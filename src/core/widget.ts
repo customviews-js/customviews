@@ -159,18 +159,16 @@ export class CustomViewsWidget {
     this.modal.className = 'cv-widget-modal-overlay';
     this.applyThemeToModal();
     
-    const toggleControls = toggles.length
-      ? toggles.map(toggle => `
-        <div class="cv-custom-state-toggle">
-          <label>
-            <div class="cv-toggle-switch" data-toggle="${toggle}">
-              <div class="cv-toggle-handle"></div>
-            </div>
-            ${this.formatToggleName(toggle)}
-          </label>
-        </div>
-      `).join('')
-      : `<p class="cv-no-toggles">No configurable sections available.</p>`;
+    const toggleControlsHtml = toggles.map(toggle => `
+      <div class="cv-custom-state-toggle">
+        <label>
+          <div class="cv-toggle-switch" data-toggle="${toggle}">
+            <div class="cv-toggle-handle"></div>
+          </div>
+          ${this.formatToggleName(toggle)}
+        </label>
+      </div>
+    `).join('');
 
     // Get tab groups
     const tabGroups = this.core.getTabGroups();
@@ -233,14 +231,18 @@ export class CustomViewsWidget {
           <div class="cv-custom-state-form">
             ${this.options.description ? `<p>${this.options.description}</p>` : ''}
             
+            ${toggles.length ? `
             <h4>Content Sections</h4>
             <div class="cv-custom-toggles">
-              ${toggleControls}
+              ${toggleControlsHtml}
             </div>
+            ` : ''}
             
+            ${this.options.showTabGroups && tabGroups && tabGroups.length > 0 ? `
             <div class="cv-widget-tab-groups-section">
               ${tabGroupsHTML}
             </div>
+            ` : ''}
             
             <div class="cv-custom-state-actions">
               ${this.options.showReset ? `<button class="cv-custom-state-reset">Reset to Default</button>` : ''}
