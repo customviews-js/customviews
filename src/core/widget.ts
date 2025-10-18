@@ -3,6 +3,7 @@ import type { CustomViewsCore } from "./core";
 import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 import { replaceIconShortcodes, ensureFontAwesomeInjected } from "./render";
+import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -160,15 +161,21 @@ export class CustomViewsWidget {
     this.applyThemeToModal();
     
     const toggleControlsHtml = toggles.map(toggle => `
-      <div class="cv-custom-state-toggle">
-        <label>
-          <div class="cv-toggle-switch" data-toggle="${toggle}">
-            <div class="cv-toggle-handle"></div>
+      <div class="cv-toggle-card">
+        <div class="cv-toggle-content">
+          <div>
+            <p class="cv-toggle-title">${this.formatToggleName(toggle)}</p>
           </div>
-          ${this.formatToggleName(toggle)}
-        </label>
+          <label class="cv-toggle-label">
+            <input class="cv-toggle-input" type="checkbox" data-toggle="${toggle}"/>
+            <span class="cv-toggle-slider"></span>
+          </label>
+        </div>
       </div>
     `).join('');
+    
+    // Todo: Re-add description if needed (Line 168, add label field to toggles if needed change structure)
+    // <p class="cv-toggle-description">Show or hide the ${this.formatToggleName(toggle).toLowerCase()} area </p>
 
     // Get tab groups
     const tabGroups = this.core.getTabGroups();
@@ -204,8 +211,8 @@ export class CustomViewsWidget {
         ).join('');
         
         return `
-          <div class="cv-tab-group-control">
-            <label for="tab-group-${group.id}">${replaceIconShortcodes(group.label || group.id)}</label>
+          <div class="cv-tab-group-wrapper">
+            <p class="cv-tab-group-description">${replaceIconShortcodes(group.label || group.id)}</p>
             <select id="tab-group-${group.id}" class="cv-tab-group-select" data-group-id="${group.id}">
               ${options}
             </select>
@@ -214,7 +221,6 @@ export class CustomViewsWidget {
       }).join('');
       
       tabGroupsHTML = `
-        <h4>Tab Groups</h4>
         <div class="cv-tab-groups">
           ${tabGroupControls}
         </div>
@@ -223,33 +229,50 @@ export class CustomViewsWidget {
 
     this.modal.innerHTML = `
       <div class="cv-widget-modal cv-custom-state-modal">
-        <div class="cv-widget-modal-header">
-          <h3>${this.options.title}</h3>
-          <button class="cv-widget-modal-close" aria-label="Close modal">×</button>
-        </div>
-        <div class="cv-widget-modal-content">
-          <div class="cv-custom-state-form">
-            ${this.options.description ? `<p>${this.options.description}</p>` : ''}
-            
-            ${toggles.length ? `
-            <h4>Content Sections</h4>
-            <div class="cv-custom-toggles">
+        <header class="cv-modal-header">
+          <div class="cv-modal-header-content">
+            <div class="cv-modal-icon">
+              ${getGearIcon()}
+            </div>
+            <div class="cv-modal-title">${this.options.title}</div>
+          </div>
+          <button class="cv-modal-close" aria-label="Close modal">
+            ${getCloseIcon()}
+          </button>
+        </header>
+        <main class="cv-modal-main">
+          ${this.options.description ? `<p class="cv-modal-description">${this.options.description}</p>` : ''}
+          
+          ${toggles.length ? `
+          <div class="cv-content-section">
+            <div class="cv-section-heading">Toggles</div>
+            <div class="cv-toggles-container">
               ${toggleControlsHtml}
             </div>
-            ` : ''}
-            
-            ${this.options.showTabGroups && tabGroups && tabGroups.length > 0 ? `
-            <div class="cv-widget-tab-groups-section">
+          </div>
+          ` : ''}
+          
+          ${this.options.showTabGroups && tabGroups && tabGroups.length > 0 ? `
+          <div class="cv-tab-groups-section">
+            <div class="cv-section-heading">Tab Groups</div>
+            <div class="cv-tab-groups-container">
               ${tabGroupsHTML}
             </div>
-            ` : ''}
-            
-            <div class="cv-custom-state-actions">
-              ${this.options.showReset ? `<button class="cv-custom-state-reset">Reset to Default</button>` : ''}
-              <button class="cv-custom-state-copy-url">Copy Shareable URL</button>
-            </div>
           </div>
-        </div>
+          ` : ''}
+        </main>
+        <footer class="cv-modal-footer">
+          ${this.options.showReset ? `
+          <button class="cv-reset-btn">
+            ${getResetIcon()}
+            <span>Reset to Default</span>
+          </button>
+          ` : ''}
+          <button class="cv-share-btn">
+            ${getShareIcon()}
+            <span>Copy Shareable URL</span>
+          </button>
+        </footer>
       </div>
     `;
 
@@ -267,7 +290,7 @@ export class CustomViewsWidget {
     if (!this.modal) return;
 
     // Close button
-    const closeBtn = this.modal.querySelector('.cv-widget-modal-close');
+    const closeBtn = this.modal.querySelector('.cv-modal-close');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
         this.closeModal();
@@ -275,7 +298,7 @@ export class CustomViewsWidget {
     }
 
     // Copy URL button
-    const copyUrlBtn = this.modal.querySelector('.cv-custom-state-copy-url');
+    const copyUrlBtn = this.modal.querySelector('.cv-share-btn');
     if (copyUrlBtn) {
       copyUrlBtn.addEventListener('click', () => {
         this.copyShareableURL();
@@ -283,7 +306,7 @@ export class CustomViewsWidget {
     }
 
     // Reset to default button
-    const resetBtn = this.modal.querySelector('.cv-custom-state-reset');
+    const resetBtn = this.modal.querySelector('.cv-reset-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         this.core.resetToDefault();
@@ -292,10 +315,9 @@ export class CustomViewsWidget {
     }
 
     // Listen to toggle switches
-    const toggleSwitches = this.modal.querySelectorAll('.cv-toggle-switch') as NodeListOf<HTMLDivElement>;
-    toggleSwitches.forEach(toggleSwitch => {
-      toggleSwitch.addEventListener('click', () => {
-        toggleSwitch.classList.toggle('cv-toggle-active');
+    const toggleInputs = this.modal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
+    toggleInputs.forEach(toggleInput => {
+      toggleInput.addEventListener('change', () => {
         const state = this.getCurrentCustomStateFromModal();
         this.core.applyState(state);
       });
@@ -353,10 +375,10 @@ export class CustomViewsWidget {
 
     // Collect toggle values
     const toggles: string[] = [];
-    const toggleSwitches = this.modal.querySelectorAll('.cv-toggle-switch') as NodeListOf<HTMLDivElement>;
-    toggleSwitches.forEach(toggleSwitch => {
-      const toggle = toggleSwitch.dataset.toggle;
-      if (toggle && toggleSwitch.classList.contains('cv-toggle-active')) {
+    const toggleInputs = this.modal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
+    toggleInputs.forEach(toggleInput => {
+      const toggle = toggleInput.dataset.toggle;
+      if (toggle && toggleInput.checked) {
         toggles.push(toggle);
       }
     });
@@ -399,17 +421,17 @@ export class CustomViewsWidget {
     // Get currently active toggles (from custom state or default configuration)
     const activeToggles = this.core.getCurrentActiveToggles();
     
-    // First, deactivate all toggle switches
-    const allToggleSwitches = this.modal.querySelectorAll('.cv-toggle-switch') as NodeListOf<HTMLDivElement>;
-    allToggleSwitches.forEach(toggleSwitch => {
-      toggleSwitch.classList.remove('cv-toggle-active');
+    // First, uncheck all toggle inputs
+    const allToggleInputs = this.modal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
+    allToggleInputs.forEach(toggleInput => {
+      toggleInput.checked = false;
     });
 
-    // Then activate the ones that should be active
+    // Then check the ones that should be active
     activeToggles.forEach(toggle => {
-      const toggleSwitch = this.modal?.querySelector(`[data-toggle="${toggle}"]`) as HTMLDivElement;
-      if (toggleSwitch) {
-        toggleSwitch.classList.add('cv-toggle-active');
+      const toggleInput = this.modal?.querySelector(`[data-toggle="${toggle}"]`) as HTMLInputElement;
+      if (toggleInput) {
+        toggleInput.checked = true;
       }
     });
 
@@ -466,7 +488,7 @@ export class CustomViewsWidget {
     this.modal.innerHTML = `
       <div class="cv-widget-modal cv-welcome-modal">
         <div class="cv-widget-modal-header">
-          <h3>${this.options.welcomeTitle}</h3>
+          <div class="cv-modal-title">${this.options.welcomeTitle}</div>
           <button class="cv-widget-modal-close" aria-label="Close modal">×</button>
         </div>
         <div class="cv-widget-modal-content">
