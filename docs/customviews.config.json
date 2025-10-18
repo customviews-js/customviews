@@ -23,8 +23,7 @@
   "baseUrl": "/customviews",
   "widget": {
     "position": "middle-left",
-    "title": "Customize your view here",
-    "description": "Toggle content sections and switch between different tab views. All changes sync across the page and are saved in the URL for sharing.",
+    "title": "Custom Views Widget",
     "showWelcome": true,
     "showTabGroups": true
   }

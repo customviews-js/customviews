@@ -61,7 +61,7 @@ export class CustomViewsWidget {
       theme: options.theme || 'light',
       showReset: options.showReset ?? true,
       title: options.title || 'Customize View',
-      description: options.description || 'Toggle different content sections to customize your view. Changes are applied instantly and the URL will be updated for sharing.',
+      description: options.description || '',
       showWelcome: options.showWelcome ?? false,
       welcomeTitle: options.welcomeTitle || 'Site Customization',
       welcomeMessage: options.welcomeMessage || 'This site is powered by Custom Views. Use the widget on the side (⚙) to customize your experience. Your preferences will be saved and can be shared via URL.<br><br>Learn more at <a href="https://github.com/customviews-js/customviews" target="_blank">customviews GitHub</a>.',
@@ -231,14 +231,16 @@ export class CustomViewsWidget {
         </div>
         <div class="cv-widget-modal-content">
           <div class="cv-custom-state-form">
-            <p>${this.options.description}</p>
+            ${this.options.description ? `<p>${this.options.description}</p>` : ''}
             
             <h4>Content Sections</h4>
             <div class="cv-custom-toggles">
               ${toggleControls}
             </div>
             
-            ${tabGroupsHTML}
+            <div class="cv-widget-tab-groups-section">
+              ${tabGroupsHTML}
+            </div>
             
             <div class="cv-custom-state-actions">
               ${this.options.showReset ? `<button class="cv-custom-state-reset">Reset to Default</button>` : ''}

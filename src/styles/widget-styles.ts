@@ -383,7 +383,6 @@ export const WIDGET_STYLES = `
 }
 
 .cv-custom-state-form h4 {
-  margin: 20px 0 10px 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
@@ -429,6 +428,10 @@ export const WIDGET_STYLES = `
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 10px;
+}
+
+.cv-widget-tab-groups-section {
+  margin-top: 20px;
 }
 
 .cv-custom-state-toggle {

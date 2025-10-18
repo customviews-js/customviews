@@ -183,7 +183,7 @@ Enable and configure the widget in your `customviews.config.json`:
 | `theme` | string | `"light"` | Widget theme: `"light"` or `"dark"`. |
 | `showReset` | boolean | `true` | Whether to show the reset to default button. |
 | `title` | string | `"Custom Views"` | Title shown in the widget icon tooltip and modal header. |
-| `description` | string | `"Toggle different content sections..."` | Description text shown in the modal. |
+| `description` | string | None | Description text shown in the modal. Set it in the configuration json if you want to add a custom description in the widget popup. |
 | `showWelcome` | boolean | `false` | Whether to show a welcome modal on first visit. |
 | `welcomeTitle` | string | `"Site Customization"` | Title for the welcome modal. |
 | `welcomeMessage` | string | Welcome message HTML | Message shown in the welcome modal. |
