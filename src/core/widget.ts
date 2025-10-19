@@ -487,21 +487,25 @@ export class CustomViewsWidget {
     
     this.modal.innerHTML = `
       <div class="cv-widget-modal cv-welcome-modal">
-        <div class="cv-widget-modal-header">
-          <div class="cv-modal-title">${this.options.welcomeTitle}</div>
-          <button class="cv-widget-modal-close" aria-label="Close modal">×</button>
-        </div>
-        <div class="cv-widget-modal-content">
-          <div class="cv-welcome-content">
-            <p style="text-align: justify;">${this.options.welcomeMessage}</p>
-            
-            <div class="cv-welcome-widget-preview">
-              <div class="cv-welcome-widget-icon">⚙</div>
-              <p class="cv-welcome-widget-label">Look for this widget on the side of the screen</p>
+        <header class="cv-modal-header">
+          <div class="cv-modal-header-content">
+            <div class="cv-modal-icon">
+              ${getGearIcon()}
             </div>
-            
-            <button class="cv-welcome-got-it">Got it!</button>
+            <h1 class="cv-modal-title">${this.options.welcomeTitle}</h1>
           </div>
+        </header>
+        <div class="cv-modal-main">
+          <p class="cv-welcome-message">${this.options.welcomeMessage}</p>
+          
+          <div class="cv-welcome-widget-preview">
+            <div class="cv-welcome-widget-icon">
+              ${getGearIcon()}
+            </div>
+            <p class="cv-welcome-widget-label">Look for this widget</p>
+          </div>
+          
+          <button class="cv-welcome-got-it">Got it!</button>
         </div>
       </div>
     `;
@@ -515,14 +519,6 @@ export class CustomViewsWidget {
    */
   private attachWelcomeModalEventListeners(): void {
     if (!this.modal) return;
-
-    // Close button
-    const closeBtn = this.modal.querySelector('.cv-widget-modal-close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        this.closeModal();
-      });
-    }
 
     // Got it button
     const gotItBtn = this.modal.querySelector('.cv-welcome-got-it');
