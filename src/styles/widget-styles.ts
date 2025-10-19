@@ -712,84 +712,125 @@ export const WIDGET_STYLES = `
 /* Dark theme custom state styles */
 /* Welcome modal styles */
 .cv-welcome-modal {
-  max-width: 500px;
+  max-width: 32rem;
+  width: 90vw;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: slideIn 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
-.cv-welcome-content {
+.cv-modal-main {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  max-height: calc(80vh - 8rem);
+}
+
+.cv-welcome-message {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0;
+  line-height: 1.4;
   text-align: center;
 }
 
-.cv-welcome-content p {
-  font-size: 15px;
-  line-height: 1.6;
-  color: #555;
-  margin-bottom: 24px;
+.cv-welcome-message a {
+  color: #3e84f4;
   text-align: justify;
+  text-decoration: none;
+}
+
+.cv-welcome-message a:hover {
+  text-decoration: underline;
 }
 
 .cv-welcome-widget-preview {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 20px;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
   background: #f8f9fa;
-  border-radius: 8px;
-  margin-bottom: 24px;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
 }
 
 .cv-welcome-widget-icon {
-  width: 36px;
-  height: 36px;
-  background: white;
-  color: black;
-  border-radius: 0 18px 18px 0;
+  width: 2rem;
+  height: 2rem;
+  background: rgba(62, 132, 244, 0.1);
+  border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: cv-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  color: #3e84f4;
 }
 
 .cv-welcome-widget-label {
-  font-size: 14px;
-  color: #666;
-  margin: 0;
+  font-size: 0.875rem;
   font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+  margin: 0;
 }
 
 .cv-welcome-got-it {
   width: 100%;
-  padding: 12px 24px;
-  background: #007bff;
+  background: #3e84f4;
   color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
   font-weight: 600;
-  transition: background 0.2s ease;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease;
+  outline: none;
 }
 
 .cv-welcome-got-it:hover {
-  background: #0056b3;
+  background: rgba(62, 132, 244, 0.9);
 }
 
-.cv-welcome-got-it:active {
-  background: #004494;
+.cv-welcome-got-it:focus {
+  box-shadow: 0 0 0 2px rgba(62, 132, 244, 0.5);
+}
+
+/* Animations */
+@keyframes cv-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Dark theme welcome modal styles */
-.cv-widget-theme-dark .cv-welcome-content p {
-  color: #cbd5e0;
+.cv-widget-theme-dark .cv-welcome-modal {
+  background: #101722;
+}
+
+.cv-widget-theme-dark .cv-welcome-message {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cv-widget-theme-dark .cv-welcome-message a {
+  color: #60a5fa;
 }
 
 .cv-widget-theme-dark .cv-welcome-widget-preview {
-  background: #1a202c;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .cv-widget-theme-dark .cv-welcome-widget-label {
-  color: #a0aec0;
+  color: #e2e8f0;
 }
 `;
 
