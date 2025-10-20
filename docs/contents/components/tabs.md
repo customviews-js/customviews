@@ -9,8 +9,7 @@
 
 The **Tabs** component lets you define **mutually exclusive content sections** that users can toggle between — perfect for organizing platform-specific, step-based, or categorized documentation.  
 
-When multiple tab groups share the same `id`, they stay synchronized automatically across the entire page.
-
+When multiple tab groups (`<cv-tabgroup/>`) share the same `id` attribute, they stay synchronized automatically across the entire page.
 
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
@@ -129,6 +128,43 @@ Pear types include the **Asian pear** and the **European pear**
 
 * **Synchronized Tab Groups** Multiple tab groups with the same `id` will automatically synchronize. When you switch tabs in one group, all other groups with the same ID will update simultaneously.
 * E.g. Clicking "Orange" in the first group will automatically switch the second group to "Orange" as well.
+
+
+## Multi-ID Tabs and Header Demarcation
+
+You can create a single tab that appears under multiple tab IDs by specifying multiple IDs separated by spaces or `|`
+
+* This will create three tabs ("apple", "orange", "pear") in the navigation bar, all showing the same content. 
+* The `header` attribute can be demarcated with the `|` character to provide a separate label for each tab. If the number of header parts matches the number of IDs, each tab will use its corresponding header. If not, the first header or fallback label will be used for all.
+* The content inside the tab is shared for all IDs listed.
+
+**Example:**
+
+
+<include src="codeAndOutputSeparate.md" boilerplate >
+<variable name="highlightStyle">html</variable>
+<variable name="code">
+<cv-tabgroup id="fruit">
+<cv-tab id="apple orange pear" header="Apple Header|Orange Header|Pear Header">
+  Applicable to all fruits.
+</cv-tab>
+<cv-tab id="pear" header="Pear Header">
+  Applicable to pear
+</cv-tab>
+</cv-tabgroup>
+</variable>
+<variable name="output">
+<cv-tabgroup id="fruit">
+<cv-tab id="apple orange" header="Apple Header|Orange Header">
+  Applicable to apple and orange.
+</cv-tab>
+<cv-tab id="pear" header="Pear Header">
+  Applicable to pear
+</cv-tab>
+<cv-tabgroup/>
+</variable>
+</include>
+
 
 
 ## Attributes & Options
