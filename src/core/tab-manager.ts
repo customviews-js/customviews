@@ -7,10 +7,16 @@ const TAB_SELECTOR = 'cv-tab';
 const NAV_AUTO_SELECTOR = 'cv-tabgroup[nav="auto"], cv-tabgroup:not([nav])';
 const NAV_CONTAINER_CLASS = 'cv-tabs-nav';
 
-/**
- * TabManager handles discovery, visibility, and navigation for tab groups and tabs
- */
 export class TabManager {
+  /**
+   * Split a tab ID into multiple IDs if it contains spaces or |
+   */
+  private static splitTabIds(tabId: string): string[] {
+    const splitIds = tabId.split(/[\s|]+/).filter(id => id.trim() !== '');
+    const trimmedIds = splitIds.map(id => id.trim());
+    return trimmedIds;
+  }
+
   /**
    * Apply tab selections to all tab groups in the DOM
    */
@@ -27,7 +33,7 @@ export class TabManager {
       if (!groupId) return;
 
       // Determine the active tab for this group
-      const activeTabId = this.resolveActiveTab(groupId, tabs, cfgGroups, groupEl as HTMLElement);
+      const activeTabId = this.resolveActiveTabForGroup(groupId, tabs, cfgGroups, groupEl as HTMLElement);
       
       // Apply visibility to direct child cv-tab elements only (not nested ones)
       const tabElements = Array.from(groupEl.children).filter(
@@ -37,7 +43,9 @@ export class TabManager {
         const tabId = tabEl.getAttribute('id');
         if (!tabId) return;
 
-        const isActive = tabId === activeTabId;
+        // Split IDs and check if any match the active tab
+        const splitIds = this.splitTabIds(tabId);
+        const isActive = splitIds.includes(activeTabId || '');
         this.applyTabVisibility(tabEl as HTMLElement, isActive);
       });
     });
@@ -45,8 +53,10 @@ export class TabManager {
 
   /**
    * Resolve the active tab for a group based on state, config, and DOM
+   * 
+   * Pass in the current tabs state, config groups, and the group element
    */
-  private static resolveActiveTab(
+  private static resolveActiveTabForGroup(
     groupId: string,
     tabs: Record<string, string>,
     cfgGroups: TabGroupConfig[] | undefined,
@@ -77,7 +87,8 @@ export class TabManager {
       (child) => child.tagName.toLowerCase() === TAB_SELECTOR
     );
     if (firstTab) {
-      return firstTab.getAttribute('id');
+      const splitIds = this.splitTabIds(firstTab.getAttribute('id') || '');
+      return splitIds[0] || null;
     }
 
     return null;
@@ -117,11 +128,15 @@ export class TabManager {
       const tabElements = Array.from(groupEl.children).filter(
         (child) => child.tagName.toLowerCase() === 'cv-tab'
       );
+
+      // Check for Font Awesome shortcodes in tab headers
       tabElements.forEach((tabEl) => {
         const tabId = tabEl.getAttribute('id');
         if (!tabId) return;
 
-        const header = tabEl.getAttribute('header') || this.getTabLabel(tabId, groupId, cfgGroups) || tabId;
+        const splitIds = this.splitTabIds(tabId);
+        const firstId = splitIds[0] || tabId;
+        const header = tabEl.getAttribute('header') || this.getTabLabel(firstId, groupId, cfgGroups) || firstId || '';
         if (/:fa-[\w-]+:/.test(header)) {
           hasFontAwesomeShortcodes = true;
         }
@@ -158,39 +173,64 @@ export class TabManager {
         const tabId = tabEl.getAttribute('id');
         if (!tabId) return;
 
-        const header = tabEl.getAttribute('header') || this.getTabLabel(tabId, groupId, cfgGroups) || tabId;
-        
-        const listItem = document.createElement('li');
-        listItem.className = 'nav-item';
-        
-        const navLink = document.createElement('a');
-        navLink.className = 'nav-link';
-        // Replace icon shortcodes in header
-        navLink.innerHTML = replaceIconShortcodes(header);
-        navLink.href = '#';
-        navLink.setAttribute('data-tab-id', tabId);
-        navLink.setAttribute('data-group-id', groupId);
-        navLink.setAttribute('role', 'tab');
-        
-        // Check if this tab is currently active
-        const isActive = tabEl.classList.contains('cv-visible');
-        if (isActive) {
-          navLink.classList.add('active');
-          navLink.setAttribute('aria-selected', 'true');
+        const splitIds = this.splitTabIds(tabId);
+        // Header demarcation: if header contains |, split and use per tab.
+        // If header attribute is present and not demarcated, use it as the fallback header.
+        const headerAttr = tabEl.getAttribute('header') || '';
+        let headerParts: string[] = [];
+        if (headerAttr && headerAttr.includes('|')) {
+          headerParts = headerAttr.split('|').map(h => h.trim());
+        }
+
+        const firstId = splitIds[0] || tabId;
+        let fallbackHeader = '';
+        if (headerAttr && !headerAttr.includes('|')) {
+          // Single header provided on the element: use for all split IDs
+          fallbackHeader = headerAttr;
         } else {
-          navLink.setAttribute('aria-selected', 'false');
+          // No header attribute or multi-part header: use config label or id as fallback
+          fallbackHeader = this.getTabLabel(firstId, groupId, cfgGroups) || firstId || '';
         }
 
-        // Add click handler
-        if (onTabClick) {
-          navLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            onTabClick(groupId, tabId);
-          });
-        }
+        // Create nav links for each split ID
+        splitIds.forEach((splitId, idx) => {
+          const listItem = document.createElement('li');
+          listItem.className = 'nav-item';
 
-        listItem.appendChild(navLink);
-        navContainer.appendChild(listItem);
+          const navLink = document.createElement('a');
+          navLink.className = 'nav-link';
+          // Use demarcated header if available, else fallback
+          let header = fallbackHeader;
+          if (headerParts.length === splitIds.length) {
+            header = headerParts[idx] ?? fallbackHeader;
+          }
+          navLink.innerHTML = replaceIconShortcodes(header);
+          navLink.href = '#';
+          navLink.setAttribute('data-tab-id', splitId);
+          navLink.setAttribute('data-group-id', groupId);
+          navLink.setAttribute('role', 'tab');
+
+          // Check if this split ID is active (same logic as applySelections)
+          const activeTabId = this.resolveActiveTabForGroup(groupId, {}, cfgGroups, groupEl as HTMLElement); // Pass empty tabs for initial state
+          const isActive = splitIds.includes(activeTabId || '');
+          if (isActive) {
+            navLink.classList.add('active');
+            navLink.setAttribute('aria-selected', 'true');
+          } else {
+            navLink.setAttribute('aria-selected', 'false');
+          }
+
+          // Add click handler
+          if (onTabClick) {
+            navLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              onTabClick(groupId, splitId);
+            });
+          }
+
+          listItem.appendChild(navLink);
+          navContainer.appendChild(listItem);
+        });
       });
 
       // Add bottom border line at the end of the tab group
@@ -226,8 +266,13 @@ export class TabManager {
     tabGroups.forEach((groupEl) => {
       const navLinks = groupEl.querySelectorAll('.nav-link');
       navLinks.forEach((link) => {
-        const tabId = link.getAttribute('data-tab-id');
-        if (tabId === activeTabId) {
+        const linkTabId = link.getAttribute('data-tab-id');
+        if (!linkTabId) return;
+
+        // Check if activeTabId matches or is in the split IDs of this link
+        const splitIds = this.splitTabIds(linkTabId);
+        const isActive = linkTabId === activeTabId || splitIds.includes(activeTabId);
+        if (isActive) {
           link.classList.add('active');
           link.setAttribute('aria-selected', 'true');
         } else {
@@ -253,14 +298,19 @@ export class TabManager {
       if (!groupId) return;
 
       // Determine the active tab for this group
-      const activeTabId = this.resolveActiveTab(groupId, tabs, cfgGroups, groupEl as HTMLElement);
+      const activeTabId = this.resolveActiveTabForGroup(groupId, tabs, cfgGroups, groupEl as HTMLElement);
       if (!activeTabId) return;
 
       // Update nav links for this group
       const navLinks = groupEl.querySelectorAll('.nav-link');
       navLinks.forEach((link) => {
-        const tabId = link.getAttribute('data-tab-id');
-        if (tabId === activeTabId) {
+        const linkTabId = link.getAttribute('data-tab-id');
+        if (!linkTabId) return;
+
+        // Check if activeTabId matches or is in the split IDs of this link
+        const splitIds = this.splitTabIds(linkTabId);
+        const isActive = linkTabId === activeTabId || splitIds.includes(activeTabId);
+        if (isActive) {
           link.classList.add('active');
           link.setAttribute('aria-selected', 'true');
         } else {
