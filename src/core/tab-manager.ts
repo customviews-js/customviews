@@ -199,10 +199,13 @@ export class TabManager {
 
           const navLink = document.createElement('a');
           navLink.className = 'nav-link';
-          // Use demarcated header if available, else fallback
+          // Use demarcated header if available, else prefer config label for this specific splitId
           let header = fallbackHeader;
           if (headerParts.length === splitIds.length) {
             header = headerParts[idx] ?? fallbackHeader;
+          } else if (!headerAttr || headerAttr.includes('|')) {
+            // Prefer the config label for the individual splitId over using firstId
+            header = this.getTabLabel(splitId, groupId, cfgGroups) || splitId || '';
           }
           navLink.innerHTML = replaceIconShortcodes(header);
           navLink.href = '#';
