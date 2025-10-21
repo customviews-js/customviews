@@ -100,6 +100,15 @@ export class CustomViewsCore {
       this.setActiveTab(groupId, tabId);
     });
 
+    // Apply stored nav visibility preference on page load
+    try {
+      const navPref = localStorage.getItem('cv-tab-navs-visible');
+      if (navPref !== null) {
+        const visible = navPref === 'true';
+        TabManager.setNavsVisibility(this.rootEl, visible);
+      }
+    } catch (e) { /* ignore */ }
+
     // For session history, clicks on back/forward button
     window.addEventListener("popstate", () => {
       this.loadAndCallApplyState();

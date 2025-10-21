@@ -429,20 +429,24 @@ export const WIDGET_STYLES = `
   color: #e2e8f0;
 }
 
-.cv-widget-theme-dark .cv-toggles-container {
+.cv-widget-theme-dark .cv-toggles-container
+.cv-widget-theme-dark .cv-tabgroups-container {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-.cv-widget-theme-dark .cv-toggle-card {
+.cv-widget-theme-dark .cv-toggle-card,
+.cv-widget-theme-dark .cv-tabgroup-card {
   background: #101722;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-.cv-widget-theme-dark .cv-toggle-title {
+.cv-widget-theme-dark .cv-toggle-title,
+.cv-widget-theme-dark .cv-tabgroup-title {
   color: #e2e8f0;
 }
 
-.cv-widget-theme-dark .cv-toggle-description {
+.cv-widget-theme-dark .cv-toggle-description,
+.cv-widget-theme-dark .cv-tabgroup-description {
   color: rgba(255, 255, 255, 0.6);
 }
 
@@ -454,7 +458,7 @@ export const WIDGET_STYLES = `
   color: rgba(255, 255, 255, 0.8);
 }
 
-.cv-widget-theme-dark .cv-tab-group-select {
+.cv-widget-theme-dark .cv-tabgroup-select {
   background: #101722;
   border-color: rgba(255, 255, 255, 0.2);
   color: #e2e8f0;
@@ -521,6 +525,7 @@ export const WIDGET_STYLES = `
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
+/* Toggles Container */
 .cv-toggles-container {
   display: flex;
   flex-direction: column;
@@ -530,7 +535,8 @@ export const WIDGET_STYLES = `
   overflow: hidden;
 }
 
-.cv-toggle-card {
+.cv-toggle-card,
+.cv-tabgroup-card {
   background: white;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -559,7 +565,7 @@ export const WIDGET_STYLES = `
   margin: 0;
 }
 
-.cv-toggle-label {
+.cv-toggle-label{
   position: relative;
   display: inline-block;
   width: 2.75rem;
@@ -621,47 +627,202 @@ export const WIDGET_STYLES = `
   background: #4299e1;
 }
 
-.cv-tab-groups-container {
+/* Tab Groups Container */
+.cv-tab-groups-list {
   display: flex;
   flex-direction: column;
+  gap: 1px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+/* Tab Group Card - Header (Navigation Headers toggle) */
+.cv-tabgroup-card.cv-tabgroup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  border-bottom: 0px;
+}
+
+.cv-tabgroup-card.cv-tabgroup-header .cv-tabgroup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   gap: 1rem;
 }
 
-.cv-tab-group-wrapper {
+/* Tab Group Card - Items */
+.cv-tabgroup-card.cv-tabgroup-item {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.cv-tab-group-description {
+.cv-tabgroup-card.cv-tabgroup-item:last-child {
+  border-bottom: none;
+}
+
+/* Tab Group Info */
+.cv-tabgroup-info {
+  flex: 1;
+}
+
+.cv-tabgroup-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.9);
+  margin: 0 0 0.25rem 0;
+}
+
+.cv-tabgroup-description {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Tab Group Label (for select dropdowns) */
+.cv-tabgroup-label {
   font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.8);
   margin: 0;
   line-height: 1.4;
+  font-weight: 500;
+  display: block;
+  cursor: pointer;
 }
 
-.cv-tab-group-select {
+/* Tab Group Select */
+.cv-tabgroup-select {
   width: 100%;
   border-radius: 0.5rem;
   background: white;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   color: rgba(0, 0, 0, 0.9);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  font-family: inherit;
 }
 
-.cv-tab-group-select:focus {
+.cv-tabgroup-select:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.cv-tabgroup-select:focus {
   outline: none;
   border-color: #3e84f4;
-  box-shadow: 0 0 0 2px rgba(62, 132, 244, 0.25);
+  box-shadow: 0 0 0 2px rgba(62, 132, 244, 0.2);
 }
 
-.cv-widget-theme-dark .cv-tab-group-select {
-  background-color: #2d3748;
-  border-color: #4a5568;
+/* Modern Toggle Switch */
+.cv-toggle-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 44px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 9999px;
+  padding: 2px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: none;
+}
+
+.cv-toggle-switch input {
+  display: none;
+}
+
+.cv-toggle-switch .cv-switch-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+  pointer-events: none;
+}
+
+.cv-toggle-switch .cv-switch-knob {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
+  z-index: 1;
+}
+
+.cv-toggle-switch input:checked + .cv-switch-bg {
+  background: #3e84f4;
+}
+
+.cv-toggle-switch input:checked ~ .cv-switch-knob {
+  transform: translateX(20px);
+}
+
+/* Dark Theme - Tab Groups */
+.cv-widget-theme-dark .cv-tabgroup-card.cv-tabgroup-header {
+  background: #101722;
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.cv-widget-theme-dark .cv-tabgroup-card.cv-tabgroup-item {
+  background: #101722;
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.cv-widget-theme-dark .cv-tabgroup-title {
   color: #e2e8f0;
+}
+
+.cv-widget-theme-dark .cv-tabgroup-description {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.cv-widget-theme-dark .cv-tabgroup-label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cv-widget-theme-dark .cv-tab-groups-list {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.cv-widget-theme-dark .cv-tabgroup-select {
+  background: #101722;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e2e8f0;
+}
+
+.cv-widget-theme-dark .cv-tabgroup-select:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.cv-widget-theme-dark .cv-tabgroup-select:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
+}
+
+/* Dark Theme - Toggle Switch */
+.cv-widget-theme-dark .cv-toggle-switch .cv-switch-bg {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.cv-widget-theme-dark .cv-toggle-switch .cv-switch-knob {
+  background: #e2e8f0;
+}
+
+.cv-widget-theme-dark .cv-toggle-switch input:checked + .cv-switch-bg {
+  background: #63b3ed;
 }
 
 .cv-modal-footer {

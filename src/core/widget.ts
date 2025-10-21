@@ -3,6 +3,7 @@ import type { CustomViewsCore } from "./core";
 import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 import { replaceIconShortcodes, ensureFontAwesomeInjected } from "./render";
+import { TabManager } from "./tab-manager";
 import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon } from "../utils/icons";
 
 export interface WidgetOptions {
@@ -179,7 +180,7 @@ export class CustomViewsWidget {
 
     // Get tab groups
     const tabGroups = this.core.getTabGroups();
-    let tabGroupsHTML = '';
+    let tabGroupControlsHTML = '';
     
     // Check if any tab group or tab labels contain Font Awesome shortcodes
     let hasFontAwesomeShortcodes = false;
@@ -203,29 +204,38 @@ export class CustomViewsWidget {
     if (hasFontAwesomeShortcodes) {
       ensureFontAwesomeInjected();
     }
-    
+
+
     if (this.options.showTabGroups && tabGroups && tabGroups.length > 0) {
-      const tabGroupControls = tabGroups.map(group => {
-        const options = group.tabs.map(tab => 
-          `<option value="${tab.id}">${replaceIconShortcodes(tab.label || tab.id)}</option>`
-        ).join('');
-        
-        return `
-          <div class="cv-tab-group-wrapper">
-            <p class="cv-tab-group-description">${replaceIconShortcodes(group.label || group.id)}</p>
-            <select id="tab-group-${group.id}" class="cv-tab-group-select" data-group-id="${group.id}">
-              ${options}
-            </select>
+      tabGroupControlsHTML = `
+        <div class="cv-tabgroup-card cv-tabgroup-header">
+          <div class="cv-tabgroup-row">
+            <div class="cv-tabgroup-info">
+              <p class="cv-tabgroup-title">Navigation Headers</p>
+              <p class="cv-tabgroup-description">Show or hide navigation headers</p>
+            </div>
+            <label class="cv-toggle-switch cv-nav-toggle">
+              <input class="cv-nav-pref-input" type="checkbox" aria-label="Show or hide navigation headers" />
+              <span class="cv-switch-bg"></span>
+              <span class="cv-switch-knob"></span>
+            </label>
           </div>
-        `;
-      }).join('');
-      
-      tabGroupsHTML = `
-        <div class="cv-tab-groups">
-          ${tabGroupControls}
+        </div>
+        <div class="cv-tab-groups-list">
+          ${tabGroups.map(group => `
+            <div class="cv-tabgroup-card cv-tabgroup-item">
+              <label class="cv-tabgroup-label" for="tab-group-${group.id}">
+                ${replaceIconShortcodes(group.label || group.id)}
+              </label>
+              <select id="tab-group-${group.id}" class="cv-tabgroup-select" data-group-id="${group.id}">
+                ${group.tabs.map(tab => `<option value="${tab.id}">${replaceIconShortcodes(tab.label || tab.id)}</option>`).join('')}
+              </select>
+            </div>
+          `).join('')}
         </div>
       `;
     }
+
 
     this.modal.innerHTML = `
       <div class="cv-widget-modal cv-custom-state-modal">
@@ -253,14 +263,15 @@ export class CustomViewsWidget {
           ` : ''}
           
           ${this.options.showTabGroups && tabGroups && tabGroups.length > 0 ? `
-          <div class="cv-tab-groups-section">
+          <div class="cv-content-section">
             <div class="cv-section-heading">Tab Groups</div>
-            <div class="cv-tab-groups-container">
-              ${tabGroupsHTML}
+            <div class="cv-tabgroups-container">
+              ${tabGroupControlsHTML}
             </div>
           </div>
           ` : ''}
         </main>
+
         <footer class="cv-modal-footer">
           ${this.options.showReset ? `
           <button class="cv-reset-btn">
@@ -324,7 +335,7 @@ export class CustomViewsWidget {
     });
 
     // Listen to tab group selects
-    const tabGroupSelects = this.modal.querySelectorAll('.cv-tab-group-select') as NodeListOf<HTMLSelectElement>;
+    const tabGroupSelects = this.modal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
     tabGroupSelects.forEach(select => {
       select.addEventListener('change', () => {
         const groupId = select.dataset.groupId;
@@ -334,6 +345,24 @@ export class CustomViewsWidget {
         }
       });
     });
+
+    // Listener for show/hide tab navs
+    const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    if (tabNavToggle) {
+      tabNavToggle.addEventListener('change', () => {
+        const visible = tabNavToggle.checked;
+        // Persist preference
+        try { localStorage.setItem('cv-tab-navs-visible', visible ? 'true' : 'false'); } catch (e) { /* ignore */ }
+        // Apply to DOM using TabManager via core
+        try {
+          const rootEl = document.body;
+          TabManager.setNavsVisibility(rootEl, visible);
+        } catch (e) {
+          // ignore errors
+          console.error('Failed to set tab nav visibility:', e);
+        }
+      });
+    }
 
     // Overlay click to close
     this.modal.addEventListener('click', (e) => {
@@ -384,7 +413,7 @@ export class CustomViewsWidget {
     });
 
     // Collect tab selections
-    const tabGroupSelects = this.modal.querySelectorAll('.cv-tab-group-select') as NodeListOf<HTMLSelectElement>;
+    const tabGroupSelects = this.modal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
     const tabs: Record<string, string> = {};
     tabGroupSelects.forEach(select => {
       const groupId = select.dataset.groupId;
@@ -437,13 +466,28 @@ export class CustomViewsWidget {
 
     // Load tab group selections
     const activeTabs = this.core.getCurrentActiveTabs();
-    const tabGroupSelects = this.modal.querySelectorAll('.cv-tab-group-select') as NodeListOf<HTMLSelectElement>;
+    const tabGroupSelects = this.modal.querySelectorAll('.cv-tab-groupselect') as NodeListOf<HTMLSelectElement>;
     tabGroupSelects.forEach(select => {
       const groupId = select.dataset.groupId;
       if (groupId && activeTabs[groupId]) {
         select.value = activeTabs[groupId];
       }
     });
+
+    // Load tab nav visibility preference
+    const navPref = ((): boolean => {
+      try {
+        const raw = localStorage.getItem('cv-tab-navs-visible');
+        if (raw === null) return TabManager.areNavsVisible(document.body);
+        return raw === 'true';
+      } catch (e) { return TabManager.areNavsVisible(document.body); }
+    })();
+  const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    if (tabNavToggle) {
+      tabNavToggle.checked = navPref;
+      // Ensure UI matches actual visibility
+      TabManager.setNavsVisibility(document.body, navPref);
+    }
   }
 
 
