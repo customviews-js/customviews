@@ -126,8 +126,9 @@ Pear types include the **Asian pear** and the **European pear**
 </include>
 
 
-* **Synchronized Tab Groups** Multiple tab groups with the same `id` will automatically synchronize. When you switch tabs in one group, all other groups with the same ID will update simultaneously.
-* E.g. Clicking "Orange" in the first group will automatically switch the second group to "Orange" as well.
+* **Single-Click Behavior** — Click once to switch tabs locally within that specific tab group only. The change is visual only and is not saved.
+* **Double-Click Behavior** — Double-click to synchronize the tab selection across all tab groups with the same `id` on the page. The state is saved to browser storage and persists across page reloads.
+* **Example:** If you have two tab groups both with `id="fruit"`, a single-click on "Orange" in the first group only changes that group locally. Double-clicking on "Orange" will sync both groups to show "Orange" and save the state.
 
 
 ## Multi-ID Tabs and Header Demarcation
@@ -161,7 +162,7 @@ You can create a single tab that appears under multiple tab IDs by specifying mu
 <cv-tab id="pear" header="Pear Header">
   Applicable to pear
 </cv-tab>
-<cv-tabgroup/>
+</cv-tabgroup>
 </variable>
 </include>
 

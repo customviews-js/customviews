@@ -115,7 +115,8 @@ export class TabManager {
   public static buildNavs(
     rootEl: HTMLElement,
     cfgGroups?: TabGroupConfig[],
-    onTabClick?: (groupId: string, tabId: string) => void
+    onTabClick?: (groupId: string, tabId: string, groupEl: HTMLElement) => void,
+    onTabDoubleClick?: (groupId: string, tabId: string, groupEl: HTMLElement) => void
   ): void {
     // Find all cv-tabgroup elements with nav="auto" or no nav attribute
     const tabGroups = rootEl.querySelectorAll(NAV_AUTO_SELECTOR);
@@ -233,13 +234,26 @@ export class TabManager {
             navLink.setAttribute('aria-selected', 'false');
           }
 
-          // Add click handler
+          // Add click handler for local tab switch
           if (onTabClick) {
             navLink.addEventListener('click', (e) => {
               e.preventDefault();
-              onTabClick(groupId, splitId);
+              // console.log("Single-click detected");
+              onTabClick(groupId, splitId, groupEl as HTMLElement);
             });
           }
+
+          // Add double-click handler for sync
+          if (onTabDoubleClick) {
+            navLink.addEventListener('dblclick', (e) => {
+              e.preventDefault();
+              // console.log("Double-click detected");
+              onTabDoubleClick(groupId, splitId, groupEl as HTMLElement);
+            });
+          }
+
+          // Add tooltip for UX feedback (use native title attribute)
+          navLink.setAttribute('title', 'Double click to change switch tabs across all groups');
 
           listItem.appendChild(navLink);
           navContainer.appendChild(listItem);
@@ -310,28 +324,24 @@ export class TabManager {
   }
 
   /**
-   * Update active state in navs after selection change (single group)
+   * Update active state in navs for a specific tabgroup element only
    */
-  public static updateNavActiveState(rootEl: HTMLElement, groupId: string, activeTabId: string): void {
-    const tabGroups = rootEl.querySelectorAll(`${TABGROUP_SELECTOR}[id="${groupId}"]`);
-    
-    tabGroups.forEach((groupEl) => {
-      const navLinks = groupEl.querySelectorAll('.nav-link');
-      navLinks.forEach((link) => {
-        const linkTabId = link.getAttribute('data-tab-id');
-        if (!linkTabId) return;
+  public static updateNavActiveState(groupEl: HTMLElement, activeTabId: string): void {
+    const navLinks = groupEl.querySelectorAll('.nav-link');
+    navLinks.forEach((link) => {
+      const linkTabId = link.getAttribute('data-tab-id');
+      if (!linkTabId) return;
 
-        // Check if activeTabId matches or is in the split IDs of this link
-        const splitIds = this.splitTabIds(linkTabId);
-        const isActive = linkTabId === activeTabId || splitIds.includes(activeTabId);
-        if (isActive) {
-          link.classList.add('active');
-          link.setAttribute('aria-selected', 'true');
-        } else {
-          link.classList.remove('active');
-          link.setAttribute('aria-selected', 'false');
-        }
-      });
+      // Check if activeTabId matches or is in the split IDs of this link
+      const splitIds = this.splitTabIds(linkTabId);
+      const isActive = linkTabId === activeTabId || splitIds.includes(activeTabId);
+      if (isActive) {
+        link.classList.add('active');
+        link.setAttribute('aria-selected', 'true');
+      } else {
+        link.classList.remove('active');
+        link.setAttribute('aria-selected', 'false');
+      }
     });
   }
 
@@ -372,4 +382,63 @@ export class TabManager {
       });
     });
   }
+
+  /**
+   * Apply tab selection to a specific tabgroup element only (not globally).
+   * Used for single-click behavior to update only the clicked tabgroup.
+   */
+  public static applyTabLocalOnly(groupEl: HTMLElement, activeTabId: string): void {
+    const tabElements = Array.from(groupEl.children).filter(
+      (child) => child.tagName.toLowerCase() === TAB_SELECTOR
+    );
+    
+    tabElements.forEach((tabEl) => {
+      const tabId = tabEl.getAttribute('id');
+      if (!tabId) return;
+
+      const splitIds = this.splitTabIds(tabId);
+      const isActive = splitIds.includes(activeTabId);
+      this.applyTabVisibility(tabEl as HTMLElement, isActive);
+    });
+  }
+
+  /**
+   * Check if a tabgroup element contains a specific tab ID (respects split IDs).
+   * Accepts groupEl to avoid repeated DOM queries.
+   */
+  public static groupHasTab(groupEl: HTMLElement, tabId: string): boolean {
+    const tabElements = Array.from(groupEl.children).filter(
+      (child) => child.tagName.toLowerCase() === TAB_SELECTOR
+    );
+    return tabElements.some((tabEl) => {
+      const idAttr = tabEl.getAttribute('id') || '';
+      const splitIds = this.splitTabIds(idAttr);
+      return splitIds.includes(tabId);
+    });
+  }
+
+
+  /**
+   * Returns array of group elements to be synced (excluding source).
+   */
+  public static getTabgroupsWithId(
+    rootEl: HTMLElement,
+    sourceGroupId: string,
+    tabId: string
+  ): HTMLElement[] {
+    const syncedGroupEls: HTMLElement[] = [];
+    const allGroupEls = Array.from(rootEl.querySelectorAll(`${TABGROUP_SELECTOR}[id="${sourceGroupId}"]`)) as HTMLElement[];
+
+    allGroupEls.forEach((targetGroupEl) => {
+      // Only sync if target group actually contains this tab
+      if (this.groupHasTab(targetGroupEl, tabId)) {
+        syncedGroupEls.push(targetGroupEl);
+      }
+    });
+
+    return syncedGroupEls;
+  }
+
+
+
 }

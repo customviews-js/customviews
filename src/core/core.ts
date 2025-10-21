@@ -66,39 +66,50 @@ export class CustomViewsCore {
   /**
    * Set active tab for a group and apply state
    */
-  public setActiveTab(groupId: string, tabId: string): void {
-    // Get current state
-    const currentToggles = this.getCurrentActiveToggles();
-    const currentTabs = this.getCurrentActiveTabs();
+  public setActiveTab(groupId: string, tabId: string, groupEl?: HTMLElement): void {
+    // If groupEl is provided, apply tab selection locally to just that element
+    // Single-click: only updates DOM visually, no persistence
+    if (groupEl) {
+      TabManager.applyTabLocalOnly(groupEl, tabId);
+      
+      // Update nav active state for this group element only
+      TabManager.updateNavActiveState(groupEl, tabId);
 
-    // Merge new tab selection
-    const newTabs = { ...currentTabs, [groupId]: tabId };
-
-    // Create new state
-    const newState: State = {
-      toggles: currentToggles,
-      tabs: newTabs
-    };
-
-    // Apply the state
-    this.applyState(newState);
-
-    // Emit custom event
-    const event = new CustomEvent('customviews:tab-change', {
-      detail: { groupId, tabId },
-      bubbles: true
-    });
-    document.dispatchEvent(event);
+      // Emit custom event for local tab change
+      const event = new CustomEvent('customviews:tab-change', {
+        detail: { groupId, tabId, synced: false },
+        bubbles: true
+      });
+      document.dispatchEvent(event);
+    }
   }
 
   // Inject styles, setup listeners and call rendering logic
   public async init() {
     injectCoreStyles();
 
-    // Build navigation once (with click handlers)
-    TabManager.buildNavs(this.rootEl, this.config.tabGroups, (groupId, tabId) => {
-      this.setActiveTab(groupId, tabId);
-    });
+    // Build navigation once (with click and double-click handlers)
+    TabManager.buildNavs(
+      this.rootEl,
+      this.config.tabGroups,
+      // Single click: update clicked group only (local, no persistence)
+      (groupId, tabId, groupEl) => {
+        this.setActiveTab(groupId, tabId, groupEl);
+      },
+      // Double click: sync across all tabgroups with same id (with persistence)
+      (groupId, tabId, _groupEl) => {
+        const currentTabs = this.getCurrentActiveTabs();
+        currentTabs[groupId] = tabId;
+        
+        const currentToggles = this.getCurrentActiveToggles();
+        const newState: State = {
+          toggles: currentToggles,
+          tabs: currentTabs
+        };
+        // applyState() will handle all visual updates via renderState()
+        this.applyState(newState);
+      }
+    );
 
     // Apply stored nav visibility preference on page load
     try {
