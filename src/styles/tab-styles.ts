@@ -107,4 +107,16 @@ cv-tabgroup {
 .cv-tab-content {
   padding: 1rem 0;
 }
+
+/* Viewer-controlled nav visibility: hide nav containers when requested */
+.cv-tabs-nav-hidden {
+  display: none !important;
+}
+
+/* Print-friendly: hide tab navigation when printing to reduce clutter */
+@media print {
+  .cv-tabs-nav {
+    display: none !important;
+  }
+}
 `;

@@ -6,6 +6,8 @@ const TABGROUP_SELECTOR = 'cv-tabgroup';
 const TAB_SELECTOR = 'cv-tab';
 const NAV_AUTO_SELECTOR = 'cv-tabgroup[nav="auto"], cv-tabgroup:not([nav])';
 const NAV_CONTAINER_CLASS = 'cv-tabs-nav';
+const NAV_HIDE_ROOT_CLASS = 'cv-hide-tab-navs';
+const NAV_HIDDEN_CLASS = 'cv-tabs-nav-hidden';
 
 export class TabManager {
   /**
@@ -166,6 +168,14 @@ export class TabManager {
       navContainer = document.createElement('ul');
       navContainer.className = `${NAV_CONTAINER_CLASS} nav-tabs`;
       navContainer.setAttribute('role', 'tablist');
+      // Respect viewer preference on the root to show/hide navs
+      const showNavs = !rootEl.classList.contains(NAV_HIDE_ROOT_CLASS);
+      if (!showNavs) {
+        navContainer.classList.add(NAV_HIDDEN_CLASS);
+        navContainer.setAttribute('aria-hidden', 'true');
+      } else {
+        navContainer.setAttribute('aria-hidden', 'false');
+      }
       groupEl.insertBefore(navContainer, groupEl.firstChild);
 
       // Build nav items
@@ -241,6 +251,45 @@ export class TabManager {
       bottomBorder.className = 'cv-tabgroup-bottom-border';
       groupEl.appendChild(bottomBorder);
     });
+  }
+
+  /**
+   * Toggle nav visibility for all tab groups (viewer-controlled)
+   */
+  public static setNavsVisibility(rootEl: HTMLElement, visible: boolean): void {
+    if (visible) {
+      rootEl.classList.remove(NAV_HIDE_ROOT_CLASS);
+    } else {
+      rootEl.classList.add(NAV_HIDE_ROOT_CLASS);
+    }
+
+    const navContainers = rootEl.querySelectorAll(`.${NAV_CONTAINER_CLASS}`);
+    navContainers.forEach((nav) => {
+      if (visible) {
+        nav.classList.remove(NAV_HIDDEN_CLASS);
+        nav.setAttribute('aria-hidden', 'false');
+      } else {
+        nav.classList.add(NAV_HIDDEN_CLASS);
+        nav.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    // Also hide/show the bottom border of tab groups
+    const bottomBorders = rootEl.querySelectorAll('.cv-tabgroup-bottom-border');
+    bottomBorders.forEach((border) => {
+      if (visible) {
+        border.classList.remove('cv-hidden');
+      } else {
+        border.classList.add('cv-hidden');
+      }
+    });
+  }
+
+  /**
+   * Read current nav visibility (viewer preference)
+   */
+  public static areNavsVisible(rootEl: HTMLElement): boolean {
+    return !rootEl.classList.contains(NAV_HIDE_ROOT_CLASS);
   }
 
   /**

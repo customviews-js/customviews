@@ -102,15 +102,29 @@ The widget is enabled by default, and will appear if not explicitly disabled in 
 <div class="cv-section-heading">Tab Groups</div>
 <div class="cv-tab-groups-container">
 
-<div class="cv-tab-groups">
+<div class="cv-tabgroup-card cv-tabgroup-header">
+<div class="cv-tabgroup-row">
+<div class="cv-tabgroup-info">
+<p class="cv-tabgroup-title">Navigation Headers</p>
+<p class="cv-tabgroup-description">Show or hide navigation headers</p>
+</div>
+<label class="cv-toggle-switch cv-nav-toggle">
+<input class="cv-nav-pref-input" type="checkbox" aria-label="Show or hide navigation headers" />
+<span class="cv-switch-bg"></span>
+<span class="cv-switch-knob"></span>
+</label>
+</div>
+</div>
 
-<div class="cv-tab-group-wrapper">
-<p class="cv-tab-group-description">Tab Group 1</p>
-<select id="tab-group-tabgroup1" class="cv-tab-group-select" data-group-id="tabgroup1">
+<div class="cv-tab-groups-list">
+<div class="cv-tabgroup-card cv-tabgroup-item">
+<label class="cv-tabgroup-label" for="tab-group-tabgroup1">
+Tab Group 1
+</label>
+<select id="tab-group-tabgroup1" class="cv-tabgroup-select" data-group-id="tabgroup1">
 <option value="option1">Option 1</option><option value="option2">Option 2</option><option value="option3">Option 3</option>
 </select>
 </div>
-
 </div>
 
 </div>
@@ -140,6 +154,7 @@ The widget is enabled by default, and will appear if not explicitly disabled in 
 
 The widget opens a modal dialog where users can:
 - Toggle content sections on/off using toggle switches (only shown when toggles are configured)
+- Show or hide navigation headers for tab groups (only shown when tab groups are configured)
 - Select active tabs in tab groups (only shown when tab groups are configured)
 - View optional description text (only shown when description is configured)
 - Reset to default view
@@ -207,6 +222,7 @@ The widget dynamically shows or hides sections based on your configuration:
 - **Description Section**: Only appears when a `description` is configured in the widget options. When omitted, this section is completely hidden.
 - **Toggle Section**: Only appears when `config.allToggles` contains at least one toggle. When no toggles are defined, this section is hidden.
 - **Tab Groups Section**: Only appears when `config.tabGroups` contains at least one tab group. When no tab groups are defined, this section is hidden.
+- **Navigation Headers Toggle**: Appears within the Tab Groups section when tab groups are configured, allowing users to show or hide tab navigation headers site-wide.
 
 This adaptive behavior ensures the widget remains clean and focused, showing only relevant controls to users.
 
@@ -270,5 +286,6 @@ widget.destroy();
 The widget automatically discovers:
 - **Toggles** from `config.allToggles` - shows checkboxes to control visibility
 - **Tab Groups** from `config.tabGroups` - shows dropdowns to select active tabs
+- **Navigation Headers** - provides a toggle to show/hide tab navigation headers site-wide (persisted in localStorage)
 
 Configure these in your `customviews.config.json` to make them available in the widget.
