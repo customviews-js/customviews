@@ -341,7 +341,18 @@ export class CustomViewsWidget {
         const groupId = select.dataset.groupId;
         const tabId = select.value;
         if (groupId && tabId) {
-          this.core.setActiveTab(groupId, tabId);
+          // Get current state and update the tab for this group, then apply globally
+          // This triggers sync behavior and persistence
+          const currentTabs = this.core.getCurrentActiveTabs();
+          currentTabs[groupId] = tabId;
+          
+          // Apply state globally for persistence and sync
+          const currentToggles = this.core.getCurrentActiveToggles();
+          const newState: State = {
+            toggles: currentToggles,
+            tabs: currentTabs
+          };
+          this.core.applyState(newState);
         }
       });
     });
