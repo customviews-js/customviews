@@ -145,7 +145,7 @@ You can create a single tab that appears under multiple tab IDs by specifying mu
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 <cv-tabgroup id="fruit">
-<cv-tab id="apple orange pear" header="Apple Header|Orange Header|Pear Header">
+<cv-tab id="apple orange" header="Apple Header|Orange Header">
   Applicable to all fruits.
 </cv-tab>
 <cv-tab id="pear" header="Pear Header">
