@@ -4,28 +4,26 @@
     "defaultState": {
       "toggles": ["mac", "linux", "windows"],
       "tabs": {
-        "fruit": "apple"
+        "fruit": "pear"
       }
     },
     "tabGroups": [
       {
         "id": "fruit",
         "label": "Fruit Selection",
-        "default": "apple",
+        "default": "pear",
         "tabs": [
-          { "id": "apple", "label": "Apple" },
-          { "id": "orange", "label": "Orange" },
-          { "id": "pear", "label": "Pear" }
+          { "id": "apple", "label": "Apple :fab-windows:" },
+          { "id": "orange", "label": "Orange :fab-apple:" },
+          { "id": "pear", "label": "Pear :fa-at:" }
         ]
       }
     ]
   },
-  "assetsJsonPath": "/assets/assets.json",
   "baseUrl": "/customviews",
   "widget": {
     "position": "middle-left",
-    "title": "Customize your view here",
-    "description": "Toggle content sections and switch between different tab views. All changes sync across the page and are saved in the URL for sharing.",
+    "title": "Custom Views Widget",
     "showWelcome": true,
     "showTabGroups": true
   }

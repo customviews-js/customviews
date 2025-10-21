@@ -33,7 +33,14 @@ Then, add a file named <strong><code class="hljs inline no-lang">customviews.js<
 </span><span>};
 </span><span>
 </span><span><span class="hljs-built_in">module</span>.exports = { getScripts };
-</span></code></pre><p>This plugin automatically injects the CustomViews runtime into every generated page during the build process.</p> <h2 id="2-register-the-plugin-in-site-json">2. Register the Plugin in site.json<a class="fa fa-anchor" href="#2-register-the-plugin-in-site-json" onclick="event.stopPropagation()"></a></h2> <p>In your project’s root <code class="hljs inline no-lang">site.json</code>, register the plugin by adding <code class="hljs inline no-lang">&quot;customviews&quot;</code> to the plugins list.</p> <pre><code class="hljs json"><span>{
+</span></code></pre><div class="alert box-container alert-info" style="" data-v-19514615><!--Icon and vertical divider for seamless header box--><!----><div class="header-and-body" data-v-19514615><!-- Header wrapper, not rendered if there is no header attribute --><!----><!-- Body wrapper --><div class="box-body-wrapper" data-v-19514615><!-- icon on the left, not shown if there is a header --><div class="icon-wrapper" style="" data-v-19514615><!--[--><i class="fas fa-info" data-v-19514615></i><!--]--></div><!-- Icon -- content divider for seamless boxes without the header attribute --><!----><!-- Content wrapper --><div class="contents" style="" data-v-19514615><!--[--><p>Note: Depending on your MarkBind JS environment, if you are operating in an ESM environment (e.g. there is a parent ESM <code class="hljs inline no-lang">package.json</code> file), the plugin needs to be written in ESM format. If that is the case, try this the ESM format instead:</p> <pre><code class="hljs js"><span><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getScripts</span>(<span class="hljs-params"></span>) </span>{
+</span><span><span class="hljs-keyword">return</span> [
+</span><span><span class="hljs-string">&#39;&lt;script src=&quot;../../../dist/custom-views.min.js&quot;&gt;&lt;/script&gt;&#39;</span>
+</span><span>];
+</span><span>}
+</span><span>
+</span><span><span class="hljs-keyword">export</span> { getScripts };
+</span></code></pre><p>This is a current limitation of MarkBind which only operates in CJS formats, which may cause compatibility issues when operating in cross CJS and ESM environments.</p><!--]--></div><!-- dismiss button on the right, not shown if there is a header --><!----></div></div></div> <p>This plugin automatically injects the CustomViews runtime into every generated page during the build process.</p> <h2 id="2-register-the-plugin-in-site-json">2. Register the Plugin in site.json<a class="fa fa-anchor" href="#2-register-the-plugin-in-site-json" onclick="event.stopPropagation()"></a></h2> <p>In your project’s root <code class="hljs inline no-lang">site.json</code>, register the plugin by adding <code class="hljs inline no-lang">&quot;customviews&quot;</code> to the plugins list.</p> <pre><code class="hljs json"><span>{
 </span><span>  <span class="hljs-attr">&quot;plugins&quot;</span>: [
 </span><span>    <span class="hljs-string">&quot;customviews&quot;</span>
 </span><span>  ]
@@ -60,8 +67,7 @@ Then, add a file named <strong><code class="hljs inline no-lang">customviews.js<
 </span><span>      }
 </span><span>    ]
 </span><span>  },
-</span><span>  <span class="hljs-attr">&quot;assetsJsonPath&quot;</span>: <span class="hljs-string">&quot;/assets/assets.json&quot;</span>,
-</span><span>  <span class="hljs-attr">&quot;baseURL&quot;</span>: <span class="hljs-string">&quot;/customviews&quot;</span>,
+</span><span>  <span class="hljs-attr">&quot;baseURL&quot;</span>: <span class="hljs-string">&quot;website-baseUrl&quot;</span>,
 </span><span>  <span class="hljs-attr">&quot;widget&quot;</span>: {
 </span><span>    <span class="hljs-attr">&quot;showWelcome&quot;</span>: <span class="hljs-literal">true</span>
 </span><span>  },

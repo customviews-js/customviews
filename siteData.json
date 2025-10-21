@@ -46,6 +46,7 @@
       "title": "User Guide - Tabs",
       "headings": {
         "tabs": "Tabs",
+        "multi-id-tabs-and-header-demarcation": "Multi-ID Tabs and Header Demarcation",
         "attributes-and-amp-options": "Attributes &amp; Options",
         "cv-tabgroup-attributes": "&lt;cv-tabgroup&gt; Attributes",
         "cv-tab-attributes": "&lt;cv-tab&gt; Attributes",
@@ -77,9 +78,9 @@
       "title": "CustomViews - Widget",
       "headings": {
         "widget": "Widget",
-        "custom-title": "Custom Title",
         "welcome-modal": "Welcome Modal",
-        "custom-welcome-title": "Custom Welcome Title",
+        "site-customization": "Site Customization",
+        "conditional-section-display": "Conditional Section Display",
         "configuration": "Configuration",
         "widget-options": "Widget Options",
         "programmatic-usage": "Programmatic Usage",

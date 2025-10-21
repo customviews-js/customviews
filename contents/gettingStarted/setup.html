@@ -20,8 +20,8 @@
   * [CLI Mastery](/customviews/contents/demo/cliMastery.html)
   * [File Structures](/customviews/contents/demo/fileStructure.html)  --><!--]--></div></div><!--]--><!--v-if--></nav> <div id="content-wrapper"><div data-v-ef898034><nav aria-label="breadcrumb" class="breadcrumb-divider" data-v-ef898034><ol class="breadcrumb" data-v-ef898034><li class="notlink breadcrumb-marker" data-v-ef898034> ››   </li><!--[--><!--]--></ol></nav></div> <h2 id="quick-start-autoload-via-script">Quick Start (Autoload via Script)<a class="fa fa-anchor" href="#quick-start-autoload-via-script" onclick="event.stopPropagation()"></a></h2> <p>To get started quickly, add the following snippet to your site’s <code class="hljs inline no-lang">&lt;head&gt;</code> or right before <code class="hljs inline no-lang">&lt;/body&gt;</code>:</p> <pre><code class="hljs html"><span><span class="hljs-comment">&lt;!-- Load from CDN or your hosted bundle --&gt;</span>
 </span><span><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://unpkg.com/@customviews-js/customviews&quot;</span></span>
-</span><span><span class="hljs-tag">        <span class="hljs-attr">data-base-url</span>=<span class="hljs-string">&quot;/customviews&quot;</span></span>
-</span><span><span class="hljs-tag">        <span class="hljs-attr">data-config-path</span>=<span class="hljs-string">&quot;/customviews.config.json&quot;</span></span>
+</span><span><span class="hljs-tag">        <span class="hljs-attr">data-base-url</span>=<span class="hljs-string">&quot;/website-baseUrl&quot;</span></span>
+</span><span><span class="hljs-tag">        <span class="hljs-attr">data-config-path</span>=<span class="hljs-string">&quot;/custom/customviewsconfigfilename.json&quot;</span></span>
 </span><span><span class="hljs-tag">        <span class="hljs-attr">defer</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
 </span></code></pre><p>This snippet loads:</p> <ul><li>The CustomViews runtime, a lightweight JavaScript that auto-initializes on page load.</li> <li>The base URL and config path, which tell the runtime where to find your assets and configuration.</li></ul> <p>Now you can start using Custom Views!</p> <h3 id="manual-initialization-optional">Manual Initialization (Optional)<a class="fa fa-anchor" href="#manual-initialization-optional" onclick="event.stopPropagation()"></a></h3> <p>If you need more control, you can import and initialize it manually. Check out the API on the GitHub page!</p> <h2 id="creating-customviews-config-json">Creating <code class="hljs inline no-lang">customviews.config.json</code><a class="fa fa-anchor" href="#creating-customviews-config-json" onclick="event.stopPropagation()"></a></h2> <p>Create a <code class="hljs inline no-lang">customviews.config.json</code> file at your project root, or point to a custom path using <code class="hljs inline no-lang">data-config-path</code>.</p> <p>Here&#39;s an example configuration:</p> <pre><code class="hljs json"><span>{
 </span><span>  <span class="hljs-attr">&quot;config&quot;</span>: {
@@ -40,7 +40,6 @@
 </span><span>      }
 </span><span>    ]
 </span><span>  },
-</span><span>  <span class="hljs-attr">&quot;assetsJsonPath&quot;</span>: <span class="hljs-string">&quot;/assets/assets.json&quot;</span>,
 </span><span>  <span class="hljs-attr">&quot;baseURL&quot;</span>: <span class="hljs-string">&quot;/customviews&quot;</span>,
 </span><span>  <span class="hljs-attr">&quot;widget&quot;</span>: {
 </span><span>    <span class="hljs-attr">&quot;showWelcome&quot;</span>: <span class="hljs-literal">true</span>
