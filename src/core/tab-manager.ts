@@ -1,5 +1,5 @@
 import type { TabGroupConfig } from "../types/types";
-import { replaceIconShortcodes, ensureFontAwesomeInjected } from "./render";
+
 
 // Constants for selectors
 const TABGROUP_SELECTOR = 'cv-tabgroup';
@@ -110,6 +110,37 @@ export class TabManager {
   }
 
   /**
+   * Extract header and body content from header component syntax: <cv-tab-header> and <cv-tab-body>
+   * Returns null if using old attribute-based syntax.
+   * 
+   * @param tabEl The <cv-tab> element to inspect
+   * @returns Object with extracted content, or null if new syntax not used
+   */
+  private static extractTabContent(
+    tabEl: HTMLElement
+  ): { headerHTML: string; bodyEl: HTMLElement | null } | null {
+    // Look for direct children 
+    let headerEl = tabEl.querySelector(':scope > cv-tab-header');
+    
+    if (!headerEl) {
+      return null;
+    }
+
+    const headerHTML = headerEl.innerHTML.trim();
+    
+    // Find body element
+    let bodyEl = tabEl.querySelector(':scope > cv-tab-body') as HTMLElement | null;
+
+    // Fallback: try finding both header and body
+    // without :scope (in case of DOM manipulation) by iterating through tabEl.children if needed
+
+    return {
+      headerHTML,
+      bodyEl
+    };
+  }
+
+  /**
    * Build navigation for tab groups with nav="auto" (one-time setup)
    */
   public static buildNavs(
@@ -120,36 +151,6 @@ export class TabManager {
   ): void {
     // Find all cv-tabgroup elements with nav="auto" or no nav attribute
     const tabGroups = rootEl.querySelectorAll(NAV_AUTO_SELECTOR);
-    
-    // Check if any tab headers contain Font Awesome shortcodes
-    // Inject Font Awesome CSS only if needed
-    let hasFontAwesomeShortcodes = false;
-    tabGroups.forEach((groupEl) => {
-      const groupId = groupEl.getAttribute('id');
-      if (!groupId) return;
-
-      const tabElements = Array.from(groupEl.children).filter(
-        (child) => child.tagName.toLowerCase() === 'cv-tab'
-      );
-
-      // Check for Font Awesome shortcodes in tab headers
-      tabElements.forEach((tabEl) => {
-        const rawTabId = tabEl.getAttribute('id');
-        if (!rawTabId) return;
-
-        const splitIds = this.splitTabIds(rawTabId);
-        const tabId = splitIds[0] || rawTabId;
-        const header = tabEl.getAttribute('header') || this.getTabLabel(tabId, groupId, cfgGroups) || tabId || '';
-        if (/:fa-[\w-]+:/.test(header)) {
-          hasFontAwesomeShortcodes = true;
-        }
-      });
-    });
-
-    // Inject Font Awesome only if shortcodes are found
-    if (hasFontAwesomeShortcodes) {
-      ensureFontAwesomeInjected();
-    }
     
     tabGroups.forEach((groupEl) => {
       const groupId = groupEl.getAttribute('id');
@@ -188,15 +189,22 @@ export class TabManager {
         // If multiple IDs, use the first as primary
         const tabId = splitIds[0] || rawTabId;
         
-        // Get header for this tab (single header, not multiple)
-        const headerAttr = tabEl.getAttribute('header') || '';
+        // Get header for this tab - prefer new syntax over old attribute syntax
+        const extractedHeaderAndBody = this.extractTabContent(tabEl as HTMLElement);
         let header = '';
-        if (headerAttr) {
-          // Single header provided on the element
-          header = headerAttr;
+      
+        // use <cv-tab-header> content if available
+        if (extractedHeaderAndBody && extractedHeaderAndBody.headerHTML) {
+          header = extractedHeaderAndBody.headerHTML;
         } else {
-          // Use config label or id as fallback
-          header = this.getTabLabel(tabId, groupId, cfgGroups) || tabId || '';
+          // use header attribute if available
+          const headerAttr = tabEl.getAttribute('header') || '';
+          if (headerAttr) {
+            header = headerAttr;
+          } else {
+            // Use config label or id as fallback
+            header = this.getTabLabel(tabId, groupId, cfgGroups) || tabId || '';
+          }
         }
 
         // Create a single nav link for this tab element
@@ -205,7 +213,7 @@ export class TabManager {
 
         const navLink = document.createElement('a');
         navLink.className = 'nav-link';
-        navLink.innerHTML = replaceIconShortcodes(header);
+        navLink.innerHTML = header;
         navLink.href = '#';
         navLink.setAttribute('data-tab-id', tabId);
         navLink.setAttribute('data-raw-tab-id', rawTabId);

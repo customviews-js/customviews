@@ -38,6 +38,26 @@ class CVToggle extends HTMLElement {
 }
 
 /**
+ * <cv-tab-header> element - represents tab header with rich HTML formatting
+ * Content is extracted and used in the navigation link
+ */
+class CVTabHeader extends HTMLElement {
+  connectedCallback() {
+    // Element is a semantic container; TabManager extracts its content
+  }
+}
+
+/**
+ * <cv-tab-body> element - represents tab body content
+ * Semantic container for tab panel content
+ */
+class CVTabBody extends HTMLElement {
+  connectedCallback() {
+    // Element is a semantic container; visibility managed by TabManager
+  }
+}
+
+/**
  * Register custom elements
  */
 export function registerCustomElements(): void {
@@ -52,5 +72,13 @@ export function registerCustomElements(): void {
 
   if (!customElements.get('cv-toggle')) {
     customElements.define('cv-toggle', CVToggle);
+  }
+
+  if (!customElements.get('cv-tab-header')) {
+    customElements.define('cv-tab-header', CVTabHeader);
+  }
+
+  if (!customElements.get('cv-tab-body')) {
+    customElements.define('cv-tab-body', CVTabBody);
   }
 }
