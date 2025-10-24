@@ -46,7 +46,7 @@
       "title": "User Guide - Tabs",
       "headings": {
         "tabs": "Tabs",
-        "multi-id-tabs-and-header-demarcation": "Multi-ID Tabs and Header Demarcation",
+        "multi-id-tabs": "Multi-ID Tabs",
         "attributes-and-amp-options": "Attributes &amp; Options",
         "cv-tabgroup-attributes": "&lt;cv-tabgroup&gt; Attributes",
         "cv-tab-attributes": "&lt;cv-tab&gt; Attributes",

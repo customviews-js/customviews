@@ -4,18 +4,18 @@
     "defaultState": {
       "toggles": ["mac", "linux", "windows"],
       "tabs": {
-        "fruit": "pear"
+        "fruit": "apple"
       }
     },
     "tabGroups": [
       {
         "id": "fruit",
         "label": "Fruit Selection",
-        "default": "pear",
+        "default": "apple",
         "tabs": [
-          { "id": "apple", "label": "Apple :fab-windows:" },
-          { "id": "orange", "label": "Orange :fab-apple:" },
-          { "id": "pear", "label": "Pear :fa-at:" }
+          { "id": "apple", "label": "Apple 2 :fab-windows:" },
+          { "id": "orange", "label": "Orange 2 :fab-apple:" },
+          { "id": "pear", "label": "Pear 2 :fa-at:" }
         ]
       }
     ]
