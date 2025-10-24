@@ -47,6 +47,12 @@
       "headings": {
         "tabs": "Tabs",
         "multi-id-tabs": "Multi-ID Tabs",
+        "alternative-syntax-with-rich-formatting": "Alternative Syntax with Rich Formatting",
+        "basic-example": "Basic Example",
+        "advanced-example-with-badges": "Advanced Example with Badges",
+        "using-icons-in-headers": "Using Icons in Headers",
+        "syntax-and-amp-rules": "Syntax &amp; Rules",
+        "backward-compatibility": "Backward Compatibility",
         "attributes-and-amp-options": "Attributes &amp; Options",
         "cv-tabgroup-attributes": "&lt;cv-tabgroup&gt; Attributes",
         "cv-tab-attributes": "&lt;cv-tab&gt; Attributes",
