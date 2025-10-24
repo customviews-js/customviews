@@ -131,13 +131,14 @@ Pear types include the **Asian pear** and the **European pear**
 * **Example:** If you have two tab groups both with `id="fruit"`, a single-click on "Orange" in the first group only changes that group locally. Double-clicking on "Orange" will sync both groups to show "Orange" and save the state.
 
 
-## Multi-ID Tabs and Header Demarcation
+## Multi-ID Tabs
 
-You can create a single tab that appears under multiple tab IDs by specifying multiple IDs separated by spaces or `|`
+You can create a single tab that represents multiple alternative IDs by specifying multiple IDs separated by spaces or `|`
 
-* This will create three tabs ("apple", "orange", "pear") in the navigation bar, all showing the same content. 
-* The `header` attribute can be demarcated with the `|` character to provide a separate label for each tab. If the number of header parts matches the number of IDs, each tab will use its corresponding header. If not, the first header or fallback label will be used for all.
+* This will create **one tab** in the navigation bar that activates when **any** of the specified IDs is selected.
+* The tab header displays the label of the first ID in the list (or the `header` attribute if provided).
 * The content inside the tab is shared for all IDs listed.
+* **Use case:** When multiple options (e.g., `python java`) present the same content, show a single tab instead of duplicates that might confuse readers into thinking the content differs.
 
 **Example:**
 
@@ -145,27 +146,72 @@ You can create a single tab that appears under multiple tab IDs by specifying mu
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="fruit">
-<cv-tab id="apple orange" header="Apple Header|Orange Header">
-  Applicable to all fruits.
-</cv-tab>
-<cv-tab id="pear" header="Pear Header">
-  Applicable to pear
-</cv-tab>
+<cv-tabgroup id="lang" nav="auto">
+  <cv-tab id="python" header="Python">
+
+Python is a high-level, interpreted programming language known for its simplicity and readability.
+
+  </cv-tab>
+  <cv-tab id="java" header="Java">
+
+Java is a statically-typed, compiled language known for its robustness and platform independence.
+
+  </cv-tab>
+  <cv-tab id="javascript" header="JavaScript">
+
+JavaScript is a dynamic language primarily used for web development.
+
+  </cv-tab>
+</cv-tabgroup>
+
+<cv-tabgroup id="lang" nav="auto">
+  <cv-tab id="python java" header="Python/Java Installation">
+
+Both Python and Java are easy to install. Download from their official websites.
+
+  </cv-tab>
+  <cv-tab id="javascript" header="JS Installation">
+
+Install JavaScript by downloading Node.js from nodejs.org.
+
+  </cv-tab>
 </cv-tabgroup>
 </variable>
 <variable name="output">
-<cv-tabgroup id="fruit">
-<cv-tab id="apple orange" header="Apple Header|Orange Header">
-  Applicable to apple and orange.
-</cv-tab>
-<cv-tab id="pear" header="Pear Header">
-  Applicable to pear
-</cv-tab>
+<cv-tabgroup id="lang" nav="auto">
+  <cv-tab id="python" header="Python">
+
+Python is a high-level, interpreted programming language known for its simplicity and readability.
+
+  </cv-tab>
+  <cv-tab id="java" header="Java">
+
+Java is a statically-typed, compiled language known for its robustness and platform independence.
+
+  </cv-tab>
+  <cv-tab id="javascript" header="JavaScript">
+
+JavaScript is a dynamic language primarily used for web development.
+
+  </cv-tab>
+</cv-tabgroup>
+
+<cv-tabgroup id="lang" nav="auto">
+  <cv-tab id="python java" header="Python/Java Installation">
+
+Both Python and Java are easy to install. Download from their official websites.
+
+  </cv-tab>
+  <cv-tab id="javascript" header="JS Installation">
+
+Install JavaScript by downloading Node.js from nodejs.org.
+
+  </cv-tab>
 </cv-tabgroup>
 </variable>
 </include>
 
+**Behavior:** In the second tab group, you'll see a single "Installation" tab in the navigation bar that becomes active when either Python or Java is selected in the first group. This avoids showing duplicate tabs with identical content.
 
 
 ## Attributes & Options
