@@ -8,7 +8,7 @@
 // this is in ES module format
 function getScripts() {
   return [
-    '<script src="https://unpkg.com/@customviews-js/customviews"></script>'
+    '<script src="../../../dist/custom-views.min.js" data-base-url="/customviews"></script>'
   ];
 };
 
