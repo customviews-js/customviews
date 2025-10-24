@@ -51,20 +51,33 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="fruit" nav="auto">
-  <cv-tab id="apple" header="Apple Types">
+<cv-tabgroup id="fruit">
+<cv-tab id="apple">
+<cv-tab-header>
 
-Apple types include **Granny Smith** and the **Cosmic Crisp**.
-  </cv-tab>
-  <cv-tab id="orange" header="Orange Types">
+:fa-solid-heart: Apple Types
+</cv-tab-header>
+<cv-tab-body>
 
-Orange types include the **Blood orange** and **Valencia orange**. 
-  </cv-tab>
-  <cv-tab id="pear" header="Pear">
+  Apple types include **Granny Smith** and the **Cosmic Crisp**.
+</cv-tab-body>
+</cv-tab>
+<cv-tab id="orange">
+<cv-tab-header>
 
-Pear types include the **Asian pear** and the **European pear**
-  </cv-tab>
-</cv-tabgroup>
+:fa-solid-circle: Orange Types
+</cv-tab-header>
+<cv-tab-body>
+
+  Orange types include the **Blood orange** and **Valencia orange**.
+</cv-tab-body>
+</cv-tab>
+<cv-tab id="pear">
+<cv-tab-header>
+
+:fa-solid-leaf: Pear Types
+</cv-tab-header>
+<cv-tab-body>
 
 </variable>
 <variable name="output">
@@ -105,23 +118,32 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="fruit" nav="auto">
+<cv-tabgroup id="fruit">
 <cv-tab id="apple">
-<cv-tab-header>:fa-solid-heart: Apple Types</cv-tab-header>
+<cv-tab-header>
+
+:fa-solid-heart: Apple Types
+</cv-tab-header>
 <cv-tab-body>
 
   Apple types include **Granny Smith** and the **Cosmic Crisp**.
 </cv-tab-body>
 </cv-tab>
 <cv-tab id="orange">
-<cv-tab-header>:fa-solid-circle: Orange Types</cv-tab-header>
+<cv-tab-header>
+
+:fa-solid-circle: Orange Types
+</cv-tab-header>
 <cv-tab-body>
 
   Orange types include the **Blood orange** and **Valencia orange**.
 </cv-tab-body>
 </cv-tab>
 <cv-tab id="pear">
-<cv-tab-header>:fa-solid-leaf: Pear Types</cv-tab-header>
+<cv-tab-header>
+
+:fa-solid-leaf: Pear Types
+</cv-tab-header>
 <cv-tab-body>
 
   Pear types include the **Asian pear** and the **European pear**

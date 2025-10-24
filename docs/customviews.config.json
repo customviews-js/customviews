@@ -13,9 +13,9 @@
         "label": "Fruit Selection",
         "default": "apple",
         "tabs": [
-          { "id": "apple", "label": "Apple 2 :fab-windows:" },
-          { "id": "orange", "label": "Orange 2 :fab-apple:" },
-          { "id": "pear", "label": "Pear 2 :fa-at:" }
+          { "id": "apple", "label": "Apple" },
+          { "id": "orange", "label": "Orange" },
+          { "id": "pear", "label": "Pear" }
         ]
       }
     ]
