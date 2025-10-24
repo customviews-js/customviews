@@ -12,16 +12,21 @@ export const TAB_STYLES = `
   margin-bottom: 1rem;
   list-style: none;
   border-bottom: 1px solid #dee2e6;
+
+  align-items: stretch;
 }
 
 .cv-tabs-nav .nav-item {
   margin-bottom: -1px;
   list-style: none;
-  display: inline-block;
+  display: flex;              /* was inline-block → make flex to stretch height */
+  align-items: stretch;       /* stretch link to full height */
 }
 
 .cv-tabs-nav .nav-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem 1rem;
   color: #495057;
   text-decoration: none;
@@ -31,6 +36,13 @@ export const TAB_STYLES = `
   border-top-right-radius: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   cursor: pointer;
+  min-height: 2.5rem;
+  box-sizing: border-box;
+}
+
+.cv-tabs-nav .nav-link p {
+  margin: 0; /* remove default margins */
+  display: inline; /* or inline-block */
 }
 
 .cv-tabs-nav .nav-link:hover,
@@ -80,6 +92,16 @@ export const TAB_STYLES = `
 
 /* Tab panel base styles */
 cv-tab {
+  display: block;
+}
+
+/* Hide cv-tab-header source element; content is extracted to nav link */
+cv-tab-header {
+  display: none !important;
+}
+
+/* Allow cv-tab-body to flow naturally */
+cv-tab-body {
   display: block;
 }
 

@@ -34,7 +34,8 @@
     "build:js": "rollup -c",
     "build": "npm run clean && npm run build:types && npm run build:js",
     "dev": "rollup -c -w",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "javascript",

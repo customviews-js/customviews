@@ -75,5 +75,31 @@
         </cv-tab>
       </cv-tabgroup>
 
-  </body>
-</html>
+      <!-- Test new rich formatting syntax -->
+      <strong style="display: block; margin-top: 16px;">Rich Formatting Test (New Syntax)</strong>
+      <cv-tabgroup id="rich-tabs" nav="auto">
+        <cv-tab id="overview">
+          <cv-tab-header><strong>Overview</strong></cv-tab-header>
+          <cv-tab-body>
+            <p>Start here to learn the basics.</p>
+          </cv-tab-body>
+        </cv-tab>
+        
+        <cv-tab id="advanced">
+          <cv-tab-header><em>Advanced Topics</em></cv-tab-header>
+          <cv-tab-body>
+            <p>Dive deeper into powerful features.</p>
+          </cv-tab-body>
+        </cv-tab>
+
+        <cv-tab id="status-active">
+          <cv-tab-header>
+            <strong>Active</strong>
+            <span style="color: green; margin-left: 0.5rem;">●</span>
+          </cv-tab-header>
+          <cv-tab-body>
+            <p>Currently active items are displayed here.</p>
+          </cv-tab-body>
+        </cv-tab>
+      </cv-tabgroup>
+  </section>
