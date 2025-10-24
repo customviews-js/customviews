@@ -477,7 +477,7 @@ export class CustomViewsWidget {
 
     // Load tab group selections
     const activeTabs = this.core.getCurrentActiveTabs();
-    const tabGroupSelects = this.modal.querySelectorAll('.cv-tab-groupselect') as NodeListOf<HTMLSelectElement>;
+    const tabGroupSelects = this.modal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
     tabGroupSelects.forEach(select => {
       const groupId = select.dataset.groupId;
       if (groupId && activeTabs[groupId]) {
