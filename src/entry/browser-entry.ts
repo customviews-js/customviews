@@ -38,22 +38,13 @@ export default function initializeFromScript(): void {
       
       // Fallback if currentScript is not available (executed after page load)
       if (!scriptTag) {
-        // Try to find the script tag by looking for our script
-        const scripts = document.querySelectorAll('script[src*="@customviews-js"]');
-        if (scripts.length > 0) {
-          // Find the most specific match (to avoid matching other custom-views scripts)
-          for (let i = 0; i < scripts.length; i++) {
-            const script = scripts[i] as HTMLScriptElement;
-            const src = script.getAttribute('src') || '';
-            // Look for .min.js or .js at the end, or the package root
-            if (src.match(/@customviews-js\/customviews(\.min)?\.js($|\?)/) || src.includes('@customviews-js/customviews')) {
-              scriptTag = script;
-              break;
-            }
-          }
-          // If no specific match found, use the first one
-          if (!scriptTag) {
-            scriptTag = scripts[0] as HTMLScriptElement;
+        // Match the actual CustomViews bundle files (e.g., custom-views.min.js, custom-views.js)
+        for (const script of document.scripts) {
+          const src = script.src || '';
+          // Match filenames like: custom-views.min.js, custom-views.js, custom-views.esm.js
+          if (/custom-views(?:\.min)?\.(?:esm\.)?js($|\?)/i.test(src)) {
+            scriptTag = script as HTMLScriptElement;
+            break;
           }
         }
       }
