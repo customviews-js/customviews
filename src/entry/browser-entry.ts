@@ -33,18 +33,20 @@ export default function initializeFromScript(): void {
     window.__customViewsInitInProgress = true;
     
     try {
-      // Find the script tag
-      let scriptTag = document.currentScript as HTMLScriptElement;
-      
-      // Fallback if currentScript is not available (executed after page load)
-      if (!scriptTag) {
-        // Match the actual CustomViews bundle files (e.g., custom-views.min.js, custom-views.js)
-        for (const script of document.scripts) {
-          const src = script.src || '';
-          // Match filenames like: custom-views.min.js, custom-views.js, custom-views.esm.js
-          if (/custom-views(?:\.min)?\.(?:esm\.)?js($|\?)/i.test(src)) {
-            scriptTag = script as HTMLScriptElement;
-            break;
+      // Find the script tag that loaded this script
+      let scriptTag = document.currentScript as HTMLScriptElement | null;
+
+      if (!scriptTag || !scriptTag.hasAttribute('data-base-url')) {
+        const dataAttrMatch = document.querySelector('script[data-base-url]') as HTMLScriptElement | null;
+        if (dataAttrMatch) {
+          scriptTag = dataAttrMatch;
+        } else {
+          for (const script of document.scripts) {
+            const src = script.src || '';
+            if (/(?:custom[-_]views|@customviews-js\/customviews)(?:\.min)?\.(?:esm\.)?js($|\?)/i.test(src)) {
+              scriptTag = script as HTMLScriptElement;
+              break;
+            }
           }
         }
       }
