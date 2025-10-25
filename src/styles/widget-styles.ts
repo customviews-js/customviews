@@ -654,6 +654,44 @@ export const WIDGET_STYLES = `
   gap: 1rem;
 }
 
+/* Navigation toggle icon container */
+.cv-nav-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cv-nav-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+/* Title container for icon + title alignment */
+.cv-tabgroup-title-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Hover state for icon - apply to the entire tabgroup-row */
+.cv-tabgroup-card.cv-tabgroup-header:hover .cv-nav-icon {
+  color: #3e84f4;
+}
+
+.cv-widget-theme-dark .cv-nav-icon {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cv-widget-theme-dark .cv-tabgroup-card.cv-tabgroup-header:hover .cv-nav-icon {
+  color: #60a5fa;
+}
+
 /* Tab Group Card - Items */
 .cv-tabgroup-card.cv-tabgroup-item {
   display: flex;
@@ -677,7 +715,7 @@ export const WIDGET_STYLES = `
   font-weight: 500;
   font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.9);
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 0 0;
 }
 
 .cv-tabgroup-description {

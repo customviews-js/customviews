@@ -4,7 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavCollapseIcon, getNavExpandIcon } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -184,15 +184,21 @@ export class CustomViewsWidget {
 
 
     if (this.options.showTabGroups && tabGroups && tabGroups.length > 0) {
+      // Determine initial nav visibility state
+      const initialNavsVisible = TabManager.areNavsVisible(document.body);
+      
       tabGroupControlsHTML = `
         <div class="cv-tabgroup-card cv-tabgroup-header">
           <div class="cv-tabgroup-row">
             <div class="cv-tabgroup-info">
-              <p class="cv-tabgroup-title">Navigation Headers</p>
+              <div class="cv-tabgroup-title-container">
+                <div class="cv-nav-icon" id="cv-nav-icon">${initialNavsVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon()}</div>
+                <p class="cv-tabgroup-title">Navigation Headers</p>
+              </div>
               <p class="cv-tabgroup-description">Show or hide navigation headers</p>
             </div>
             <label class="cv-toggle-switch cv-nav-toggle">
-              <input class="cv-nav-pref-input" type="checkbox" aria-label="Show or hide navigation headers" />
+              <input class="cv-nav-pref-input" type="checkbox" ${initialNavsVisible ? 'checked' : ''} aria-label="Show or hide navigation headers" />
               <span class="cv-switch-bg"></span>
               <span class="cv-switch-knob"></span>
             </label>
@@ -336,9 +342,37 @@ export class CustomViewsWidget {
 
     // Listener for show/hide tab navs
     const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
-    if (tabNavToggle) {
+    const navIcon = this.modal?.querySelector('#cv-nav-icon');
+    const navHeaderCard = this.modal?.querySelector('.cv-tabgroup-card.cv-tabgroup-header') as HTMLElement | null;
+    
+    if (tabNavToggle && navIcon && navHeaderCard) {
+      // Helper to update icon based on state
+      const updateIcon = (isVisible: boolean, isHovering: boolean = false) => {
+        if (isHovering) {
+          // On hover, show the action icon (collapse if visible, expand if hidden)
+          navIcon.innerHTML = isVisible ? getNavCollapseIcon() : getNavExpandIcon();
+        } else {
+          // Normal state, show the status icon (on if visible, off if hidden)
+          navIcon.innerHTML = isVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
+        }
+      };
+      
+      // Add hover listeners to entire header card
+      navHeaderCard.addEventListener('mouseenter', () => {
+        updateIcon(tabNavToggle.checked, true);
+      });
+      
+      navHeaderCard.addEventListener('mouseleave', () => {
+        updateIcon(tabNavToggle.checked, false);
+      });
+      
+      // Add change listener
       tabNavToggle.addEventListener('change', () => {
         const visible = tabNavToggle.checked;
+        
+        // Update the icon based on new state (not hovering)
+        updateIcon(visible, false);
+        
         // Persist preference
         try { localStorage.setItem('cv-tab-navs-visible', visible ? 'true' : 'false'); } catch (e) { /* ignore */ }
         // Apply to DOM using TabManager via core
