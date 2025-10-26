@@ -8,7 +8,7 @@
 * Refactor widget welcome messages and styles for better clarity
 * Improve custom element registration timing during initialization
 * Set default auto-initialization: Just include script tag and config `/customviews.config.json` file at root.
-  * Customize via `data-base-url`, `data-config-path` if separate baseURL or config file path.
+  * Customize via `data-base-url`, `data-config-path` if separate baseUrl or config file path.
 
 ### Tab Groups Feature
 * Added `<cv-tabgroup>` and `<cv-tab>` custom elements for synchronized, mutually exclusive content sections
@@ -41,9 +41,9 @@
 * URL parameters take precedence over persistence
 * Better event handling with automatic updates
 
-### BaseURL Support
-* Added `baseURL` parameter to `init()` options
-* Automatically prepends baseURL to `configPath`, `assetsJsonPath`, and all asset `src` paths
+### BaseUrl Support
+* Added `baseUrl` parameter to `init()` options
+* Automatically prepends baseUrl to `configPath`, `assetsJsonPath`, and all asset `src` paths
 * Supports subdirectory deployments (e.g., GitHub Pages with `/project-name`)
 * Smart handling: skips prepending for absolute URLs (http://, https://)
 

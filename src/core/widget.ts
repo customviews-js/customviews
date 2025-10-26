@@ -4,7 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -184,15 +184,23 @@ export class CustomViewsWidget {
 
 
     if (this.options.showTabGroups && tabGroups && tabGroups.length > 0) {
+      // Determine initial nav visibility state
+      const initialNavsVisible = TabManager.areNavsVisible(document.body);
+      
       tabGroupControlsHTML = `
         <div class="cv-tabgroup-card cv-tabgroup-header">
           <div class="cv-tabgroup-row">
+            <div class="cv-tabgroup-logo-box" id="cv-nav-icon-box">
+              <div class="cv-nav-icon" id="cv-nav-icon">${initialNavsVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon()}</div>
+            </div>
             <div class="cv-tabgroup-info">
-              <p class="cv-tabgroup-title">Navigation Headers</p>
+              <div class="cv-tabgroup-title-container">
+                <p class="cv-tabgroup-title">Navigation Headers</p>
+              </div>
               <p class="cv-tabgroup-description">Show or hide navigation headers</p>
             </div>
             <label class="cv-toggle-switch cv-nav-toggle">
-              <input class="cv-nav-pref-input" type="checkbox" aria-label="Show or hide navigation headers" />
+              <input class="cv-nav-pref-input" type="checkbox" ${initialNavsVisible ? 'checked' : ''} aria-label="Show or hide navigation headers" />
               <span class="cv-switch-bg"></span>
               <span class="cv-switch-knob"></span>
             </label>
@@ -252,13 +260,13 @@ export class CustomViewsWidget {
         <footer class="cv-modal-footer">
           ${this.options.showReset ? `
           <button class="cv-reset-btn">
-            ${getResetIcon()}
+            <span class="cv-reset-btn-icon">${getResetIcon()}</span>
             <span>Reset to Default</span>
           </button>
           ` : ''}
           <button class="cv-share-btn">
-            ${getShareIcon()}
             <span>Copy Shareable URL</span>
+            <span class="cv-share-btn-icon">${getCopyIcon()}</span>
           </button>
         </footer>
       </div>
@@ -290,6 +298,18 @@ export class CustomViewsWidget {
     if (copyUrlBtn) {
       copyUrlBtn.addEventListener('click', () => {
         this.copyShareableURL();
+        
+        // Visual feedback: change icon to tick for 3 seconds
+        const iconContainer = copyUrlBtn.querySelector('.cv-share-btn-icon');
+        if (iconContainer) {
+          const originalIcon = iconContainer.innerHTML;
+          iconContainer.innerHTML = getTickIcon();
+          
+          // Revert after 3 seconds
+          setTimeout(() => {
+            iconContainer.innerHTML = originalIcon;
+          }, 3000);
+        }
       });
     }
 
@@ -297,8 +317,21 @@ export class CustomViewsWidget {
     const resetBtn = this.modal.querySelector('.cv-reset-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
+        // Add spinning animation to icon
+        const resetIcon = resetBtn.querySelector('.cv-reset-btn-icon');
+        if (resetIcon) {
+          resetIcon.classList.add('cv-spinning');
+        }
+        
         this.core.resetToDefault();
         this.loadCurrentStateIntoForm();
+        
+        // Remove spinning animation after it completes
+        setTimeout(() => {
+          if (resetIcon) {
+            resetIcon.classList.remove('cv-spinning');
+          }
+        }, 600); // 600ms matches the animation duration
       });
     }
 
@@ -336,11 +369,40 @@ export class CustomViewsWidget {
 
     // Listener for show/hide tab navs
     const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
-    if (tabNavToggle) {
+    const navIcon = this.modal?.querySelector('#cv-nav-icon');
+    const navHeaderCard = this.modal?.querySelector('.cv-tabgroup-card.cv-tabgroup-header') as HTMLElement | null;
+    
+    if (tabNavToggle && navIcon && navHeaderCard) {
+      // Helper to update icon based on state
+      const updateIcon = (isVisible: boolean, isHovering: boolean = false) => {
+        if (isHovering) {
+          // On hover, show the transition icon
+          navIcon.innerHTML = getNavDashed();
+        } else {
+          // Normal state, show the status icon (on if visible, off if hidden)
+          navIcon.innerHTML = isVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
+        }
+      };
+      
+      // Add hover listeners to entire header card
+      navHeaderCard.addEventListener('mouseenter', () => {
+        updateIcon(tabNavToggle.checked, true);
+      });
+      
+      navHeaderCard.addEventListener('mouseleave', () => {
+        updateIcon(tabNavToggle.checked, false);
+      });
+      
+      // Add change listener
       tabNavToggle.addEventListener('change', () => {
         const visible = tabNavToggle.checked;
-        // Persist preference
-        try { localStorage.setItem('cv-tab-navs-visible', visible ? 'true' : 'false'); } catch (e) { /* ignore */ }
+        
+        // Update the icon based on new state (not hovering)
+        updateIcon(visible, false);
+        
+        // Persist preference via core
+        this.core.persistTabNavVisibility(visible);
+        
         // Apply to DOM using TabManager via core
         try {
           const rootEl = document.body;
@@ -464,17 +526,23 @@ export class CustomViewsWidget {
 
     // Load tab nav visibility preference
     const navPref = ((): boolean => {
-      try {
-        const raw = localStorage.getItem('cv-tab-navs-visible');
-        if (raw === null) return TabManager.areNavsVisible(document.body);
-        return raw === 'true';
-      } catch (e) { return TabManager.areNavsVisible(document.body); }
+      const persisted = this.core.getPersistedTabNavVisibility();
+      if (persisted !== null) {
+        return persisted;
+      }
+      return TabManager.areNavsVisible(document.body);
     })();
-  const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    const navIcon = this.modal?.querySelector('#cv-nav-icon');
     if (tabNavToggle) {
       tabNavToggle.checked = navPref;
       // Ensure UI matches actual visibility
       TabManager.setNavsVisibility(document.body, navPref);
+      
+      // Update the nav icon to reflect the current state
+      if (navIcon) {
+        navIcon.innerHTML = navPref ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
+      }
     }
   }
 
@@ -496,13 +564,22 @@ export class CustomViewsWidget {
     const hasSeenWelcome = localStorage.getItem(STORAGE_KEY);
     
     if (!hasSeenWelcome) {
-      // Show welcome modal after a short delay to let the page settle
-      setTimeout(() => {
-        this.createWelcomeModal();
-      }, 500);
+      // Check if this page has any custom views elements
+      const hasCustomViewElements = 
+        document.querySelector('cv-tabgroup') !== null ||
+        document.querySelector('cv-tab') !== null ||
+        document.querySelector('cv-toggle') !== null ||
+        document.querySelector('[data-cv-toggle]') !== null;
       
-      // Mark as shown
-      localStorage.setItem(STORAGE_KEY, 'true');
+      if (hasCustomViewElements) {
+        // Show welcome modal after a short delay to let the page settle
+        setTimeout(() => {
+          this.createWelcomeModal();
+        }, 500);
+        
+        // Mark as shown
+        localStorage.setItem(STORAGE_KEY, 'true');
+      }
     }
   }
 

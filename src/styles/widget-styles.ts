@@ -654,6 +654,57 @@ export const WIDGET_STYLES = `
   gap: 1rem;
 }
 
+/* Navigation toggle icon container */
+.cv-nav-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cv-nav-icon {
+  width: 2rem;
+  height: 2rem;
+  color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+/* Logo box - centered grey box on its own row */
+.cv-tabgroup-logo-box {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Title container for title alignment (without icon) */
+.cv-tabgroup-title-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Hover state for icon - apply to the entire tabgroup-row */
+.cv-tabgroup-card.cv-tabgroup-header:hover .cv-nav-icon {
+  color: #3e84f4;
+}
+
+.cv-widget-theme-dark .cv-nav-icon {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.cv-widget-theme-dark .cv-tabgroup-card.cv-tabgroup-header:hover .cv-nav-icon {
+  color: #60a5fa;
+}
+
 /* Tab Group Card - Items */
 .cv-tabgroup-card.cv-tabgroup-item {
   display: flex;
@@ -671,13 +722,16 @@ export const WIDGET_STYLES = `
 /* Tab Group Info */
 .cv-tabgroup-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .cv-tabgroup-title {
   font-weight: 500;
   font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.9);
-  margin: 0 0 0.25rem 0;
+  margin: 0 0 0 0;
 }
 
 .cv-tabgroup-description {
@@ -868,6 +922,10 @@ export const WIDGET_STYLES = `
 .cv-btn-icon {
   width: 1rem;
   height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
 }
 
 /* Dark theme custom state styles */
@@ -992,6 +1050,32 @@ export const WIDGET_STYLES = `
 
 .cv-widget-theme-dark .cv-welcome-widget-label {
   color: #e2e8f0;
+}
+
+/* Dark theme logo box */
+.cv-widget-theme-dark .cv-tabgroup-logo-box {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Spinning animation for reset button icon */
+@keyframes cv-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.cv-spinning {
+  animation: cv-spin 0.6s ease-in-out;
+}
+
+/* Hide widget icon in print view */
+@media print {
+  .cv-widget-icon {
+    display: none !important;
+  }
 }
 `;
 

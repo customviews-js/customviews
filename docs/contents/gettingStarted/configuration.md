@@ -28,8 +28,7 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
         "tabs": [
           { "id": "tabA", "label": "Tab A" },
           { "id": "tabB", "label": "Tab B" }
-        ],
-        "default": "tabA"
+        ]
       }
     ]
   },
@@ -56,8 +55,8 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `allToggles` | `string[]` | Yes | Array of all available toggle IDs that can be used on the page. |
-| `defaultState` | `object` | Yes | Default state when no user preferences are saved. |
+| `allToggles` | `string[]` | No | Array of all available toggle IDs that can be used on the page. If omitted, defaults to an empty array. |
+| `defaultState` | `object` | No | Default state when no user preferences are saved. If omitted, the system will auto-generate a default state with all toggles enabled and all tab groups set to their first tab. |
 | `defaultState.toggles` | `string[]` | No | Toggles enabled by default. |
 | `defaultState.tabs` | `object` | No | Default tab selections: `{groupId: tabId}`. |
 | `tabGroups` | `object[]` | No | Array of tab group configurations. |
@@ -71,9 +70,42 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
 | `tabs` | `object[]` | Yes | Array of tab configurations. |
 | `tabs[].id` | `string` | Yes | Unique identifier for the tab. |
 | `tabs[].label` | `string` | No | Display label for the tab. |
-| `default` | `string` | No | Default tab ID (falls back to first tab if omitted). |
 
-### Global Options
+## Default State Behavior
+
+When `defaultState` is not provided or is omitted from the config, CustomViews automatically generates a default state:
+
+- **Toggles**: All toggles from `allToggles` are enabled
+- **Tabs**: All tab groups are set to their first tab
+
+### Example: Auto-generated Default State
+
+```json
+{
+  "config": {
+    "allToggles": ["mac", "linux", "windows"],
+    "tabGroups": [
+      {
+        "id": "os",
+        "tabs": [
+          { "id": "first", "label": "First Tab" },
+          { "id": "second", "label": "Second Tab" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+This configuration will auto-generate:
+```javascript
+{
+  toggles: ["mac", "linux", "windows"],
+  tabs: { os: "first" }
+}
+```
+
+## Global Options
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|

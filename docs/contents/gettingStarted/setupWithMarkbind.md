@@ -88,7 +88,6 @@ At your project root, create a `customviews.config.json` file to define your tog
       {
         "id": "fruit",
         "label": "Fruit Selection",
-        "default": "apple",
         "tabs": [
           { "id": "apple", "label": "Apple" },
           { "id": "orange", "label": "Orange" },
@@ -97,7 +96,7 @@ At your project root, create a `customviews.config.json` file to define your tog
       }
     ]
   },
-  "baseURL": "website-baseUrl",
+  "baseUrl": "website-baseUrl",
   "widget": {
     "showWelcome": true
   },
