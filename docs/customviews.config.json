@@ -2,16 +2,15 @@
   "config": {
     "allToggles": ["mac", "linux", "windows"],
     "defaultState": {
-      "toggles": ["mac", "linux", "windows"],
+      "toggles": ["windows"],
       "tabs": {
-        "fruit": "apple"
+        "fruit": "pear"
       }
     },
     "tabGroups": [
       {
         "id": "fruit",
         "label": "Fruit Selection",
-        "default": "apple",
         "tabs": [
           { "id": "apple", "label": "Apple" },
           { "id": "orange", "label": "Orange" },
