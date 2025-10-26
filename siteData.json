@@ -204,7 +204,10 @@
       "src": "index.md",
       "title": "Custom Views Library - Interactive Documentation & Demo",
       "headings": {
-        "introduction": "Introduction"
+        "introduction": "Introduction",
+        "quick-demo": "Quick Demo",
+        "toggles": "Toggles",
+        "tabs": "Tabs"
       },
       "headingKeywords": {}
     }
