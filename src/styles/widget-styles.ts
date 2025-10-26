@@ -662,8 +662,8 @@ export const WIDGET_STYLES = `
 }
 
 .cv-nav-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 2rem;
+  height: 2rem;
   color: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
@@ -672,7 +672,20 @@ export const WIDGET_STYLES = `
   transition: color 0.2s ease;
 }
 
-/* Title container for icon + title alignment */
+/* Logo box - centered grey box on its own row */
+.cv-tabgroup-logo-box {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 0.5rem;
+}
+
+/* Title container for title alignment (without icon) */
 .cv-tabgroup-title-container {
   display: flex;
   align-items: center;
@@ -709,6 +722,9 @@ export const WIDGET_STYLES = `
 /* Tab Group Info */
 .cv-tabgroup-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .cv-tabgroup-title {
@@ -1030,6 +1046,11 @@ export const WIDGET_STYLES = `
 
 .cv-widget-theme-dark .cv-welcome-widget-label {
   color: #e2e8f0;
+}
+
+/* Dark theme logo box */
+.cv-widget-theme-dark .cv-tabgroup-logo-box {
+  background: rgba(255, 255, 255, 0.1);
 }
 `;
 
