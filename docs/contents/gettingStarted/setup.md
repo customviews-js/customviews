@@ -12,9 +12,9 @@ To get started quickly, add the following snippet to your site’s `<head>` or r
 ```html
 <!-- Load from CDN or your hosted bundle -->
 <script src="https://unpkg.com/@customviews-js/customviews"
-        data-base-url="/website-baseUrl"
-        data-config-path="/custom/customviewsconfigfilename.json"
-        defer></script>
+        data-base-url="/website-baseUrl"                          (ONLY IF NEEDED)
+        data-config-path="/custom/customviewsconfigfilename.json" (ONLY IF NEEDED)
+></script>
 ```
 
 This snippet loads:
@@ -39,18 +39,22 @@ Here's an example configuration:
     "defaultState": {
       "toggles": ["example-toggle"],
       "tabs": {
-        "platform-tabs": "windows"
+        "fruit": "pear"
       }
     },
     "tabGroups": [
       {
-        "id": "platform-tabs",
-        "tabs": ["windows", "mac", "linux"],
-        "default": "windows"
+        "id": "fruit",
+        "label": "Fruit Selection",
+        "tabs": [
+          { "id": "apple", "label": "Apple" },
+          { "id": "orange", "label": "Orange" },
+          { "id": "pear", "label": "Pear" }
+        ]
       }
     ]
   },
-  "baseURL": "/customviews",
+  "baseUrl": "/customviews",
   "widget": {
     "showWelcome": true
   },
@@ -63,7 +67,7 @@ Here's an example configuration:
 | ------ | ------------ |
 | `config.allToggles` | List of toggle IDs recognized by CustomViews. |
 | `config.defaultState` | Toggles and tabs per tab group enabled by default on first load. |
-| `assetsJsonPath` | Path to your compiled assets manifest (resolved relative to `baseURL`). |
+| `assetsJsonPath` | Path to your compiled assets manifest (resolved relative to `baseUrl`). |
 | `widget` | Floating widget settings — control position, visibility, and welcome prompt. |
 | `showUrl` | When true, CustomViews encodes the active state into the browser URL for shareable links. |
 

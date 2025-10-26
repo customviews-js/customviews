@@ -10,7 +10,6 @@
     "tabGroups": [
       {
         "id": "demo-tabs",
-        "default": "tabA",
         "tabs": [
           { "id": "tabA", "label": "Alpha" },
           { "id": "tabB", "label": "Beta" },
@@ -19,7 +18,7 @@
       }
     ]
   },
-  "baseURL": "/demo",
+  "baseUrl": "/demo",
   "showUrl": false,
   "widget": {
     "enabled": true,

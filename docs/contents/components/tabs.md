@@ -542,7 +542,6 @@ For more control (such as widget integration or default selections), configure t
 | `id` | string | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
 | `label` | string | - | Display name shown in the widget. |
 | `tabs` | TabConfig[] | **(required)** | Array of tab configurations. |
-| `default` | string | First tab | Default tab ID to show on initial load. |
 
 #### TabConfig
 
