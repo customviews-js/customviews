@@ -539,13 +539,22 @@ export class CustomViewsWidget {
     const hasSeenWelcome = localStorage.getItem(STORAGE_KEY);
     
     if (!hasSeenWelcome) {
-      // Show welcome modal after a short delay to let the page settle
-      setTimeout(() => {
-        this.createWelcomeModal();
-      }, 500);
+      // Check if this page has any custom views elements
+      const hasCustomViewElements = 
+        document.querySelector('cv-tabgroup') !== null ||
+        document.querySelector('cv-tab') !== null ||
+        document.querySelector('cv-toggle') !== null ||
+        document.querySelector('[data-cv-toggle]') !== null;
       
-      // Mark as shown
-      localStorage.setItem(STORAGE_KEY, 'true');
+      if (hasCustomViewElements) {
+        // Show welcome modal after a short delay to let the page settle
+        setTimeout(() => {
+          this.createWelcomeModal();
+        }, 500);
+        
+        // Mark as shown
+        localStorage.setItem(STORAGE_KEY, 'true');
+      }
     }
   }
 
