@@ -33,7 +33,7 @@ export class CustomViewsCore {
     this.persistenceManager = new PersistenceManager();
     this.visibilityManager = new VisibilityManager();
     this.showUrlEnabled = opt.showUrl ?? false;
-    this.lastAppliedState = this.cloneState(this.config?.defaultState);
+    this.lastAppliedState = this.cloneState(this.getComputedDefaultState());
   }
 
   public getConfig(): Config {
@@ -45,6 +45,42 @@ export class CustomViewsCore {
    */
   public getTabGroups(): TabGroupConfig[] | undefined {
     return this.config.tabGroups;
+  }
+
+  /**
+   * Generate a computed default state:
+   * - If config.defaultState is defined, use it (even if empty)
+   * - Otherwise, compute a default: enable all toggles and set all tab groups to their first tab
+   */
+  private getComputedDefaultState(): State {
+    const configDefaultState = this.config?.defaultState;
+    
+    // If defaultState is explicitly defined in config, use it as-is
+    if (configDefaultState !== undefined) {
+      return configDefaultState;
+    }
+
+    // Otherwise, compute a default state: all toggles on, all tabs to first
+    const tabs: Record<string, string> = {};
+    
+    // Set all tab groups to their first tab
+    if (this.config.tabGroups?.length) {
+      this.config.tabGroups.forEach(group => {
+        if (group.tabs && group.tabs.length > 0) {
+          const firstTab = group.tabs[0];
+          if (firstTab?.id) {
+            tabs[group.id] = firstTab.id;
+          }
+        }
+      });
+    }
+
+    const computedState: State = {
+      toggles: [...(this.config.allToggles || [])],
+      tabs
+    };
+
+    return computedState;
   }
 
   /**
@@ -60,7 +96,7 @@ export class CustomViewsCore {
       return { ...persistedState.tabs };
     }
 
-    return this.config?.defaultState?.tabs ? { ...this.config.defaultState.tabs } : {};
+    return this.getComputedDefaultState().tabs || {};
   }
 
   /**
@@ -124,7 +160,7 @@ export class CustomViewsCore {
     this.loadAndCallApplyState();
   }
 
-  // Priority: URL state > persisted state > default
+  // Priority: URL state > persisted state > config default > computed default
   // Also filters using the visibility manager to persist selection
   // across back/forward button clicks
   private async loadAndCallApplyState() {
@@ -142,8 +178,8 @@ export class CustomViewsCore {
       return;
     }
 
-    // 3. Local Config Fallback
-    this.renderState(this.config.defaultState);
+    // 3. Computed Default Fallback
+    this.renderState(this.getComputedDefaultState());
   }
 
   /**
@@ -163,7 +199,7 @@ export class CustomViewsCore {
   /** Render all toggles for the current state */
   private renderState(state: State) {
     this.lastAppliedState = this.cloneState(state);
-    const toggles = state.toggles || [];
+    const toggles = state?.toggles || [];
     const finalToggles = this.visibilityManager.filterVisibleToggles(toggles);
 
     // Apply toggle visibility
@@ -189,7 +225,7 @@ export class CustomViewsCore {
     this.persistenceManager.clearAll();
 
     if (this.config) {
-      this.renderState(this.config.defaultState);
+      this.renderState(this.getComputedDefaultState());
     } else {
       console.warn("No configuration loaded, cannot reset to default state");
     }
@@ -211,7 +247,7 @@ export class CustomViewsCore {
     }
 
     if (this.config) {
-      return this.config.defaultState.toggles || [];
+      return this.getComputedDefaultState().toggles || [];
     }
 
     return [];
@@ -223,7 +259,7 @@ export class CustomViewsCore {
   public clearPersistence() {
     this.persistenceManager.clearAll();
     if (this.config) {
-      this.renderState(this.config.defaultState);
+      this.renderState(this.getComputedDefaultState());
     } else {
       console.warn("No configuration loaded, cannot reset to default state");
     }
@@ -309,7 +345,7 @@ export class CustomViewsCore {
     }
 
     if (this.config) {
-      return this.cloneState(this.config.defaultState);
+      return this.cloneState(this.getComputedDefaultState());
     }
 
     return {};
