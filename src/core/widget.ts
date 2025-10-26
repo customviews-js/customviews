@@ -4,7 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavCollapseIcon, getNavExpandIcon } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -190,9 +190,11 @@ export class CustomViewsWidget {
       tabGroupControlsHTML = `
         <div class="cv-tabgroup-card cv-tabgroup-header">
           <div class="cv-tabgroup-row">
+            <div class="cv-tabgroup-logo-box" id="cv-nav-icon-box">
+              <div class="cv-nav-icon" id="cv-nav-icon">${initialNavsVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon()}</div>
+            </div>
             <div class="cv-tabgroup-info">
               <div class="cv-tabgroup-title-container">
-                <div class="cv-nav-icon" id="cv-nav-icon">${initialNavsVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon()}</div>
                 <p class="cv-tabgroup-title">Navigation Headers</p>
               </div>
               <p class="cv-tabgroup-description">Show or hide navigation headers</p>
@@ -349,8 +351,8 @@ export class CustomViewsWidget {
       // Helper to update icon based on state
       const updateIcon = (isVisible: boolean, isHovering: boolean = false) => {
         if (isHovering) {
-          // On hover, show the action icon (collapse if visible, expand if hidden)
-          navIcon.innerHTML = isVisible ? getNavCollapseIcon() : getNavExpandIcon();
+          // On hover, show the transition icon
+          navIcon.innerHTML = getNavDashed();
         } else {
           // Normal state, show the status icon (on if visible, off if hidden)
           navIcon.innerHTML = isVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
@@ -373,8 +375,9 @@ export class CustomViewsWidget {
         // Update the icon based on new state (not hovering)
         updateIcon(visible, false);
         
-        // Persist preference
-        try { localStorage.setItem('cv-tab-navs-visible', visible ? 'true' : 'false'); } catch (e) { /* ignore */ }
+        // Persist preference via core
+        this.core.persistTabNavVisibility(visible);
+        
         // Apply to DOM using TabManager via core
         try {
           const rootEl = document.body;
@@ -498,17 +501,23 @@ export class CustomViewsWidget {
 
     // Load tab nav visibility preference
     const navPref = ((): boolean => {
-      try {
-        const raw = localStorage.getItem('cv-tab-navs-visible');
-        if (raw === null) return TabManager.areNavsVisible(document.body);
-        return raw === 'true';
-      } catch (e) { return TabManager.areNavsVisible(document.body); }
+      const persisted = this.core.getPersistedTabNavVisibility();
+      if (persisted !== null) {
+        return persisted;
+      }
+      return TabManager.areNavsVisible(document.body);
     })();
-  const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    const navIcon = this.modal?.querySelector('#cv-nav-icon');
     if (tabNavToggle) {
       tabNavToggle.checked = navPref;
       // Ensure UI matches actual visibility
       TabManager.setNavsVisibility(document.body, navPref);
+      
+      // Update the nav icon to reflect the current state
+      if (navIcon) {
+        navIcon.innerHTML = navPref ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
+      }
     }
   }
 

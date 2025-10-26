@@ -6,7 +6,8 @@ import type { State } from "../types/types";
 export class PersistenceManager {
   // Storage keys for localStorage
   private static readonly STORAGE_KEYS = {
-    STATE: 'customviews-state'
+    STATE: 'customviews-state',
+    TAB_NAV_VISIBILITY: 'cv-tab-navs-visible'
   } as const;
 
   /**
@@ -47,6 +48,34 @@ export class PersistenceManager {
     if (!this.isStorageAvailable()) return;
 
     localStorage.removeItem(PersistenceManager.STORAGE_KEYS.STATE);
+    localStorage.removeItem(PersistenceManager.STORAGE_KEYS.TAB_NAV_VISIBILITY);
+  }
+
+  /**
+   * Persist tab nav visibility preference
+   */
+  public persistTabNavVisibility(visible: boolean): void {
+    if (!this.isStorageAvailable()) return;
+
+    try {
+      localStorage.setItem(PersistenceManager.STORAGE_KEYS.TAB_NAV_VISIBILITY, visible ? 'true' : 'false');
+    } catch (error) {
+      console.warn('Failed to persist tab nav visibility:', error);
+    }
+  }
+
+  /**
+   * Get persisted tab nav visibility preference
+   */
+  public getPersistedTabNavVisibility(): boolean | null {
+    if (!this.isStorageAvailable()) return null;
+    try {
+      const raw = localStorage.getItem(PersistenceManager.STORAGE_KEYS.TAB_NAV_VISIBILITY);
+      return raw === null ? null : raw === 'true';
+    } catch (error) {
+      console.warn('Failed to get persisted tab nav visibility:', error);
+      return null;
+    }
   }
 
   /**
