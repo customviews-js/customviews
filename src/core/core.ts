@@ -112,13 +112,10 @@ export class CustomViewsCore {
     );
 
     // Apply stored nav visibility preference on page load
-    try {
-      const navPref = localStorage.getItem('cv-tab-navs-visible');
-      if (navPref !== null) {
-        const visible = navPref === 'true';
-        TabManager.setNavsVisibility(this.rootEl, visible);
-      }
-    } catch (e) { /* ignore */ }
+    const navPref = this.persistenceManager.getPersistedTabNavVisibility();
+    if (navPref !== null) {
+      TabManager.setNavsVisibility(this.rootEl, navPref);
+    }
 
     // For session history, clicks on back/forward button
     window.addEventListener("popstate", () => {
@@ -196,6 +193,9 @@ export class CustomViewsCore {
     } else {
       console.warn("No configuration loaded, cannot reset to default state");
     }
+
+    // Reset tab nav visibility to default (visible)
+    TabManager.setNavsVisibility(this.rootEl, true);
 
     // Clear URL
     URLStateManager.clearURL();
@@ -282,6 +282,20 @@ export class CustomViewsCore {
         console.warn('Error in state change listener:', error);
       }
     });
+  }
+
+  /**
+   * Persist tab nav visibility preference
+   */
+  public persistTabNavVisibility(visible: boolean): void {
+    this.persistenceManager.persistTabNavVisibility(visible);
+  }
+
+  /**
+   * Get persisted tab nav visibility preference
+   */
+  public getPersistedTabNavVisibility(): boolean | null {
+    return this.persistenceManager.getPersistedTabNavVisibility();
   }
 
   private cloneState(state?: State | null): State {
