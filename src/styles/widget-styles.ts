@@ -99,6 +99,13 @@ export const WIDGET_STYLES = `
   width: 36px;
 }
 
+/* Hide widget icon in print view */
+@media print {
+  .cv-widget-icon {
+    display: none !important;
+  }
+}
+
 .cv-widget-middle-right:hover,
 .cv-widget-top-right:hover,
 .cv-widget-bottom-right:hover,
