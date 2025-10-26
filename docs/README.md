@@ -32,7 +32,7 @@ Use the "Custom Views" widget in the middle-left corner to interact with the dem
 - The site uses MarkBind for static site generation
 - The Custom Views library is loaded from unpkg CDN
 - Plugin configuration is in `_markbind/plugins/customviews.js`
-- `baseURL: '/customviews'` is configured for GitHub Pages deployment
+- `baseUrl: '/customviews'` is configured for GitHub Pages deployment
 - Documentation pages demonstrate the library in action
 
 

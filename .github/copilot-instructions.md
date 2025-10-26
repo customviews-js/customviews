@@ -38,7 +38,7 @@ Keep responses short and use these concrete references when changing behavior.
 - `customviews.config.json` (see `docs/_site/customviews.config.json`) contains:
   - `config` (object) — { allToggles: string[], defaultState: { toggles: string[] }, tabGroups?: TabGroupConfig[] }
   - `assetsJsonPath` (string) — relative or absolute path to assets JSON
-  - `baseURL` (string) — site base used when not overridden by script
+  - `baseUrl` (string) — site base used when not overridden by script
   - `widget` (object) — { enabled?: boolean, position?, theme?, showReset?, showWelcome?, ... }
 
 6) Developer workflows (commands to run)
