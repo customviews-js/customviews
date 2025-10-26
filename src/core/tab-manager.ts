@@ -69,13 +69,10 @@ export class TabManager {
       return tabs[groupId];
     }
 
-    // 2. Check config default
+    // 2. Check config for first tab
     if (cfgGroups) {
       const groupCfg = cfgGroups.find(g => g.id === groupId);
       if (groupCfg) {
-        if (groupCfg.default) {
-          return groupCfg.default;
-        }
         // Fallback to first tab in config
         const firstConfigTab = groupCfg.tabs[0];
         if (firstConfigTab) {

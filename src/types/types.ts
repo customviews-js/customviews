@@ -50,8 +50,6 @@ export interface TabGroupConfig {
   label?: string;
   /** Available tabs in this group */
   tabs: TabConfig[];
-  /** Default tab id for this group (fallback to first in tabs if omitted) */
-  default?: string;
 }
 
 /**
@@ -59,9 +57,9 @@ export interface TabGroupConfig {
  */
 export interface Config {
   /** All available toggle categories */
-  allToggles: string[];
+  allToggles?: string[];
   /** Default state for the site */
-  defaultState: State;
+  defaultState?: State;
   /** Optional tab group configurations */
   tabGroups?: TabGroupConfig[];
 }
