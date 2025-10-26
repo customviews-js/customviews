@@ -163,6 +163,8 @@
         "configuration-options": "Configuration Options",
         "core-configuration-config": "Core Configuration (config)",
         "tab-group-configuration": "Tab Group Configuration",
+        "default-state-behavior": "Default State Behavior",
+        "example-auto-generated-default-state": "Example: Auto-generated Default State",
         "global-options": "Global Options",
         "widget-configuration-widget": "Widget Configuration (widget)",
         "script-tag-attributes": "Script Tag Attributes",
