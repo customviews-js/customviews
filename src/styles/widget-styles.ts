@@ -99,13 +99,6 @@ export const WIDGET_STYLES = `
   width: 36px;
 }
 
-/* Hide widget icon in print view */
-@media print {
-  .cv-widget-icon {
-    display: none !important;
-  }
-}
-
 .cv-widget-middle-right:hover,
 .cv-widget-top-right:hover,
 .cv-widget-bottom-right:hover,
@@ -929,6 +922,10 @@ export const WIDGET_STYLES = `
 .cv-btn-icon {
   width: 1rem;
   height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
 }
 
 /* Dark theme custom state styles */
@@ -1058,6 +1055,27 @@ export const WIDGET_STYLES = `
 /* Dark theme logo box */
 .cv-widget-theme-dark .cv-tabgroup-logo-box {
   background: rgba(255, 255, 255, 0.1);
+}
+
+/* Spinning animation for reset button icon */
+@keyframes cv-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.cv-spinning {
+  animation: cv-spin 0.6s ease-in-out;
+}
+
+/* Hide widget icon in print view */
+@media print {
+  .cv-widget-icon {
+    display: none !important;
+  }
 }
 `;
 

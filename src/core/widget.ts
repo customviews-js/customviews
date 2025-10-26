@@ -4,7 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getShareIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -260,13 +260,13 @@ export class CustomViewsWidget {
         <footer class="cv-modal-footer">
           ${this.options.showReset ? `
           <button class="cv-reset-btn">
-            ${getResetIcon()}
+            <span class="cv-reset-btn-icon">${getResetIcon()}</span>
             <span>Reset to Default</span>
           </button>
           ` : ''}
           <button class="cv-share-btn">
-            ${getShareIcon()}
             <span>Copy Shareable URL</span>
+            <span class="cv-share-btn-icon">${getCopyIcon()}</span>
           </button>
         </footer>
       </div>
@@ -298,6 +298,18 @@ export class CustomViewsWidget {
     if (copyUrlBtn) {
       copyUrlBtn.addEventListener('click', () => {
         this.copyShareableURL();
+        
+        // Visual feedback: change icon to tick for 3 seconds
+        const iconContainer = copyUrlBtn.querySelector('.cv-share-btn-icon');
+        if (iconContainer) {
+          const originalIcon = iconContainer.innerHTML;
+          iconContainer.innerHTML = getTickIcon();
+          
+          // Revert after 3 seconds
+          setTimeout(() => {
+            iconContainer.innerHTML = originalIcon;
+          }, 3000);
+        }
       });
     }
 
@@ -305,8 +317,21 @@ export class CustomViewsWidget {
     const resetBtn = this.modal.querySelector('.cv-reset-btn');
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
+        // Add spinning animation to icon
+        const resetIcon = resetBtn.querySelector('.cv-reset-btn-icon');
+        if (resetIcon) {
+          resetIcon.classList.add('cv-spinning');
+        }
+        
         this.core.resetToDefault();
         this.loadCurrentStateIntoForm();
+        
+        // Remove spinning animation after it completes
+        setTimeout(() => {
+          if (resetIcon) {
+            resetIcon.classList.remove('cv-spinning');
+          }
+        }, 600); // 600ms matches the animation duration
       });
     }
 
