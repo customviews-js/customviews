@@ -29,10 +29,6 @@
 
     // Types (empty unless you want to include global types)
     "types": [],
-    "baseUrl": "src",
-    "paths": {
-      "types/*": ["types/*"]
-    },
   },
   "include": ["src"],                 
   "exclude": ["node_modules", "dist", "test", "docs"] 

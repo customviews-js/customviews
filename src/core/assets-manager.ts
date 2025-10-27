@@ -1,4 +1,4 @@
-import type { CustomViewAsset } from "types/types";
+import type { CustomViewAsset } from "../types/types";
 
 export class AssetsManager {
   assets: Record<string, CustomViewAsset>;
