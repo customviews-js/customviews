@@ -111,3 +111,16 @@ export function getNavDashed(): string {
             <path d="M185 12.5001L247 12.5001" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-dasharray="10 10"/>
           </svg>`;
 }
+
+
+export function getPinIcon(isPinned: boolean = false): string {
+  const opacity = isPinned ? '1' : '0.6'; // Optional: additional dimming effect
+  
+  return `
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" opacity="${opacity}" xmlns="http://www.w3.org/2000/svg">
+      <g transform="rotate(45 8 8)">
+        <path d="M10.5 2H12V0H4V2H5.5V6L4 7.5V9H7.2V15H8.8V9H12V7.5L10.5 6V2Z"/>
+      </g>
+    </svg>
+  `.trim();
+}

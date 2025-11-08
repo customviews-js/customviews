@@ -1,4 +1,5 @@
 import type { TabGroupConfig } from "../types/types";
+import { getPinIcon } from "../utils/icons";
 
 
 // Constants for selectors
@@ -32,17 +33,33 @@ export class TabManager {
     
     tabGroups.forEach((groupEl) => {
       const groupId = groupEl.getAttribute('id');
-      if (!groupId) return;
-
+      
       // Determine the active tab for this group
-      const activeTabId = this.resolveActiveTabForGroup(groupId, tabs, cfgGroups, groupEl as HTMLElement);
+      let activeTabId: string | null;
+      if (groupId) {
+        activeTabId = this.resolveActiveTabForGroup(groupId, tabs, cfgGroups, groupEl as HTMLElement);
+      } else {
+        // For standalone groups without id, activate the first tab
+        const tabElements = Array.from(groupEl.children).filter(
+          (child) => child.tagName.toLowerCase() === TAB_SELECTOR
+        );
+        const firstTab = tabElements[0];
+        if (firstTab) {
+          const firstTabId = firstTab.getAttribute('id') || firstTab.getAttribute('data-cv-internal-id') || '';
+          const splitIds = this.splitTabIds(firstTabId);
+          activeTabId = splitIds[0] || null;
+        } else {
+          activeTabId = null;
+        }
+      }
       
       // Apply visibility to direct child cv-tab elements only (not nested ones)
       const tabElements = Array.from(groupEl.children).filter(
         (child) => child.tagName.toLowerCase() === TAB_SELECTOR
       );
       tabElements.forEach((tabEl) => {
-        const tabId = tabEl.getAttribute('id');
+        // Use id or internal id
+        const tabId = tabEl.getAttribute('id') || tabEl.getAttribute('data-cv-internal-id');
         if (!tabId) return;
 
         // Split IDs and check if any match the active tab
@@ -86,7 +103,9 @@ export class TabManager {
       (child) => child.tagName.toLowerCase() === TAB_SELECTOR
     );
     if (firstTab) {
-      const splitIds = this.splitTabIds(firstTab.getAttribute('id') || '');
+      // Use id or internal id
+      const tabId = firstTab.getAttribute('id') || firstTab.getAttribute('data-cv-internal-id') || '';
+      const splitIds = this.splitTabIds(tabId);
       return splitIds[0] || null;
     }
 
@@ -138,7 +157,7 @@ export class TabManager {
   }
 
   /**
-   * Build navigation for tab groups with nav="auto" (one-time setup)
+   * Build navigation for tab groups (one-time setup)
    */
   public static buildNavs(
     rootEl: HTMLElement,
@@ -150,8 +169,10 @@ export class TabManager {
     const tabGroups = rootEl.querySelectorAll(NAV_AUTO_SELECTOR);
     
     tabGroups.forEach((groupEl) => {
-      const groupId = groupEl.getAttribute('id');
-      if (!groupId) return;
+      const groupId = groupEl.getAttribute('id') || null;
+      
+      // Note: groupId can be null for standalone tabgroups
+      // These won't sync with other groups or persist state
 
       // Check if nav already exists - if so, skip building
       let navContainer = groupEl.querySelector(`.${NAV_CONTAINER_CLASS}`);
@@ -167,6 +188,7 @@ export class TabManager {
       navContainer = document.createElement('ul');
       navContainer.className = `${NAV_CONTAINER_CLASS} nav-tabs`;
       navContainer.setAttribute('role', 'tablist');
+      
       // Respect viewer preference on the root to show/hide navs
       const showNavs = !rootEl.classList.contains(NAV_HIDE_ROOT_CLASS);
       if (!showNavs) {
@@ -178,9 +200,14 @@ export class TabManager {
       groupEl.insertBefore(navContainer, groupEl.firstChild);
 
       // Build nav items
-      tabElements.forEach((tabEl) => {
-        const rawTabId = tabEl.getAttribute('id');
-        if (!rawTabId) return;
+      tabElements.forEach((tabEl, index) => {
+        let rawTabId = tabEl.getAttribute('id');
+        
+        // If tab has no id, generate one based on position
+        if (!rawTabId) {
+          rawTabId = `${groupId}-tab-${index}`;
+          tabEl.setAttribute('data-cv-internal-id', rawTabId);
+        }
 
         const splitIds = this.splitTabIds(rawTabId);
         // If multiple IDs, use the first as primary
@@ -199,8 +226,17 @@ export class TabManager {
           if (headerAttr) {
             header = headerAttr;
           } else {
-            // Use config label or id as fallback
-            header = this.getTabLabel(tabId, groupId, cfgGroups) || tabId || '';
+            // Use config label if available (only if group has an id)
+            const configLabel = groupId ? this.getTabLabel(tabId, groupId, cfgGroups) : null;
+            if (configLabel) {
+              header = configLabel;
+            } else if (tabEl.getAttribute('id')) {
+              // Use the original id if it exists
+              header = tabId;
+            } else {
+              // Auto-generate label for tabs without id (Tab 1, Tab 2, etc.)
+              header = `Tab ${index + 1}`;
+            }
           }
         }
 
@@ -210,15 +246,35 @@ export class TabManager {
 
         const navLink = document.createElement('a');
         navLink.className = 'nav-link';
-        navLink.innerHTML = header;
         navLink.href = '#';
         navLink.setAttribute('data-tab-id', tabId);
         navLink.setAttribute('data-raw-tab-id', rawTabId);
-        navLink.setAttribute('data-group-id', groupId);
+        if (groupId) {
+          navLink.setAttribute('data-group-id', groupId);
+        }
         navLink.setAttribute('role', 'tab');
+        
+        // Create header container with text and pin icon
+        const headerContainer = document.createElement('span');
+        headerContainer.className = 'cv-tab-header-container';
+        
+        const headerText = document.createElement('span');
+        headerText.className = 'cv-tab-header-text';
+        headerText.innerHTML = header;
+        
+        const pinIcon = document.createElement('span');
+        pinIcon.className = 'cv-tab-pin-icon';
+        pinIcon.innerHTML = getPinIcon(true);
+        pinIcon.style.display = 'none'; // Hidden by default
+        
+        headerContainer.appendChild(headerText);
+        headerContainer.appendChild(pinIcon);
+        navLink.appendChild(headerContainer);
 
         // Check if any of the split IDs is active
-        const activeTabId = this.resolveActiveTabForGroup(groupId, {}, cfgGroups, groupEl as HTMLElement); // Pass empty tabs for initial state
+        const activeTabId = groupId 
+          ? this.resolveActiveTabForGroup(groupId, {}, cfgGroups, groupEl as HTMLElement)
+          : (index === 0 ? tabId : null); // For standalone groups, activate first tab
         const isActive = splitIds.includes(activeTabId || '');
         if (isActive) {
           navLink.classList.add('active');
@@ -231,16 +287,15 @@ export class TabManager {
         if (onTabClick) {
           navLink.addEventListener('click', (e) => {
             e.preventDefault();
-            // console.log("Single-click detected");
-            onTabClick(groupId, tabId, groupEl as HTMLElement);
+            // For standalone groups (no groupId), use empty string
+            onTabClick(groupId || '', tabId, groupEl as HTMLElement);
           });
         }
 
-        // Add double-click handler for sync
-        if (onTabDoubleClick) {
+        // Add double-click handler for sync (only for groups with id)
+        if (onTabDoubleClick && groupId) {
           navLink.addEventListener('dblclick', (e) => {
             e.preventDefault();
-            // console.log("Double-click detected");
             onTabDoubleClick(groupId, tabId, groupEl as HTMLElement);
           });
         }
@@ -385,7 +440,8 @@ export class TabManager {
     );
     
     tabElements.forEach((tabEl) => {
-      const tabId = tabEl.getAttribute('id');
+      // Use id or internal id
+      const tabId = tabEl.getAttribute('id') || tabEl.getAttribute('data-cv-internal-id');
       if (!tabId) return;
 
       const splitIds = this.splitTabIds(tabId);
@@ -403,7 +459,8 @@ export class TabManager {
       (child) => child.tagName.toLowerCase() === TAB_SELECTOR
     );
     return tabElements.some((tabEl) => {
-      const idAttr = tabEl.getAttribute('id') || '';
+      // Use id or internal id
+      const idAttr = tabEl.getAttribute('id') || tabEl.getAttribute('data-cv-internal-id') || '';
       const splitIds = this.splitTabIds(idAttr);
       return splitIds.includes(tabId);
     });
@@ -431,6 +488,42 @@ export class TabManager {
     return syncedGroupEls;
   }
 
+  /**
+   * Update pin icon visibility for all tab groups based on current state.
+   * Shows pin icon for tabs that are in the persisted state (i.e., have been double-clicked).
+   */
+  public static updatePinIcons(
+    rootEl: HTMLElement,
+    tabs: Record<string, string>
+  ): void {
+    const tabGroups = rootEl.querySelectorAll(TABGROUP_SELECTOR);
+    
+    tabGroups.forEach((groupEl) => {
+      const groupId = groupEl.getAttribute('id');
+      if (!groupId) return;
+
+      const persistedTabId = tabs[groupId];
+      
+      // Find all nav links in this group
+      const navLinks = groupEl.querySelectorAll('.nav-link');
+      navLinks.forEach((link) => {
+        const rawTabId = link.getAttribute('data-raw-tab-id');
+        const pinIcon = link.querySelector('.cv-tab-pin-icon') as HTMLElement;
+        
+        if (!pinIcon || !rawTabId) return;
+        
+        // Check if persisted tab ID matches any of the split IDs (for multi-ID tabs)
+        const splitIds = this.splitTabIds(rawTabId);
+        const shouldShowPin = persistedTabId && splitIds.includes(persistedTabId);
+        
+        if (shouldShowPin) {
+          pinIcon.style.display = 'inline-block';
+        } else {
+          pinIcon.style.display = 'none';
+        }
+      });
+    });
+  }
 
 
 }

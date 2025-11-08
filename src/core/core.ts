@@ -214,6 +214,9 @@ export class CustomViewsCore {
     // Update nav active states (without rebuilding)
     TabManager.updateAllNavActiveStates(this.rootEl, state.tabs || {}, this.config.tabGroups);
 
+    // Update pin icons to show which tabs are persisted
+    TabManager.updatePinIcons(this.rootEl, state.tabs || {});
+
     // Notify state change listeners (like widgets)
     this.notifyStateChangeListeners();
   }
