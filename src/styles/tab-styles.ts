@@ -45,6 +45,29 @@ export const TAB_STYLES = `
   display: inline; /* or inline-block */
 }
 
+/* Tab header container with pin icon */
+.cv-tab-header-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cv-tab-header-text {
+  flex: 1;
+}
+
+.cv-tab-pin-icon {
+  display: inline-block;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+.cv-tab-pin-icon svg {
+  vertical-align: middle;
+  width: 14px;
+  height: 14px;
+}
+
 .cv-tabs-nav .nav-link:hover,
 .cv-tabs-nav .nav-link:focus {
   border-color: #e9ecef #e9ecef #dee2e6;

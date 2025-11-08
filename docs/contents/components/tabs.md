@@ -1,5 +1,7 @@
 <frontmatter>
   title: User Guide - Tabs
+  pageNav: 4
+  pageNavTitle: "Topics"
 </frontmatter>
 
 # Tabs
@@ -11,11 +13,13 @@ The **Tabs** component lets you define **mutually exclusive content sections** t
 
 When multiple tab groups (`<cv-tabgroup/>`) share the same `id` attribute, they stay synchronized automatically across the entire page.
 
+<!-- ------------------------ CODE OUTPUT ---------------------------- -->
+
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 
-<cv-tabgroup id="fruit" nav="auto">
+<cv-tabgroup id="fruit">
   <cv-tab id="apple" header="Apple">
   
 **Apple Information**
@@ -52,112 +56,154 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
 </cv-tabgroup>
 
 <cv-tabgroup id="fruit">
-<cv-tab id="apple">
-<cv-tab-header>
+  <cv-tab id="apple">
+  <cv-tab-header>
 
 :fa-solid-heart: Apple Types
-</cv-tab-header>
-<cv-tab-body>
+  </cv-tab-header>
+  <cv-tab-body>
 
   Apple types include **Granny Smith** and the **Cosmic Crisp**.
-</cv-tab-body>
-</cv-tab>
-<cv-tab id="orange">
-<cv-tab-header>
+  </cv-tab-body>
+  </cv-tab>
+  <cv-tab id="orange">
+  <cv-tab-header>
 
 :fa-solid-circle: Orange Types
-</cv-tab-header>
-<cv-tab-body>
+  </cv-tab-header>
+  <cv-tab-body>
 
   Orange types include the **Blood orange** and **Valencia orange**.
-</cv-tab-body>
-</cv-tab>
-<cv-tab id="pear">
-<cv-tab-header>
+  </cv-tab-body>
+  </cv-tab>
+  <cv-tab id="pear">
+  <cv-tab-header>
 
 :fa-solid-leaf: Pear Types
-</cv-tab-header>
-<cv-tab-body>
+  </cv-tab-header>
+  <cv-tab-body>
+</cv-tabgroup>
 
 </variable>
 <variable name="output">
 
-<cv-tabgroup id="fruit" nav="auto">
+<cv-tabgroup id="fruit" >
+  
   <cv-tab id="apple" header="Apple">
   
-**Apple Information**
+  **Apple Information**
 
-Apples are crisp, sweet fruits that come in many varieties. They are rich in fiber and vitamin C.
+  Apples are crisp, sweet fruits that come in many varieties. They are rich in fiber and vitamin C.
 
-<box type="important" icon=":apple:">
-    An apple a day keeps the doctor away!
-</box>
+  <box type="important" icon=":apple:">
+      An apple a day keeps the doctor away!
+  </box>
 
   </cv-tab>
   <cv-tab id="orange" header="Orange">
   
-**Orange Information**
+  **Orange Information**
 
-Oranges are citrus fruits known for their high vitamin C content and refreshing juice.
+  Oranges are citrus fruits known for their high vitamin C content and refreshing juice.
 
-<box type="warning" icon=":orange:">
-    The color orange was named after the fruit, not the other way around
-</box>
+  <box type="warning" icon=":orange:">
+      The color orange was named after the fruit, not the other way around
+  </box>
 
   </cv-tab>
   <cv-tab id="pear" header="Pear">
   
-**Pear Information**
+  **Pear Information**
 
-Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high in fiber and antioxidants.
+  Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high in fiber and antioxidants.
 
-<box type="success" icon=":pear:">
+  <box type="success" icon=":pear:">
     Pears do not ripen on the tree; they ripen from the inside out after being picked. 
-</box>
-
+  </box>
   </cv-tab>
 </cv-tabgroup>
 
 <cv-tabgroup id="fruit">
-<cv-tab id="apple">
-<cv-tab-header>
+  <cv-tab id="apple">
+  <cv-tab-header>
 
 :fa-solid-heart: Apple Types
-</cv-tab-header>
-<cv-tab-body>
+  </cv-tab-header>
+  <cv-tab-body>
 
-  Apple types include **Granny Smith** and the **Cosmic Crisp**.
-</cv-tab-body>
-</cv-tab>
-<cv-tab id="orange">
-<cv-tab-header>
+Apple types include **Granny Smith** and the **Cosmic Crisp**.
+  </cv-tab-body>
+  </cv-tab>
+  <cv-tab id="orange">
+  <cv-tab-header>
 
 :fa-solid-circle: Orange Types
-</cv-tab-header>
-<cv-tab-body>
+  </cv-tab-header>
+  <cv-tab-body>
 
-  Orange types include the **Blood orange** and **Valencia orange**.
-</cv-tab-body>
-</cv-tab>
-<cv-tab id="pear">
-<cv-tab-header>
+Orange types include the **Blood orange** and **Valencia orange**.
+  </cv-tab-body>
+  </cv-tab>
+  <cv-tab id="pear">
+  <cv-tab-header>
 
 :fa-solid-leaf: Pear Types
-</cv-tab-header>
-<cv-tab-body>
+  </cv-tab-header>
+  <cv-tab-body>
 
-  Pear types include the **Asian pear** and the **European pear**
-</cv-tab-body>
-</cv-tab>
+Pear types include the **Asian pear** and the **European pear**
+  </cv-tab-body>
+  </cv-tab>
 </cv-tabgroup>
 
 </variable>
 </include>
 
+<!-- ------------------------ CODE OUTPUT ---------------------------- -->
+
+
 
 * **Single-Click Behavior** — Click once to switch tabs locally within that specific tab group only. The change is visual only and is not saved.
 * **Double-Click Behavior** — Double-click to synchronize the tab selection across all tab groups with the same `id` on the page. The state is saved to browser storage and persists across page reloads.
 * **Example:** If you have two tab groups both with `id="fruit"`, a single-click on "Orange" in the first group only changes that group locally. Double-clicking on "Orange" will sync both groups to show "Orange" and save the state.
+
+## No-ID Tabs
+
+Each tabgroup element should have a parent `id` attribute, while each tab element should have their own tab `id` as well.
+
+However, if a tabgroup element does not have an `id` attribute, the tabgroup and children tabs will function as normal tabs. If the children tabs do not have `id` or `header` attributes, their headers will be enumerated.
+
+For example:
+
+<include src="codeAndOutputSeparate.md" boilerplate >
+<variable name="highlightStyle">html</variable>
+<variable name="code">
+<cv-tabgroup>
+<cv-tab>
+
+  Tab 1 Content
+</cv-tab>
+<cv-tab>
+
+  Tab 2 Content
+</cv-tab>
+</cv-tabgroup>
+</variable>
+<variable name="output">
+<cv-tabgroup>
+<cv-tab>
+
+  Tab 1 Content
+</cv-tab>
+<cv-tab>
+
+  Tab 2 Content
+</cv-tab>
+</cv-tabgroup>
+</variable>
+</include>
+
+
 
 
 ## Multi-ID Tabs
@@ -169,13 +215,15 @@ You can create a single tab that represents multiple alternative IDs by specifyi
 * The content inside the tab is shared for all IDs listed.
 * **Use case:** When multiple options (e.g., `python java`) present the same content, show a single tab instead of duplicates that might confuse readers into thinking the content differs.
 
-**Example:**
+<!-- ------------------------ CODE OUTPUT ---------------------------- -->
 
+
+**Example:**
 
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="lang" nav="auto">
+<cv-tabgroup id="lang" >
   <cv-tab id="python" header="Python">
 
 Python is a high-level, interpreted programming language known for its simplicity and readability.
@@ -193,7 +241,7 @@ JavaScript is a dynamic language primarily used for web development.
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="lang" nav="auto">
+<cv-tabgroup id="lang" >
   <cv-tab id="python java" header="Python/Java Installation">
 
 Both Python and Java are easy to install. Download from their official websites.
@@ -207,7 +255,7 @@ Install JavaScript by downloading Node.js from nodejs.org.
 </cv-tabgroup>
 </variable>
 <variable name="output">
-<cv-tabgroup id="lang" nav="auto">
+<cv-tabgroup id="lang" >
   <cv-tab id="python" header="Python">
 
 Python is a high-level, interpreted programming language known for its simplicity and readability.
@@ -225,7 +273,7 @@ JavaScript is a dynamic language primarily used for web development.
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="lang" nav="auto">
+<cv-tabgroup id="lang" >
   <cv-tab id="python java" header="Python/Java Installation">
 
 Both Python and Java are easy to install. Download from their official websites.
@@ -239,6 +287,9 @@ Install JavaScript by downloading Node.js from nodejs.org.
 </cv-tabgroup>
 </variable>
 </include>
+
+<!-- ------------------------ CODE OUTPUT ---------------------------- -->
+
 
 **Behavior:** In the second tab group, you'll see a single "Installation" tab in the navigation bar that becomes active when either Python or Java is selected in the first group. This avoids showing duplicate tabs with identical content.
 
@@ -253,12 +304,14 @@ This is useful when you need:
 - **Complex nested elements** with custom styling
 - **Multi-line or specially formatted headers**
 
+<!-- ------------------------ CODE OUTPUT ---------------------------- -->
+
 ### Basic Example
 
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="docs" nav="auto">
+<cv-tabgroup id="docs" >
   <cv-tab id="overview">
     <cv-tab-header><strong>Overview</strong></cv-tab-header>
     <cv-tab-body>
@@ -275,7 +328,7 @@ This is useful when you need:
 </cv-tabgroup>
 </variable>
 <variable name="output">
-<cv-tabgroup id="docs" nav="auto">
+<cv-tabgroup id="docs" >
   <cv-tab id="overview">
     <cv-tab-header><strong>Overview</strong></cv-tab-header>
     <cv-tab-body>
@@ -293,13 +346,19 @@ This is useful when you need:
 </variable>
 </include>
 
+<!-- ------------------------ CODE OUTPUT ---------------------------- -->
+
+
 ### Advanced Example with Badges
+
+<!-- ------------------------ CODE OUTPUT ---------------------------- -->
+
 
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="status" nav="auto">
-  <cv-tab id="active">
+<cv-tabgroup>
+  <cv-tab header="active">
     <cv-tab-header>
       <strong>Active</strong> 
       <span style="color: green; margin-left: 0.5rem;">●</span>
@@ -309,7 +368,7 @@ This is useful when you need:
     </cv-tab-body>
   </cv-tab>
   
-  <cv-tab id="archived">
+  <cv-tab header="archived">
     <cv-tab-header>
       <strong>Archived</strong> 
       <span style="color: gray; margin-left: 0.5rem;">●</span>
@@ -321,8 +380,8 @@ This is useful when you need:
 </cv-tabgroup>
 </variable>
 <variable name="output">
-<cv-tabgroup id="status" nav="auto">
-  <cv-tab id="active">
+<cv-tabgroup>
+  <cv-tab header="active">
     <cv-tab-header>
       <strong>Active</strong> 
       <span style="color: green; margin-left: 0.5rem;">●</span>
@@ -332,7 +391,7 @@ This is useful when you need:
     </cv-tab-body>
   </cv-tab>
   
-  <cv-tab id="archived">
+  <cv-tab header="archived">
     <cv-tab-header>
       <strong>Archived</strong> 
       <span style="color: gray; margin-left: 0.5rem;">●</span>
@@ -355,7 +414,7 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="status" nav="auto">
+<cv-tabgroup id="status">
 <cv-tab id="enabled">
   <cv-tab-header>
   
@@ -388,36 +447,40 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
 </cv-tabgroup>
 </variable>
 <variable name="output">
-<cv-tabgroup id="status" nav="auto">
-<cv-tab id="enabled">
-  <cv-tab-header>
 
-  :fa-solid-virus: Enabled
-  </cv-tab-header>
-  <cv-tab-body>
-  This feature is currently enabled and active.
-  </cv-tab-body>
+<cv-tabgroup id="status">
+<cv-tab id="enabled">
+<cv-tab-header>
+
+:fa-solid-virus: Enabled
+</cv-tab-header>
+<cv-tab-body>
+
+This feature is currently enabled and active.
+</cv-tab-body>
 </cv-tab>
 
 <cv-tab id="disabled">
-  <cv-tab-header>
+<cv-tab-header>
 
-  :fa-solid-virus-slash: Disabled
-  </cv-tab-header>
-  <cv-tab-body>
-  This feature is currently disabled.
-  </cv-tab-body>
+:fa-solid-virus-slash: Disabled
+</cv-tab-header>
+<cv-tab-body>
+
+This feature is currently disabled.
+</cv-tab-body>
 </cv-tab>
 
 <cv-tab id="pending">
-  <cv-tab-header>
+<cv-tab-header>
 
-  :fa-solid-hourglass-end: Pending
-  </cv-tab-header>
-    <cv-tab-body>
-      This feature is pending review.
-    </cv-tab-body>
-  </cv-tab>
+:fa-solid-hourglass-end: Pending
+</cv-tab-header>
+<cv-tab-body>
+
+This feature is pending review.
+</cv-tab-body>
+</cv-tab>
 </cv-tabgroup>
 </variable>
 </include>
@@ -449,30 +512,6 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
 - The `header` attribute supports plain text only—for rich formatting and HTML, use `<cv-tab-header>`.
 - If `<cv-tab-header>` exists but is empty, the tab ID is used as the fallback header label.
 
-### Backward Compatibility
-
-The new syntax is **fully backward compatible**. Your existing tab definitions with the `header` attribute will continue to work without any changes:
-
-```html
-<!-- Old syntax (still works) -->
-<cv-tab id="tab1" header="My Header">Content</cv-tab>
-
-<!-- New syntax (allows rich formatting) -->
-<cv-tab id="tab2">
-  <cv-tab-header>My <strong>Rich</strong> Header</cv-tab-header>
-  <cv-tab-body>Content</cv-tab-body>
-</cv-tab>
-
-<!-- Mixed on the same page - no problem! -->
-<cv-tabgroup id="mixed" nav="auto">
-  <cv-tab id="old" header="Old Style">Old content</cv-tab>
-  <cv-tab id="new">
-    <cv-tab-header><em>New Style</em></cv-tab-header>
-    <cv-tab-body>New content</cv-tab-body>
-  </cv-tab>
-</cv-tabgroup>
-```
-
 
 ## Attributes & Options
 
@@ -481,7 +520,7 @@ The new syntax is **fully backward compatible**. Your existing tab definitions w
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `id` | string | **(required)** | Unique identifier for the tab group. Tab groups with the same ID will synchronize. |
-| `nav` | string | `"auto"` | Navigation display mode. Use `"auto"` to automatically generate navigation, or omit the attribute (defaults to auto). Use `"none"` to hide navigation. |
+| `nav` | string | `"auto"` | Navigation display mode. Use `"none"` to hide navigation headers. |
 
 ### `<cv-tab>` Attributes
 
@@ -489,12 +528,6 @@ The new syntax is **fully backward compatible**. Your existing tab definitions w
 |------|------|---------|-------------|
 | `id` | string | **(required)** | Unique identifier for the tab within its group. |
 | `header` | string | Tab ID | Display label for the tab in the navigation bar. Plain text only (no icons or HTML). Use `<cv-tab-header>` for rich formatting. |
-
-## Configuration
-
-Tab groups work out of the box without any configuration—just use the `<cv-tabgroup>` and `<cv-tab>` elements in your HTML. The first tab will be shown by default.
-
-However, you can optionally configure tab groups in your configuration file for additional features:
 
 ## Configuration
 
