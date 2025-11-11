@@ -23,6 +23,11 @@ class CVTabgroup extends HTMLElement {
         bubbles: true,
         detail: { groupId: this.getAttribute('id') }
       });
+      try {
+        console.log('[CustomViews] Emitting event', 'cv:tabgroup-ready', { groupId: this.getAttribute('id') });
+      } catch (e) {
+        /* ignore logging errors */
+      }
       this.dispatchEvent(event);
     }, 0);
   }

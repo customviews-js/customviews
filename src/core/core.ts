@@ -116,6 +116,12 @@ export class CustomViewsCore {
         detail: { groupId, tabId, synced: false },
         bubbles: true
       });
+      // Helpful debug log for rollout / troubleshooting when tabs change locally
+      try {
+        console.log('[CustomViews] Emitting event', 'customviews:tab-change', { groupId, tabId, synced: false });
+      } catch (e) {
+        /* ignore logging errors in restricted environments */
+      }
       document.dispatchEvent(event);
     }
   }
