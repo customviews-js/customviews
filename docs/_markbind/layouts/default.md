@@ -28,6 +28,8 @@
   * [Widget]({{baseUrl}}/contents/components/widget.html)
   * [Toggles]({{baseUrl}}/contents/components/toggles.html)
   * [Tabs]({{baseUrl}}/contents/components/tabs.html)
+* Tests
+  * [Test Tabs]({{baseUrl}}/contents/tests/tabs.html)
 <!-- * Developer Guide
   * [Tabs]({{baseUrl}}/contents/devGuide/tabs.html)
 * [Demo]({{baseUrl}}/contents/demo/demo.html)
