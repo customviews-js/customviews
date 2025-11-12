@@ -102,7 +102,6 @@ export class ScrollManager {
 
       // Only scroll if there's a noticeable change to avoid jitter
       if (Math.abs(scrollDelta) > 1) {
-        console.log("[ScrollManager] Adjusting scroll position by", scrollDelta, "pixels due to content shift.");
         window.scrollBy({
           top: scrollDelta,
           behavior: 'instant'
