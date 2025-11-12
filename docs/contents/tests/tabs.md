@@ -188,10 +188,7 @@ Install JavaScript by downloading Node.js from nodejs.org.
 <!-- ------------------------ CODE OUTPUT ---------------------------- -->
 
 
-<include src="codeAndOutputSeparate.md" boilerplate >
-<variable name="highlightStyle">html</variable>
-<variable name="code">
-<cv-tabgroup>
+<cv-tabgroup id="active-archived">
   <cv-tab header="active">
     <cv-tab-header>
       <strong>Active</strong> 
@@ -212,31 +209,6 @@ Install JavaScript by downloading Node.js from nodejs.org.
     </cv-tab-body>
   </cv-tab>
 </cv-tabgroup>
-</variable>
-<variable name="output">
-<cv-tabgroup>
-  <cv-tab header="active">
-    <cv-tab-header>
-      <strong>Active</strong> 
-      <span style="color: green; margin-left: 0.5rem;">●</span>
-    </cv-tab-header>
-    <cv-tab-body>
-      Currently active items are displayed here.
-    </cv-tab-body>
-  </cv-tab>
-  
-  <cv-tab header="archived">
-    <cv-tab-header>
-      <strong>Archived</strong> 
-      <span style="color: gray; margin-left: 0.5rem;">●</span>
-    </cv-tab-header>
-    <cv-tab-body>
-      Archived items are stored here for reference.
-    </cv-tab-body>
-  </cv-tab>
-</cv-tabgroup>
-</variable>
-</include>
 
 ### Using Icons in Headers
 
@@ -245,9 +217,6 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
 1. **Via MarkBind shortcodes** (when using MarkBind) — MarkBind pre-processes `:fa-solid-icon:` into `<i>` elements
 2. **Via direct HTML** — Include Font Awesome `<i>` tags directly
 
-<include src="codeAndOutputSeparate.md" boilerplate >
-<variable name="highlightStyle">html</variable>
-<variable name="code">
 <cv-tabgroup id="status">
 <cv-tab id="enabled">
   <cv-tab-header>
@@ -279,45 +248,6 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
   </cv-tab-body>
   </cv-tab>
 </cv-tabgroup>
-</variable>
-<variable name="output">
-
-<cv-tabgroup id="status">
-<cv-tab id="enabled">
-<cv-tab-header>
-
-:fa-solid-virus: Enabled
-</cv-tab-header>
-<cv-tab-body>
-
-This feature is currently enabled and active.
-</cv-tab-body>
-</cv-tab>
-
-<cv-tab id="disabled">
-<cv-tab-header>
-
-:fa-solid-virus-slash: Disabled
-</cv-tab-header>
-<cv-tab-body>
-
-This feature is currently disabled.
-</cv-tab-body>
-</cv-tab>
-
-<cv-tab id="pending">
-<cv-tab-header>
-
-:fa-solid-hourglass-end: Pending
-</cv-tab-header>
-<cv-tab-body>
-
-This feature is pending review.
-</cv-tab-body>
-</cv-tab>
-</cv-tabgroup>
-</variable>
-</include>
 
 **Example with direct HTML:**
 ```html

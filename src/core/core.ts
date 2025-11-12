@@ -5,6 +5,7 @@ import { URLStateManager } from "./url-state-manager";
 import { VisibilityManager } from "./visibility-manager";
 import { TabManager } from "./tab-manager";
 import { ToggleManager } from "./toggle-manager";
+import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
 
 
@@ -116,12 +117,6 @@ export class CustomViewsCore {
         detail: { groupId, tabId, synced: false },
         bubbles: true
       });
-      // Helpful debug log for rollout / troubleshooting when tabs change locally
-      try {
-        console.log('[CustomViews] Emitting event', 'customviews:tab-change', { groupId, tabId, synced: false });
-      } catch (e) {
-        /* ignore logging errors in restricted environments */
-      }
       document.dispatchEvent(event);
     }
   }
@@ -190,8 +185,17 @@ export class CustomViewsCore {
 
   /**
   * Apply a custom state, saves to localStorage and updates the URL
+  * Add 'source' in options to indicate the origin of the state change
+  * (e.g., 'widget' to trigger scroll behavior)
   */
-  public applyState(state: State) {
+  public applyState(state: State, options?: { source?: string }) {
+    // console.log(`[Core] applyState called with source: ${options?.source}`, state);
+    
+    let groupToScrollTo: HTMLElement | null = null;
+    if (options?.source === 'widget') {
+      groupToScrollTo = ScrollManager.findHighestVisibleTabGroup();
+    }
+
     const snapshot = this.cloneState(state);
     this.renderState(snapshot);
     this.persistenceManager.persistState(snapshot);
@@ -199,6 +203,13 @@ export class CustomViewsCore {
       URLStateManager.updateURL(snapshot);
     } else {
       URLStateManager.clearURL();
+    }
+
+    if (groupToScrollTo) {
+      // Defer scrolling until after the DOM has been updated by renderState
+      queueMicrotask(() => {
+        ScrollManager.scrollToTabGroup(groupToScrollTo as HTMLElement);
+      });
     }
   }
 
