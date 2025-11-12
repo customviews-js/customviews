@@ -134,7 +134,12 @@ export class CustomViewsCore {
         this.setActiveTab(groupId, tabId, groupEl);
       },
       // Double click: sync across all tabgroups with same id (with persistence)
-      (groupId, tabId, _groupEl) => {
+      (groupId, tabId, groupEl) => {
+        // 1. Record position before state change
+        const navHeader = groupEl.querySelector('.cv-tabs-nav');
+        const anchorElement = navHeader instanceof HTMLElement ? navHeader : groupEl;
+        const initialTop = anchorElement.getBoundingClientRect().top;
+
         const currentTabs = this.getCurrentActiveTabs();
         currentTabs[groupId] = tabId;
         
@@ -143,8 +148,11 @@ export class CustomViewsCore {
           toggles: currentToggles,
           tabs: currentTabs
         };
-        // applyState() will handle all visual updates via renderState()
-        this.applyState(newState);
+
+        // 2. Apply state with scroll anchor information
+        this.applyState(newState, { 
+          scrollAnchor: { element: anchorElement, top: initialTop } 
+        });
       }
     );
 
@@ -188,7 +196,7 @@ export class CustomViewsCore {
   * Add 'source' in options to indicate the origin of the state change
   * (e.g., 'widget' to trigger scroll behavior)
   */
-  public applyState(state: State, options?: { source?: string }) {
+  public applyState(state: State, options?: { source?: string; scrollAnchor?: { element: HTMLElement; top: number; }; }) {
     // console.log(`[Core] applyState called with source: ${options?.source}`, state);
     
     let groupToScrollTo: HTMLElement | null = null;
@@ -209,6 +217,25 @@ export class CustomViewsCore {
       // Defer scrolling until after the DOM has been updated by renderState
       queueMicrotask(() => {
         ScrollManager.scrollToTabGroup(groupToScrollTo as HTMLElement);
+      });
+    }
+
+    // Handle scroll anchoring for double-clicks
+    if (options?.scrollAnchor) {
+      requestAnimationFrame(() => {
+        const { element, top: initialTop } = options.scrollAnchor!;
+        const newTop = element.getBoundingClientRect().top;
+        const scrollDelta = newTop - initialTop;
+
+        // Only scroll if there's a noticeable change to avoid jitter
+        if (Math.abs(scrollDelta) > 1) {
+          console.log("[Core] Adjusting scroll position by", scrollDelta, "pixels due to content shift.");
+          console.log("Using requestAnimationFrame to ensure DOM is updated before scrolling.");
+          window.scrollBy({
+            top: scrollDelta,
+            behavior: 'instant'
+          });
+        }
       });
     }
   }
