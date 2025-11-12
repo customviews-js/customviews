@@ -87,4 +87,27 @@ export class ScrollManager {
       behavior: 'smooth',
     });
   }
+
+  /**
+   * Adjusts the scroll position to keep a specific element in the same visual location
+   * after a content change. This is useful for preventing the page from jumping when
+   * content above the element is added or removed.
+   * @param scrollAnchor An object containing the element to anchor and its initial top position.
+   */
+  public static handleScrollAnchor(scrollAnchor: { element: HTMLElement; top: number }): void {
+    requestAnimationFrame(() => {
+      const { element, top: initialTop } = scrollAnchor;
+      const newTop = element.getBoundingClientRect().top;
+      const scrollDelta = newTop - initialTop;
+
+      // Only scroll if there's a noticeable change to avoid jitter
+      if (Math.abs(scrollDelta) > 1) {
+        console.log("[ScrollManager] Adjusting scroll position by", scrollDelta, "pixels due to content shift.");
+        window.scrollBy({
+          top: scrollDelta,
+          behavior: 'instant'
+        });
+      }
+    });
+  }
 }

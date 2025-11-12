@@ -23,7 +23,7 @@ export class TabManager {
   /**
    * Apply tab selections to all tab groups in the DOM
    */
-  public static applySelections(
+  public static applyTabSelections(
     rootEl: HTMLElement,
     tabs: Record<string, string>,
     cfgGroups?: TabGroupConfig[]

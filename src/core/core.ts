@@ -195,6 +195,7 @@ export class CustomViewsCore {
   * Apply a custom state, saves to localStorage and updates the URL
   * Add 'source' in options to indicate the origin of the state change
   * (e.g., 'widget' to trigger scroll behavior)
+  * Add scrollAnchor in options to maintain scroll position of a specific element
   */
   public applyState(state: State, options?: { source?: string; scrollAnchor?: { element: HTMLElement; top: number; }; }) {
     // console.log(`[Core] applyState called with source: ${options?.source}`, state);
@@ -221,22 +222,9 @@ export class CustomViewsCore {
     }
 
     // Handle scroll anchoring for double-clicks
+    // scroll to original position after content changes
     if (options?.scrollAnchor) {
-      requestAnimationFrame(() => {
-        const { element, top: initialTop } = options.scrollAnchor!;
-        const newTop = element.getBoundingClientRect().top;
-        const scrollDelta = newTop - initialTop;
-
-        // Only scroll if there's a noticeable change to avoid jitter
-        if (Math.abs(scrollDelta) > 1) {
-          console.log("[Core] Adjusting scroll position by", scrollDelta, "pixels due to content shift.");
-          console.log("Using requestAnimationFrame to ensure DOM is updated before scrolling.");
-          window.scrollBy({
-            top: scrollDelta,
-            behavior: 'instant'
-          });
-        }
-      });
+      ScrollManager.handleScrollAnchor(options.scrollAnchor);
     }
   }
 
@@ -253,7 +241,7 @@ export class CustomViewsCore {
     ToggleManager.renderAssets(this.rootEl, finalToggles, this.assetsManager);
 
     // Apply tab selections
-    TabManager.applySelections(this.rootEl, state.tabs || {}, this.config.tabGroups);
+    TabManager.applyTabSelections(this.rootEl, state.tabs || {}, this.config.tabGroups);
 
     // Update nav active states (without rebuilding)
     TabManager.updateAllNavActiveStates(this.rootEl, state.tabs || {}, this.config.tabGroups);
