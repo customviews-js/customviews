@@ -340,7 +340,7 @@ export class CustomViewsWidget {
     toggleInputs.forEach(toggleInput => {
       toggleInput.addEventListener('change', () => {
         const state = this.getCurrentCustomStateFromModal();
-        this.core.applyState(state);
+        this.core.applyState(state, { source: 'widget' });
       });
     });
 
@@ -362,7 +362,7 @@ export class CustomViewsWidget {
             toggles: currentToggles,
             tabs: currentTabs
           };
-          this.core.applyState(newState);
+          this.core.applyState(newState, { source: 'widget' });
         }
       });
     });

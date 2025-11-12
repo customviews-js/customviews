@@ -5,6 +5,7 @@ import { URLStateManager } from "./url-state-manager";
 import { VisibilityManager } from "./visibility-manager";
 import { TabManager } from "./tab-manager";
 import { ToggleManager } from "./toggle-manager";
+import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
 
 
@@ -133,7 +134,12 @@ export class CustomViewsCore {
         this.setActiveTab(groupId, tabId, groupEl);
       },
       // Double click: sync across all tabgroups with same id (with persistence)
-      (groupId, tabId, _groupEl) => {
+      (groupId, tabId, groupEl) => {
+        // 1. Record position before state change
+        const navHeader = groupEl.querySelector('.cv-tabs-nav');
+        const anchorElement = navHeader instanceof HTMLElement ? navHeader : groupEl;
+        const initialTop = anchorElement.getBoundingClientRect().top;
+
         const currentTabs = this.getCurrentActiveTabs();
         currentTabs[groupId] = tabId;
         
@@ -142,8 +148,11 @@ export class CustomViewsCore {
           toggles: currentToggles,
           tabs: currentTabs
         };
-        // applyState() will handle all visual updates via renderState()
-        this.applyState(newState);
+
+        // 2. Apply state with scroll anchor information
+        this.applyState(newState, { 
+          scrollAnchor: { element: anchorElement, top: initialTop } 
+        });
       }
     );
 
@@ -184,8 +193,18 @@ export class CustomViewsCore {
 
   /**
   * Apply a custom state, saves to localStorage and updates the URL
+  * Add 'source' in options to indicate the origin of the state change
+  * (e.g., 'widget' to trigger scroll behavior)
+  * Add scrollAnchor in options to maintain scroll position of a specific element
   */
-  public applyState(state: State) {
+  public applyState(state: State, options?: { source?: string; scrollAnchor?: { element: HTMLElement; top: number; }; }) {
+    // console.log(`[Core] applyState called with source: ${options?.source}`, state);
+    
+    let groupToScrollTo: HTMLElement | null = null;
+    if (options?.source === 'widget') {
+      groupToScrollTo = ScrollManager.findHighestVisibleTabGroup();
+    }
+
     const snapshot = this.cloneState(state);
     this.renderState(snapshot);
     this.persistenceManager.persistState(snapshot);
@@ -193,6 +212,19 @@ export class CustomViewsCore {
       URLStateManager.updateURL(snapshot);
     } else {
       URLStateManager.clearURL();
+    }
+
+    if (groupToScrollTo) {
+      // Defer scrolling until after the DOM has been updated by renderState
+      queueMicrotask(() => {
+        ScrollManager.scrollToTabGroup(groupToScrollTo as HTMLElement);
+      });
+    }
+
+    // Handle scroll anchoring for double-clicks
+    // scroll to original position after content changes
+    if (options?.scrollAnchor) {
+      ScrollManager.handleScrollAnchor(options.scrollAnchor);
     }
   }
 
@@ -209,7 +241,7 @@ export class CustomViewsCore {
     ToggleManager.renderAssets(this.rootEl, finalToggles, this.assetsManager);
 
     // Apply tab selections
-    TabManager.applySelections(this.rootEl, state.tabs || {}, this.config.tabGroups);
+    TabManager.applyTabSelections(this.rootEl, state.tabs || {}, this.config.tabGroups);
 
     // Update nav active states (without rebuilding)
     TabManager.updateAllNavActiveStates(this.rootEl, state.tabs || {}, this.config.tabGroups);
