@@ -131,12 +131,6 @@ export default function initializeFromScript(): void {
           widget
         }
       });
-      // Emit a ready event and log for developers to know the library initialized
-      try {
-        console.log('[CustomViews] Emitting event', 'customviews:ready', { hasCore: !!core, hasWidget: !!widget });
-      } catch (e) {
-        /* ignore logging errors */
-      }
       document.dispatchEvent(readyEvent);
 
       // Mark initialized and clear in-progress flag
