@@ -1,6 +1,6 @@
 import { injectWidgetStyles } from "../styles/widget-styles";
 import type { CustomViewsCore } from "./core";
-import type { State } from "../types/types";
+import type { State, ToggleConfig } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
@@ -146,14 +146,14 @@ export class CustomViewsWidget {
   private openStateModal(): void {
     // Get toggles from current configuration and open the modal regardless of count
     const config = this.core.getConfig();
-    const toggles = config?.allToggles || [];
+    const toggles = config?.toggles || [];
     this.createCustomStateModal(toggles);
   }
 
   /**
    * Create the custom state creator modal
    */
-  private createCustomStateModal(toggles: string[]): void {
+  private createCustomStateModal(toggles: ToggleConfig[]): void {
     // Close existing modal
     this.closeModal();
 
@@ -165,10 +165,10 @@ export class CustomViewsWidget {
       <div class="cv-toggle-card">
         <div class="cv-toggle-content">
           <div>
-            <p class="cv-toggle-title">${this.formatToggleName(toggle)}</p>
+            <p class="cv-toggle-title">${toggle.label || toggle.id}</p>
           </div>
           <label class="cv-toggle-label">
-            <input class="cv-toggle-input" type="checkbox" data-toggle="${toggle}"/>
+            <input class="cv-toggle-input" type="checkbox" data-toggle="${toggle.id}"/>
             <span class="cv-toggle-slider"></span>
           </label>
         </div>
@@ -176,7 +176,7 @@ export class CustomViewsWidget {
     `).join('');
     
     // Todo: Re-add description if needed (Line 168, add label field to toggles if needed change structure)
-    // <p class="cv-toggle-description">Show or hide the ${this.formatToggleName(toggle).toLowerCase()} area </p>
+    // <p class="cv-toggle-description">Show or hide the toggleName area </p>
 
     // Get tab groups
     const tabGroups = this.core.getTabGroups();
@@ -544,14 +544,6 @@ export class CustomViewsWidget {
         navIcon.innerHTML = navPref ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
       }
     }
-  }
-
-
-  /**
-   * Format toggle name for display
-   */
-  private formatToggleName(toggle: string): string {
-    return toggle.charAt(0).toUpperCase() + toggle.slice(1);
   }
 
   /**

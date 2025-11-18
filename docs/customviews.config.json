@@ -1,12 +1,10 @@
 {
   "config": {
-    "allToggles": ["mac", "linux", "windows"],
-    "defaultState": {
-      "toggles": ["windows"],
-      "tabs": {
-        "fruit": "pear"
-      }
-    },
+    "toggles": [
+      { "id": "mac", "label": "MacOS" },
+      { "id": "linux", "label": "Linux" },
+      { "id": "windows", "label": "Windows" }
+    ],
     "tabGroups": [
       {
         "id": "fruit",
@@ -17,7 +15,13 @@
           { "id": "pear", "label": "Pear" }
         ]
       }
-    ]
+    ],
+    "defaultState": {
+      "toggles": ["windows"],
+      "tabs": {
+        "fruit": "pear"
+      }
+    }
   },
   "baseUrl": "/customviews",
   "widget": {
