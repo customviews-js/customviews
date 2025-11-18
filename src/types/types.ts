@@ -50,6 +50,8 @@ export interface TabGroupConfig {
   label?: string;
   /** Available tabs in this group */
   tabs: TabConfig[];
+  /** Determines if the tab group is only shown on pages where it's used. */
+  isLocal?: boolean;
 }
 
 /**
@@ -60,6 +62,8 @@ export interface ToggleConfig {
   id: string;
   /** Display label for the toggle */
   label?: string;
+  /** Determines if the toggle is only shown on pages where it's used. */
+  isLocal?: boolean;
 }
 
 /**

@@ -29,12 +29,8 @@
   * [Toggles]({{baseUrl}}/contents/components/toggles.html)
   * [Tabs]({{baseUrl}}/contents/components/tabs.html)
 * Tests
+  * [Local Components]({{baseUrl}}/contents/tests/localComponents.html)
   * [Test Tabs]({{baseUrl}}/contents/tests/tabs.html)
-<!-- * Developer Guide
-  * [Tabs]({{baseUrl}}/contents/devGuide/tabs.html)
-* [Demo]({{baseUrl}}/contents/demo/demo.html)
-  * [CLI Mastery]({{baseUrl}}/contents/demo/cliMastery.html)
-  * [File Structures]({{baseUrl}}/contents/demo/fileStructure.html)  -->
       </site-nav>
     </div>
   </nav>

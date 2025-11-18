@@ -46,6 +46,7 @@ export class CustomViewsWidget {
   private container: HTMLElement;
   private widgetIcon: HTMLElement | null = null;
   private options: Required<WidgetOptions>;
+  private _hasVisibleConfig = false;
   
   // Modal state
   private modal: HTMLElement | null = null;
@@ -69,14 +70,42 @@ export class CustomViewsWidget {
       welcomeMessage: options.welcomeMessage || 'This site is powered by Custom Views. Use the widget on the side (⚙) to customize your experience. Your preferences will be saved and can be shared via URL.<br><br>Learn more at <a href="https://github.com/customviews-js/customviews" target="_blank">customviews GitHub</a>.',
       showTabGroups: options.showTabGroups ?? true
     };
+
+    // Determine if there are any configurations to show
+    const config = this.core.getConfig();
+    const allToggles = config?.toggles || [];
+    const visibleToggles = allToggles.filter(toggle => {
+      if (toggle.isLocal) {
+        return !!document.querySelector(`[data-cv-toggle="${toggle.id}"], [data-cv-toggle-group-id="${toggle.id}"]`);
+      }
+      return true;
+    });
+
+    const allTabGroups = this.core.getTabGroups() || [];
+    const visibleTabGroups = allTabGroups.filter(group => {
+      if (group.isLocal) {
+        return !!document.querySelector(`cv-tabgroup[id="${group.id}"]`);
+      }
+      return true;
+    });
+
+    if (visibleToggles.length > 0 || (this.options.showTabGroups && visibleTabGroups.length > 0)) {
+      this._hasVisibleConfig = true;
+    }
     
     // No external state manager to initialize
   }
 
   /**
-   * Render the widget
+   * Render the widget modal icon
+   * 
+   * Does not render if there are no visible toggles or tab groups.
    */
-  public render(): HTMLElement {
+  public renderModalIcon(): HTMLElement | undefined {
+    if (!this._hasVisibleConfig) {
+      return;
+    }
+
     this.widgetIcon = this.createWidgetIcon();
     this.attachEventListeners();
     
@@ -144,10 +173,20 @@ export class CustomViewsWidget {
    * Open the custom state creator
    */
   private openStateModal(): void {
-    // Get toggles from current configuration and open the modal regardless of count
+    // Get toggles from current configuration
     const config = this.core.getConfig();
-    const toggles = config?.toggles || [];
-    this.createCustomStateModal(toggles);
+    const allToggles = config?.toggles || [];
+
+    // Filter toggles to only include global and visible local toggles
+    const visibleToggles = allToggles.filter(toggle => {
+      if (toggle.isLocal) {
+        // Check if a toggle element with this id exists on the page
+        return !!document.querySelector(`[data-cv-toggle="${toggle.id}"], [data-cv-toggle-group-id="${toggle.id}"]`);
+      }
+      return true; // Keep global toggles
+    });
+
+    this.createCustomStateModal(visibleToggles);
   }
 
   /**
@@ -179,7 +218,15 @@ export class CustomViewsWidget {
     // <p class="cv-toggle-description">Show or hide the toggleName area </p>
 
     // Get tab groups
-    const tabGroups = this.core.getTabGroups();
+    const allTabGroups = this.core.getTabGroups() || [];
+    const tabGroups = allTabGroups.filter(group => {
+      if (group.isLocal) {
+        // Check if a tab group element with this id exists on the page
+        return !!document.querySelector(`cv-tabgroup[id="${group.id}"]`);
+      }
+      return true; // Keep global tab groups
+    });
+
     let tabGroupControlsHTML = '';
 
 
@@ -550,28 +597,21 @@ export class CustomViewsWidget {
    * Check if this is the first visit and show welcome modal
    */
   private showWelcomeModalIfFirstVisit(): void {
+    if (!this._hasVisibleConfig) return;
+
     const STORAGE_KEY = 'cv-welcome-shown';
     
     // Check if welcome has been shown before
     const hasSeenWelcome = localStorage.getItem(STORAGE_KEY);
     
     if (!hasSeenWelcome) {
-      // Check if this page has any custom views elements
-      const hasCustomViewElements = 
-        document.querySelector('cv-tabgroup') !== null ||
-        document.querySelector('cv-tab') !== null ||
-        document.querySelector('cv-toggle') !== null ||
-        document.querySelector('[data-cv-toggle]') !== null;
+      // Show welcome modal after a short delay to let the page settle
+      setTimeout(() => {
+        this.createWelcomeModal();
+      }, 500);
       
-      if (hasCustomViewElements) {
-        // Show welcome modal after a short delay to let the page settle
-        setTimeout(() => {
-          this.createWelcomeModal();
-        }, 500);
-        
-        // Mark as shown
-        localStorage.setItem(STORAGE_KEY, 'true');
-      }
+      // Mark as shown
+      localStorage.setItem(STORAGE_KEY, 'true');
     }
   }
 
