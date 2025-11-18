@@ -144,10 +144,20 @@ export class CustomViewsWidget {
    * Open the custom state creator
    */
   private openStateModal(): void {
-    // Get toggles from current configuration and open the modal regardless of count
+    // Get toggles from current configuration
     const config = this.core.getConfig();
-    const toggles = config?.toggles || [];
-    this.createCustomStateModal(toggles);
+    const allToggles = config?.toggles || [];
+
+    // Filter toggles to only include global and visible local toggles
+    const visibleToggles = allToggles.filter(toggle => {
+      if (toggle.isLocal) {
+        // Check if a toggle element with this id exists on the page
+        return !!document.querySelector(`[data-cv-toggle="${toggle.id}"], [data-cv-toggle-group-id="${toggle.id}"]`);
+      }
+      return true; // Keep global toggles
+    });
+
+    this.createCustomStateModal(visibleToggles);
   }
 
   /**
@@ -179,7 +189,15 @@ export class CustomViewsWidget {
     // <p class="cv-toggle-description">Show or hide the toggleName area </p>
 
     // Get tab groups
-    const tabGroups = this.core.getTabGroups();
+    const allTabGroups = this.core.getTabGroups() || [];
+    const tabGroups = allTabGroups.filter(group => {
+      if (group.isLocal) {
+        // Check if a tab group element with this id exists on the page
+        return !!document.querySelector(`cv-tabgroup[id="${group.id}"]`);
+      }
+      return true; // Keep global tab groups
+    });
+
     let tabGroupControlsHTML = '';
 
 

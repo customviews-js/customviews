@@ -87,11 +87,35 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 }
 ```
 
+## Global vs. Local Toggles
+
+By default, all toggles defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
+
+You can mark a toggle as **local** to make it appear in the widget *only* on pages where that specific toggle is actually used. This is useful for keeping the widget clean and only showing relevant options to the user.
+
+To mark a toggle as local, add `"isLocal": true` to its configuration.
+
+**Example:**
+
+If you have a `mac` toggle that is only used on a few pages, setting it as local ensures the "MacOS" option only appears in the widget on those pages.
+
+```json
+{
+  "config": {
+    "toggles": [
+      { "id": "mac", "label": "MacOS", "isLocal": true },
+      { "id": "linux", "label": "Linux" },
+      { "id": "windows", "label": "Windows" }
+    ]
+  }
+}
+```
+
 ## Key Fields
 
 | Field | Description |
 |--------|-------------|
-| `config.toggles` | An array of toggle objects. Each object must have an `id` and can have an optional `label` for display in the widget. |
+| `config.toggles` | An array of toggle objects. Each object must have an `id` and can have an optional `label` and `isLocal` flag. |
 | `config.defaultState.toggles` | An array of toggle `id`s that should be active by default on first load when no URL or stored state is available. |
 
 ---

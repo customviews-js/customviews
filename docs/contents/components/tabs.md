@@ -566,6 +566,36 @@ For more control (such as widget integration or default selections), configure t
 </box>
 
 
+## Global vs. Local Tab Groups
+
+By default, all tab groups defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
+
+You can mark a tab group as **local** to make it appear in the widget *only* on pages where that specific tab group is actually used. This is useful for keeping the widget clean and only showing relevant options to the user.
+
+To mark a tab group as local, add `"isLocal": true` to its configuration.
+
+**Example:**
+
+Imagine you have a "fruit" tab group that only appears on one page. By setting it as local, the "Fruit Selection" option will only show up in the widget on that specific page.
+
+```json
+{
+  "config": {
+    "tabGroups": [
+      {
+        "id": "fruit",
+        "label": "Fruit Selection",
+        "isLocal": true, // This makes the group local
+        "tabs": [
+          { "id": "apple", "label": "Apple" },
+          { "id": "orange", "label": "Orange" }
+        ]
+      }
+    ]
+  }
+}
+```
+
 ### Config File Options
 
 #### TabGroupConfig
@@ -574,6 +604,7 @@ For more control (such as widget integration or default selections), configure t
 |------|------|---------|-------------|
 | `id` | string | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
 | `label` | string | - | Display name shown in the widget. |
+| `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the widget on pages where it's used. |
 | `tabs` | TabConfig[] | **(required)** | Array of tab configurations. |
 
 #### TabConfig
