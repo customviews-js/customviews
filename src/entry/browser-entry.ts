@@ -115,7 +115,7 @@ export default function initializeFromScript(): void {
           core,
           ...configFile.widget
         });
-        widget.render();
+        widget.renderModalIcon();
         
         // Store widget instance
         window.customViewsInstance.widget = widget;
