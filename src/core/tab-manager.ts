@@ -165,6 +165,12 @@ export class TabManager {
     const rootEl = document.body; // Needed for NAV_HIDE_ROOT_CLASS check
     
     tabGroups.forEach((groupEl) => {
+      // Prevent re-initialization
+      if (groupEl.hasAttribute('data-cv-initialized')) {
+        return;
+      }
+      groupEl.setAttribute('data-cv-initialized', 'true');
+
       // Filter to only build for groups with nav="auto" or no nav attribute
       if (!groupEl.matches(NAV_AUTO_SELECTOR)) {
         return;
@@ -491,37 +497,35 @@ export class TabManager {
   /**
    * Update pin icon visibility for all tab groups based on current state.
    * Shows pin icon for tabs that are in the persisted state (i.e., have been double-clicked).
-   */
+    */
   public static updatePinIcons(
-    tabGroups: HTMLElement[],
-    tabs: Record<string, string>
-  ): void {
-    tabGroups.forEach((groupEl) => {
-      const groupId = groupEl.getAttribute('id');
-      if (!groupId) return;
+      tabGroups: HTMLElement[],
+      tabs: Record<string, string>
+    ): void {
+      tabGroups.forEach((groupEl) => {
+        const groupId = groupEl.getAttribute('id');
+        if (!groupId) return;
 
-      const persistedTabId = tabs[groupId];
-      
-      // Find all nav links in this group
-      const navLinks = groupEl.querySelectorAll('.nav-link');
-      navLinks.forEach((link) => {
-        const rawTabId = link.getAttribute('data-raw-tab-id');
-        const pinIcon = link.querySelector('.cv-tab-pin-icon') as HTMLElement;
+        const persistedTabId = tabs[groupId];
         
-        if (!pinIcon || !rawTabId) return;
-        
-        // Check if persisted tab ID matches any of the split IDs (for multi-ID tabs)
-        const splitIds = this.splitTabIds(rawTabId);
-        const shouldShowPin = persistedTabId && splitIds.includes(persistedTabId);
-        
-        if (shouldShowPin) {
-          pinIcon.style.display = 'inline-block';
-        } else {
-          pinIcon.style.display = 'none';
-        }
+        // Find all nav links in this group
+        const navLinks = groupEl.querySelectorAll('.nav-link');
+        navLinks.forEach((link) => {
+          const rawTabId = link.getAttribute('data-raw-tab-id');
+          const pinIcon = link.querySelector('.cv-tab-pin-icon') as HTMLElement;
+          
+          if (!pinIcon || !rawTabId) return;
+          
+          // Check if persisted tab ID matches any of the split IDs (for multi-ID tabs)
+          const splitIds = this.splitTabIds(rawTabId);
+          const shouldShowPin = persistedTabId && splitIds.includes(persistedTabId);
+          
+          if (shouldShowPin) {
+            pinIcon.style.display = 'inline-block';
+          } else {
+            pinIcon.style.display = 'none';
+          }
+        });
       });
-    });
-  }
-
-
+    }
 }

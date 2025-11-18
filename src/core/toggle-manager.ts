@@ -62,4 +62,25 @@ export class ToggleManager {
       el.classList.remove('cv-visible');
     }
   }
+
+  /**
+   * Scans a given DOM subtree for toggle elements and initializes them.
+   * This includes applying visibility and rendering assets.
+   */
+  public static initializeToggles(
+    root: HTMLElement,
+    activeToggles: ToggleId[],
+    assetsManager: AssetsManager
+  ): void {
+    const elements: HTMLElement[] = [];
+    if (root.matches('[data-cv-toggle], [data-customviews-toggle], cv-toggle')) {
+        elements.push(root);
+    }
+    root.querySelectorAll('[data-cv-toggle], [data-customviews-toggle], cv-toggle').forEach(el => elements.push(el as HTMLElement));
+
+    if (elements.length === 0) return;
+
+    this.applyToggles(elements, activeToggles);
+    this.renderAssets(elements, activeToggles, assetsManager);
+  }
 }

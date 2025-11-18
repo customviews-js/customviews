@@ -58,7 +58,10 @@ export class CustomViewsCore {
     let newComponentsFound = false;
 
     // Scan for toggles
-    const toggles = element.querySelectorAll(TOGGLE_SELECTOR);
+    const toggles = Array.from(element.querySelectorAll(TOGGLE_SELECTOR));
+    if (element.matches(TOGGLE_SELECTOR)) {
+      toggles.unshift(element);
+    }
     toggles.forEach((toggle) => {
       if (!this.componentRegistry.toggles.has(toggle as HTMLElement)) {
         this.componentRegistry.toggles.add(toggle as HTMLElement);
@@ -67,7 +70,10 @@ export class CustomViewsCore {
     });
 
     // Scan for tab groups
-    const tabGroups = element.querySelectorAll(TABGROUP_SELECTOR);
+    const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
+    if (element.matches(TABGROUP_SELECTOR)) {
+      tabGroups.unshift(element);
+    }
     tabGroups.forEach((tabGroup) => {
       if (!this.componentRegistry.tabGroups.has(tabGroup as HTMLElement)) {
         this.componentRegistry.tabGroups.add(tabGroup as HTMLElement);
@@ -167,7 +173,26 @@ export class CustomViewsCore {
     injectCoreStyles();
     this.scan(this.rootEl);
 
-    // Build navigation once (with click and double-click handlers)
+    // Initialize all components found on initial scan
+    this.initializeNewComponents();
+
+    // Apply stored nav visibility preference on page load
+    const navPref = this.persistenceManager.getPersistedTabNavVisibility();
+    if (navPref !== null) {
+      TabManager.setNavsVisibility(this.rootEl, navPref);
+    }
+
+    // For session history, clicks on back/forward button
+    window.addEventListener("popstate", () => {
+      this.loadAndCallApplyState();
+    });
+    this.loadAndCallApplyState();
+    this.initObserver();
+  }
+
+  private initializeNewComponents(): void {
+    // Build navigation for any newly added tab groups.
+    // The `data-cv-initialized` attribute in `buildNavs` prevents re-initialization.
     TabManager.buildNavs(
       Array.from(this.componentRegistry.tabGroups),
       this.config.tabGroups,
@@ -198,36 +223,34 @@ export class CustomViewsCore {
       }
     );
 
-    // Apply stored nav visibility preference on page load
-    const navPref = this.persistenceManager.getPersistedTabNavVisibility();
-    if (navPref !== null) {
-      TabManager.setNavsVisibility(this.rootEl, navPref);
-    }
-
-    // For session history, clicks on back/forward button
-    window.addEventListener("popstate", () => {
-      this.loadAndCallApplyState();
-    });
-    this.loadAndCallApplyState();
-    this.initObserver();
+    // Future components (e.g., toggles, widgets) can be initialized here
   }
 
   private initObserver() {
     this.observer = new MutationObserver((mutations) => {
-      let needsRender = false;
+      let newComponentsFound = false;
       for (const mutation of mutations) {
-        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+        if (mutation.type === 'childList') {
           mutation.addedNodes.forEach((node) => {
-            if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node instanceof Element) {
+              // Scan the new node for components and add them to the registry
               if (this.scan(node as HTMLElement)) {
-                needsRender = true;
+                newComponentsFound = true;
               }
             }
           });
         }
       }
-      if (needsRender) {
-        this.loadAndCallApplyState();
+
+      if (newComponentsFound) {
+        // Initialize navs for new components.
+        this.initializeNewComponents();
+        
+        // Re-apply the last known state. renderState will handle disconnecting
+        // the observer to prevent infinite loops.
+        if (this.lastAppliedState) {
+          this.renderState(this.lastAppliedState);
+        }
       }
     });
 
@@ -296,7 +319,11 @@ export class CustomViewsCore {
     }
   }
 
-  /** Render all toggles for the current state */
+  /** 
+   * Renders state on components in ComponentRegistry
+   * Applies the given state.
+   * Disconnects the mutation observer during rendering to prevent loops
+   **/
   private renderState(state: State) {
     this.observer?.disconnect();
     this.lastAppliedState = this.cloneState(state);
