@@ -2,35 +2,30 @@ import type { ToggleId } from "../types/types";
 import { AssetsManager } from "./assets-manager";
 import { renderAssetInto } from "./render";
 
-// Constants for selectors
-const TOGGLE_DATA_SELECTOR = "[data-cv-toggle], [data-customviews-toggle]";
-const TOGGLE_ELEMENT_SELECTOR = "cv-toggle";
-const TOGGLE_SELECTOR = `${TOGGLE_DATA_SELECTOR}, ${TOGGLE_ELEMENT_SELECTOR}`;
-
 /**
  * ToggleManager handles discovery, visibility, and asset rendering for toggle elements
  */
 export class ToggleManager {
   /**
-   * Apply toggle visibility to all toggle elements in the DOM
+   * Apply toggle visibility to a given list of toggle elements
    */
-  public static applyToggles(rootEl: HTMLElement, activeToggles: ToggleId[]): void {
-    rootEl.querySelectorAll(TOGGLE_SELECTOR).forEach(el => {
-      const categories = this.getToggleCategories(el as HTMLElement);
+  public static applyToggles(elements: HTMLElement[], activeToggles: ToggleId[]): void {
+    elements.forEach(el => {
+      const categories = this.getToggleCategories(el);
       const shouldShow = categories.some(cat => activeToggles.includes(cat));
-      this.applyToggleVisibility(el as HTMLElement, shouldShow);
+      this.applyToggleVisibility(el, shouldShow);
     });
   }
 
   /**
-   * Render assets into toggle elements that are currently visible
+   * Render assets into a given list of toggle elements that are currently visible
    */
-  public static renderAssets(rootEl: HTMLElement, activeToggles: ToggleId[], assetsManager: AssetsManager): void {
-    rootEl.querySelectorAll(TOGGLE_SELECTOR).forEach(el => {
-      const categories = this.getToggleCategories(el as HTMLElement);
-      const toggleId = this.getToggleId(el as HTMLElement);
+  public static renderAssets(elements: HTMLElement[], activeToggles: ToggleId[], assetsManager: AssetsManager): void {
+    elements.forEach(el => {
+      const categories = this.getToggleCategories(el);
+      const toggleId = this.getToggleId(el);
       if (toggleId && categories.some(cat => activeToggles.includes(cat))) {
-        renderAssetInto(el as HTMLElement, toggleId, assetsManager);
+        renderAssetInto(el, toggleId, assetsManager);
       }
     });
   }

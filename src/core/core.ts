@@ -8,6 +8,13 @@ import { ToggleManager } from "./toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
 
+const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
+const TABGROUP_SELECTOR = 'cv-tabgroup';
+
+interface ComponentRegistry {
+  toggles: Set<HTMLElement>;
+  tabGroups: Set<HTMLElement>;
+}
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -21,6 +28,12 @@ export class CustomViewsCore {
   private assetsManager: AssetsManager;
   private persistenceManager: PersistenceManager;
   private visibilityManager: VisibilityManager;
+  private observer: MutationObserver | null = null;
+
+  private componentRegistry: ComponentRegistry = {
+    toggles: new Set(),
+    tabGroups: new Set(),
+  };
 
   private config: Config;
   private stateChangeListeners: Array<() => void> = [];
@@ -35,6 +48,34 @@ export class CustomViewsCore {
     this.visibilityManager = new VisibilityManager();
     this.showUrlEnabled = opt.showUrl ?? false;
     this.lastAppliedState = this.cloneState(this.getComputedDefaultState());
+  }
+
+  /**
+   * Scan the given element for toggles and tab groups, register them
+   * Returns true if new components were found
+   */
+  private scan(element: HTMLElement): boolean {
+    let newComponentsFound = false;
+
+    // Scan for toggles
+    const toggles = element.querySelectorAll(TOGGLE_SELECTOR);
+    toggles.forEach((toggle) => {
+      if (!this.componentRegistry.toggles.has(toggle as HTMLElement)) {
+        this.componentRegistry.toggles.add(toggle as HTMLElement);
+        newComponentsFound = true;
+      }
+    });
+
+    // Scan for tab groups
+    const tabGroups = element.querySelectorAll(TABGROUP_SELECTOR);
+    tabGroups.forEach((tabGroup) => {
+      if (!this.componentRegistry.tabGroups.has(tabGroup as HTMLElement)) {
+        this.componentRegistry.tabGroups.add(tabGroup as HTMLElement);
+        newComponentsFound = true;
+      }
+    });
+
+    return newComponentsFound;
   }
 
   public getConfig(): Config {
@@ -124,10 +165,11 @@ export class CustomViewsCore {
   // Inject styles, setup listeners and call rendering logic
   public async init() {
     injectCoreStyles();
+    this.scan(this.rootEl);
 
     // Build navigation once (with click and double-click handlers)
     TabManager.buildNavs(
-      this.rootEl,
+      Array.from(this.componentRegistry.tabGroups),
       this.config.tabGroups,
       // Single click: update clicked group only (local, no persistence)
       (groupId, tabId, groupEl) => {
@@ -167,6 +209,32 @@ export class CustomViewsCore {
       this.loadAndCallApplyState();
     });
     this.loadAndCallApplyState();
+    this.initObserver();
+  }
+
+  private initObserver() {
+    this.observer = new MutationObserver((mutations) => {
+      let needsRender = false;
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              if (this.scan(node as HTMLElement)) {
+                needsRender = true;
+              }
+            }
+          });
+        }
+      }
+      if (needsRender) {
+        this.loadAndCallApplyState();
+      }
+    });
+
+    this.observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
   }
 
   // Priority: URL state > persisted state > config default > computed default
@@ -230,27 +298,35 @@ export class CustomViewsCore {
 
   /** Render all toggles for the current state */
   private renderState(state: State) {
+    this.observer?.disconnect();
     this.lastAppliedState = this.cloneState(state);
     const toggles = state?.toggles || [];
     const finalToggles = this.visibilityManager.filterVisibleToggles(toggles);
 
+    const toggleElements = Array.from(this.componentRegistry.toggles);
+    const tabGroupElements = Array.from(this.componentRegistry.tabGroups);
+
     // Apply toggle visibility
-    ToggleManager.applyToggles(this.rootEl, finalToggles);
+    ToggleManager.applyToggles(toggleElements, finalToggles);
 
     // Render assets into toggles
-    ToggleManager.renderAssets(this.rootEl, finalToggles, this.assetsManager);
+    ToggleManager.renderAssets(toggleElements, finalToggles, this.assetsManager);
 
     // Apply tab selections
-    TabManager.applyTabSelections(this.rootEl, state.tabs || {}, this.config.tabGroups);
+    TabManager.applyTabSelections(tabGroupElements, state.tabs || {}, this.config.tabGroups);
 
     // Update nav active states (without rebuilding)
-    TabManager.updateAllNavActiveStates(this.rootEl, state.tabs || {}, this.config.tabGroups);
+    TabManager.updateAllNavActiveStates(tabGroupElements, state.tabs || {}, this.config.tabGroups);
 
     // Update pin icons to show which tabs are persisted
-    TabManager.updatePinIcons(this.rootEl, state.tabs || {});
+    TabManager.updatePinIcons(tabGroupElements, state.tabs || {});
 
     // Notify state change listeners (like widgets)
     this.notifyStateChangeListeners();
+    this.observer?.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
   }
 
   /**
