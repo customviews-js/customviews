@@ -77,7 +77,7 @@ export class CustomViewsCore {
     }
 
     const computedState: State = {
-      toggles: [...(this.config.allToggles || [])],
+      toggles: this.config.toggles?.map(t => t.id) || [],
       tabs
     };
 

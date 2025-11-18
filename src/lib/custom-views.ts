@@ -12,7 +12,7 @@ export type initOptions = {
   assetsJsonPath?: string;
   /** Root element to apply custom views */
   rootEl?: HTMLElement;
-  /** Config object with allToggles and defaultState */
+  /** Config object with toggles and defaultState */
   config?: Config;
   /** Base URL for all paths */
   baseURL?: string;
@@ -56,7 +56,7 @@ export class CustomViews {
     } else {
       console.error("No config provided, using minimal default config");
       // Create a minimal default config
-      config = { allToggles: [], defaultState: {} };
+      config = { toggles: [], defaultState: {} };
     }
 
     const coreOptions: CustomViewsOptions = {

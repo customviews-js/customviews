@@ -1,6 +1,10 @@
 {
   "config": {
-    "allToggles": ["windows", "mac", "linux"],
+    "toggles": [
+      { "id": "windows", "label": "Windows" },
+      { "id": "mac", "label": "MacOS" },
+      { "id": "linux", "label": "Linux" }
+    ],
     "defaultState": {
       "toggles": ["windows"],
       "tabs": {

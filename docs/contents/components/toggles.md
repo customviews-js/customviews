@@ -74,12 +74,16 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 
 ```json
 {
-	"config": {
-		"allToggles": ["mac", "linux", "windows"],
-		"defaultState": {
-			"toggles": ["mac", "linux", "windows"]
-		}
-	}
+  "config": {
+    "toggles": [
+      { "id": "mac", "label": "MacOS" },
+      { "id": "linux", "label": "Linux" },
+      { "id": "windows", "label": "Windows" }
+    ],
+    "defaultState": {
+      "toggles": ["mac", "linux", "windows"]
+    }
+  }
 }
 ```
 
@@ -87,8 +91,8 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 
 | Field | Description |
 |--------|-------------|
-| `config.allToggles` | List of all toggle IDs the site supports. The widget uses this list to render toggle controls. |
-| `config.defaultState.toggles` | Toggles visible by default on first load when no URL or stored state is available. |
+| `config.toggles` | An array of toggle objects. Each object must have an `id` and can have an optional `label` for display in the widget. |
+| `config.defaultState.toggles` | An array of toggle `id`s that should be active by default on first load when no URL or stored state is available. |
 
 ---
 
@@ -113,7 +117,7 @@ Elements whose toggles match the active state are shown; all others are hidden.
 ## Troubleshooting
 
 * Toggles not appearing in widget?
-	* Check config.allToggles includes your toggle IDs.
+	* Check that your `config.toggles` array is correctly formatted with `id` and `label` for each toggle.
 
 * No effect when toggling?
 	* Ensure the element uses data-cv-toggle and matches an active toggle ID.

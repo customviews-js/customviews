@@ -53,11 +53,21 @@ export interface TabGroupConfig {
 }
 
 /**
+ * Configuration for a single toggle.
+ */
+export interface ToggleConfig {
+  /** Toggle identifier */
+  id: string;
+  /** Display label for the toggle */
+  label?: string;
+}
+
+/**
  * Configuration for the site, has default state and list of toggles
  */
 export interface Config {
   /** All available toggle categories */
-  allToggles?: string[];
+  toggles?: ToggleConfig[];
   /** Default state for the site */
   defaultState?: State;
   /** Optional tab group configurations */
@@ -68,7 +78,7 @@ export interface Config {
  * Represents the configuration file structure for CustomViews auto-initialization.
  */
 export interface ConfigFile {
-  /** Core configuration object with allToggles and defaultState */
+  /** Core configuration object with toggles and defaultState */
   config?: Config;
   /** Path to the assets JSON file */
   assetsJsonPath?: string;

@@ -72,7 +72,7 @@ export default function initializeFromScript(): void {
           console.warn(`[CustomViews] Config file not found at ${fullConfigPath}. Using defaults.`);
           // Provide minimal default config structure
           configFile = { 
-            config: { allToggles: [], defaultState: {}},
+            config: { toggles: [], defaultState: {}},
             widget: { enabled: true }
           };
         } else {
