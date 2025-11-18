@@ -8,8 +8,8 @@
     ],
     "tabGroups": [
       {
-        "id": "ltabs",
-        "label": "Local Tab",
+        "id": "ltab",
+        "label": "Local Tab Configuration",
         "isLocal": true,
         "tabs": [
           { "id": "lt1", "label": "Tab Option 1" },
