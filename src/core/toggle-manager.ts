@@ -24,8 +24,11 @@ export class ToggleManager {
     elements.forEach(el => {
       const categories = this.getToggleCategories(el);
       const toggleId = this.getToggleId(el);
-      if (toggleId && categories.some(cat => activeToggles.includes(cat))) {
+      const isRendered = el.dataset.cvRendered === 'true';
+
+      if (toggleId && !isRendered && categories.some(cat => activeToggles.includes(cat))) {
         renderAssetInto(el, toggleId, assetsManager);
+        el.dataset.cvRendered = 'true';
       }
     });
   }
