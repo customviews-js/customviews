@@ -1,6 +1,6 @@
 import { injectWidgetStyles } from "../styles/widget-styles";
 import type { CustomViewsCore } from "./core";
-import type { State, ToggleConfig } from "../types/types";
+import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
@@ -49,7 +49,7 @@ export class CustomViewsWidget {
   private _hasVisibleConfig = false;
   
   // Modal state
-  private modal: HTMLElement | null = null;
+  private stateModal: HTMLElement | null = null;
   
 
   constructor(options: WidgetOptions) {
@@ -146,9 +146,9 @@ export class CustomViewsWidget {
     }
 
     // Clean up modal
-    if (this.modal) {
-      this.modal.remove();
-      this.modal = null;
+    if (this.stateModal) {
+      this.stateModal.remove();
+      this.stateModal = null;
     }
   }
 
@@ -163,9 +163,8 @@ export class CustomViewsWidget {
    * Close the modal
    */
   private closeModal(): void {
-    if (this.modal) {
-      this.modal.remove();
-      this.modal = null;
+    if (this.stateModal) {
+      this.stateModal.classList.add('cv-hidden');
     }
   }
 
@@ -173,6 +172,31 @@ export class CustomViewsWidget {
    * Open the custom state creator
    */
   private openStateModal(): void {
+    if (!this.stateModal) {
+      this._createStateModal();
+    }
+    this._updateStateModalContent();
+    this.stateModal!.classList.remove('cv-hidden');
+  }
+
+  /**
+   * Create the custom state creator modal shell and attach listeners
+   */
+  private _createStateModal(): void {
+    this.stateModal = document.createElement('div');
+    this.stateModal.className = 'cv-widget-modal-overlay cv-hidden';
+    this.applyThemeToModal();
+    
+    document.body.appendChild(this.stateModal);
+    this._attachStateModalFrameEventListeners();
+  }
+
+  /**
+   * Update the content of the state modal
+   */
+  private _updateStateModalContent(): void {
+    if (!this.stateModal) return;
+
     // Get toggles from current configuration
     const config = this.core.getConfig();
     const allToggles = config?.toggles || [];
@@ -186,21 +210,7 @@ export class CustomViewsWidget {
       return true; // Keep global toggles
     });
 
-    this.createCustomStateModal(visibleToggles);
-  }
-
-  /**
-   * Create the custom state creator modal
-   */
-  private createCustomStateModal(toggles: ToggleConfig[]): void {
-    // Close existing modal
-    this.closeModal();
-
-    this.modal = document.createElement('div');
-    this.modal.className = 'cv-widget-modal-overlay';
-    this.applyThemeToModal();
-    
-    const toggleControlsHtml = toggles.map(toggle => `
+    const toggleControlsHtml = visibleToggles.map(toggle => `
       <div class="cv-toggle-card">
         <div class="cv-toggle-content">
           <div>
@@ -213,9 +223,6 @@ export class CustomViewsWidget {
         </div>
       </div>
     `).join('');
-    
-    // Todo: Re-add description if needed (Line 168, add label field to toggles if needed change structure)
-    // <p class="cv-toggle-description">Show or hide the toggleName area </p>
 
     // Get tab groups
     const allTabGroups = this.core.getTabGroups() || [];
@@ -228,10 +235,7 @@ export class CustomViewsWidget {
     });
 
     let tabGroupControlsHTML = '';
-
-
     if (this.options.showTabGroups && tabGroups && tabGroups.length > 0) {
-      // Determine initial nav visibility state
       const initialNavsVisible = TabManager.areNavsVisible(document.body);
       
       tabGroupControlsHTML = `
@@ -268,8 +272,7 @@ export class CustomViewsWidget {
       `;
     }
 
-
-    this.modal.innerHTML = `
+    this.stateModal.innerHTML = `
       <div class="cv-widget-modal cv-custom-state-modal">
         <header class="cv-modal-header">
           <div class="cv-modal-header-content">
@@ -285,7 +288,7 @@ export class CustomViewsWidget {
         <main class="cv-modal-main">
           ${this.options.description ? `<p class="cv-modal-description">${this.options.description}</p>` : ''}
           
-          ${toggles.length ? `
+          ${visibleToggles.length ? `
           <div class="cv-content-section">
             <div class="cv-section-heading">Toggles</div>
             <div class="cv-toggles-container">
@@ -319,53 +322,45 @@ export class CustomViewsWidget {
       </div>
     `;
 
-    document.body.appendChild(this.modal);
-    this.attachStateModalEventListeners();
-
-    // Load current state into form if we're already in a custom state
+    this._attachStateModalContentEventListeners();
     this.loadCurrentStateIntoForm();
   }
 
   /**
-   * Attach event listeners for custom state creator
+   * Attach event listeners for the modal frame (delegated events)
    */
-  private attachStateModalEventListeners(): void {
-    if (!this.modal) return;
+  private _attachStateModalFrameEventListeners(): void {
+    if (!this.stateModal) return;
 
-    // Close button
-    const closeBtn = this.modal.querySelector('.cv-modal-close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
+    // Delegated click events
+    this.stateModal.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+
+      // Close button
+      if (target.closest('.cv-modal-close')) {
         this.closeModal();
-      });
-    }
+        return;
+      }
 
-    // Copy URL button
-    const copyUrlBtn = this.modal.querySelector('.cv-share-btn');
-    if (copyUrlBtn) {
-      copyUrlBtn.addEventListener('click', () => {
+      // Copy URL button
+      if (target.closest('.cv-share-btn')) {
         this.copyShareableURL();
-        
-        // Visual feedback: change icon to tick for 3 seconds
-        const iconContainer = copyUrlBtn.querySelector('.cv-share-btn-icon');
+        const copyUrlBtn = target.closest('.cv-share-btn');
+        const iconContainer = copyUrlBtn?.querySelector('.cv-share-btn-icon');
         if (iconContainer) {
           const originalIcon = iconContainer.innerHTML;
           iconContainer.innerHTML = getTickIcon();
-          
-          // Revert after 3 seconds
           setTimeout(() => {
             iconContainer.innerHTML = originalIcon;
           }, 3000);
         }
-      });
-    }
+        return;
+      }
 
-    // Reset to default button
-    const resetBtn = this.modal.querySelector('.cv-reset-btn');
-    if (resetBtn) {
-      resetBtn.addEventListener('click', () => {
-        // Add spinning animation to icon
-        const resetIcon = resetBtn.querySelector('.cv-reset-btn-icon');
+      // Reset to default button
+      if (target.closest('.cv-reset-btn')) {
+        const resetBtn = target.closest('.cv-reset-btn');
+        const resetIcon = resetBtn?.querySelector('.cv-reset-btn-icon');
         if (resetIcon) {
           resetIcon.classList.add('cv-spinning');
         }
@@ -373,17 +368,39 @@ export class CustomViewsWidget {
         this.core.resetToDefault();
         this.loadCurrentStateIntoForm();
         
-        // Remove spinning animation after it completes
         setTimeout(() => {
           if (resetIcon) {
             resetIcon.classList.remove('cv-spinning');
           }
-        }, 600); // 600ms matches the animation duration
-      });
-    }
+        }, 600);
+        return;
+      }
+      
+      // Overlay click to close
+      if (e.target === this.stateModal) {
+        this.closeModal();
+      }
+    });
+
+    // Escape key to close
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        this.closeModal();
+      }
+    };
+    // We can't remove this listener easily if it's anonymous, so we attach it to the document
+    // and it will stay for the lifetime of the widget. This is acceptable.
+    document.addEventListener('keydown', handleEscape);
+  }
+
+  /**
+   * Attach event listeners for custom state creator's dynamic content
+   */
+  private _attachStateModalContentEventListeners(): void {
+    if (!this.stateModal) return;
 
     // Listen to toggle switches
-    const toggleInputs = this.modal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
+    const toggleInputs = this.stateModal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
     toggleInputs.forEach(toggleInput => {
       toggleInput.addEventListener('change', () => {
         const state = this.getCurrentCustomStateFromModal();
@@ -392,18 +409,15 @@ export class CustomViewsWidget {
     });
 
     // Listen to tab group selects
-    const tabGroupSelects = this.modal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
+    const tabGroupSelects = this.stateModal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
     tabGroupSelects.forEach(select => {
       select.addEventListener('change', () => {
         const groupId = select.dataset.groupId;
         const tabId = select.value;
         if (groupId && tabId) {
-          // Get current state and update the tab for this group, then apply globally
-          // This triggers sync behavior and persistence
           const currentTabs = this.core.getCurrentActiveTabs();
           currentTabs[groupId] = tabId;
           
-          // Apply state globally for persistence and sync
           const currentToggles = this.core.getCurrentActiveToggles();
           const newState: State = {
             toggles: currentToggles,
@@ -415,78 +429,44 @@ export class CustomViewsWidget {
     });
 
     // Listener for show/hide tab navs
-    const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
-    const navIcon = this.modal?.querySelector('#cv-nav-icon');
-    const navHeaderCard = this.modal?.querySelector('.cv-tabgroup-card.cv-tabgroup-header') as HTMLElement | null;
+    const tabNavToggle = this.stateModal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    const navIcon = this.stateModal?.querySelector('#cv-nav-icon');
+    const navHeaderCard = this.stateModal?.querySelector('.cv-tabgroup-card.cv-tabgroup-header') as HTMLElement | null;
     
     if (tabNavToggle && navIcon && navHeaderCard) {
-      // Helper to update icon based on state
       const updateIcon = (isVisible: boolean, isHovering: boolean = false) => {
         if (isHovering) {
-          // On hover, show the transition icon
           navIcon.innerHTML = getNavDashed();
         } else {
-          // Normal state, show the status icon (on if visible, off if hidden)
           navIcon.innerHTML = isVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
         }
       };
       
-      // Add hover listeners to entire header card
-      navHeaderCard.addEventListener('mouseenter', () => {
-        updateIcon(tabNavToggle.checked, true);
-      });
+      navHeaderCard.addEventListener('mouseenter', () => updateIcon(tabNavToggle.checked, true));
+      navHeaderCard.addEventListener('mouseleave', () => updateIcon(tabNavToggle.checked, false));
       
-      navHeaderCard.addEventListener('mouseleave', () => {
-        updateIcon(tabNavToggle.checked, false);
-      });
-      
-      // Add change listener
       tabNavToggle.addEventListener('change', () => {
         const visible = tabNavToggle.checked;
-        
-        // Update the icon based on new state (not hovering)
         updateIcon(visible, false);
-        
-        // Persist preference via core
         this.core.persistTabNavVisibility(visible);
-        
-        // Apply to DOM using TabManager via core
         try {
-          const rootEl = document.body;
-          TabManager.setNavsVisibility(rootEl, visible);
+          TabManager.setNavsVisibility(document.body, visible);
         } catch (e) {
-          // ignore errors
           console.error('Failed to set tab nav visibility:', e);
         }
       });
     }
-
-    // Overlay click to close
-    this.modal.addEventListener('click', (e) => {
-      if (e.target === this.modal) {
-        this.closeModal();
-      }
-    });
-
-    // Escape key to close
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        this.closeModal();
-        document.removeEventListener('keydown', handleEscape);
-      }
-    };
-    document.addEventListener('keydown', handleEscape);
   }
 
   /**
    * Apply theme class to the modal overlay based on options
    */
   private applyThemeToModal(): void {
-    if (!this.modal) return;
+    if (!this.stateModal) return;
     if (this.options.theme === 'dark') {
-      this.modal.classList.add('cv-widget-theme-dark');
+      this.stateModal.classList.add('cv-widget-theme-dark');
     } else {
-      this.modal.classList.remove('cv-widget-theme-dark');
+      this.stateModal.classList.remove('cv-widget-theme-dark');
     }
   }
 
@@ -495,13 +475,13 @@ export class CustomViewsWidget {
    * Get current state from form values
    */
   private getCurrentCustomStateFromModal(): State {
-    if (!this.modal) {
+    if (!this.stateModal) {
       return {};
     }
 
     // Collect toggle values
     const toggles: string[] = [];
-    const toggleInputs = this.modal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
+    const toggleInputs = this.stateModal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
     toggleInputs.forEach(toggleInput => {
       const toggle = toggleInput.dataset.toggle;
       if (toggle && toggleInput.checked) {
@@ -510,7 +490,7 @@ export class CustomViewsWidget {
     });
 
     // Collect tab selections
-    const tabGroupSelects = this.modal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
+    const tabGroupSelects = this.stateModal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
     const tabs: Record<string, string> = {};
     tabGroupSelects.forEach(select => {
       const groupId = select.dataset.groupId;
@@ -542,20 +522,20 @@ export class CustomViewsWidget {
    * Load current state into form based on currently active toggles
    */
   private loadCurrentStateIntoForm(): void {
-    if (!this.modal) return;
+    if (!this.stateModal) return;
 
     // Get currently active toggles (from custom state or default configuration)
     const activeToggles = this.core.getCurrentActiveToggles();
     
     // First, uncheck all toggle inputs
-    const allToggleInputs = this.modal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
+    const allToggleInputs = this.stateModal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
     allToggleInputs.forEach(toggleInput => {
       toggleInput.checked = false;
     });
 
     // Then check the ones that should be active
     activeToggles.forEach(toggle => {
-      const toggleInput = this.modal?.querySelector(`[data-toggle="${toggle}"]`) as HTMLInputElement;
+      const toggleInput = this.stateModal?.querySelector(`[data-toggle="${toggle}"]`) as HTMLInputElement;
       if (toggleInput) {
         toggleInput.checked = true;
       }
@@ -563,7 +543,7 @@ export class CustomViewsWidget {
 
     // Load tab group selections
     const activeTabs = this.core.getCurrentActiveTabs();
-    const tabGroupSelects = this.modal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
+    const tabGroupSelects = this.stateModal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
     tabGroupSelects.forEach(select => {
       const groupId = select.dataset.groupId;
       if (groupId && activeTabs[groupId]) {
@@ -579,8 +559,8 @@ export class CustomViewsWidget {
       }
       return TabManager.areNavsVisible(document.body);
     })();
-    const tabNavToggle = this.modal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
-    const navIcon = this.modal?.querySelector('#cv-nav-icon');
+    const tabNavToggle = this.stateModal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
+    const navIcon = this.stateModal?.querySelector('#cv-nav-icon');
     if (tabNavToggle) {
       tabNavToggle.checked = navPref;
       // Ensure UI matches actual visibility
@@ -620,13 +600,15 @@ export class CustomViewsWidget {
    */
   private createWelcomeModal(): void {
     // Don't show if there's already a modal open
-    if (this.modal) return;
+    if (this.stateModal && !this.stateModal.classList.contains('cv-hidden')) return;
 
-    this.modal = document.createElement('div');
-    this.modal.className = 'cv-widget-modal-overlay cv-welcome-modal-overlay';
-    this.applyThemeToModal();
+    const welcomeModal = document.createElement('div');
+    welcomeModal.className = 'cv-widget-modal-overlay cv-welcome-modal-overlay';
+    if (this.options.theme === 'dark') {
+      welcomeModal.classList.add('cv-widget-theme-dark');
+    }
     
-    this.modal.innerHTML = `
+    welcomeModal.innerHTML = `
       <div class="cv-widget-modal cv-welcome-modal">
         <header class="cv-modal-header">
           <div class="cv-modal-header-content">
@@ -651,36 +633,36 @@ export class CustomViewsWidget {
       </div>
     `;
 
-    document.body.appendChild(this.modal);
-    this.attachWelcomeModalEventListeners();
+    document.body.appendChild(welcomeModal);
+    this.attachWelcomeModalEventListeners(welcomeModal);
   }
 
   /**
    * Attach event listeners for welcome modal
    */
-  private attachWelcomeModalEventListeners(): void {
-    if (!this.modal) return;
+  private attachWelcomeModalEventListeners(welcomeModal: HTMLElement): void {
+    const closeModal = () => {
+      welcomeModal.remove();
+      document.removeEventListener('keydown', handleEscape);
+    };
 
     // Got it button
-    const gotItBtn = this.modal.querySelector('.cv-welcome-got-it');
+    const gotItBtn = welcomeModal.querySelector('.cv-welcome-got-it');
     if (gotItBtn) {
-      gotItBtn.addEventListener('click', () => {
-        this.closeModal();
-      });
+      gotItBtn.addEventListener('click', closeModal);
     }
 
     // Overlay click to close
-    this.modal.addEventListener('click', (e) => {
-      if (e.target === this.modal) {
-        this.closeModal();
+    welcomeModal.addEventListener('click', (e) => {
+      if (e.target === welcomeModal) {
+        closeModal();
       }
     });
 
     // Escape key to close
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        this.closeModal();
-        document.removeEventListener('keydown', handleEscape);
+        closeModal();
       }
     };
     document.addEventListener('keydown', handleEscape);
