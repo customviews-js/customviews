@@ -1,13 +1,22 @@
 {
   "config": {
-    "allToggles": ["mac", "linux", "windows"],
-    "defaultState": {
-      "toggles": ["windows"],
-      "tabs": {
-        "fruit": "pear"
-      }
-    },
+    "toggles": [
+      { "id": "lt", "label": "Local Toggle", "isLocal": true },
+      { "id": "mac", "label": "MacOS"},
+      { "id": "linux", "label": "Linux" },
+      { "id": "windows", "label": "Windows" }
+    ],
     "tabGroups": [
+      {
+        "id": "ltab",
+        "label": "Local Tab Configuration",
+        "isLocal": true,
+        "tabs": [
+          { "id": "lt1", "label": "Tab Option 1" },
+          { "id": "lt2", "label": "Tab Option 2" },
+          { "id": "lt3", "label": "Tab Option 3" }
+        ]
+      },
       {
         "id": "fruit",
         "label": "Fruit Selection",
@@ -17,7 +26,13 @@
           { "id": "pear", "label": "Pear" }
         ]
       }
-    ]
+    ],
+    "defaultState": {
+      "toggles": ["windows"],
+      "tabs": {
+        "fruit": "pear"
+      }
+    }
   },
   "baseUrl": "/customviews",
   "widget": {

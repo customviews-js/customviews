@@ -20,20 +20,6 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/archive/concepts.md",
-      "title": "Development Concepts",
-      "headings": {
-        "overall-idea": "Overall Idea",
-        "terminology-of-customviews": "Terminology of CustomViews",
-        "toggle": "Toggle",
-        "3-state": "3. State",
-        "4-view-a-predefined-state": "4. View: (A predefined State)",
-        "5-configuration-local-config": "5. Configuration / Local Config",
-        "url-formatting": "URL Formatting"
-      },
-      "headingKeywords": {}
-    },
-    {
       "src": "contents/components/components.md",
       "title": "Components",
       "headings": {
@@ -45,20 +31,21 @@
       "src": "contents/components/tabs.md",
       "title": "User Guide - Tabs",
       "headings": {
-        "tabs": "Tabs",
-        "multi-id-tabs": "Multi-ID Tabs",
-        "alternative-syntax-with-rich-formatting": "Alternative Syntax with Rich Formatting",
         "basic-example": "Basic Example",
         "advanced-example-with-badges": "Advanced Example with Badges",
         "using-icons-in-headers": "Using Icons in Headers",
+        "tabs": "Tabs",
+        "no-id-tabs": "No-ID Tabs",
+        "multi-id-tabs": "Multi-ID Tabs",
+        "header-syntax-with-rich-formatting": "Header Syntax with Rich Formatting",
         "syntax-and-amp-rules": "Syntax &amp; Rules",
-        "backward-compatibility": "Backward Compatibility",
         "attributes-and-amp-options": "Attributes &amp; Options",
         "cv-tabgroup-attributes": "&lt;cv-tabgroup&gt; Attributes",
         "cv-tab-attributes": "&lt;cv-tab&gt; Attributes",
         "configuration": "Configuration",
-        "configuration-2": "Configuration",
-        "config-file-options": "Config File Options"
+        "json-configuration-option-types": "JSON Configuration Option Types",
+        "global-vs-local-tab-groups": "Global vs. Local Tab Groups",
+        "defining-local-components": "Defining Local Components"
       },
       "headingKeywords": {}
     },
@@ -66,15 +53,17 @@
       "src": "contents/components/toggles.md",
       "title": "CustomViews - Toggle Component",
       "headings": {
-        "toggle": "Toggle",
+        "toggles": "Toggles",
         "macos": "macOS",
         "linux": "Linux",
         "windows": "Windows",
-        "variants": "Variants",
+        "multi-id-toggles": "Multi-ID Toggles",
         "configuration": "Configuration",
         "key-fields": "Key Fields",
         "attributes-and-amp-options": "Attributes &amp; Options",
         "visibility-resolution-order": "Visibility Resolution Order",
+        "global-vs-local-toggles": "Global vs. Local Toggles",
+        "registering-local-toggles-for-the-widget": "Registering Local Toggles for the Widget",
         "troubleshooting": "Troubleshooting"
       },
       "headingKeywords": {}
@@ -91,66 +80,6 @@
         "widget-options": "Widget Options",
         "programmatic-usage": "Programmatic Usage",
         "integration-with-toggles-and-tabs": "Integration with Toggles and Tabs"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/demo/cliMastery.md",
-      "title": "Git CLI Mastery Across Operating Systems",
-      "headings": {
-        "git-cli-mastery-across-operating-systems": "Git CLI Mastery Across Operating Systems ",
-        "1-repository-initialization": "1. Repository Initialization",
-        "platform-specific-notes": "Platform-Specific Notes",
-        "2-basic-git-workflow": "2. Basic Git Workflow",
-        "essential-commands-for-daily-use": "Essential Commands for Daily Use",
-        "3-advanced-git-commands": "3. Advanced Git Commands",
-        "interactive-rebase": "Interactive Rebase",
-        "stashing-changes": "Stashing Changes",
-        "4-git-configuration-best-practices": "4. Git Configuration Best Practices",
-        "global-configuration": "Global Configuration",
-        "5-troubleshooting-common-issues": "5. Troubleshooting Common Issues",
-        "6-platform-specific-git-tools": "6. Platform-Specific Git Tools",
-        "macos-git-tools": " macOS Git Tools",
-        "linux-git-tools": " Linux Git Tools",
-        "windows-git-tools": " Windows Git Tools",
-        "quick-reference-card": "🎯 Quick Reference Card",
-        "most-used-git-commands": "Most Used Git Commands"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/demo/demo.md",
-      "title": "Interactive Demo & Examples",
-      "headings": {
-        "interactive-demo-and-amp-examples": "Interactive Demo &amp; Examples",
-        "demo-controls": "Demo Controls",
-        "os-specific-demos": "OS-Specific Demos"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/demo/fileStructure.md",
-      "title": "File System Structures Across Operating Systems",
-      "headings": {
-        "file-system-structures-across-operating-systems": "File System Structures Across Operating Systems ",
-        "platform-specific-file-organization": "Platform-Specific File Organization",
-        "macos-file-system": " macOS File System",
-        "linux-file-system": " Linux File System",
-        "windows-file-system": " Windows File System",
-        "configuration-file-locations": "Configuration File Locations",
-        "quick-file-operations-reference": "Quick File Operations Reference",
-        "essential-commands-by-platform": "Essential Commands by Platform"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/devGuide/tabs.md",
-      "title": "DevGuide - Tabs",
-      "headings": {
-        "how-do-the-tabs-and-tabgroups-work-in-customviews": "How do the Tabs and TabGroups work in CustomViews?",
-        "core-module": "Core Module",
-        "tab-manager": "Tab Manager",
-        "main-methods": "Main methods:"
       },
       "headingKeywords": {}
     },
@@ -199,6 +128,30 @@
         "4-verify-installation": "4. Verify Installation",
         "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages",
         "learn-more": "Learn More"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "contents/tests/cvtest.md",
+      "headings": {},
+      "headingKeywords": {}
+    },
+    {
+      "src": "contents/tests/localComponents.md",
+      "title": "Local Components",
+      "headings": {
+        "local-components": "Local Components",
+        "local-toggle": "Local Toggle",
+        "local-tab-groups": "Local Tab Groups",
+        "further-testing": "Further Testing"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "contents/tests/tabs.md",
+      "title": "User Guide - Tabs",
+      "headings": {
+        "fruits-tabs": "Fruits Tabs"
       },
       "headingKeywords": {}
     },
