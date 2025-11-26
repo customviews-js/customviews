@@ -567,7 +567,7 @@ For more control (such as widget integration or default selections), configure t
 
 #### TabGroupConfig
 
-The TabGroupConfig object is for for defining tabgroups in JSON configuration.
+The TabGroupConfig object is for defining tabgroups in JSON configuration.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
