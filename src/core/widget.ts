@@ -47,6 +47,8 @@ export class CustomViewsWidget {
   private widgetIcon: HTMLElement | null = null;
   private options: Required<WidgetOptions>;
   private _hasVisibleConfig = false;
+  private pageToggleIds: Set<string> = new Set();
+  private pageTabIds: Set<string> = new Set();
   
   // Modal state
   private stateModal: HTMLElement | null = null;
@@ -92,6 +94,14 @@ export class CustomViewsWidget {
     if (visibleToggles.length > 0 || (this.options.showTabGroups && visibleTabGroups.length > 0)) {
       this._hasVisibleConfig = true;
     }
+
+    // Scan for page-declared local components and cache them
+    // Do this on initialization to avoid querying DOM repeatedly
+    const pageTogglesAttr = document.querySelector('[data-cv-page-local-toggles]')?.getAttribute('data-cv-page-local-toggles') || '';
+    this.pageToggleIds = new Set(pageTogglesAttr.split(',').filter(id => id.trim()));
+
+    const pageTabsAttr = document.querySelector('[data-cv-page-local-tabs]')?.getAttribute('data-cv-page-local-tabs') || '';
+    this.pageTabIds = new Set(pageTabsAttr.split(',').filter(id => id.trim()));
     
     // No external state manager to initialize
   }
@@ -197,12 +207,8 @@ export class CustomViewsWidget {
   private _updateStateModalContent(): void {
     if (!this.stateModal) return;
 
-    // Scan for page-declared local components
-    const pageTogglesAttr = document.querySelector('[data-cv-page-local-toggles]')?.getAttribute('data-cv-page-local-toggles') || '';
-    const pageTabsAttr = document.querySelector('[data-cv-page-local-tabs]')?.getAttribute('data-cv-page-local-tabs') || '';
-
-    const pageToggleIds = new Set(pageTogglesAttr.split(',').filter(id => id.trim()));
-    const pageTabIds = new Set(pageTabsAttr.split(',').filter(id => id.trim()));
+    const pageToggleIds = this.pageToggleIds;
+    const pageTabIds = this.pageTabIds;
 
     // Get toggles from current configuration
     const config = this.core.getConfig();
