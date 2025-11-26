@@ -197,15 +197,21 @@ export class CustomViewsWidget {
   private _updateStateModalContent(): void {
     if (!this.stateModal) return;
 
+    // Scan for page-declared local components
+    const pageTogglesAttr = document.querySelector('[data-cv-page-local-toggles]')?.getAttribute('data-cv-page-local-toggles') || '';
+    const pageTabsAttr = document.querySelector('[data-cv-page-local-tabs]')?.getAttribute('data-cv-page-local-tabs') || '';
+
+    const pageToggleIds = new Set(pageTogglesAttr.split(',').filter(id => id.trim()));
+    const pageTabIds = new Set(pageTabsAttr.split(',').filter(id => id.trim()));
+
     // Get toggles from current configuration
     const config = this.core.getConfig();
     const allToggles = config?.toggles || [];
 
-    // Filter toggles to only include global and visible local toggles
+    // Filter toggles to only include global and visible/declared local toggles
     const visibleToggles = allToggles.filter(toggle => {
       if (toggle.isLocal) {
-        // Check if a toggle element with this id exists on the page
-        return !!document.querySelector(`[data-cv-toggle="${toggle.id}"], [data-cv-toggle-group-id="${toggle.id}"]`);
+        return pageToggleIds.has(toggle.id) || !!document.querySelector(`[data-cv-toggle="${toggle.id}"], [data-cv-toggle-group-id="${toggle.id}"]`);
       }
       return true; // Keep global toggles
     });
@@ -228,8 +234,7 @@ export class CustomViewsWidget {
     const allTabGroups = this.core.getTabGroups() || [];
     const tabGroups = allTabGroups.filter(group => {
       if (group.isLocal) {
-        // Check if a tab group element with this id exists on the page
-        return !!document.querySelector(`cv-tabgroup[id="${group.id}"]`);
+        return pageTabIds.has(group.id) || !!document.querySelector(`cv-tabgroup[id="${group.id}"]`);
       }
       return true; // Keep global tab groups
     });

@@ -515,7 +515,6 @@ This feature is pending review.
 <br>
 
 
-
 ## Attributes & Options
 
 ### `<cv-tabgroup>` Attributes
@@ -532,7 +531,8 @@ This feature is pending review.
 | `id` | string | **(required)** | Unique identifier for the tab within its group. |
 | `header` | string | Tab ID | Display label for the tab in the navigation bar. Plain text only (no icons or HTML). Use `<cv-tab-header>` for rich formatting. |
 
-## Configuration
+
+# Configuration
 
 Tab groups work out of the box with no setup — just use the `<cv-tabgroup>` and `<cv-tab>` elements.  
 By default, the first tab is shown.
@@ -593,7 +593,7 @@ The TabConfig object is for for defining tabs in JSON configuration.
 </box>
 
 
-## Global vs. Local Tab Groups
+# Global vs. Local Tab Groups
 
 By default, all tab groups defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
 
@@ -659,3 +659,18 @@ If all tab configurations (and other component configurations) are local, and a 
   }
 }
 ```
+
+
+# Defining Local Components
+
+You can ensure that specific local tab groups are always available in the widget, even if they are not initially visible on the page. This is useful for tab groups that are loaded dynamically (e.g., inside a dropdown menu) and might not be detected by the plugin otherwise.
+
+To do this, add a `data-cv-page-local-tabs` attribute to any element (an empty `<div>` is a good choice). The value of this attribute should be a comma-separated list of the local tab group IDs you want to register.
+
+For example, to make the local tab groups with IDs `OS` and `language` available in the widget, add the following to your page:
+
+```html
+<div data-cv-page-local-tabs="OS, language"></div>
+```
+
+This will ensure that the specified local tab groups appear in the configuration widget, allowing users to control them even if they are not immediately visible on the page.
