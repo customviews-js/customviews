@@ -314,8 +314,8 @@ This is useful when you need:
 ```html
 <cv-tab id="tab-id">
   <cv-tab-header>Header content (supports HTML)</cv-tab-header>
-  <cv-tab-body>Tab body content (mutually inclusive)</cv-tab-body>
-  Tab body content (mutually inclusive)
+  <cv-tab-body>Tab body content (both can be used together)</cv-tab-body>
+  Tab body content (both can be used together)
 </cv-tab>
 ```
 
