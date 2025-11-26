@@ -84,6 +84,29 @@ export class CustomViewsCore {
     return newComponentsFound;
   }
 
+  /**
+   * Unscan the given element for toggles and tab groups, de-register them
+   */
+  private unscan(element: HTMLElement): void {
+    // Unscan for toggles
+    const toggles = Array.from(element.querySelectorAll(TOGGLE_SELECTOR));
+    if (element.matches(TOGGLE_SELECTOR)) {
+      toggles.unshift(element);
+    }
+    toggles.forEach((toggle) => {
+      this.componentRegistry.toggles.delete(toggle as HTMLElement);
+    });
+
+    // Unscan for tab groups
+    const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
+    if (element.matches(TABGROUP_SELECTOR)) {
+      tabGroups.unshift(element);
+    }
+    tabGroups.forEach((tabGroup) => {
+      this.componentRegistry.tabGroups.delete(tabGroup as HTMLElement);
+    });
+  }
+
   public getConfig(): Config {
     return this.config;
   }
@@ -237,6 +260,13 @@ export class CustomViewsCore {
               if (this.scan(node as HTMLElement)) {
                 newComponentsFound = true;
               }
+            }
+          });
+
+          mutation.removedNodes.forEach((node) => {
+            if (node instanceof Element) {
+              // Unscan the removed node to cleanup the registry
+              this.unscan(node as HTMLElement);
             }
           });
         }
