@@ -21,16 +21,13 @@ export class TabManager {
   }
 
   /**
-   * Apply tab selections to all tab groups in the DOM
+   * Apply tab selections to a given list of tab group elements
    */
   public static applyTabSelections(
-    rootEl: HTMLElement,
+    tabGroups: HTMLElement[],
     tabs: Record<string, string>,
     cfgGroups?: TabGroupConfig[]
   ): void {
-    // Find all cv-tabgroup elements
-    const tabGroups = rootEl.querySelectorAll(TABGROUP_SELECTOR);
-    
     tabGroups.forEach((groupEl) => {
       const groupId = groupEl.getAttribute('id');
       
@@ -160,15 +157,25 @@ export class TabManager {
    * Build navigation for tab groups (one-time setup)
    */
   public static buildNavs(
-    rootEl: HTMLElement,
+    tabGroups: HTMLElement[],
     cfgGroups?: TabGroupConfig[],
     onTabClick?: (groupId: string, tabId: string, groupEl: HTMLElement) => void,
     onTabDoubleClick?: (groupId: string, tabId: string, groupEl: HTMLElement) => void
   ): void {
-    // Find all cv-tabgroup elements with nav="auto" or no nav attribute
-    const tabGroups = rootEl.querySelectorAll(NAV_AUTO_SELECTOR);
+    const rootEl = document.body; // Needed for NAV_HIDE_ROOT_CLASS check
     
     tabGroups.forEach((groupEl) => {
+      // Prevent re-initialization
+      if (groupEl.hasAttribute('data-cv-initialized')) {
+        return;
+      }
+      groupEl.setAttribute('data-cv-initialized', 'true');
+
+      // Filter to only build for groups with nav="auto" or no nav attribute
+      if (!groupEl.matches(NAV_AUTO_SELECTOR)) {
+        return;
+      }
+
       const groupId = groupEl.getAttribute('id') || null;
       
       // Note: groupId can be null for standalone tabgroups
@@ -230,7 +237,8 @@ export class TabManager {
             const configLabel = groupId ? this.getTabLabel(tabId, groupId, cfgGroups) : null;
             if (configLabel) {
               header = configLabel;
-            } else if (tabEl.getAttribute('id')) {
+            }
+            else if (tabEl.getAttribute('id')) {
               // Use the original id if it exists
               header = tabId;
             } else {
@@ -396,12 +404,10 @@ export class TabManager {
    * Update active states for all tab groups based on current state
    */
   public static updateAllNavActiveStates(
-    rootEl: HTMLElement,
+    tabGroups: HTMLElement[],
     tabs: Record<string, string>,
     cfgGroups?: TabGroupConfig[]
   ): void {
-    const tabGroups = rootEl.querySelectorAll(TABGROUP_SELECTOR);
-    
     tabGroups.forEach((groupEl) => {
       const groupId = groupEl.getAttribute('id');
       if (!groupId) return;
@@ -491,39 +497,35 @@ export class TabManager {
   /**
    * Update pin icon visibility for all tab groups based on current state.
    * Shows pin icon for tabs that are in the persisted state (i.e., have been double-clicked).
-   */
+    */
   public static updatePinIcons(
-    rootEl: HTMLElement,
-    tabs: Record<string, string>
-  ): void {
-    const tabGroups = rootEl.querySelectorAll(TABGROUP_SELECTOR);
-    
-    tabGroups.forEach((groupEl) => {
-      const groupId = groupEl.getAttribute('id');
-      if (!groupId) return;
+      tabGroups: HTMLElement[],
+      tabs: Record<string, string>
+    ): void {
+      tabGroups.forEach((groupEl) => {
+        const groupId = groupEl.getAttribute('id');
+        if (!groupId) return;
 
-      const persistedTabId = tabs[groupId];
-      
-      // Find all nav links in this group
-      const navLinks = groupEl.querySelectorAll('.nav-link');
-      navLinks.forEach((link) => {
-        const rawTabId = link.getAttribute('data-raw-tab-id');
-        const pinIcon = link.querySelector('.cv-tab-pin-icon') as HTMLElement;
+        const persistedTabId = tabs[groupId];
         
-        if (!pinIcon || !rawTabId) return;
-        
-        // Check if persisted tab ID matches any of the split IDs (for multi-ID tabs)
-        const splitIds = this.splitTabIds(rawTabId);
-        const shouldShowPin = persistedTabId && splitIds.includes(persistedTabId);
-        
-        if (shouldShowPin) {
-          pinIcon.style.display = 'inline-block';
-        } else {
-          pinIcon.style.display = 'none';
-        }
+        // Find all nav links in this group
+        const navLinks = groupEl.querySelectorAll('.nav-link');
+        navLinks.forEach((link) => {
+          const rawTabId = link.getAttribute('data-raw-tab-id');
+          const pinIcon = link.querySelector('.cv-tab-pin-icon') as HTMLElement;
+          
+          if (!pinIcon || !rawTabId) return;
+          
+          // Check if persisted tab ID matches any of the split IDs (for multi-ID tabs)
+          const splitIds = this.splitTabIds(rawTabId);
+          const shouldShowPin = persistedTabId && splitIds.includes(persistedTabId);
+          
+          if (shouldShowPin) {
+            pinIcon.style.display = 'inline-block';
+          } else {
+            pinIcon.style.display = 'none';
+          }
+        });
       });
-    });
-  }
-
-
+    }
 }

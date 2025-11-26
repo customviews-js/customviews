@@ -8,6 +8,13 @@ import { ToggleManager } from "./toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
 
+const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
+const TABGROUP_SELECTOR = 'cv-tabgroup';
+
+interface ComponentRegistry {
+  toggles: Set<HTMLElement>;
+  tabGroups: Set<HTMLElement>;
+}
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -21,6 +28,12 @@ export class CustomViewsCore {
   private assetsManager: AssetsManager;
   private persistenceManager: PersistenceManager;
   private visibilityManager: VisibilityManager;
+  private observer: MutationObserver | null = null;
+
+  private componentRegistry: ComponentRegistry = {
+    toggles: new Set(),
+    tabGroups: new Set(),
+  };
 
   private config: Config;
   private stateChangeListeners: Array<() => void> = [];
@@ -35,6 +48,63 @@ export class CustomViewsCore {
     this.visibilityManager = new VisibilityManager();
     this.showUrlEnabled = opt.showUrl ?? false;
     this.lastAppliedState = this.cloneState(this.getComputedDefaultState());
+  }
+
+  /**
+   * Scan the given element for toggles and tab groups, register them
+   * Returns true if new components were found
+   */
+  private scan(element: HTMLElement): boolean {
+    let newComponentsFound = false;
+
+    // Scan for toggles
+    const toggles = Array.from(element.querySelectorAll(TOGGLE_SELECTOR));
+    if (element.matches(TOGGLE_SELECTOR)) {
+      toggles.unshift(element);
+    }
+    toggles.forEach((toggle) => {
+      if (!this.componentRegistry.toggles.has(toggle as HTMLElement)) {
+        this.componentRegistry.toggles.add(toggle as HTMLElement);
+        newComponentsFound = true;
+      }
+    });
+
+    // Scan for tab groups
+    const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
+    if (element.matches(TABGROUP_SELECTOR)) {
+      tabGroups.unshift(element);
+    }
+    tabGroups.forEach((tabGroup) => {
+      if (!this.componentRegistry.tabGroups.has(tabGroup as HTMLElement)) {
+        this.componentRegistry.tabGroups.add(tabGroup as HTMLElement);
+        newComponentsFound = true;
+      }
+    });
+
+    return newComponentsFound;
+  }
+
+  /**
+   * Unscan the given element for toggles and tab groups, de-register them
+   */
+  private unscan(element: HTMLElement): void {
+    // Unscan for toggles
+    const toggles = Array.from(element.querySelectorAll(TOGGLE_SELECTOR));
+    if (element.matches(TOGGLE_SELECTOR)) {
+      toggles.unshift(element);
+    }
+    toggles.forEach((toggle) => {
+      this.componentRegistry.toggles.delete(toggle as HTMLElement);
+    });
+
+    // Unscan for tab groups
+    const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
+    if (element.matches(TABGROUP_SELECTOR)) {
+      tabGroups.unshift(element);
+    }
+    tabGroups.forEach((tabGroup) => {
+      this.componentRegistry.tabGroups.delete(tabGroup as HTMLElement);
+    });
   }
 
   public getConfig(): Config {
@@ -124,10 +194,30 @@ export class CustomViewsCore {
   // Inject styles, setup listeners and call rendering logic
   public async init() {
     injectCoreStyles();
+    this.scan(this.rootEl);
 
-    // Build navigation once (with click and double-click handlers)
+    // Initialize all components found on initial scan
+    this.initializeNewComponents();
+
+    // Apply stored nav visibility preference on page load
+    const navPref = this.persistenceManager.getPersistedTabNavVisibility();
+    if (navPref !== null) {
+      TabManager.setNavsVisibility(this.rootEl, navPref);
+    }
+
+    // For session history, clicks on back/forward button
+    window.addEventListener("popstate", () => {
+      this.loadAndCallApplyState();
+    });
+    this.loadAndCallApplyState();
+    this.initObserver();
+  }
+
+  private initializeNewComponents(): void {
+    // Build navigation for any newly added tab groups.
+    // The `data-cv-initialized` attribute in `buildNavs` prevents re-initialization.
     TabManager.buildNavs(
-      this.rootEl,
+      Array.from(this.componentRegistry.tabGroups),
       this.config.tabGroups,
       // Single click: update clicked group only (local, no persistence)
       (groupId, tabId, groupEl) => {
@@ -156,17 +246,51 @@ export class CustomViewsCore {
       }
     );
 
-    // Apply stored nav visibility preference on page load
-    const navPref = this.persistenceManager.getPersistedTabNavVisibility();
-    if (navPref !== null) {
-      TabManager.setNavsVisibility(this.rootEl, navPref);
-    }
+    // Future components (e.g., toggles, widgets) can be initialized here
+  }
 
-    // For session history, clicks on back/forward button
-    window.addEventListener("popstate", () => {
-      this.loadAndCallApplyState();
+  private initObserver() {
+    this.observer = new MutationObserver((mutations) => {
+      let newComponentsFound = false;
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node instanceof Element) {
+              // Scan the new node for components and add them to the registry
+              if (this.scan(node as HTMLElement)) {
+                newComponentsFound = true;
+              }
+            }
+          });
+
+          mutation.removedNodes.forEach((node) => {
+            if (node instanceof Element) {
+              // Unscan the removed node to cleanup the registry
+              this.unscan(node as HTMLElement);
+            }
+          });
+        }
+      }
+
+      if (newComponentsFound) {
+        // Initialize navs for new components.
+        this.initializeNewComponents();
+        
+        // Re-apply the last known state. renderState will handle disconnecting
+        // the observer to prevent infinite loops.
+        if (this.lastAppliedState) {
+          this.renderState(this.lastAppliedState);
+        }
+      }
     });
-    this.loadAndCallApplyState();
+
+    // Observe only the root element to avoid performance issues on large pages.
+    if (this.rootEl) {
+      this.observer.observe(this.rootEl, {
+        childList: true,
+        subtree: true,
+      });
+    }
   }
 
   // Priority: URL state > persisted state > config default > computed default
@@ -228,29 +352,41 @@ export class CustomViewsCore {
     }
   }
 
-  /** Render all toggles for the current state */
+  /** 
+   * Renders state on components in ComponentRegistry
+   * Applies the given state.
+   * Disconnects the mutation observer during rendering to prevent loops
+   **/
   private renderState(state: State) {
+    this.observer?.disconnect();
     this.lastAppliedState = this.cloneState(state);
     const toggles = state?.toggles || [];
     const finalToggles = this.visibilityManager.filterVisibleToggles(toggles);
 
+    const toggleElements = Array.from(this.componentRegistry.toggles);
+    const tabGroupElements = Array.from(this.componentRegistry.tabGroups);
+
     // Apply toggle visibility
-    ToggleManager.applyToggles(this.rootEl, finalToggles);
+    ToggleManager.applyToggles(toggleElements, finalToggles);
 
     // Render assets into toggles
-    ToggleManager.renderAssets(this.rootEl, finalToggles, this.assetsManager);
+    ToggleManager.renderAssets(toggleElements, finalToggles, this.assetsManager);
 
     // Apply tab selections
-    TabManager.applyTabSelections(this.rootEl, state.tabs || {}, this.config.tabGroups);
+    TabManager.applyTabSelections(tabGroupElements, state.tabs || {}, this.config.tabGroups);
 
     // Update nav active states (without rebuilding)
-    TabManager.updateAllNavActiveStates(this.rootEl, state.tabs || {}, this.config.tabGroups);
+    TabManager.updateAllNavActiveStates(tabGroupElements, state.tabs || {}, this.config.tabGroups);
 
     // Update pin icons to show which tabs are persisted
-    TabManager.updatePinIcons(this.rootEl, state.tabs || {});
+    TabManager.updatePinIcons(tabGroupElements, state.tabs || {});
 
     // Notify state change listeners (like widgets)
     this.notifyStateChangeListeners();
+    this.observer?.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
   }
 
   /**

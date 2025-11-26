@@ -5,11 +5,9 @@
   pageNavTitle: "Topics"
 </frontmatter>
 
-## Toggle
+# Toggles
 
-`<cv-toggle>`
-
-`<div data-cv-toggle="category">`
+`<cv-toggle>` `<div data-cv-toggle="category">`
 
 Toggles let you show or hide sections of a page based on a category (for example: `mac`, `linux`, `windows`). They are ideal for platform-specific content, progressive disclosure, or audience-targeted sections.
 
@@ -53,7 +51,7 @@ When the active toggle state includes `mac`, only the element with `data-cv-togg
 
 > Other attribute names are supported as well: `data-customviews-toggle` behaves the same as `data-cv-toggle`.
 
-## Variants 
+## Multi-ID Toggles 
 
 You can apply multiple toggles to a single element by separating categories with spaces.
 This allows content to appear as long as one toggle category is active.
@@ -68,7 +66,7 @@ This allows content to appear as long as one toggle category is active.
 </cv-toggle>
 ```
 
-## Configuration 
+# Configuration 
 
 To make toggles discoverable by the CustomViews widget, you must define them in your `customviews.config.json`.
 
@@ -83,30 +81,6 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
     "defaultState": {
       "toggles": ["mac", "linux", "windows"]
     }
-  }
-}
-```
-
-## Global vs. Local Toggles
-
-By default, all toggles defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
-
-You can mark a toggle as **local** to make it appear in the widget *only* on pages where that specific toggle is actually used. This is useful for keeping the widget clean and only showing relevant options to the user.
-
-To mark a toggle as local, add `"isLocal": true` to its configuration.
-
-**Example:**
-
-If you have a `mac` toggle that is only used on a few pages, setting it as local ensures the "MacOS" option only appears in the widget on those pages.
-
-```json
-{
-  "config": {
-    "toggles": [
-      { "id": "mac", "label": "MacOS", "isLocal": true },
-      { "id": "linux", "label": "Linux" },
-      { "id": "windows", "label": "Windows" }
-    ]
   }
 }
 ```
@@ -138,7 +112,48 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 Elements whose toggles match the active state are shown; all others are hidden.
 
 
-## Troubleshooting
+# Global vs. Local Toggles
+
+By default, all toggles defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
+
+You can mark a toggle as **local** to make it appear in the widget *only* on pages where that specific toggle is actually used. This is useful for keeping the widget clean and only showing relevant options to the user.
+
+To mark a toggle as local, add `"isLocal": true` to its configuration.
+
+**Example:**
+
+If you have a `mac` toggle that is only used on a few pages, setting it as local ensures the "MacOS" option only appears in the widget on those pages.
+
+```json
+{
+  "config": {
+    "toggles": [
+      { "id": "mac", "label": "MacOS", "isLocal": true },
+      { "id": "linux", "label": "Linux" },
+      { "id": "windows", "label": "Windows" }
+    ]
+  }
+}
+```
+
+# Registering Local Toggles for the Widget
+
+You can ensure that specific local toggles are always available in the widget, even if they are not initially visible on the page. This is useful for toggles that are loaded dynamically (e.g., inside a dropdown menu) and might not be detected by the plugin otherwise.
+
+To do this, add a `data-cv-page-local-toggles` attribute to any element (an empty `<div>` is a good choice). The value of this attribute should be a comma-separated list of the local toggle IDs you want to register.
+
+For example, to make the local toggles with IDs `advanced` and `dark-mode` available in the widget, add the following to your page:
+
+```html
+<div data-cv-page-local-toggles="advanced, dark-mode"></div>
+```
+
+This will ensure that the specified local toggles appear in the configuration widget, allowing users to control them even if they are not immediately visible on the page.
+
+
+
+
+# Troubleshooting
 
 * Toggles not appearing in widget?
 	* Check that your `config.toggles` array is correctly formatted with `id` and `label` for each toggle.

@@ -240,6 +240,10 @@ export const WIDGET_STYLES = `
   animation: fadeIn 0.2s ease;
 }
 
+.cv-widget-modal-overlay.cv-hidden {
+  display: none;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
