@@ -638,7 +638,7 @@ For example, this tab group is only specific to this page:
 
 By setting it as **local** in the configuration, the "Local Tab Configuration" option will only show up in the widget on pages containing that tab group.
 
-If all tab configurations (and other component configurations) are local, and a given page has no configured elements, the modal nor modal icon will not appear.
+If all tab configurations (and other component configurations) are local, and a given page has no configured elements, neither the modal nor the modal icon will appear.
 
 **Configuration file** setting this option:
 ```json
