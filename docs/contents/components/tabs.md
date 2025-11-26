@@ -578,7 +578,7 @@ The TabGroupConfig object is for for defining tabgroups in JSON configuration.
 
 #### TabConfig
 
-The TabConfig object is for for defining tabs in JSON configuration.
+The TabConfig object is for defining tabs in JSON configuration.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
