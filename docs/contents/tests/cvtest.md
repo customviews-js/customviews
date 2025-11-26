@@ -34,5 +34,7 @@
 :fa-solid-leaf: Pear Types
   </cv-tab-header>
   <cv-tab-body>
+  </cv-tab-body>
+  </cv-tab>
 </cv-tabgroup>
 
