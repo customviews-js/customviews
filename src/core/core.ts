@@ -254,10 +254,13 @@ export class CustomViewsCore {
       }
     });
 
-    this.observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-    });
+    // Observe only the root element to avoid performance issues on large pages.
+    if (this.rootEl) {
+      this.observer.observe(this.rootEl, {
+        childList: true,
+        subtree: true,
+      });
+    }
   }
 
   // Priority: URL state > persisted state > config default > computed default
