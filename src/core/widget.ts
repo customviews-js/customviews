@@ -98,12 +98,11 @@ export class CustomViewsWidget {
     // Scan for page-declared local components and cache them
     // Do this on initialization to avoid querying DOM repeatedly
     const pageTogglesAttr = document.querySelector('[data-cv-page-local-toggles]')?.getAttribute('data-cv-page-local-toggles') || '';
-    this.pageToggleIds = new Set(pageTogglesAttr.split(',').filter(id => id.trim()));
+    this.pageToggleIds = new Set(pageTogglesAttr.split(',').map(id => id.trim()).filter(id => id));
 
     const pageTabsAttr = document.querySelector('[data-cv-page-local-tabs]')?.getAttribute('data-cv-page-local-tabs') || '';
-    this.pageTabIds = new Set(pageTabsAttr.split(',').filter(id => id.trim()));
+    this.pageTabIds = new Set(pageTabsAttr.split(',').map(id => id.trim()).filter(id => id));
     
-    // No external state manager to initialize
   }
 
   /**
