@@ -31,6 +31,7 @@
 * Tests
   * [Local Components]({{baseUrl}}/contents/tests/localComponents.html)
   * [Test Tabs]({{baseUrl}}/contents/tests/tabs.html)
+  * [Focus and Sharing]({{baseUrl}}/contents/tests/focus-test.html)
       </site-nav>
     </div>
   </nav>
