@@ -28,6 +28,7 @@
   * [Widget]({{baseUrl}}/contents/components/widget.html)
   * [Toggles]({{baseUrl}}/contents/components/toggles.html)
   * [Tabs]({{baseUrl}}/contents/components/tabs.html)
+  * [Share]({{baseUrl}}/contents/components/share.html)
 * Tests
   * [Local Components]({{baseUrl}}/contents/tests/localComponents.html)
   * [Test Tabs]({{baseUrl}}/contents/tests/tabs.html)

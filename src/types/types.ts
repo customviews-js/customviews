@@ -26,6 +26,8 @@ export interface State {
   toggles?: ToggleId[];
   /** Optional tab selections: groupId -> tabId */
   tabs?: Record<string, string>;
+  /** Optional focus selections: array of element IDs */
+  focus?: string[];
 }
 
 export type ToggleId = string;
@@ -76,6 +78,11 @@ export interface Config {
   defaultState?: State;
   /** Optional tab group configurations */
   tabGroups?: TabGroupConfig[];
+  /** Excluded tags and IDs for Share/Focus modes */
+  shareExclusions?: {
+    tags?: string[];
+    ids?: string[];
+  };
 }
 
 /**
@@ -90,7 +97,7 @@ export interface ConfigFile {
   baseUrl?: string;
   /** Whether to keep the `view` state parameter visible in the browser URL bar */
   showUrl?: boolean;
-  
+
   /** Widget configuration options */
   widget?: {
     /** Whether the widget is enabled */

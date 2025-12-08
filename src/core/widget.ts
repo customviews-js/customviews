@@ -4,39 +4,39 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getLinkIcon } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
   core: CustomViewsCore;
-  
+
   /** Container element where the widget should be rendered */
   container?: HTMLElement;
-  
+
   /** Widget position: 'top-right', 'top-left', 'bottom-right', 'bottom-left', 'middle-left', 'middle-right' */
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
-  
+
   /** Widget theme: 'light' or 'dark' */
   theme?: 'light' | 'dark';
-  
+
   /** Whether to show reset button */
   showReset?: boolean;
-  
+
   /** Widget title */
   title?: string;
-  
+
   /** Widget description text */
   description?: string;
-  
+
   /** Whether to show welcome modal on first visit */
   showWelcome?: boolean;
-  
+
   /** Welcome modal title (only used if showWelcome is true) */
   welcomeTitle?: string;
-  
+
   /** Welcome modal message (only used if showWelcome is true) */
   welcomeMessage?: string;
-  
+
   /** Whether to show tab groups section in widget (default: true) */
   showTabGroups?: boolean;
 }
@@ -49,15 +49,15 @@ export class CustomViewsWidget {
   private _hasVisibleConfig = false;
   private pageToggleIds: Set<string> = new Set();
   private pageTabIds: Set<string> = new Set();
-  
+
   // Modal state
   private stateModal: HTMLElement | null = null;
-  
+
 
   constructor(options: WidgetOptions) {
     this.core = options.core;
     this.container = options.container || document.body;
-    
+
     // Set defaults
     this.options = {
       core: options.core,
@@ -102,7 +102,7 @@ export class CustomViewsWidget {
 
     const pageTabsAttr = document.querySelector('[data-cv-page-local-tabs]')?.getAttribute('data-cv-page-local-tabs') || '';
     this.pageTabIds = new Set(pageTabsAttr.split(',').map(id => id.trim()).filter(id => id));
-    
+
   }
 
   /**
@@ -117,15 +117,15 @@ export class CustomViewsWidget {
 
     this.widgetIcon = this.createWidgetIcon();
     this.attachEventListeners();
-    
+
     // Always append to body since it's a floating icon
     document.body.appendChild(this.widgetIcon);
-    
+
     // Show welcome modal on first visit if enabled
     if (this.options.showWelcome) {
       this.showWelcomeModalIfFirstVisit();
     }
-    
+
     return this.widgetIcon;
   }
 
@@ -138,10 +138,10 @@ export class CustomViewsWidget {
     icon.innerHTML = '⚙';
     icon.title = this.options.title;
     icon.setAttribute('aria-label', 'Open Custom Views');
-    
+
     // Add styles
     injectWidgetStyles();
-    
+
     return icon;
   }
 
@@ -195,7 +195,7 @@ export class CustomViewsWidget {
     this.stateModal = document.createElement('div');
     this.stateModal.className = 'cv-widget-modal-overlay cv-hidden';
     this.applyThemeToModal();
-    
+
     document.body.appendChild(this.stateModal);
     this._attachStateModalFrameEventListeners();
   }
@@ -247,7 +247,7 @@ export class CustomViewsWidget {
     let tabGroupControlsHTML = '';
     if (this.options.showTabGroups && tabGroups && tabGroups.length > 0) {
       const initialNavsVisible = TabManager.areNavsVisible(document.body);
-      
+
       tabGroupControlsHTML = `
         <div class="cv-tabgroup-card cv-tabgroup-header">
           <div class="cv-tabgroup-row">
@@ -328,6 +328,10 @@ export class CustomViewsWidget {
             <span>Copy Shareable URL</span>
             <span class="cv-share-btn-icon">${getCopyIcon()}</span>
           </button>
+          <button class="cv-toggle-share-mode-btn">
+            <span>Select Sections to Share</span>
+            <span class="cv-toggle-share-mode-btn-icon">${getLinkIcon()}</span>
+          </button>
         </footer>
       </div>
     `;
@@ -374,10 +378,10 @@ export class CustomViewsWidget {
         if (resetIcon) {
           resetIcon.classList.add('cv-spinning');
         }
-        
+
         this.core.resetToDefault();
         this.loadCurrentStateIntoForm();
-        
+
         setTimeout(() => {
           if (resetIcon) {
             resetIcon.classList.remove('cv-spinning');
@@ -385,7 +389,14 @@ export class CustomViewsWidget {
         }, 600);
         return;
       }
-      
+
+      // Toggle Share Mode button
+      if (target.closest('.cv-toggle-share-mode-btn')) {
+        this.closeModal();
+        this.core.toggleShareMode();
+        return;
+      }
+
       // Overlay click to close
       if (e.target === this.stateModal) {
         this.closeModal();
@@ -427,7 +438,7 @@ export class CustomViewsWidget {
         if (groupId && tabId) {
           const currentTabs = this.core.getCurrentActiveTabs();
           currentTabs[groupId] = tabId;
-          
+
           const currentToggles = this.core.getCurrentActiveToggles();
           const newState: State = {
             toggles: currentToggles,
@@ -442,7 +453,7 @@ export class CustomViewsWidget {
     const tabNavToggle = this.stateModal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
     const navIcon = this.stateModal?.querySelector('#cv-nav-icon');
     const navHeaderCard = this.stateModal?.querySelector('.cv-tabgroup-card.cv-tabgroup-header') as HTMLElement | null;
-    
+
     if (tabNavToggle && navIcon && navHeaderCard) {
       const updateIcon = (isVisible: boolean, isHovering: boolean = false) => {
         if (isHovering) {
@@ -451,10 +462,10 @@ export class CustomViewsWidget {
           navIcon.innerHTML = isVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
         }
       };
-      
+
       navHeaderCard.addEventListener('mouseenter', () => updateIcon(tabNavToggle.checked, true));
       navHeaderCard.addEventListener('mouseleave', () => updateIcon(tabNavToggle.checked, false));
-      
+
       tabNavToggle.addEventListener('change', () => {
         const visible = tabNavToggle.checked;
         updateIcon(visible, false);
@@ -522,10 +533,10 @@ export class CustomViewsWidget {
   private copyShareableURL(): void {
     const customState = this.getCurrentCustomStateFromModal();
     const url = URLStateManager.generateShareableURL(customState);
-    
+
     navigator.clipboard.writeText(url).then(() => {
       console.log('Shareable URL copied to clipboard!');
-    }).catch(() => {console.error('Failed to copy URL!');});
+    }).catch(() => { console.error('Failed to copy URL!'); });
   }
 
   /**
@@ -536,7 +547,7 @@ export class CustomViewsWidget {
 
     // Get currently active toggles (from custom state or default configuration)
     const activeToggles = this.core.getCurrentActiveToggles();
-    
+
     // First, uncheck all toggle inputs
     const allToggleInputs = this.stateModal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
     allToggleInputs.forEach(toggleInput => {
@@ -575,7 +586,7 @@ export class CustomViewsWidget {
       tabNavToggle.checked = navPref;
       // Ensure UI matches actual visibility
       TabManager.setNavsVisibility(document.body, navPref);
-      
+
       // Update the nav icon to reflect the current state
       if (navIcon) {
         navIcon.innerHTML = navPref ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
@@ -590,16 +601,16 @@ export class CustomViewsWidget {
     if (!this._hasVisibleConfig) return;
 
     const STORAGE_KEY = 'cv-welcome-shown';
-    
+
     // Check if welcome has been shown before
     const hasSeenWelcome = localStorage.getItem(STORAGE_KEY);
-    
+
     if (!hasSeenWelcome) {
       // Show welcome modal after a short delay to let the page settle
       setTimeout(() => {
         this.createWelcomeModal();
       }, 500);
-      
+
       // Mark as shown
       localStorage.setItem(STORAGE_KEY, 'true');
     }
@@ -617,7 +628,7 @@ export class CustomViewsWidget {
     if (this.options.theme === 'dark') {
       welcomeModal.classList.add('cv-widget-theme-dark');
     }
-    
+
     welcomeModal.innerHTML = `
       <div class="cv-widget-modal cv-welcome-modal">
         <header class="cv-modal-header">

@@ -1,5 +1,6 @@
 import type { State, TabGroupConfig, Config } from "../types/types";
 import type { AssetsManager } from "./assets-manager";
+
 import { PersistenceManager } from "./persistence";
 import { URLStateManager } from "./url-state-manager";
 import { VisibilityManager } from "./visibility-manager";
@@ -7,6 +8,9 @@ import { TabManager } from "./tab-manager";
 import { ToggleManager } from "./toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
+import { ShareManager } from "./share-manager";
+import { FocusManager } from "./focus-manager";
+import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './config';
 
 const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
 const TABGROUP_SELECTOR = 'cv-tabgroup';
@@ -29,6 +33,8 @@ export class CustomViewsCore {
   private persistenceManager: PersistenceManager;
   private visibilityManager: VisibilityManager;
   private observer: MutationObserver | null = null;
+  private shareManager: ShareManager;
+  private focusManager: FocusManager;
 
   private componentRegistry: ComponentRegistry = {
     toggles: new Set(),
@@ -48,6 +54,21 @@ export class CustomViewsCore {
     this.visibilityManager = new VisibilityManager();
     this.showUrlEnabled = opt.showUrl ?? false;
     this.lastAppliedState = this.cloneState(this.getComputedDefaultState());
+
+    // Resolve Exclusions
+    const excludedTags = [...DEFAULT_EXCLUDED_TAGS, ...(this.config.shareExclusions?.tags || [])];
+    const excludedIds = [...DEFAULT_EXCLUDED_IDS, ...(this.config.shareExclusions?.ids || [])];
+    const commonOptions = { excludedTags, excludedIds };
+
+    this.shareManager = new ShareManager(commonOptions);
+    this.focusManager = new FocusManager(this.rootEl, commonOptions);
+  }
+
+  /**
+   * Toggles the share mode on or off.
+   */
+  public toggleShareMode(): void {
+    this.shareManager.toggleShareMode();
   }
 
   /**
@@ -85,7 +106,7 @@ export class CustomViewsCore {
   }
 
   /**
-   * Unscan the given element for toggles and tab groups, de-register them
+   * Unscan the given element for toggles and tab groups, de-register them from registry
    */
   private unscan(element: HTMLElement): void {
     // Unscan for toggles
@@ -125,7 +146,7 @@ export class CustomViewsCore {
    */
   private getComputedDefaultState(): State {
     const configDefaultState = this.config?.defaultState;
-    
+
     // If defaultState is explicitly defined in config, use it as-is
     if (configDefaultState !== undefined) {
       return configDefaultState;
@@ -133,7 +154,7 @@ export class CustomViewsCore {
 
     // Otherwise, compute a default state: all toggles on, all tabs to first
     const tabs: Record<string, string> = {};
-    
+
     // Set all tab groups to their first tab
     if (this.config.tabGroups?.length) {
       this.config.tabGroups.forEach(group => {
@@ -178,7 +199,7 @@ export class CustomViewsCore {
     // Single-click: only updates DOM visually, no persistence
     if (groupEl) {
       TabManager.applyTabLocalOnly(groupEl, tabId);
-      
+
       // Update nav active state for this group element only
       TabManager.updateNavActiveState(groupEl, tabId);
 
@@ -209,7 +230,9 @@ export class CustomViewsCore {
     window.addEventListener("popstate", () => {
       this.loadAndCallApplyState();
     });
+
     this.loadAndCallApplyState();
+    this.focusManager.init();
     this.initObserver();
   }
 
@@ -232,16 +255,16 @@ export class CustomViewsCore {
 
         const currentTabs = this.getCurrentActiveTabs();
         currentTabs[groupId] = tabId;
-        
+
         const currentToggles = this.getCurrentActiveToggles();
         const newState: State = {
           toggles: currentToggles,
-          tabs: currentTabs
+          tabs: currentTabs,
         };
 
         // 2. Apply state with scroll anchor information
-        this.applyState(newState, { 
-          scrollAnchor: { element: anchorElement, top: initialTop } 
+        this.applyState(newState, {
+          scrollAnchor: { element: anchorElement, top: initialTop }
         });
       }
     );
@@ -275,7 +298,7 @@ export class CustomViewsCore {
       if (newComponentsFound) {
         // Initialize navs for new components.
         this.initializeNewComponents();
-        
+
         // Re-apply the last known state. renderState will handle disconnecting
         // the observer to prevent infinite loops.
         if (this.lastAppliedState) {
@@ -323,7 +346,7 @@ export class CustomViewsCore {
   */
   public applyState(state: State, options?: { source?: string; scrollAnchor?: { element: HTMLElement; top: number; }; }) {
     // console.log(`[Core] applyState called with source: ${options?.source}`, state);
-    
+
     let groupToScrollTo: HTMLElement | null = null;
     if (options?.source === 'widget') {
       groupToScrollTo = ScrollManager.findHighestVisibleTabGroup();
@@ -506,7 +529,7 @@ export class CustomViewsCore {
   }
 
   private cloneState(state?: State | null): State {
-    if (!state) return { };
+    if (!state) return {};
     return JSON.parse(JSON.stringify(state));
   }
 
