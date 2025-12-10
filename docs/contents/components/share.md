@@ -11,7 +11,7 @@ CustomViews provides a powerful way to share specific content from a page. "Shar
 ## Sharing Content
 
 ### 1. Activating Share Mode
-When Share Mode is activated (e.g., by clicking a "Share" button on your site), a floating bar appears at the bottom of the screen, and the page becomes interactive for selection.
+To activate Share Mode, click the **floating share button** located at the bottom right of the screen. A floating bar will appear at the bottom, and the page becomes interactive for selection.
 
 ### 2. Selecting Elements
 Hover over any part of the page to see it highlighted.
@@ -20,19 +20,19 @@ Hover over any part of the page to see it highlighted.
 - **Multiple Selection**: You can select as many different sections of the page as you need.
 
 #### Smart Selection Guidelines
+
 - **Parent Selection**: If you select a large container (like a whole section), individual items inside it are automatically included. You cannot select a child element separately if its parent is already selected.
 - **"Up" Button**: When hovering over an element, a small helper tooltip appears. Click the **"↰" (Up Arrow)** button in this tooltip to quickly select the parent container instead of the specific element.
 - **Direct Selection**: The tooltip also has a **"✓" (Tick)** button to select the current element without clicking it directly—useful for precise selection.
 
 ### 3. Generating the Link
-Once you have selected one or more items:
-1.  Look at the floating bar at the bottom of the screen.
-2.  Click **"Generate Link"**.
-3.  A unique link is automatically copied to your clipboard.
-4.  Share this link with anyone!
+Once you have selected one or more items, use the floating bar at the bottom:
+
+- **Preview**: Click **"Preview"** to open the generated link in a new tab immediately. This lets you verify exactly what the recipient will see.
+- **Generate Link**: Click **"Generate Link"** to copy the unique link to your clipboard.
 
 ### 4. Exiting
-To leave Share Mode, click the **"Exit"** button on the floating bar or simply press the **`Esc`** key on your keyboard.
+To leave Share Mode, click the **"Exit"** button on the floating bar, press the **`Esc`** key, or click the floating share button again.
 
 ---
 

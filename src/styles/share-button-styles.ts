@@ -5,7 +5,7 @@ export const SHARE_BUTTON_STYLES = `
   #${SHARE_BUTTON_ID} {
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    right: 100px;
     width: 50px;
     height: 50px;
     border-radius: 50%;

@@ -39,13 +39,20 @@ export class FocusManager {
      * Initializes the Focus Manager. Checks URL for focus parameter.
      */
     public init(): void {
-        this.injectStyles();
+        this.handleUrlChange();
+    }
 
+    public handleUrlChange(): void {
         const urlParams = new URLSearchParams(window.location.search);
         const encodedDescriptors = urlParams.get(FOCUS_PARAM);
 
         if (encodedDescriptors) {
             this.applyFocusMode(encodedDescriptors);
+        } else {
+            // encoding missing, ensure we exit focus mode if active
+            if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                this.exitFocusMode();
+            }
         }
     }
 
@@ -242,6 +249,18 @@ export class FocusManager {
         divider.remove();
         const idx = this.dividers.indexOf(divider);
         if (idx > -1) this.dividers.splice(idx, 1);
+
+        // If no more hidden elements, remove the banner
+        if (this.hiddenElements.size === 0) {
+            this.removeExitBanner();
+        }
+    }
+
+    private removeExitBanner(): void {
+        if (this.exitBanner) {
+            this.exitBanner.remove();
+            this.exitBanner = null;
+        }
     }
 
     /**
@@ -280,10 +299,7 @@ export class FocusManager {
         targets.forEach(t => t.classList.remove(FOCUSED_CLASS));
 
         // Remove banner
-        if (this.exitBanner) {
-            this.exitBanner.remove();
-            this.exitBanner = null;
-        }
+        this.removeExitBanner();
 
         // Update URL
         const url = new URL(window.location.href);

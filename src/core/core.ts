@@ -236,6 +236,7 @@ export class CustomViewsCore {
     // For session history, clicks on back/forward button
     window.addEventListener("popstate", () => {
       this.loadAndCallApplyState();
+      this.focusManager.handleUrlChange();
     });
 
     this.loadAndCallApplyState();
