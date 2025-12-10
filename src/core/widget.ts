@@ -4,7 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getLinkIcon } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -328,10 +328,7 @@ export class CustomViewsWidget {
             <span>Copy Shareable URL</span>
             <span class="cv-share-btn-icon">${getCopyIcon()}</span>
           </button>
-          <button class="cv-toggle-share-mode-btn">
-            <span>Select Sections to Share</span>
-            <span class="cv-toggle-share-mode-btn-icon">${getLinkIcon()}</span>
-          </button>
+
         </footer>
       </div>
     `;
@@ -390,12 +387,7 @@ export class CustomViewsWidget {
         return;
       }
 
-      // Toggle Share Mode button
-      if (target.closest('.cv-toggle-share-mode-btn')) {
-        this.closeModal();
-        this.core.toggleShareMode();
-        return;
-      }
+
 
       // Overlay click to close
       if (e.target === this.stateModal) {

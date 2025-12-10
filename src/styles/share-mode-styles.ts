@@ -67,7 +67,16 @@ export const SHARE_MODE_STYLES = `
   #${FLOATING_ACTION_BAR_ID} .cv-action-button.clear:hover {
     background-color: #4a4a4a;
   }
+  #${FLOATING_ACTION_BAR_ID} .cv-action-button.clear:hover {
+    background-color: #4a4a4a;
+  }
 
+  #${FLOATING_ACTION_BAR_ID} .cv-action-button.preview {
+    background-color: #106ebe;
+  }
+  #${FLOATING_ACTION_BAR_ID} .cv-action-button.preview:hover {
+    background-color: #005a9e;
+  }
   #${FLOATING_ACTION_BAR_ID} .cv-action-button.exit {
     background-color: #d13438;
   }

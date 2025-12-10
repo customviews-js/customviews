@@ -9,6 +9,7 @@ import { ToggleManager } from "./toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
 import { ShareManager } from "./share-manager";
+import { ShareButton } from "./share-button";
 import { FocusManager } from "./focus-manager";
 import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './config';
 
@@ -34,6 +35,7 @@ export class CustomViewsCore {
   private visibilityManager: VisibilityManager;
   private observer: MutationObserver | null = null;
   private shareManager: ShareManager;
+  private shareButton: ShareButton;
   private focusManager: FocusManager;
 
   private componentRegistry: ComponentRegistry = {
@@ -61,7 +63,12 @@ export class CustomViewsCore {
     const commonOptions = { excludedTags, excludedIds };
 
     this.shareManager = new ShareManager(commonOptions);
+    this.shareButton = new ShareButton(this.shareManager);
     this.focusManager = new FocusManager(this.rootEl, commonOptions);
+  }
+
+  public getShareManager(): ShareManager {
+    return this.shareManager;
   }
 
   /**
@@ -233,6 +240,7 @@ export class CustomViewsCore {
 
     this.loadAndCallApplyState();
     this.focusManager.init();
+    this.shareButton.init();
     this.initObserver();
   }
 

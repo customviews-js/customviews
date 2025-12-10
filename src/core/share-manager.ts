@@ -47,6 +47,20 @@ export class ShareManager {
     this.boundHandleKeydown = this.handleKeydown.bind(this);
   }
 
+  private listeners: Array<(isActive: boolean) => void> = [];
+
+  public addStateChangeListener(listener: (isActive: boolean) => void): void {
+    this.listeners.push(listener);
+  }
+
+  public removeStateChangeListener(listener: (isActive: boolean) => void): void {
+    this.listeners = this.listeners.filter(l => l !== listener);
+  }
+
+  private notifyListeners(): void {
+    this.listeners.forEach(listener => listener(this.isActive));
+  }
+
   public toggleShareMode(): void {
     this.isActive = !this.isActive;
     if (this.isActive) {
@@ -54,6 +68,7 @@ export class ShareManager {
     } else {
       this.cleanup();
     }
+    this.notifyListeners();
   }
 
   /**
@@ -331,6 +346,7 @@ export class ShareManager {
     bar.innerHTML = `
       <span id="cv-selected-count">0 items selected</span>
       <button class="cv-action-button clear">Clear All</button>
+      <button class="cv-action-button preview">Preview</button>
       <button class="cv-action-button generate">Generate Link</button>
       <button class="cv-action-button exit">Exit</button>
     `;
@@ -338,6 +354,7 @@ export class ShareManager {
     this.floatingBarEl = bar;
 
     bar.querySelector('.clear')?.addEventListener('click', () => this.clearAll());
+    bar.querySelector('.preview')?.addEventListener('click', () => this.previewLink());
     bar.querySelector('.generate')?.addEventListener('click', () => this.generateLink());
     bar.querySelector('.exit')?.addEventListener('click', () => this.toggleShareMode());
   }
@@ -358,10 +375,9 @@ export class ShareManager {
     this.updateFloatingBarCount();
   }
 
-  private async generateLink(): Promise<void> {
+  private getShareUrl(): URL | null {
     if (this.selectedElements.size === 0) {
-      ToastManager.show('Please select at least one item.');
-      return;
+      return null;
     }
 
     const descriptors = Array.from(this.selectedElements).map(el => AnchorEngine.createDescriptor(el));
@@ -369,6 +385,15 @@ export class ShareManager {
 
     const url = new URL(window.location.href);
     url.searchParams.set('cv-focus', serialized);
+    return url;
+  }
+
+  private async generateLink(): Promise<void> {
+    const url = this.getShareUrl();
+    if (!url) {
+      ToastManager.show('Please select at least one item.');
+      return;
+    }
 
     try {
       await navigator.clipboard.writeText(url.toString());
@@ -377,6 +402,15 @@ export class ShareManager {
       console.error('Clipboard failed', e);
       ToastManager.show('Failed to copy link.');
     }
+  }
+
+  private previewLink(): void {
+    const url = this.getShareUrl();
+    if (!url) {
+      ToastManager.show('Please select at least one item.');
+      return;
+    }
+    window.open(url.toString(), '_blank');
   }
 
 

@@ -131,3 +131,10 @@ export function getLinkIcon(): string {
             <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
         </svg>`;
 }
+
+export function getShareIcon(): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M18 8h-2a1 1 0 0 0 0 2h2v8H6v-8h2a1 1 0 0 0 0-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2z"/>
+            <path fill="currentColor" d="M11 6.41V12a1 1 0 0 0 2 0V6.41l1.29 1.3a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.42l-3-3a1 1 0 0 0-1.42 0l-3 3a1 1 0 1 0 1.42 1.42L11 6.41z"/>
+          </svg>`;
+} 
