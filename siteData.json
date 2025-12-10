@@ -28,6 +28,21 @@
       "headingKeywords": {}
     },
     {
+      "src": "contents/components/share.md",
+      "title": "User Guide - Sharing",
+      "headings": {
+        "share-mode-and-amp-focus-view": "Share Mode &amp; Focus View",
+        "sharing-content": "Sharing Content",
+        "1-activating-share-mode": "1. Activating Share Mode",
+        "2-selecting-elements": "2. Selecting Elements",
+        "3-generating-the-link": "3. Generating the Link",
+        "4-exiting": "4. Exiting",
+        "focus-view-recipient-experience": "Focus View (Recipient Experience)",
+        "customizing-share-behavior": "Customizing Share Behavior"
+      },
+      "headingKeywords": {}
+    },
+    {
       "src": "contents/components/tabs.md",
       "title": "User Guide - Tabs",
       "headings": {
@@ -134,6 +149,20 @@
     {
       "src": "contents/tests/cvtest.md",
       "headings": {},
+      "headingKeywords": {}
+    },
+    {
+      "src": "contents/tests/focus-test.md",
+      "title": "Focus and Sharing Test",
+      "headings": {
+        "focus-and-sharing-feature-test-page": "Focus and Sharing Feature Test Page",
+        "intro-section": "Introduction",
+        "step-1": "Step 1: Install Dependencies",
+        "step-2": "Step 2: Configure the Plugin",
+        "troubleshooting": "Troubleshooting",
+        "error-1": "Error: Build Fails",
+        "final-section": "Final Section"
+      },
       "headingKeywords": {}
     },
     {
