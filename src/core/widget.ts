@@ -4,7 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -49,6 +49,7 @@ export class CustomViewsWidget {
   private _hasVisibleConfig = false;
   private pageToggleIds: Set<string> = new Set();
   private pageTabIds: Set<string> = new Set();
+  private currentTab: 'customize' | 'share' = 'customize';
 
   // Modal state
   private stateModal: HTMLElement | null = null;
@@ -256,12 +257,12 @@ export class CustomViewsWidget {
             </div>
             <div class="cv-tabgroup-info">
               <div class="cv-tabgroup-title-container">
-                <p class="cv-tabgroup-title">Navigation Headers</p>
+                <p class="cv-tabgroup-title">Show only the selected tab</p>
               </div>
-              <p class="cv-tabgroup-description">Show or hide navigation headers</p>
+              <p class="cv-tabgroup-description">Hide the navigation headers</p>
             </div>
             <label class="cv-toggle-switch cv-nav-toggle">
-              <input class="cv-nav-pref-input" type="checkbox" ${initialNavsVisible ? 'checked' : ''} aria-label="Show or hide navigation headers" />
+              <input class="cv-nav-pref-input" type="checkbox" ${initialNavsVisible ? '' : 'checked'} aria-label="Show only the selected tab" />
               <span class="cv-switch-bg"></span>
               <span class="cv-switch-knob"></span>
             </label>
@@ -298,23 +299,48 @@ export class CustomViewsWidget {
         <main class="cv-modal-main">
           ${this.options.description ? `<p class="cv-modal-description">${this.options.description}</p>` : ''}
           
-          ${visibleToggles.length ? `
-          <div class="cv-content-section">
-            <div class="cv-section-heading">Toggles</div>
-            <div class="cv-toggles-container">
-              ${toggleControlsHtml}
+          <div class="cv-modal-tabs">
+            <button class="cv-modal-tab ${this.currentTab === 'customize' ? 'active' : ''}" data-tab="customize">Customize</button>
+            <button class="cv-modal-tab ${this.currentTab === 'share' ? 'active' : ''}" data-tab="share">Share</button>
+          </div>
+
+          <div class="cv-tab-content ${this.currentTab === 'customize' ? 'active' : ''}" data-content="customize">
+            ${visibleToggles.length ? `
+            <div class="cv-content-section">
+              <div class="cv-section-heading">Toggles</div>
+              <div class="cv-toggles-container">
+                ${toggleControlsHtml}
+              </div>
+            </div>
+            ` : ''}
+            
+            ${this.options.showTabGroups && tabGroups && tabGroups.length > 0 ? `
+            <div class="cv-content-section">
+              <div class="cv-section-heading">Tab Groups</div>
+              <div class="cv-tabgroups-container">
+                ${tabGroupControlsHTML}
+              </div>
+            </div>
+            ` : ''}
+          </div>
+
+          <div class="cv-tab-content ${this.currentTab === 'share' ? 'active' : ''}" data-content="share">
+            <div class="cv-share-content">
+              <div class="cv-share-instruction">
+                Create a shareable link for your current customization, or select specific parts of the page to share.
+              </div>
+              
+              <button class="cv-share-action-btn primary cv-start-share-btn">
+                <span class="cv-btn-icon">${getShareIcon()}</span>
+                <span>Select elements to share</span>
+              </button>
+              
+              <button class="cv-share-action-btn cv-copy-url-btn">
+                <span class="cv-btn-icon">${getCopyIcon()}</span>
+                <span>Copy Shareable URL of Settings</span>
+              </button>
             </div>
           </div>
-          ` : ''}
-          
-          ${this.options.showTabGroups && tabGroups && tabGroups.length > 0 ? `
-          <div class="cv-content-section">
-            <div class="cv-section-heading">Tab Groups</div>
-            <div class="cv-tabgroups-container">
-              ${tabGroupControlsHTML}
-            </div>
-          </div>
-          ` : ''}
         </main>
 
         <footer class="cv-modal-footer">
@@ -323,12 +349,8 @@ export class CustomViewsWidget {
             <span class="cv-reset-btn-icon">${getResetIcon()}</span>
             <span>Reset to Default</span>
           </button>
-          ` : ''}
-          <button class="cv-share-btn">
-            <span>Copy Shareable URL</span>
-            <span class="cv-share-btn-icon">${getCopyIcon()}</span>
-          </button>
-
+          ` : '<div></div>'}
+          <button class="cv-done-btn">Done</button>
         </footer>
       </div>
     `;
@@ -353,20 +375,6 @@ export class CustomViewsWidget {
         return;
       }
 
-      // Copy URL button
-      if (target.closest('.cv-share-btn')) {
-        this.copyShareableURL();
-        const copyUrlBtn = target.closest('.cv-share-btn');
-        const iconContainer = copyUrlBtn?.querySelector('.cv-share-btn-icon');
-        if (iconContainer) {
-          const originalIcon = iconContainer.innerHTML;
-          iconContainer.innerHTML = getTickIcon();
-          setTimeout(() => {
-            iconContainer.innerHTML = originalIcon;
-          }, 3000);
-        }
-        return;
-      }
 
       // Reset to default button
       if (target.closest('.cv-reset-btn')) {
@@ -387,7 +395,11 @@ export class CustomViewsWidget {
         return;
       }
 
-
+      // Done button
+      if (target.closest('.cv-done-btn')) {
+        this.closeModal();
+        return;
+      }
 
       // Overlay click to close
       if (e.target === this.stateModal) {
@@ -455,17 +467,64 @@ export class CustomViewsWidget {
         }
       };
 
-      navHeaderCard.addEventListener('mouseenter', () => updateIcon(tabNavToggle.checked, true));
-      navHeaderCard.addEventListener('mouseleave', () => updateIcon(tabNavToggle.checked, false));
+      navHeaderCard.addEventListener('mouseenter', () => updateIcon(!tabNavToggle.checked, true));
+      navHeaderCard.addEventListener('mouseleave', () => updateIcon(!tabNavToggle.checked, false));
 
       tabNavToggle.addEventListener('change', () => {
-        const visible = tabNavToggle.checked;
+        const visible = !tabNavToggle.checked;
         updateIcon(visible, false);
         this.core.persistTabNavVisibility(visible);
         try {
           TabManager.setNavsVisibility(document.body, visible);
         } catch (e) {
           console.error('Failed to set tab nav visibility:', e);
+        }
+      });
+    }
+
+    // Tab switching
+    const tabs = this.stateModal.querySelectorAll('.cv-modal-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = (tab as HTMLElement).dataset.tab;
+        if (tabId === 'customize' || tabId === 'share') {
+          this.currentTab = tabId;
+
+          // Update UI without full re-render
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          const contents = this.stateModal?.querySelectorAll('.cv-tab-content');
+          contents?.forEach(c => {
+            c.classList.remove('active');
+            if ((c as HTMLElement).dataset.content === tabId) {
+              c.classList.add('active');
+            }
+          });
+        }
+      });
+    });
+
+    // Share buttons (inside content)
+    const startShareBtn = this.stateModal.querySelector('.cv-start-share-btn');
+    if (startShareBtn) {
+      startShareBtn.addEventListener('click', () => {
+        this.closeModal();
+        this.core.toggleShareMode();
+      });
+    }
+
+    const copyUrlBtn = this.stateModal.querySelector('.cv-copy-url-btn');
+    if (copyUrlBtn) {
+      copyUrlBtn.addEventListener('click', () => {
+        this.copyShareableURL();
+        const iconContainer = copyUrlBtn.querySelector('.cv-btn-icon');
+        if (iconContainer) {
+          const originalIcon = iconContainer.innerHTML;
+          iconContainer.innerHTML = getTickIcon();
+          setTimeout(() => {
+            iconContainer.innerHTML = originalIcon;
+          }, 2000);
         }
       });
     }
@@ -575,7 +634,7 @@ export class CustomViewsWidget {
     const tabNavToggle = this.stateModal.querySelector('.cv-nav-pref-input') as HTMLInputElement | null;
     const navIcon = this.stateModal?.querySelector('#cv-nav-icon');
     if (tabNavToggle) {
-      tabNavToggle.checked = navPref;
+      tabNavToggle.checked = !navPref;
       // Ensure UI matches actual visibility
       TabManager.setNavsVisibility(document.body, navPref);
 
