@@ -4,7 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
-import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon } from "../utils/icons";
+import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getGitHubIcon } from "../utils/icons";
 
 export interface WidgetOptions {
   /** The CustomViews core instance to control */
@@ -345,11 +345,17 @@ export class CustomViewsWidget {
 
         <footer class="cv-modal-footer">
           ${this.options.showReset ? `
-          <button class="cv-reset-btn">
+          <button class="cv-reset-btn" title="Reset to Default">
             <span class="cv-reset-btn-icon">${getResetIcon()}</span>
-            <span>Reset to Default</span>
+            <span>Reset</span>
           </button>
           ` : '<div></div>'}
+          
+          <a href="https://github.com/customviews-js/customviews" target="_blank" class="cv-footer-link">
+            ${getGitHubIcon()}
+            <span>View on GitHub</span>
+          </a>
+
           <button class="cv-done-btn">Done</button>
         </footer>
       </div>

@@ -890,6 +890,33 @@ export const WIDGET_STYLES = `
   padding: 0.75rem;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
+  
+.cv-footer-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.5);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.cv-footer-link:hover {
+  color: #3e84f4;
+}
+
+.cv-footer-link svg {
+  opacity: 0.8;
+}
+
+.cv-widget-theme-dark .cv-footer-link {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.cv-widget-theme-dark .cv-footer-link:hover {
+  color: #60a5fa;
+}
 
 .cv-reset-btn,
 .cv-share-btn {
