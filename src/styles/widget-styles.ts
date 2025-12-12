@@ -1112,7 +1112,11 @@ export const WIDGET_STYLES = `
 .cv-modal-tabs {
   display: flex;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cv-tab-content > .cv-content-section + .cv-content-section {
+  margin-top: 1.5rem;
 }
 
 .cv-modal-tab {
