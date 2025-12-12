@@ -1,9 +1,10 @@
 /**
- * Custom Elements for Tab Groups and Tabs
+ * Defines the custom elements used by CustomViews.
  */
 
 /**
- * <cv-tab> element - represents a single tab panel
+ * `<cv-tab>`: A custom element representing a single tab panel within a tab group.
+ * Its content is displayed when the corresponding tab is active.
  */
 class CVTab extends HTMLElement {
   connectedCallback() {
@@ -12,7 +13,8 @@ class CVTab extends HTMLElement {
 }
 
 /**
- * <cv-tabgroup> element - represents a group of tabs
+ * `<cv-tabgroup>`: A custom element that encapsulates a set of tabs (`<cv-tab>`).
+ * It manages the tab navigation and content visibility for the group.
  */
 class CVTabgroup extends HTMLElement {
   connectedCallback() {
@@ -29,7 +31,7 @@ class CVTabgroup extends HTMLElement {
 }
 
 /**
- * <cv-toggle> element - represents a toggleable content block
+ * `<cv-toggle>`: A custom element for creating a toggleable content block.
  */
 class CVToggle extends HTMLElement {
   connectedCallback() {
@@ -38,8 +40,8 @@ class CVToggle extends HTMLElement {
 }
 
 /**
- * <cv-tab-header> element - represents tab header with rich HTML formatting
- * Content is extracted and used in the navigation link
+ * `<cv-tab-header>`: A semantic container for a tab's header content.
+ * The content of this element is used to create the navigation link for the tab.
  */
 class CVTabHeader extends HTMLElement {
   connectedCallback() {
@@ -48,8 +50,7 @@ class CVTabHeader extends HTMLElement {
 }
 
 /**
- * <cv-tab-body> element - represents tab body content
- * Semantic container for tab panel content
+ * `<cv-tab-body>`: A semantic container for the main content of a tab panel.
  */
 class CVTabBody extends HTMLElement {
   connectedCallback() {
@@ -58,14 +59,14 @@ class CVTabBody extends HTMLElement {
 }
 
 /**
- * Register custom elements
+ * Registers all CustomViews custom elements with the CustomElementRegistry.
  */
 export function registerCustomElements(): void {
   // Only register if not already defined
   if (!customElements.get('cv-tab')) {
     customElements.define('cv-tab', CVTab);
   }
-  
+
   if (!customElements.get('cv-tabgroup')) {
     customElements.define('cv-tabgroup', CVTabgroup);
   }

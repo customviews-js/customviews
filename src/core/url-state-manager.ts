@@ -79,7 +79,9 @@ export class URLStateManager {
   }
 
   /**
-   * Encode state into URL-safe string (Toggles and Tabs only currently)
+   * Encode state into URL-safe string 
+   * 
+   * (Covers Toggles, Tabs and Focus currently)
    */
   private static encodeState(state: State): string | null {
     try {
@@ -94,6 +96,11 @@ export class URLStateManager {
       // Add tab groups if present
       if (state.tabs && Object.keys(state.tabs).length > 0) {
         compact.g = Object.entries(state.tabs);
+      }
+
+      // Add focus if present
+      if (state.focus && state.focus.length > 0) {
+        compact.f = state.focus;
       }
 
       // Convert to JSON and encode
@@ -117,7 +124,9 @@ export class URLStateManager {
   }
 
   /**
-   * Decode custom state from URL parameter (Toggles and Tabs only currently)
+   * Decode custom state from URL parameter
+   * 
+   * (Covers Toggles, Tabs and Focus currently)
    */
   private static decodeState(encoded: string): State | null {
     try {
@@ -144,7 +153,7 @@ export class URLStateManager {
       if (!compact || typeof compact !== 'object') {
         throw new Error('Invalid compact state structure');
       }
-      
+
       // Reconstruct State from compact format
 
       // Reconstruct Toggles
@@ -162,7 +171,10 @@ export class URLStateManager {
         }
       }
 
-    
+      // Reconstruct Focus
+      if (Array.isArray(compact.f)) {
+        state.focus = compact.f;
+      }
 
       return state;
     } catch (error) {
