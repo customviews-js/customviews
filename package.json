@@ -33,9 +33,15 @@
     "build:types": "tsc --project tsconfig.json",
     "build:js": "rollup -c",
     "build": "npm run clean && npm run build:types && npm run build:js",
+    "release": "npm run release:beta",
+    "release:beta": "npm run build && npm publish --tag beta",
+    "release:prod": "npm run build && npm publish --tag latest",
+    "bump:beta": "npm version prerelease --preid=beta",
+    "bump:patch": "npm version patch",
+    "bump:minor": "npm version minor",
+    "bump:major": "npm version major",
     "dev": "rollup -c -w",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest run"
   },
   "keywords": [
     "javascript",

@@ -1,55 +1,36 @@
-<!-- Markdown Guide to releasing next version of this package -->
+# Release Workflow
 
-# Making a Release
+## Prerequisites
+*   **Login to NPM**: Ensure you are authenticated.
+    ```sh
+    npm login
+    # OR ensure you have an access token configured in .npmrc
+    ```
 
-Follow these steps to bundle and release the next version of this package:
-
-## 1. Update the Version
-
-Edit `package.json` and increment the `"version"` field as needed.
-
-## 2. Update Dependencies
-
-Run:
+## 1. Beta Release (Experimental)
+Use for testing new features.
 
 ```sh
-npm install
+# 1. Bump version (e.g., 1.4.0 -> 1.4.1-beta.0)
+npm run bump:beta
+
+# 2. Release to NPM (@beta tag)
+npm run release:beta
 ```
+* Note that running `npm run bump:beta` will update the release version to the next beta version, incrementing the beta version number if the last release was a beta release.
+* `npm version prerelease --preid=beta` creates a release commit and tag, but does not automatically publish to NPM.
+* `npm run release:beta` will publish the release to NPM with the `@beta` tag.
 
-This updates `package-lock.json` to match your new version and dependencies.
-
-## 3. Build the Bundle
-
-Run:
+## 2. Production Release (Stable)
+Use when beta is stable and ready for everyone.
 
 ```sh
-npm run build
+# 1. Bump version (e.g., 1.4.1-beta.x -> 1.4.1)
+npm run bump:patch
+# OR: npm run bump:minor / npm run bump:major
+
+# 2. Release to NPM (@latest tag)
+npm run release:prod
 ```
 
-This generates the bundled files in the `dist/` folder.
-
-## 4. Login to npm (if needed)
-
-```sh
-npm login
-```
-
-## 5. Publish to npm
-
-Run:
-
-```sh
-npm publish
-```
-
-Your package will now be available on npm.
-
-## 6. (Optional) Tag a Release on GitHub
-
-Push your changes and create a release/tag for versioning.
-
----
-
-**Tip:**  
-- Use `npm version patch|minor|major` to bump the version automatically.
-- Make sure your `dist/` files are up to date before
+> **Note:** The `release:*` commands automatically run `npm run build` before publishing.
