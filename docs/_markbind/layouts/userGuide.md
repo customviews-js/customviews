@@ -9,7 +9,7 @@
       <site-nav>
 * [Getting Started]({{baseUrl}}/userGuide/gettingStarted.html)
 * Site Integrations
-  * [MarkBind]({{baseUrl}}/userGuide/gettingStarted/setupWithMarkbind.html)
+  * [MarkBind]({{baseUrl}}/userGuide/integrations/setupWithMarkbind.html)
 * [Configuration]({{baseUrl}}/userGuide/configuration.html)
 * [Components]({{baseUrl}}/userGuide/components/all.html)
   * [Widget]({{baseUrl}}/userGuide/components/widget.html)

@@ -139,11 +139,3 @@ Now you can declaratively use CustomViews attributes directly in your .md or .mb
 ```
 
 CustomViews will automatically handle visibility, persistence, and synchronization across all tabs and toggles.
-
-
-## Learn More
-
-
-- 📘 [MarkBind Plugin System Documentation](https://markbind.org/userGuide/usingPlugins.html)
-- 🧩 [CustomViews GitHub Repository](https://github.com/customviews-js/customviews)
-- 💡 [User Guide: Components]({{baseUrl}}/contents/components/components.html)
