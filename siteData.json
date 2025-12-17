@@ -20,7 +20,94 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/components/components.md",
+      "src": "about.md",
+      "title": "About Page",
+      "headings": {
+        "about-page": "About Page"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/devGuide.md",
+      "title": "Developer Guide",
+      "headings": {
+        "developer-guide": "Developer Guide"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/index.md",
+      "headings": {},
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/releases.md",
+      "title": "Developer Guide - Making Releases",
+      "headings": {
+        "release-workflow": "Release Workflow",
+        "prerequisites": "Prerequisites",
+        "1-beta-release-experimental": "1. Beta Release (Experimental)",
+        "2-production-release-stable": "2. Production Release (Stable)"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/tests/cvtest.md",
+      "title": "Developer Guide - Tests",
+      "headings": {
+        "tests": "Tests"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/tests/focus-test.md",
+      "title": "Developer Guide - Focus and Sharing Tests",
+      "headings": {
+        "focus-and-sharing-tests": "Focus and Sharing Tests",
+        "intro-section": "Introduction",
+        "step-1": "Step 1: Install Dependencies",
+        "step-2": "Step 2: Configure the Plugin",
+        "troubleshooting": "Troubleshooting",
+        "error-1": "Error: Build Fails",
+        "final-section": "Final Section"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/tests/localComponents.md",
+      "title": "Developer Guide - Local Components",
+      "headings": {
+        "local-components": "Local Components",
+        "local-components-2": "Local Components",
+        "local-toggle": "Local Toggle",
+        "local-tab-groups": "Local Tab Groups",
+        "further-testing": "Further Testing"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/tests/tabs.md",
+      "title": "Developer Guide - Tabs",
+      "headings": {
+        "tabs": "Tabs",
+        "fruits-tabs": "Fruits Tabs"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "index.md",
+      "title": "Custom Views Library - Interactive Documentation & Demo",
+      "headings": {
+        "customviews": "CustomViews",
+        "introduction": "Introduction",
+        "quick-demo": "Quick Demo",
+        "toggles": "Toggles",
+        "tabs": "Tabs"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "userGuide/components/all.md",
       "title": "Components",
       "headings": {
         "components": "Components"
@@ -28,7 +115,7 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/components/share.md",
+      "src": "userGuide/components/share.md",
       "title": "User Guide - Sharing",
       "headings": {
         "share-mode-and-amp-focus-view": "Share Mode &amp; Focus View",
@@ -43,7 +130,7 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/components/tabs.md",
+      "src": "userGuide/components/tabs.md",
       "title": "User Guide - Tabs",
       "headings": {
         "basic-example": "Basic Example",
@@ -65,7 +152,7 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/components/toggles.md",
+      "src": "userGuide/components/toggles.md",
       "title": "CustomViews - Toggle Component",
       "headings": {
         "toggles": "Toggles",
@@ -84,7 +171,7 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/components/widget.md",
+      "src": "userGuide/components/widget.md",
       "title": "CustomViews - Widget",
       "headings": {
         "widget": "Widget",
@@ -99,9 +186,9 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/gettingStarted/configuration.md",
-      "title": "Configuration Reference",
+      "src": "userGuide/configuration.md",
       "headings": {
+        "configuration-reference": "Configuration Reference",
         "configuration-file-customviews-config-json": "Configuration File (customviews.config.json)",
         "basic-structure": "Basic Structure",
         "configuration-options": "Configuration Options",
@@ -122,18 +209,23 @@
       "headingKeywords": {}
     },
     {
-      "src": "contents/gettingStarted/setup.md",
-      "title": "Installation",
+      "src": "userGuide/gettingStarted.md",
+      "title": "User Guide - Getting Started",
       "headings": {
-        "quick-start-autoload-via-script": "Quick Start (Autoload via Script)",
-        "manual-initialization-optional": "Manual Initialization (Optional)",
-        "creating-customviews-config-json": "Creating customviews.config.json",
-        "key-fields": "Key Fields"
+        "getting-started": "Getting Started",
+        "method-1-cdn-script-tag-recommended": "Method 1: CDN / Script Tag (Recommended)",
+        "method-2-install-via-npm": "Method 2: Install via NPM",
+        "verify-installation": "Verify Installation"
       },
       "headingKeywords": {}
     },
     {
-      "src": "contents/gettingStarted/setupWithMarkbind.md",
+      "src": "userGuide/index.md",
+      "headings": {},
+      "headingKeywords": {}
+    },
+    {
+      "src": "userGuide/integrations/setupWithMarkbind.md",
       "title": "Installation (MarkBind Setup)",
       "headings": {
         "setting-up-customviews-in-a-markbind-site": "Setting up CustomViews in a MarkBind Site",
@@ -143,55 +235,6 @@
         "4-verify-installation": "4. Verify Installation",
         "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages",
         "learn-more": "Learn More"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/tests/cvtest.md",
-      "headings": {},
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/tests/focus-test.md",
-      "title": "Focus and Sharing Test",
-      "headings": {
-        "focus-and-sharing-feature-test-page": "Focus and Sharing Feature Test Page",
-        "intro-section": "Introduction",
-        "step-1": "Step 1: Install Dependencies",
-        "step-2": "Step 2: Configure the Plugin",
-        "troubleshooting": "Troubleshooting",
-        "error-1": "Error: Build Fails",
-        "final-section": "Final Section"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/tests/localComponents.md",
-      "title": "Local Components",
-      "headings": {
-        "local-components": "Local Components",
-        "local-toggle": "Local Toggle",
-        "local-tab-groups": "Local Tab Groups",
-        "further-testing": "Further Testing"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "contents/tests/tabs.md",
-      "title": "User Guide - Tabs",
-      "headings": {
-        "fruits-tabs": "Fruits Tabs"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "index.md",
-      "title": "Custom Views Library - Interactive Documentation & Demo",
-      "headings": {
-        "introduction": "Introduction",
-        "quick-demo": "Quick Demo",
-        "toggles": "Toggles",
-        "tabs": "Tabs"
       },
       "headingKeywords": {}
     }
