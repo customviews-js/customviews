@@ -328,7 +328,8 @@ export class CustomViewsCore {
     // 1. URL State
     const urlState = URLStateManager.parseURL();
     if (urlState) {
-      this.applyState(urlState);
+      // Apply URL state temporarily (do not persist until interaction)
+      this.applyState(urlState, { persist: false });
       return;
     }
 
@@ -345,11 +346,12 @@ export class CustomViewsCore {
 
   /**
   * Apply a custom state, saves to localStorage and updates the URL
-  * Add 'source' in options to indicate the origin of the state change
+  * 'source' in options indicates the origin of the state change
   * (e.g., 'widget' to trigger scroll behavior)
-  * Add scrollAnchor in options to maintain scroll position of a specific element
+  * 'scrollAnchor' in options indicates the element to maintain scroll position of
+  * 'persist' (default true) to control whether to save to localStorage
   */
-  public applyState(state: State, options?: { source?: string; scrollAnchor?: { element: HTMLElement; top: number; }; }) {
+  public applyState(state: State, options?: { source?: string; scrollAnchor?: { element: HTMLElement; top: number; }; persist?: boolean; }) {
     // console.log(`[Core] applyState called with source: ${options?.source}`, state);
 
     let groupToScrollTo: HTMLElement | null = null;
@@ -359,7 +361,12 @@ export class CustomViewsCore {
 
     const snapshot = this.cloneState(state);
     this.renderState(snapshot);
-    this.persistenceManager.persistState(snapshot);
+
+    // Only persist if explicitly requested (default true)
+    if (options?.persist !== false) {
+      this.persistenceManager.persistState(snapshot);
+    }
+
     if (this.showUrlEnabled) {
       URLStateManager.updateURL(snapshot);
     } else {
