@@ -1,11 +1,22 @@
+{% set title = "Making Releases" %}
+<span id="title" class="d-none">{{ title }}</span>
+
+<frontmatter>
+  title: "Developer Guide - {{ title }}"
+  layout: devGuide.md
+  pageNav: 2
+</frontmatter>
+
 # Release Workflow
 
 ## Prerequisites
-*   **Login to NPM**: Ensure you are authenticated.
-    ```sh
-    npm login
-    # OR ensure you have an access token configured in .npmrc
-    ```
+* Ensure you have NPM access to the organization and package on NPM to make releases for CustomViews. [NPM Link](https://www.npmjs.com/package/@customviews-js/customviews).
+* **Login to NPM**: Ensure you are authenticated.
+
+```sh
+npm login
+# OR ensure you have an access token configured in .npmrc
+```
 
 ## 1. Beta Release (Experimental)
 Use for testing new features.

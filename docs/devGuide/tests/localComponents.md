@@ -1,8 +1,13 @@
+{% set title = "Local Components" %}
+<span id="title" class="d-none">{{ title }}</span>
+
 <frontmatter>
-  title: Local Components
-  pageNav: 4
-  pageNavTitle: "Topics"
+  title: "Developer Guide - {{ title }}"
+  layout: devGuide.md
+  pageNav: 2
 </frontmatter>
+
+# {{ title }}
 
 ## Local Components
 

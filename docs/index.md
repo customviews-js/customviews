@@ -1,20 +1,19 @@
 <frontmatter>
   title: Custom Views Library - Interactive Documentation & Demo
-  layout: default.md
-  pageNav: 4
-  pageNavTitle: "Topics"
 </frontmatter>
 
-<div class="bg-secondary text-white px-2 py-2 mb-4">
+<h1 class="display-3"><md>**CustomViews**</md></h1>
 
-  What is _Custom Views_?
-  
-  Custom Views is a small runtime that provides specially designed, customizable, framework-agnostic UI components.
 
-  :white_check_mark: Entirely Native: Built on web standards with no excess tooling and no third party bloat.
-  
-  :white_check_mark: Open Source: Use Custom Views however you like, always free and open source.
-</div>
+
+What is _Custom Views_?
+
+Custom Views is a small runtime that provides specially designed, customizable, framework-agnostic UI components.
+
+:white_check_mark: Entirely Native: Built on web standards with no excess tooling and no third party bloat.
+
+:white_check_mark: Open Source: Use Custom Views however you like, always free and open source.
+
 
 ## Introduction
 
