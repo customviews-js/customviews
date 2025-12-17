@@ -1,8 +1,13 @@
+{% set title = "Focus and Sharing Tests" %}
+<span id="title" class="d-none">{{ title }}</span>
+
 <frontmatter>
-  title: "Focus and Sharing Test"
+  title: "Developer Guide - {{ title }}"
+  layout: devGuide.md
+  pageNav: 2
 </frontmatter>
 
-# Focus and Sharing Feature Test Page
+# {{ title }}
 
 This page is for testing the "Content Focus & Sharing" feature of CustomViews.
 

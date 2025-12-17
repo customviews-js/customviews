@@ -1,3 +1,14 @@
+{% set title = "Tests" %}
+<span id="title" class="d-none">{{ title }}</span>
+
+<frontmatter>
+  title: "Developer Guide - {{ title }}"
+  layout: devGuide.md
+  pageNav: 2
+</frontmatter>
+
+# {{ title }}
+
 <cv-tabgroup id="test">
 <cv-tab id="tab-id">
   <cv-tab-header>Header content (supports HTML)</cv-tab-header>

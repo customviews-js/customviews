@@ -1,8 +1,13 @@
+{% set title = "Tabs" %}
+<span id="title" class="d-none">{{ title }}</span>
+
 <frontmatter>
-  title: User Guide - Tabs
-  pageNav: 4
-  pageNavTitle: "Topics"
+  title: "Developer Guide - {{ title }}"
+  layout: devGuide.md
+  pageNav: 2
 </frontmatter>
+
+# {{ title }}
 
 
 <panel header="Fetches Panel Content from with src" src="./cvtest.md">
