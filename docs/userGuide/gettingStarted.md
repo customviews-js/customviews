@@ -25,7 +25,8 @@ There are two main ways to use CustomViews: including it directly via a script t
 
 <box type="info" seamless>
 
-This method is the quickest way to get started and is ideal for static sites (Jekyll, Hugo, MarkBind, plain HTML).
+This method is the quickest way to get started and is ideal for static sites (Jekyll, Hugo, MarkBind, plain HTML). For more details, see the integrations section for each framework.
+
 </box>
 
 ++**1. Add the Script Tag**++
@@ -42,7 +43,7 @@ Add the following script tag to the `<head>` or end of `<body>` in your HTML fil
 
 ++**2. Create a Configuration File (Optional)**++
 
-Create a `customviews.config.json` file in the same directory as your HTML file (or your site root). This file defines the available toggles and default settings.
+Create a `customviews.config.json` file in the same directory as your site root. This file defines the available toggles and default settings.
 
 ```json
 {

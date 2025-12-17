@@ -1,9 +1,13 @@
+{% set title = "Configuration Reference" %}
+<span id="title" class="d-none">{{ title }}</span>
+
 <frontmatter>
-  title: Configuration Reference
-  layout: default.md
-  pageNav: 4
+  layout: userGuide.md
+  pageNav: 2
   pageNavTitle: "Topics"
 </frontmatter>
+
+# {{ title }}
 
 ## Configuration File (`customviews.config.json`)
 
