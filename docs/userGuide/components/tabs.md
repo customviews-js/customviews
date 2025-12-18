@@ -5,7 +5,7 @@
   pageNavTitle: "Topics"
 </frontmatter>
 
-# Tabs
+## Tabs
 
 `<cv-tabgroup>`
 `<cv-tab>`
@@ -289,6 +289,30 @@ Install JavaScript by downloading Node.js from nodejs.org.
 
 
 **Behavior:** In the second tab group, you'll see a single "Installation" tab in the navigation bar that becomes active when either Python or Java is selected in the first group. This avoids showing duplicate tabs with identical content.
+
+
+## Setting the Default Tab
+
+By default, the **first tab** in a group is selected when the page loads (unless the user has previously selected a different tab, in which case their selection is restored).
+
+You can override this default behavior and specify which tab should be initially selected using the `customviews.config.json` file.
+
+**Example:**
+To make the "orange" tab selected by default for the "fruit" group:
+
+```json
+{
+  "config": {
+    "defaultState": {
+      "tabs": {
+        "fruit": "orange"
+      }
+    }
+  }
+}
+```
+
+<br>
 
 
 ## Header Syntax with Rich Formatting
