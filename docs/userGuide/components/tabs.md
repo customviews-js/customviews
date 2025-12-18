@@ -295,9 +295,9 @@ Install JavaScript by downloading Node.js from nodejs.org.
 
 By default, the **first tab** in a group is selected when the page loads (unless the user has previously selected a different tab, in which case their selection is restored).
 
-You can override this default behavior and specify which tab should be initially selected using the `customviews.config.json` file.
+You can override this default behavior and specify which tab should be initially selected using the `customviews.config.json`, in the `defaultState` property.
 
-**Example:**
+**Default Tab Example Configuration:**
 To make the "orange" tab selected by default for the "fruit" group:
 
 ```json
