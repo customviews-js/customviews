@@ -30,4 +30,11 @@ This page lists the available components and how to use them.
 
 [Using the Widget :fa-solid-arrow-up-right-from-square:]({{baseUrl}}/userGuide/components/widget.html)
   </card>
+  <card header="**Share**">
+    The share component allows users to share their custom view with others. <br><br>
+
+<img src="{{baseUrl}}/assets/components/share.svg" alt="Share icon" style="display: block; margin: 0 auto; width: 50px; height: 50px;"> <br>
+
+[Using the Share Component :fa-solid-arrow-up-right-from-square:]({{baseUrl}}/userGuide/components/share.html)
+  </card>
 </cardstack>
