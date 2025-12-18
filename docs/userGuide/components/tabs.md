@@ -547,17 +547,28 @@ For more control (such as widget integration or default selections), configure t
       {
         "id": "fruit",
         "label": "Fruit Selection",
-        "default": "apple",
+        "isLocal": false,
         "tabs": [
           { "id": "apple", "label": "Apple" },
           { "id": "orange", "label": "Orange" },
           { "id": "pear", "label": "Pear" }
         ]
-      }
+      },
+      {
+        "id": "localTabGroup",
+        "label": "Page specific tabgroup",
+        "isLocal": true,
+        "tabs": [
+          { "id": "a", "label": "Alpha" },
+          { "id": "b", "label": "Beta" },
+          { "id": "c", "label": "Charlie" }
+        ]
+      },
     ],
     "defaultState": {
       "tabs": {
-        "fruit": "apple"
+        "fruit": "apple",
+        "localTabGroup": "c"
       }
     },
   }
