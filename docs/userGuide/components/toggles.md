@@ -128,13 +128,31 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 {
   "config": {
     "toggles": [
-      { "id": "mac", "label": "MacOS", "isLocal": true },
+      { "id": "localToggle", "label": "Local Toggle"},
+      { "id": "mac", "label": "MacOS"},
       { "id": "linux", "label": "Linux" },
       { "id": "windows", "label": "Windows" }
     ]
   }
 }
 ```
+
+And present on this page:
+
+```html
+<box data-cv-toggle="localToggle">
+
+Local Toggle content 
+
+</box>
+```
+
+
+<box data-cv-toggle="localToggle">
+
+Local Toggle content 
+
+</box>
 
 # Registering Local Toggles for the Widget
 
