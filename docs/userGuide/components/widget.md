@@ -1,11 +1,11 @@
 <frontmatter>
   title: CustomViews - Widget
-  layout: default.md
+  layout: userGuide.md
   pageNav: 4
   pageNavTitle: "Topics"
 </frontmatter>
 
-## Widget
+# Widget
 
 The **Widget** provides a floating user interface that allows visitors to customize their view of the page. It appears as a gear icon (⚙) positioned on the side of the screen, giving users control over content visibility and tab selections.
 

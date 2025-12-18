@@ -1,8 +1,12 @@
 <frontmatter>
   title: Components
+  layout: userGuide.md
+  pageNav: 4
 </frontmatter>
 
 ## Components
+
+This page lists the available components and how to use them.
 
 <cardstack searchable>
   <card header="**Toggles**">

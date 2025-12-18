@@ -1,7 +1,8 @@
 {% set title = "Configuration Reference" %}
 <span id="title" class="d-none">{{ title }}</span>
 
-<frontmatter>
+<frontmatter>  
+  title: "User Guide - Configuration"
   layout: userGuide.md
   pageNav: 2
   pageNavTitle: "Topics"
