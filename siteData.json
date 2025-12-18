@@ -187,6 +187,7 @@
     },
     {
       "src": "userGuide/configuration.md",
+      "title": "User Guide - Configuration",
       "headings": {
         "configuration-reference": "Configuration Reference",
         "configuration-file-customviews-config-json": "Configuration File (customviews.config.json)",
@@ -233,8 +234,7 @@
         "2-register-the-plugin-in-site-json": "2. Register the Plugin in site.json",
         "3-create-customviews-config-json": "3. Create customviews.config.json",
         "4-verify-installation": "4. Verify Installation",
-        "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages",
-        "learn-more": "Learn More"
+        "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages"
       },
       "headingKeywords": {}
     }
