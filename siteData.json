@@ -122,10 +122,11 @@
         "sharing-content": "Sharing Content",
         "1-activating-share-mode": "1. Activating Share Mode",
         "2-selecting-elements": "2. Selecting Elements",
-        "3-generating-the-link": "3. Generating the Link",
-        "4-exiting": "4. Exiting",
+        "smart-selection-guidelines": "Smart Selection Guidelines",
+        "generating-the-link": "Generating the Link",
+        "exiting": "Exiting",
         "focus-view-recipient-experience": "Focus View (Recipient Experience)",
-        "customizing-share-behavior": "Customizing Share Behavior"
+        "customizing-share-behavior-to-refine": "Customizing Share Behavior ( TO REFINE )"
       },
       "headingKeywords": {}
     },
@@ -139,6 +140,7 @@
         "tabs": "Tabs",
         "no-id-tabs": "No-ID Tabs",
         "multi-id-tabs": "Multi-ID Tabs",
+        "setting-the-default-tab": "Setting the Default Tab",
         "header-syntax-with-rich-formatting": "Header Syntax with Rich Formatting",
         "syntax-and-amp-rules": "Syntax &amp; Rules",
         "attributes-and-amp-options": "Attributes &amp; Options",
