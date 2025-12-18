@@ -5,7 +5,7 @@
   pageNavTitle: "Topics"
 </frontmatter>
 
-# Toggles
+## Toggles
 
 `<cv-toggle>` `<div data-cv-toggle="category">`
 
@@ -66,7 +66,7 @@ This allows content to appear as long as one toggle category is active.
 </cv-toggle>
 ```
 
-# Configuration 
+## Configuration 
 
 To make toggles discoverable by the CustomViews widget, you must define them in your `customviews.config.json`.
 
@@ -112,7 +112,7 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 Elements whose toggles match the active state are shown; all others are hidden.
 
 
-# Global vs. Local Toggles
+## Global vs. Local Toggles
 
 By default, all toggles defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
 
@@ -154,7 +154,7 @@ Local Toggle content
 
 </box>
 
-# Registering Local Toggles for the Widget
+## Registering Local Toggles for the Widget
 
 You can ensure that specific local toggles are always available in the widget, even if they are not initially visible on the page. This is useful for toggles that are loaded dynamically (e.g., inside a dropdown menu) and might not be detected by the plugin otherwise.
 
