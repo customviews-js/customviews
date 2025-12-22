@@ -128,8 +128,8 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 {
   "config": {
     "toggles": [
-      { "id": "localToggle", "label": "Local Toggle"},
-      { "id": "mac", "label": "MacOS"},
+      { "id": "localToggle", "label": "Local Toggle", "isLocal": true},
+      { "id": "mac", "label": "MacOS", "isLocal": false},
       { "id": "linux", "label": "Linux" },
       { "id": "windows", "label": "Windows" }
     ]
