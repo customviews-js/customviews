@@ -3,7 +3,7 @@ import { JSDOM } from 'jsdom';
 import { CustomViewsCore } from '../../src/core/core';
 import { AssetsManager } from '../../src/core/assets-manager';
 import { URLStateManager } from '../../src/core/url-state-manager';
-import type { Config } from '../../src/types/types';
+import type { Config, State } from '../../src/types/types';
 
 // Mock URLStateManager
 vi.mock('../../src/core/url-state-manager', async () => {
@@ -54,7 +54,7 @@ describe('CustomViewsCore Persistence', () => {
         mockAssetsManager = {} as AssetsManager;
         mockConfig = {
             toggles: [{ id: 't1' }, { id: 't2' }],
-            defaultState: { toggles: ['t1'] }
+            defaultState: { shownToggles: ['t1'] }
         };
 
         const options = {
@@ -72,7 +72,7 @@ describe('CustomViewsCore Persistence', () => {
     });
 
     it('should NOT persist state to localStorage when persist option is false', () => {
-        const newState = { toggles: ['t2'] };
+        const newState: State = { shownToggles: ['t2'] };
         core.applyState(newState, { persist: false });
 
         const storedState = localStorage.getItem('customviews-state');
@@ -80,7 +80,7 @@ describe('CustomViewsCore Persistence', () => {
     });
 
     it('should persist state to localStorage when persist option is true (default)', () => {
-        const newState = { toggles: ['t2'] };
+        const newState: State = { shownToggles: ['t2'] };
         core.applyState(newState);
 
         const storedState = localStorage.getItem('customviews-state');
@@ -90,7 +90,7 @@ describe('CustomViewsCore Persistence', () => {
 
     it('should apply URL state temporarily and not persist it', async () => {
         // Mock URL having a state
-        const urlState = { toggles: ['t2'] };
+        const urlState = { shownToggles: ['t2'] };
         vi.spyOn(URLStateManager, 'parseURL').mockReturnValue(urlState);
 
         // Re-initialize core to trigger loadAndCallApplyState
@@ -110,7 +110,7 @@ describe('CustomViewsCore Persistence', () => {
         expect(URLStateManager.parseURL).toHaveBeenCalled();
 
         // Verify state is applied (we can't easily check internal state, maybe check active toggles)
-        const activeToggles = core.getCurrentActiveToggles();
+        const activeToggles = core.getCurrentShownToggles();
         expect(activeToggles).toEqual(['t2']);
 
         // Verify localStorage is EMPTY

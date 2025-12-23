@@ -398,14 +398,13 @@ export class CustomViewsCore {
     const toggles = state?.shownToggles || [];
     const finalToggles = this.visibilityManager.filterVisibleToggles(toggles);
 
-    const toggleElements = Array.from(this.componentRegistry.toggles);
+    const allToggleElements = Array.from(this.componentRegistry.toggles);
     const tabGroupElements = Array.from(this.componentRegistry.tabGroups);
 
-    // Apply toggle visibility
-    ToggleManager.applyToggles(toggleElements, finalToggles, state.peekToggles);
+    ToggleManager.applyTogglesVisibility(allToggleElements, finalToggles, state.peekToggles);
 
     // Render assets into toggles
-    ToggleManager.renderAssets(toggleElements, finalToggles, this.assetsManager);
+    ToggleManager.renderToggleAssets(allToggleElements, finalToggles, this.assetsManager);
 
     // Apply tab selections
     TabManager.applyTabSelections(tabGroupElements, state.tabs || {}, this.config.tabGroups);

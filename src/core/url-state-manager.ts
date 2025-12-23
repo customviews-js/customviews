@@ -89,8 +89,8 @@ export class URLStateManager {
       const compact: any = {};
 
       // Add toggles if present and non-empty
-      if (state.toggles && state.toggles.length > 0) {
-        compact.t = state.toggles;
+      if (state.shownToggles && state.shownToggles.length > 0) {
+        compact.t = state.shownToggles;
       }
 
       // Add tab groups if present
@@ -158,7 +158,7 @@ export class URLStateManager {
 
       // Reconstruct Toggles
       const state: State = {
-        toggles: Array.isArray(compact.t) ? compact.t : []
+        shownToggles: Array.isArray(compact.t) ? compact.t : []
       };
 
       // Reconstruct Tabs
