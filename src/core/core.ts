@@ -261,9 +261,9 @@ export class CustomViewsCore {
         const currentTabs = this.getCurrentActiveTabs();
         currentTabs[groupId] = tabId;
 
-        const currentToggles = this.getCurrentShownToggles();
+        const currentState = this.getCurrentState();
         const newState: State = {
-          shownToggles: currentToggles,
+          ...currentState,
           tabs: currentTabs,
         };
 
@@ -442,21 +442,6 @@ export class CustomViewsCore {
     URLStateManager.clearURL();
   }
 
-
-  /**
-   * Get the currently active toggles regardless of whether they come from custom state or default configuration
-   */
-  public getCurrentShownToggles(): string[] {
-    if (this.lastAppliedState) {
-      return this.lastAppliedState.shownToggles || [];
-    }
-
-    if (this.config) {
-      return this.getComputedDefaultState().shownToggles || [];
-    }
-
-    return [];
-  }
 
   /**
    * Get the full current state including active toggles, peek toggles, and tabs
