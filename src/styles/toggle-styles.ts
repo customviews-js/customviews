@@ -40,29 +40,51 @@ export const TOGGLE_STYLES = `
   mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
+
+.cv-wrapper {
   position: relative;
+  width: 100%;
+  display: block;
+  margin-bottom: 24px; /* Space for the button */
 }
 
 .cv-expand-btn {
-  /* Position relative to flow, but pulled up to overlap the fuzzy edge */
-  display: flex;
-  margin: -24px auto 4px auto; /* Negative top margin pulls it up */
-  background: white;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 4px 12px;
-  font-size: 12px;
+  position: absolute;
+  bottom: -28px; /* Mostly outside, slight overlap */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex !important;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 4px;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
-  z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 100;
   align-items: center;
   justify-content: center;
-  color: #333;
-  width: fit-content;
+  color: #888;
+  transition: all 0.2s ease;
+  box-shadow: none;
 }
 
 .cv-expand-btn:hover {
-  background: #f0f0f0;
+  background: rgba(0, 0, 0, 0.05);
   color: #000;
+  transform: translateX(-50%) scale(1.1);
+}
+
+.cv-expand-btn svg {
+  display: block;
+  opacity: 0.6;
+}
+
+.cv-expand-btn:hover svg {
+  opacity: 1;
+}
+
+.cv-expand-btn:hover svg {
+  opacity: 1;
 }
 `;

@@ -1,6 +1,7 @@
 import type { ToggleId } from "../types/types";
 import { AssetsManager } from "./assets-manager";
 import { renderAssetInto } from "./render";
+import { getChevronDownIcon, getChevronUpIcon } from "../utils/icons";
 
 /**
  * ToggleManager handles discovery, visibility, and asset rendering for toggle elements
@@ -34,7 +35,7 @@ export class ToggleManager {
   public static renderToggleAssets(elements: HTMLElement[], activeToggles: ToggleId[], assetsManager: AssetsManager): void {
     // TO DO: (gerteck) Enable for peek toggles as well
     // Also, rework the rendering logic again to make it more user friendly.
-    
+
     elements.forEach(el => {
       const categories = this.getToggleCategories(el);
       const toggleId = this.getToggleId(el);
@@ -93,20 +94,32 @@ export class ToggleManager {
   }
 
   /**
-   * Manage the presence of the inline Expand/Collapse button
-   * 
-   * TODO: (gerteck) Revisit this logic and update the styling
+   * Manage the presence of the inline Expand/Collapse button using a wrapper approach
    */
   private static manageExpandButton(el: HTMLElement, showExpand: boolean, showCollapse: boolean = false): void {
-    // Check for existing sibling button
-    let btn = el.nextElementSibling as HTMLElement;
-    const isExistingBtn = btn && btn.classList.contains('cv-expand-btn');
+    // 1. Ensure wrapper exists
+    let wrapper = el.parentElement;
+    if (!wrapper || !wrapper.classList.contains('cv-wrapper')) {
+      // Create wrapper if not exists
+      wrapper = document.createElement('div');
+      wrapper.className = 'cv-wrapper';
+      el.parentNode?.insertBefore(wrapper, el);
+      wrapper.appendChild(el);
+    }
+
+    // 2. Check for existing button inside wrapper
+    let btn = wrapper.querySelector('.cv-expand-btn') as HTMLElement;
+    const isExistingBtn = !!btn;
+
+    // SVG Icons
+    const chevronDown = getChevronDownIcon();
+    const chevronUp = getChevronUpIcon();
 
     // Helper to create button
-    const createBtn = (text: string, expand: boolean) => {
+    const createBtn = (iconSvg: string, expand: boolean) => {
       const newBtn = document.createElement('button');
       newBtn.className = 'cv-expand-btn';
-      newBtn.innerHTML = text;
+      newBtn.innerHTML = iconSvg;
       newBtn.setAttribute('aria-label', expand ? 'Expand content' : 'Collapse content');
       newBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -123,21 +136,25 @@ export class ToggleManager {
 
     if (showExpand) {
       if (isExistingBtn) {
-        if (btn.innerHTML !== 'Show More') {
-          btn.replaceWith(createBtn('Show More', true));
+        // Update existing button if needed (e.g. icon changed)
+        // Check loosely by innerHTML content
+        if (!btn.innerHTML.includes('polyline points="6 9')) {
+          const newBtn = createBtn(chevronDown, true);
+          btn.replaceWith(newBtn);
         }
-        btn.style.display = 'flex';
+        (wrapper.querySelector('.cv-expand-btn') as HTMLElement).style.display = 'flex';
       } else {
-        el.after(createBtn('Show More', true));
+        wrapper.appendChild(createBtn(chevronDown, true));
       }
     } else if (showCollapse) {
       if (isExistingBtn) {
-        if (btn.innerHTML !== 'Show Less') {
-          btn.replaceWith(createBtn('Show Less', false));
+        if (!btn.innerHTML.includes('polyline points="18 15')) {
+          const newBtn = createBtn(chevronUp, false);
+          btn.replaceWith(newBtn);
         }
-        btn.style.display = 'flex';
+        (wrapper.querySelector('.cv-expand-btn') as HTMLElement).style.display = 'flex';
       } else {
-        el.after(createBtn('Show Less', false));
+        wrapper.appendChild(createBtn(chevronUp, false));
       }
     } else {
       if (isExistingBtn) {
