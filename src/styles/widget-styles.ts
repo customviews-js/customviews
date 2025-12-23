@@ -454,10 +454,6 @@ export const WIDGET_STYLES = `
   color: rgba(255, 255, 255, 0.6);
 }
 
-.cv-widget-theme-dark .cv-toggle-slider {
-  background: rgba(255, 255, 255, 0.2);
-}
-
 .cv-widget-theme-dark .cv-tab-group-description {
   color: rgba(255, 255, 255, 0.8);
 }
@@ -578,40 +574,32 @@ export const WIDGET_STYLES = `
 }
 
 .cv-toggle-input {
+  /* Only hide if it is part of a custom slider toggle */
+}
+.cv-toggle-label .cv-toggle-input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.cv-toggle-slider {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 9999px;
-  transition: background-color 0.2s ease;
+.cv-toggle-radios {
+  display: flex;
+  gap: 8px;
 }
 
-.cv-toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: 1rem;
-  width: 1rem;
-  left: 0.25rem;
-  bottom: 0.25rem;
-  background: white;
-  border-radius: 50%;
-  transition: transform 0.2s ease;
+.cv-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-.cv-toggle-input:checked + .cv-toggle-slider {
-  background: #3e84f4;
-}
-
-.cv-toggle-input:checked + .cv-toggle-slider:before {
-  transform: translateX(1.25rem);
+.cv-radio-label input {
+  margin: 0;
+  opacity: 1;
+  width: auto;
+  height: auto;
 }
 
 /* Dark theme toggle switch styles */
