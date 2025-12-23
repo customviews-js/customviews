@@ -5,17 +5,16 @@
 export const TOGGLE_STYLES = `
 /* Core toggle visibility transitions */
 [data-cv-toggle], [data-customviews-toggle], cv-toggle {
-  transition: opacity 150ms ease,
-              transform 150ms ease,
-              max-height 200ms ease,
-              margin 150ms ease;
-  will-change: opacity, transform, max-height, margin;
+  display: block;
+  overflow: hidden;
+  /* Removed transitions for instant toggling */
 }
 
+/* Open State */
 .cv-visible {
   opacity: 1 !important;
   transform: translateY(0) !important;
-  max-height: var(--cv-max-height, 9999px) !important;
+  max-height: none !important;
 }
 
 .cv-hidden {
@@ -32,11 +31,13 @@ export const TOGGLE_STYLES = `
   overflow: hidden !important;
 }
 
+/* Close/Peek State */
 .cv-peek {
   display: block !important;
   max-height: 70px !important;
   overflow: hidden !important;
-  opacity: 0.7 !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
   mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
@@ -53,7 +54,7 @@ export const TOGGLE_STYLES = `
   bottom: -28px; /* Mostly outside, slight overlap */
   left: 50%;
   transform: translateX(-50%);
-  display: flex !important;
+  display: flex;
   background: transparent;
   border: none;
   border-radius: 50%;
