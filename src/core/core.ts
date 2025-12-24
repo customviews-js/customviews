@@ -132,6 +132,13 @@ export class CustomViewsCore {
     });
   }
 
+  /**
+   * Check if there are any active components in the registry
+   */
+  public hasActiveComponents(): boolean {
+    return this.componentRegistry.toggles.size > 0 || this.componentRegistry.tabGroups.size > 0;
+  }
+
   public getConfig(): Config {
     return this.config;
   }

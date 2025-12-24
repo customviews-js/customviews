@@ -116,8 +116,6 @@ export interface ConfigFile {
     description?: string;
     /** Whether to show welcome modal on first visit */
     showWelcome?: boolean;
-    /** Welcome modal title */
-    welcomeTitle?: string;
     /** Welcome modal message */
     welcomeMessage?: string;
     /** Whether to show tab groups section in widget (default: true) */
