@@ -6,7 +6,7 @@
       { "id": "linux", "label": "Linux" }
     ],
     "defaultState": {
-      "toggles": ["windows"],
+      "shownToggles": ["windows"],
       "tabs": {
         "demo-tabs": "tabA"
       }

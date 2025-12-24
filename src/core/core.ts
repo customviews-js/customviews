@@ -172,7 +172,7 @@ export class CustomViewsCore {
     }
 
     const computedState: State = {
-      toggles: this.config.toggles?.map(t => t.id) || [],
+      shownToggles: this.config.toggles?.map(t => t.id) || [],
       tabs
     };
 
@@ -261,9 +261,9 @@ export class CustomViewsCore {
         const currentTabs = this.getCurrentActiveTabs();
         currentTabs[groupId] = tabId;
 
-        const currentToggles = this.getCurrentActiveToggles();
+        const currentState = this.getCurrentState();
         const newState: State = {
-          toggles: currentToggles,
+          ...currentState,
           tabs: currentTabs,
         };
 
@@ -395,17 +395,16 @@ export class CustomViewsCore {
   private renderState(state: State) {
     this.observer?.disconnect();
     this.lastAppliedState = this.cloneState(state);
-    const toggles = state?.toggles || [];
+    const toggles = state?.shownToggles || [];
     const finalToggles = this.visibilityManager.filterVisibleToggles(toggles);
 
-    const toggleElements = Array.from(this.componentRegistry.toggles);
+    const allToggleElements = Array.from(this.componentRegistry.toggles);
     const tabGroupElements = Array.from(this.componentRegistry.tabGroups);
 
-    // Apply toggle visibility
-    ToggleManager.applyToggles(toggleElements, finalToggles);
+    ToggleManager.applyTogglesVisibility(allToggleElements, finalToggles, state.peekToggles);
 
     // Render assets into toggles
-    ToggleManager.renderAssets(toggleElements, finalToggles, this.assetsManager);
+    ToggleManager.renderToggleAssets(allToggleElements, finalToggles, this.assetsManager);
 
     // Apply tab selections
     TabManager.applyTabSelections(tabGroupElements, state.tabs || {}, this.config.tabGroups);
@@ -445,18 +444,18 @@ export class CustomViewsCore {
 
 
   /**
-   * Get the currently active toggles regardless of whether they come from custom state or default configuration
+   * Get the full current state including active toggles, peek toggles, and tabs
    */
-  public getCurrentActiveToggles(): string[] {
+  public getCurrentState(): State {
     if (this.lastAppliedState) {
-      return this.lastAppliedState.toggles || [];
+      return this.cloneState(this.lastAppliedState);
     }
 
     if (this.config) {
-      return this.getComputedDefaultState().toggles || [];
+      return this.cloneState(this.getComputedDefaultState());
     }
 
-    return [];
+    return {};
   }
 
   /**

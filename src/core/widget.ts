@@ -228,10 +228,20 @@ export class CustomViewsWidget {
           <div>
             <p class="cv-toggle-title">${toggle.label || toggle.id}</p>
           </div>
-          <label class="cv-toggle-label">
-            <input class="cv-toggle-input" type="checkbox" data-toggle="${toggle.id}"/>
-            <span class="cv-toggle-slider"></span>
-          </label>
+          <div class="cv-toggle-radios">
+             <label class="cv-radio-label" title="Hide">
+               <input class="cv-toggle-input" type="radio" name="cv-toggle-${toggle.id}" value="hide" data-toggle="${toggle.id}"/>
+               <span>Hide</span>
+             </label>
+             <label class="cv-radio-label" title="Peek">
+               <input class="cv-toggle-input" type="radio" name="cv-toggle-${toggle.id}" value="peek" data-toggle="${toggle.id}"/>
+               <span>Peek</span>
+             </label>
+             <label class="cv-radio-label" title="Show">
+               <input class="cv-toggle-input" type="radio" name="cv-toggle-${toggle.id}" value="show" data-toggle="${toggle.id}"/>
+               <span>Show</span>
+             </label>
+          </div>
         </div>
       </div>
     `).join('');
@@ -449,10 +459,13 @@ export class CustomViewsWidget {
           const currentTabs = this.core.getCurrentActiveTabs();
           currentTabs[groupId] = tabId;
 
-          const currentToggles = this.core.getCurrentActiveToggles();
+
+          const currentState = this.core.getCurrentState();
+
           const newState: State = {
-            toggles: currentToggles,
-            tabs: currentTabs
+            shownToggles: currentState.shownToggles || [],
+            peekToggles: currentState.peekToggles || [], // Preserve peek state, fallback to empty array
+            tabs: currentTabs,
           };
           this.core.applyState(newState, { source: 'widget' });
         }
@@ -559,28 +572,37 @@ export class CustomViewsWidget {
 
     // Collect toggle values
     const toggles: string[] = [];
-    const toggleInputs = this.stateModal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
-    toggleInputs.forEach(toggleInput => {
-      const toggle = toggleInput.dataset.toggle;
-      if (toggle && toggleInput.checked) {
-        toggles.push(toggle);
+    const peekToggles: string[] = [];
+
+    // Get all radio inputs
+    const radios = this.stateModal.querySelectorAll('input[type="radio"]:checked');
+    radios.forEach(radio => {
+      const input = radio as HTMLInputElement;
+      const toggleId = input.getAttribute('data-toggle');
+      if (toggleId) {
+        if (input.value === 'show') {
+          toggles.push(toggleId);
+        } else if (input.value === 'peek') {
+          peekToggles.push(toggleId);
+        }
       }
     });
 
-    // Collect tab selections
-    const tabGroupSelects = this.stateModal.querySelectorAll('.cv-tabgroup-select') as NodeListOf<HTMLSelectElement>;
-    const tabs: Record<string, string> = {};
-    tabGroupSelects.forEach(select => {
-      const groupId = select.dataset.groupId;
-      if (groupId) {
-        tabs[groupId] = select.value;
-      }
-    });
+    const result: State = { shownToggles: toggles, peekToggles };
 
-    const result: State = { toggles };
-    if (Object.keys(tabs).length > 0) {
-      result.tabs = tabs;
+    // Get active tabs from selects
+    const selects = this.stateModal.querySelectorAll('select[data-group-id]');
+    if (selects.length > 0) {
+      result.tabs = {};
+      selects.forEach(select => {
+        const el = select as HTMLSelectElement;
+        const groupId = el.getAttribute('data-group-id');
+        if (groupId) {
+          result.tabs![groupId] = el.value;
+        }
+      });
     }
+
     return result;
   }
 
@@ -602,20 +624,31 @@ export class CustomViewsWidget {
   private loadCurrentStateIntoForm(): void {
     if (!this.stateModal) return;
 
-    // Get currently active toggles (from custom state or default configuration)
-    const activeToggles = this.core.getCurrentActiveToggles();
+    // We need complete state for both shown and peek toggles
+    const currentState = this.core.getCurrentState();
+    const currentToggles = currentState.shownToggles || [];
+    const currentPeekToggles = currentState.peekToggles || [];
 
-    // First, uncheck all toggle inputs
+    // Reset all inputs first (optional, but good for clarity)
     const allToggleInputs = this.stateModal.querySelectorAll('.cv-toggle-input') as NodeListOf<HTMLInputElement>;
-    allToggleInputs.forEach(toggleInput => {
-      toggleInput.checked = false;
+
+    // Identify unique toggles present in the modal
+    const uniqueToggles = new Set<string>();
+    allToggleInputs.forEach(input => {
+      if (input.dataset.toggle) uniqueToggles.add(input.dataset.toggle);
     });
 
-    // Then check the ones that should be active
-    activeToggles.forEach(toggle => {
-      const toggleInput = this.stateModal?.querySelector(`[data-toggle="${toggle}"]`) as HTMLInputElement;
-      if (toggleInput) {
-        toggleInput.checked = true;
+    uniqueToggles.forEach(toggleId => {
+      let valueToSelect = 'hide';
+      if (currentToggles.includes(toggleId)) {
+        valueToSelect = 'show';
+      } else if (currentPeekToggles.includes(toggleId)) {
+        valueToSelect = 'peek';
+      }
+
+      const input = this.stateModal!.querySelector(`input[name="cv-toggle-${toggleId}"][value="${valueToSelect}"]`) as HTMLInputElement;
+      if (input) {
+        input.checked = true;
       }
     });
 

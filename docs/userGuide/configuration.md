@@ -21,7 +21,7 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
   "config": {
     "allToggles": ["toggle1", "toggle2"],
     "defaultState": {
-      "toggles": ["toggle1"],
+      "shownToggles": ["toggle1"],
       "tabs": {
         "group1": "tabA"
       }
@@ -62,7 +62,8 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
 |-------|------|----------|-------------|
 | `allToggles` | `string[]` | No | Array of all available toggle IDs that can be used on the page. If omitted, defaults to an empty array. |
 | `defaultState` | `object` | No | Default state when no user preferences are saved. If omitted, the system will auto-generate a default state with all toggles enabled and all tab groups set to their first tab. |
-| `defaultState.toggles` | `string[]` | No | Toggles enabled by default. |
+| `defaultState.shownToggles` | `string[]` | No | Toggles enabled (fully visible) by default. |
+| `defaultState.peekToggles` | `string[]` | No | Toggles in peek mode (preview) by default. |
 | `defaultState.tabs` | `object` | No | Default tab selections: `{groupId: tabId}`. |
 | `tabGroups` | `object[]` | No | Array of tab group configurations. |
 
@@ -105,7 +106,7 @@ When `defaultState` is not provided or is omitted from the config, CustomViews a
 This configuration will auto-generate:
 ```javascript
 {
-  toggles: ["mac", "linux", "windows"],
+  shownToggles: ["mac", "linux", "windows"],
   tabs: { os: "first" }
 }
 ```
@@ -213,7 +214,7 @@ import { CustomViews } from './lib/custom-views';
 const core = await CustomViews.init({
   config: {
     allToggles: ['toggle1'],
-    defaultState: { toggles: ['toggle1'] }
+    defaultState: { shownToggles: ['toggle1'] }
   },
   assetsJsonPath: '/assets.json',
   baseUrl: '/customviews'

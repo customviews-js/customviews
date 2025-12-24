@@ -79,7 +79,8 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
       { "id": "windows", "label": "Windows" }
     ],
     "defaultState": {
-      "toggles": ["mac", "linux", "windows"]
+      "shownToggles": ["mac"],
+      "peekToggles": ["linux"]
     }
   }
 }
@@ -90,7 +91,8 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 | Field | Description |
 |--------|-------------|
 | `config.toggles` | An array of toggle objects. Each object must have an `id` and can have an optional `label` and `isLocal` flag. |
-| `config.defaultState.toggles` | An array of toggle `id`s that should be active by default on first load when no URL or stored state is available. |
+| `config.defaultState.shownToggles` | An array of toggle `id`s that should be active (fully visible) by default on first load. |
+| `config.defaultState.peekToggles` | An array of toggle `id`s that should be in peek mode by default. |
 
 ---
 
@@ -151,6 +153,21 @@ Local Toggle content
 <box data-cv-toggle="localToggle">
 
 Local Toggle content 
+
+Some long long text content to make sure the box is scrollable
+
+Use toggles to separate platform-specific or audience-specific instructions:
+- `mac`: Steps tailored for macOS users.
+- `linux`: Commands for common Linux distributions.
+- `windows`: Installer-based setup for Windows.
+Scroll within this panel to review additional best practices:
+- Keep toggle IDs short, descriptive, and lowercase (e.g. `advanced`, `dark-mode`).
+- Prefer reusing the same toggle IDs across pages for consistency.
+- Avoid introducing toggles that overlap heavily in meaning (users may be confused).
+- Document what each toggle controls in your configuration or contributor guide.
+- Test that content is still understandable when individual toggles are on or off.
+- Consider a sensible default combination of toggles for new visitors.
+These extra lines ensure the box remains scrollable while conveying useful guidance.
 
 </box>
 
