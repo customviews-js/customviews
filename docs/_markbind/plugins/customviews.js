@@ -9,7 +9,8 @@
 function getScripts() {
   return [
     // '<script src="../../../dist/custom-views.min.js" data-base-url="/customviews"></script>',
-    '<script src="https://unpkg.com/@customviews-js/customviews" data-base-url="/customviews"></script>'
+    // '<script src="https://unpkg.com/@customviews-js/customviews" data-base-url="/customviews"></script>'
+    '<script src="https://unpkg.com/@customviews-js/customviews@beta" data-base-url="/customviews"></script>'
   ];
 };
 
