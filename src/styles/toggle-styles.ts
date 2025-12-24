@@ -7,18 +7,18 @@ export const TOGGLE_STYLES = `
 [data-cv-toggle], [data-customviews-toggle], cv-toggle {
   display: block;
   overflow: hidden;
-  /* Removed transitions for instant toggling */
+  transition: all 0.35s ease-in-out;
 }
 
 /* Open State */
 .cv-visible {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  max-height: none !important;
+  opacity: 1;
+  transform: translateY(0);
+  max-height: none;
 }
 
 .cv-hidden {
-  opacity: 0 !important;
+  opacity: 0;
   transform: translateY(-4px) !important;
   pointer-events: none !important;
   padding-top: 0 !important;
@@ -34,7 +34,7 @@ export const TOGGLE_STYLES = `
 /* Close/Peek State */
 .cv-peek {
   display: block !important;
-  max-height: 70px !important;
+  max-height: 70px;
   overflow: hidden !important;
   opacity: 1 !important;
   transform: translateY(0) !important;
