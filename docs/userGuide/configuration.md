@@ -128,9 +128,9 @@ This configuration will auto-generate:
 | `theme` | `string` | `"light"` | Widget theme: `"light"` or `"dark"`. |
 | `showReset` | `boolean` | `true` | Whether to show the reset to default button. |
 | `title` | `string` | `"Custom Views"` | Title shown in widget tooltip and modal header. |
-| `description` | `string` | `"Toggle different content sections..."` | Description text shown in the modal. |
-| `showWelcome` | `boolean` | `false` | Whether to show a welcome modal on first visit. |
-| `welcomeMessage` | `string` | `"Customize your reading experience..."` | Message shown in the welcome modal. |
+| `description` | `string` | `"Toggle different content sections..."` | Description text shown in the main widget modal. |
+| `showWelcome` | `boolean` | `false` | Whether to show a welcome callout on first visit. |
+| `welcomeMessage` | `string` | `"Customize your reading experience..."` | Message shown in the welcome callout. |
 | `showTabGroups` | `boolean` | `true` | Whether to show tab groups section in widget. |
 
 ## Script Tag Attributes

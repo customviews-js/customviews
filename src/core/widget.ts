@@ -28,10 +28,10 @@ export interface WidgetOptions {
   /** Widget description text */
   description?: string;
 
-  /** Whether to show welcome modal on first visit */
+  /** Whether to show welcome callout on first visit */
   showWelcome?: boolean;
 
-  /** Welcome modal message (only used if showWelcome is true) */
+  /** Welcome callout message (only used if showWelcome is true) */
   welcomeMessage?: string;
 
   /** Whether to show tab groups section in widget (default: true) */
@@ -188,7 +188,6 @@ export class CustomViewsWidget {
     if (!this.introCallout) return;
 
     const callout = this.introCallout;
-
 
     // Clear reference immediately from class to prevent re-use
     this.introCallout = null;
@@ -743,7 +742,12 @@ export class CustomViewsWidget {
     const STORAGE_KEY = 'cv-intro-shown';
 
     // Check if intro has been shown before
-    const hasSeenIntro = localStorage.getItem(STORAGE_KEY);
+    let hasSeenIntro: string | null = null;
+    try {
+      hasSeenIntro = localStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+      // Ignore localStorage errors (e.g. private mode)
+    }
 
     if (!hasSeenIntro) {
       // Show callout after a short delay
@@ -770,9 +774,6 @@ export class CustomViewsWidget {
     // Close button
     const closeBtn = document.createElement('button');
     closeBtn.className = 'cv-widget-callout-close';
-    closeBtn.innerHTML = getCloseIcon(); // Reusing close icon, might be too big? 
-    // Actually getCloseIcon returns an SVG string.
-    // Let's use a simple '×' character or a smaller SVG for the callout close button for simplicity/tightness
     closeBtn.innerHTML = '×';
     closeBtn.setAttribute('aria-label', 'Dismiss intro');
     closeBtn.addEventListener('click', (e) => {
@@ -784,8 +785,6 @@ export class CustomViewsWidget {
     const msg = document.createElement('p');
     msg.className = 'cv-widget-callout-text';
     msg.textContent = this.options.welcomeMessage;
-    // Allow HTML in welcome message? The original allowed it. 
-    msg.innerHTML = this.options.welcomeMessage;
 
     callout.appendChild(closeBtn);
     callout.appendChild(msg);
@@ -797,7 +796,7 @@ export class CustomViewsWidget {
       this.widgetIcon.classList.add('cv-pulse');
     }
 
-    // Auto-dismiss on click anywhere on callout? No, maybe clicking callout opens widget?
+    // Auto-dismiss and open widget on click anywhere on callout
     callout.addEventListener('click', () => {
       this.dismissIntroCallout();
       this.openStateModal();

@@ -73,7 +73,7 @@ Enable and configure the widget in your `customviews.config.json`:
 | `title` | string | `"Custom Views"` | Title shown in the widget icon tooltip and modal header. |
 | `description` | string | `null` | Optional description text shown in the modal. When not set, the description section is omitted entirely. |
 | `showWelcome` | boolean | `false` | Whether to show a welcome modal on first visit. |
-| `welcomeMessage` | string | Welcome message HTML | Message shown in the welcome modal. |
+| `welcomeMessage` | string | Welcome message HTML | Message shown in the welcome callout. |
 
 ## Programmatic Usage
 
