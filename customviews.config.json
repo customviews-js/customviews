@@ -1,28 +1,11 @@
 {
   "config": {
     "toggles": [
-      {
-        "id": "lt",
-        "label": "Local Toggle",
-        "isLocal": true
-      },
-      {
-        "id": "localToggle",
-        "label": "Local Toggle Label",
-        "isLocal": true
-      },
-      {
-        "id": "mac",
-        "label": "MacOS"
-      },
-      {
-        "id": "linux",
-        "label": "Linux"
-      },
-      {
-        "id": "windows",
-        "label": "Windows"
-      }
+      {"id": "lt","label": "Local Toggle","isLocal": true},
+      {"id": "localToggle","label": "Local Toggle Label","isLocal": true},
+      {"id": "mac","label": "MacOS"},
+      {"id": "linux","label": "Linux"},
+      {"id": "windows","label": "Windows"}
     ],
     "tabGroups": [
       {
@@ -30,18 +13,9 @@
         "label": "Local Tab Configuration",
         "isLocal": true,
         "tabs": [
-          {
-            "id": "lt1",
-            "label": "Tab Option 1"
-          },
-          {
-            "id": "lt2",
-            "label": "Tab Option 2"
-          },
-          {
-            "id": "lt3",
-            "label": "Tab Option 3"
-          }
+          {"id": "lt1","label": "Tab Option 1"},
+          {"id": "lt2","label": "Tab Option 2"},  
+          {"id": "lt3","label": "Tab Option 3"}
         ]
       },
       {
@@ -59,25 +33,15 @@
         "label": "Fruit Selection",
         "isLocal": false,
         "tabs": [
-          {
-            "id": "apple",
-            "label": "Apple"
-          },
-          {
-            "id": "orange",
-            "label": "Orange"
-          },
-          {
-            "id": "pear",
-            "label": "Pear"
-          }
+          {"id": "apple","label": "Apple"},
+          {"id": "orange","label": "Orange"},
+          {"id": "pear","label": "Pear"}
         ]
       }
     ],
     "defaultState": {
-      "toggles": [
-        "windows"
-      ],
+      "shownToggles": ["windows"],
+      "peekToggles": ["mac", "localToggle"],
       "tabs": {
         "fruit": "pear",
         "ltab": "lt1"

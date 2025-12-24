@@ -47,7 +47,9 @@
         "release-workflow": "Release Workflow",
         "prerequisites": "Prerequisites",
         "1-beta-release-experimental": "1. Beta Release (Experimental)",
-        "2-production-release-stable": "2. Production Release (Stable)"
+        "using-the-beta-release": "Using the beta release",
+        "2-production-release-stable": "2. Production Release (Stable)",
+        "using-the-production-release": "Using the production release"
       },
       "headingKeywords": {}
     },
