@@ -32,6 +32,24 @@ npm run release:beta
 * `npm version prerelease --preid=beta` creates a release commit and tag, but does not automatically publish to NPM.
 * `npm run release:beta` will publish the release to NPM with the `@beta` tag.
 
+### Using the beta release
+
+To use the beta release from CDNs, the script tag should be updated to use the beta version.
+
+For example,
+
+unpkg:
+
+```html
+<script src="https://unpkg.com/@customviews-js/customviews@beta"></script>
+```
+
+jsDelivr:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@customviews-js/customviews@beta"></script>
+```
+
 ## 2. Production Release (Stable)
 Use when beta is stable and ready for everyone.
 
@@ -45,3 +63,23 @@ npm run release:prod
 ```
 
 > **Note:** The `release:*` commands automatically run `npm run build` before publishing.
+
+
+### Using the production release
+
+To use the production release from CDNs, the script tag should be updated to use the production version.
+
+For example,
+
+unpkg:
+
+```html
+<script src="https://unpkg.com/@customviews-js/customviews@latest"></script>
+```
+
+jsDelivr:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@customviews-js/customviews@latest"></script>
+```
+  
