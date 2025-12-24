@@ -75,9 +75,8 @@
       }
     ],
     "defaultState": {
-      "toggles": [
-        "windows"
-      ],
+      "shownToggles": ["windows"],
+      "peekToggles": ["mac"],
       "tabs": {
         "fruit": "pear",
         "ltab": "lt1"
