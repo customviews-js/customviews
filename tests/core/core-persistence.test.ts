@@ -110,7 +110,7 @@ describe('CustomViewsCore Persistence', () => {
         expect(URLStateManager.parseURL).toHaveBeenCalled();
 
         // Verify state is applied (we can't easily check internal state, maybe check active toggles)
-        const activeToggles = core.getCurrentShownToggles();
+        const activeToggles = core.getCurrentState().shownToggles;
         expect(activeToggles).toEqual(['t2']);
 
         // Verify localStorage is EMPTY
