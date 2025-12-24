@@ -31,8 +31,6 @@ export interface WidgetOptions {
   /** Whether to show welcome modal on first visit */
   showWelcome?: boolean;
 
-
-
   /** Welcome modal message (only used if showWelcome is true) */
   welcomeMessage?: string;
 
@@ -44,6 +42,7 @@ export class CustomViewsWidget {
   private core: CustomViewsCore;
   private container: HTMLElement;
   private widgetIcon: HTMLElement | null = null;
+  private introCallout: HTMLElement | null = null;
   private options: Required<WidgetOptions>;
   private _hasVisibleConfig = false;
   private pageToggleIds: Set<string> = new Set();
@@ -160,9 +159,9 @@ export class CustomViewsWidget {
     }
 
     // Clean up callout
-    const callout = document.querySelector('.cv-widget-callout');
-    if (callout) {
-      callout.remove();
+    if (this.introCallout) {
+      this.introCallout.remove();
+      this.introCallout = null;
     }
   }
 
@@ -185,9 +184,15 @@ export class CustomViewsWidget {
   /**
    * Dismiss the intro callout
    */
-  private dismissIntroCallout(callout: HTMLElement): void {
-    callout.classList.add('cv-hidden');
-    setTimeout(() => callout.remove(), 300); // Wait for fade out if any
+  private dismissIntroCallout(): void {
+    if (!this.introCallout) return;
+
+    const callout = this.introCallout;
+
+
+    // Clear reference immediately from class to prevent re-use
+    this.introCallout = null;
+    callout.remove();
 
     // Stop pulsing the widget icon
     if (this.widgetIcon) {
@@ -206,6 +211,21 @@ export class CustomViewsWidget {
    * Open the custom state creator
    */
   private openStateModal(): void {
+    // Dismiss intro callout if valid
+    if (this.introCallout) {
+      this.dismissIntroCallout();
+    } else {
+      // Even if no callout is shown (e.g. page had no content), opening the widget
+      // should count as "seen", preventing future callouts.
+      try {
+        if (!localStorage.getItem('cv-intro-shown')) {
+          localStorage.setItem('cv-intro-shown', 'true');
+        }
+      } catch (e) {
+        // Ignore localStorage errors
+      }
+    }
+
     if (!this.stateModal) {
       this._createStateModal();
     }
@@ -738,9 +758,10 @@ export class CustomViewsWidget {
    */
   private createCallout(): void {
     // Avoid duplicates
-    if (document.querySelector('.cv-widget-callout')) return;
+    if (this.introCallout || document.querySelector('.cv-widget-callout')) return;
 
-    const callout = document.createElement('div');
+    this.introCallout = document.createElement('div');
+    const callout = this.introCallout;
     callout.className = `cv-widget-callout cv-pos-${this.options.position}`;
     if (this.options.theme === 'dark') {
       callout.classList.add('cv-widget-theme-dark');
@@ -756,7 +777,7 @@ export class CustomViewsWidget {
     closeBtn.setAttribute('aria-label', 'Dismiss intro');
     closeBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      this.dismissIntroCallout(callout);
+      this.dismissIntroCallout();
     });
 
     // Message
@@ -778,7 +799,7 @@ export class CustomViewsWidget {
 
     // Auto-dismiss on click anywhere on callout? No, maybe clicking callout opens widget?
     callout.addEventListener('click', () => {
-      this.dismissIntroCallout(callout);
+      this.dismissIntroCallout();
       this.openStateModal();
     });
   }
