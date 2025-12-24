@@ -714,6 +714,12 @@ export class CustomViewsWidget {
   private showIntroCalloutIfFirstVisit(): void {
     if (!this._hasVisibleConfig) return;
 
+    // Strict check: Only show callout if there is actual content on the page to customize.
+    // We check the core registry for any active toggles or tab groups.
+    if (!this.core.hasActiveComponents()) {
+      return;
+    }
+
     const STORAGE_KEY = 'cv-intro-shown';
 
     // Check if intro has been shown before
