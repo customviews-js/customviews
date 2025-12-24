@@ -85,7 +85,4 @@ export const TOGGLE_STYLES = `
   opacity: 1;
 }
 
-.cv-expand-btn:hover svg {
-  opacity: 1;
-}
 `;
