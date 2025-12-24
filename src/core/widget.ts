@@ -31,8 +31,7 @@ export interface WidgetOptions {
   /** Whether to show welcome modal on first visit */
   showWelcome?: boolean;
 
-  /** Welcome modal title (only used if showWelcome is true) */
-  welcomeTitle?: string;
+
 
   /** Welcome modal message (only used if showWelcome is true) */
   welcomeMessage?: string;
@@ -69,8 +68,7 @@ export class CustomViewsWidget {
       title: options.title || 'Customize View',
       description: options.description || '',
       showWelcome: options.showWelcome ?? false,
-      welcomeTitle: options.welcomeTitle || 'Site Customization',
-      welcomeMessage: options.welcomeMessage || 'This site is powered by Custom Views. Use the widget on the side (⚙) to customize your experience. Your preferences will be saved and can be shared via URL.<br><br>Learn more at <a href="https://github.com/customviews-js/customviews" target="_blank">customviews GitHub</a>.',
+      welcomeMessage: options.welcomeMessage || 'Customize your reading experience (theme, toggles, tabs) here.',
       showTabGroups: options.showTabGroups ?? true
     };
 
@@ -122,9 +120,9 @@ export class CustomViewsWidget {
     // Always append to body since it's a floating icon
     document.body.appendChild(this.widgetIcon);
 
-    // Show welcome modal on first visit if enabled
+    // Show intro callout on first visit if enabled
     if (this.options.showWelcome) {
-      this.showWelcomeModalIfFirstVisit();
+      this.showIntroCalloutIfFirstVisit();
     }
 
     return this.widgetIcon;
@@ -160,6 +158,12 @@ export class CustomViewsWidget {
       this.stateModal.remove();
       this.stateModal = null;
     }
+
+    // Clean up callout
+    const callout = document.querySelector('.cv-widget-callout');
+    if (callout) {
+      callout.remove();
+    }
   }
 
   private attachEventListeners(): void {
@@ -175,6 +179,26 @@ export class CustomViewsWidget {
   private closeModal(): void {
     if (this.stateModal) {
       this.stateModal.classList.add('cv-hidden');
+    }
+  }
+
+  /**
+   * Dismiss the intro callout
+   */
+  private dismissIntroCallout(callout: HTMLElement): void {
+    callout.classList.add('cv-hidden');
+    setTimeout(() => callout.remove(), 300); // Wait for fade out if any
+
+    // Stop pulsing the widget icon
+    if (this.widgetIcon) {
+      this.widgetIcon.classList.remove('cv-pulse');
+    }
+
+    // Mark as shown in localStorage
+    try {
+      localStorage.setItem('cv-intro-shown', 'true');
+    } catch (e) {
+      // Ignore localStorage errors
     }
   }
 
@@ -685,98 +709,72 @@ export class CustomViewsWidget {
   }
 
   /**
-   * Check if this is the first visit and show welcome modal
+   * Check if this is the first visit and show intro callout
    */
-  private showWelcomeModalIfFirstVisit(): void {
+  private showIntroCalloutIfFirstVisit(): void {
     if (!this._hasVisibleConfig) return;
 
-    const STORAGE_KEY = 'cv-welcome-shown';
+    const STORAGE_KEY = 'cv-intro-shown';
 
-    // Check if welcome has been shown before
-    const hasSeenWelcome = localStorage.getItem(STORAGE_KEY);
+    // Check if intro has been shown before
+    const hasSeenIntro = localStorage.getItem(STORAGE_KEY);
 
-    if (!hasSeenWelcome) {
-      // Show welcome modal after a short delay to let the page settle
+    if (!hasSeenIntro) {
+      // Show callout after a short delay
       setTimeout(() => {
-        this.createWelcomeModal();
-      }, 500);
-
-      // Mark as shown
-      localStorage.setItem(STORAGE_KEY, 'true');
+        this.createCallout();
+      }, 1000);
     }
   }
 
   /**
-   * Create and show the welcome modal
+   * Create and show the intro callout
    */
-  private createWelcomeModal(): void {
-    // Don't show if there's already a modal open
-    if (this.stateModal && !this.stateModal.classList.contains('cv-hidden')) return;
+  private createCallout(): void {
+    // Avoid duplicates
+    if (document.querySelector('.cv-widget-callout')) return;
 
-    const welcomeModal = document.createElement('div');
-    welcomeModal.className = 'cv-widget-modal-overlay cv-welcome-modal-overlay';
+    const callout = document.createElement('div');
+    callout.className = `cv-widget-callout cv-pos-${this.options.position}`;
     if (this.options.theme === 'dark') {
-      welcomeModal.classList.add('cv-widget-theme-dark');
+      callout.classList.add('cv-widget-theme-dark');
     }
 
-    welcomeModal.innerHTML = `
-      <div class="cv-widget-modal cv-welcome-modal">
-        <header class="cv-modal-header">
-          <div class="cv-modal-header-content">
-            <div class="cv-modal-icon">
-              ${getGearIcon()}
-            </div>
-            <h1 class="cv-modal-title">${this.options.welcomeTitle}</h1>
-          </div>
-        </header>
-        <div class="cv-modal-main">
-          <p class="cv-welcome-message">${this.options.welcomeMessage}</p>
-          
-          <div class="cv-welcome-widget-preview">
-            <div class="cv-welcome-widget-icon">
-              ${getGearIcon()}
-            </div>
-            <p class="cv-welcome-widget-label">Look for this widget</p>
-          </div>
-          
-          <button class="cv-welcome-got-it">Got it!</button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(welcomeModal);
-    this.attachWelcomeModalEventListeners(welcomeModal);
-  }
-
-  /**
-   * Attach event listeners for welcome modal
-   */
-  private attachWelcomeModalEventListeners(welcomeModal: HTMLElement): void {
-    const closeModal = () => {
-      welcomeModal.remove();
-      document.removeEventListener('keydown', handleEscape);
-    };
-
-    // Got it button
-    const gotItBtn = welcomeModal.querySelector('.cv-welcome-got-it');
-    if (gotItBtn) {
-      gotItBtn.addEventListener('click', closeModal);
-    }
-
-    // Overlay click to close
-    welcomeModal.addEventListener('click', (e) => {
-      if (e.target === welcomeModal) {
-        closeModal();
-      }
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'cv-widget-callout-close';
+    closeBtn.innerHTML = getCloseIcon(); // Reusing close icon, might be too big? 
+    // Actually getCloseIcon returns an SVG string.
+    // Let's use a simple '×' character or a smaller SVG for the callout close button for simplicity/tightness
+    closeBtn.innerHTML = '×';
+    closeBtn.setAttribute('aria-label', 'Dismiss intro');
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.dismissIntroCallout(callout);
     });
 
-    // Escape key to close
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closeModal();
-      }
-    };
-    document.addEventListener('keydown', handleEscape);
+    // Message
+    const msg = document.createElement('p');
+    msg.className = 'cv-widget-callout-text';
+    msg.textContent = this.options.welcomeMessage;
+    // Allow HTML in welcome message? The original allowed it. 
+    msg.innerHTML = this.options.welcomeMessage;
+
+    callout.appendChild(closeBtn);
+    callout.appendChild(msg);
+
+    document.body.appendChild(callout);
+
+    // Add pulse to widget icon to draw attention
+    if (this.widgetIcon) {
+      this.widgetIcon.classList.add('cv-pulse');
+    }
+
+    // Auto-dismiss on click anywhere on callout? No, maybe clicking callout opens widget?
+    callout.addEventListener('click', () => {
+      this.dismissIntroCallout(callout);
+      this.openStateModal();
+    });
   }
 
 
