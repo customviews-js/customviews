@@ -31,7 +31,7 @@
 ### Welcome Modal
 * **First-visit Modal**: Optional welcome screen for new users
 * localStorage caching - shows only once per browser
-* Configurable via `showWelcome`, `welcomeTitle`, `welcomeMessage` options
+* Configurable via `showWelcome`, `welcomeMessage` options
 * Visual preview of widget icon in modal
 * Theme support (light/dark)
 

@@ -130,8 +130,7 @@ This configuration will auto-generate:
 | `title` | `string` | `"Custom Views"` | Title shown in widget tooltip and modal header. |
 | `description` | `string` | `"Toggle different content sections..."` | Description text shown in the modal. |
 | `showWelcome` | `boolean` | `false` | Whether to show a welcome modal on first visit. |
-| `welcomeTitle` | `string` | `"Site Customization"` | Title for the welcome modal. |
-| `welcomeMessage` | `string` | Welcome message HTML | Message shown in the welcome modal. |
+| `welcomeMessage` | `string` | `"Customize your reading experience..."` | Message shown in the welcome modal. |
 | `showTabGroups` | `boolean` | `true` | Whether to show tab groups section in widget. |
 
 ## Script Tag Attributes
