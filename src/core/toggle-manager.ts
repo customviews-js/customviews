@@ -75,25 +75,89 @@ export class ToggleManager {
   /**
    * Apply simple class-based visibility to a toggle element
    */
+
   private static applyToggleVisibility(toggleElement: HTMLElement, visible: boolean, peek: boolean = false): void {
     const isLocallyExpanded = this.expandedPeekElements.has(toggleElement);
 
+    const wasHidden = toggleElement.classList.contains('cv-hidden');
+    const wasPeek = toggleElement.classList.contains('cv-peek');
+    const wasVisible = !wasHidden && !wasPeek;
+
     if (visible) {
-      toggleElement.classList.remove('cv-hidden', 'cv-peek');
-      toggleElement.classList.add('cv-visible');
-      // Show collapse button ONLY if locally expanded (meaning we are actually in peek mode but expanded).
-      // If globally visible (because of 'Show' state), isLocallyExpanded should have been cleared by applyTogglesVisibility,
-      // so this will be false, and button will be removed.
+      if (!wasVisible) {
+        // Prepare for opening animation
+        const fullHeight = toggleElement.scrollHeight;
+
+        // precise start height
+        if (wasHidden) toggleElement.style.maxHeight = '0px';
+        else if (wasPeek) toggleElement.style.maxHeight = '70px'; // Matching CSS value
+
+        toggleElement.classList.remove('cv-hidden', 'cv-peek');
+        toggleElement.classList.add('cv-visible');
+
+        // Force reflow to establish start state
+        void toggleElement.offsetHeight;
+
+        // Animate to full height
+        toggleElement.style.maxHeight = `${fullHeight}px`;
+
+        // Cleanup after transition to restore max-height: none
+        toggleElement.addEventListener('transitionend', function cleanup() {
+          if (toggleElement.classList.contains('cv-visible')) {
+            toggleElement.style.maxHeight = '';
+          }
+          toggleElement.removeEventListener('transitionend', cleanup);
+        }, { once: true });
+      } else {
+        // Ensure class is present if it wasn't
+        toggleElement.classList.add('cv-visible');
+        toggleElement.classList.remove('cv-hidden', 'cv-peek');
+      }
+
       this.manageExpandButton(toggleElement, false, isLocallyExpanded);
+
     } else if (peek) {
-      toggleElement.classList.remove('cv-hidden', 'cv-visible');
-      toggleElement.classList.add('cv-peek');
-      // Show/create expand button if peeked
+      if (!wasPeek) {
+        // Determine start height
+        if (wasVisible) {
+          toggleElement.style.maxHeight = `${toggleElement.scrollHeight}px`;
+        } else if (wasHidden) {
+          toggleElement.style.maxHeight = '0px';
+        }
+
+        // Force reflow if we set a start height
+        if (wasVisible || wasHidden) {
+          void toggleElement.offsetHeight;
+        }
+
+        toggleElement.classList.remove('cv-hidden', 'cv-visible');
+        toggleElement.classList.add('cv-peek');
+
+        // now animate to peek height
+        toggleElement.style.maxHeight = '70px';
+
+        toggleElement.addEventListener('transitionend', function cleanup() {
+          if (toggleElement.classList.contains('cv-peek')) {
+            toggleElement.style.maxHeight = '';
+          }
+          toggleElement.removeEventListener('transitionend', cleanup);
+        }, { once: true });
+      }
       this.manageExpandButton(toggleElement, true, false);
+
     } else {
-      toggleElement.classList.add('cv-hidden');
-      toggleElement.classList.remove('cv-visible', 'cv-peek');
-      // Ensure button is gone/hidden
+      // Hiding
+      if (!wasHidden) {
+        // From Visible (none) -> Hidden
+        if (wasVisible) {
+          toggleElement.style.maxHeight = `${toggleElement.scrollHeight}px`;
+          void toggleElement.offsetHeight;
+        }
+
+        toggleElement.classList.remove('cv-visible', 'cv-peek');
+        toggleElement.classList.add('cv-hidden');
+        toggleElement.style.maxHeight = '';
+      }
       this.manageExpandButton(toggleElement, false, false);
     }
   }
