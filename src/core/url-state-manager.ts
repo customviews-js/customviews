@@ -93,6 +93,11 @@ export class URLStateManager {
         compact.t = state.shownToggles;
       }
 
+      // Add peek toggles if present and non-empty
+      if (state.peekToggles && state.peekToggles.length > 0) {
+        compact.p = state.peekToggles;
+      }
+
       // Add tab groups if present
       if (state.tabs && Object.keys(state.tabs).length > 0) {
         compact.g = Object.entries(state.tabs);
@@ -158,7 +163,8 @@ export class URLStateManager {
 
       // Reconstruct Toggles
       const state: State = {
-        shownToggles: Array.isArray(compact.t) ? compact.t : []
+        shownToggles: Array.isArray(compact.t) ? compact.t : [],
+        peekToggles: Array.isArray(compact.p) ? compact.p : []
       };
 
       // Reconstruct Tabs
