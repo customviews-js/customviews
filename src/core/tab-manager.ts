@@ -309,7 +309,7 @@ export class TabManager {
         }
 
         // Add tooltip for UX feedback (use native title attribute)
-        navLink.setAttribute('title', 'Double click to change switch tabs across all groups');
+        navLink.setAttribute('title', "Double-click a tab to 'pin' it in all similar tab groups.");
 
         listItem.appendChild(navLink);
         navContainer.appendChild(listItem);
