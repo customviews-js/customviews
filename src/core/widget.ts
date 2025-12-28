@@ -4,6 +4,7 @@ import type { State } from "../types/types";
 import { URLStateManager } from "./url-state-manager";
 
 import { TabManager } from "./tab-manager";
+import { ToastManager } from "./toast-manager";
 import { getGearIcon, getCloseIcon, getResetIcon, getCopyIcon, getTickIcon, getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getGitHubIcon } from "../utils/icons";
 
 export interface WidgetOptions {
@@ -445,6 +446,7 @@ export class CustomViewsWidget {
 
         this.core.resetToDefault();
         this.loadCurrentStateIntoForm();
+        ToastManager.show('Settings reset to default');
 
         setTimeout(() => {
           if (resetIcon) {
@@ -657,8 +659,10 @@ export class CustomViewsWidget {
     const url = URLStateManager.generateShareableURL(customState);
 
     navigator.clipboard.writeText(url).then(() => {
-      console.log('Shareable URL copied to clipboard!');
-    }).catch(() => { console.error('Failed to copy URL!'); });
+      ToastManager.show('Link copied to clipboard!');
+    }).catch(() => { 
+      ToastManager.show('Failed to copy URL!');
+    });
   }
 
   /**
