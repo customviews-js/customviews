@@ -338,7 +338,6 @@ export const WIDGET_STYLES = `
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   overflow-y: auto;
   max-height: calc(80vh - 8rem);
 }
@@ -666,15 +665,14 @@ export const WIDGET_STYLES = `
 
 /* Logo box - centered grey box on its own row */
 .cv-tabgroup-logo-box {
-  width: 3.5rem;
-  height: 3.5rem;
+  width: 3rem;
+  height: 3rem;
   background: rgba(0, 0, 0, 0.08);
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-bottom: 0.5rem;
 }
 
 /* Title container for title alignment (without icon) */

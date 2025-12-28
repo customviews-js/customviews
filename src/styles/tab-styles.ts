@@ -150,7 +150,7 @@ cv-tabgroup {
 
 /* Tab content wrapper */
 .cv-tab-content {
-  padding: 1rem 0;
+  padding: 0.5rem;
 }
 
 /* Viewer-controlled nav visibility: hide nav containers when requested */
