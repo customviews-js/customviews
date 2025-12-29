@@ -225,7 +225,7 @@
     position={options.position} 
     title={options.title} 
     pulse={showPulse} 
-    on:click={openModal} 
+    onclick={openModal} 
   />
 
   <!-- Modal -->

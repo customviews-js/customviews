@@ -27,7 +27,7 @@
           name="cv-toggle-{toggle.id}" 
           value="hide" 
           checked={value === 'hide'}
-          on:change={() => onChange('hide')}
+          onchange={() => onChange('hide')}
         />
         <span>Hide</span>
       </label>
@@ -38,7 +38,7 @@
           name="cv-toggle-{toggle.id}" 
           value="peek" 
           checked={value === 'peek'}
-          on:change={() => onChange('peek')}
+          onchange={() => onChange('peek')}
         />
         <span>Peek</span>
       </label>
@@ -49,7 +49,7 @@
           name="cv-toggle-{toggle.id}" 
           value="show" 
           checked={value === 'show'}
-          on:change={() => onChange('show')}
+          onchange={() => onChange('show')}
         />
         <span>Show</span>
       </label>

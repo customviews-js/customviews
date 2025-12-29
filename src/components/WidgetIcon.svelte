@@ -2,6 +2,7 @@
   export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right' | undefined = 'middle-left';
   export let title: string | undefined = 'Customize View';
   export let pulse: boolean | undefined = false;
+  export let onclick: (() => void) | undefined = undefined;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -11,7 +12,7 @@
   role="button"
   tabindex="0"
   aria-label="Open Custom Views"
-  on:click
+  {onclick}
 >
   ⚙
 </div>

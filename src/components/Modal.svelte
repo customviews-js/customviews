@@ -79,7 +79,12 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="modal-overlay" on:click|self={onclose} transition:fade={{ duration: 200 }}>
+<div 
+  class="modal-overlay" 
+  onclick={(e) => { if(e.target === e.currentTarget) onclose(); }} 
+  role="presentation"
+  transition:fade={{ duration: 200 }}
+>
   <div class="modal-box cv-custom-state-modal" role="dialog" aria-modal="true" transition:scale={{ duration: 200, start: 0.9 }}>
     <header class="header">
       <div class="header-content">
@@ -89,7 +94,7 @@
         </div>
         <div class="title">{title}</div>
       </div>
-      <button class="close-btn" aria-label="Close modal" on:click={onclose}>
+      <button class="close-btn" aria-label="Close modal" onclick={onclose}>
         <!-- Close icon svg -->
         {@html getCloseIcon()}
       </button>
@@ -103,11 +108,11 @@
       <div class="tabs">
         <button 
           class="tab {activeTab === 'customize' ? 'active' : ''}" 
-          on:click={() => activeTab = 'customize'}
+          onclick={() => activeTab = 'customize'}
         >Customize</button>
         <button 
           class="tab {activeTab === 'share' ? 'active' : ''}" 
-          on:click={() => activeTab = 'share'}
+          onclick={() => activeTab = 'share'}
         >Share</button>
       </div>
 
@@ -135,8 +140,8 @@
                 <!-- Navigation Headers Toggle -->
                 <div 
                   class="tabgroup-card header-card" 
-                  on:mouseenter={() => handleNavHover(true)}
-                  on:mouseleave={() => handleNavHover(false)}
+                  onmouseenter={() => handleNavHover(true)}
+                  onmouseleave={() => handleNavHover(false)}
                   role="group"
                 >
                   <div class="tabgroup-row">
@@ -154,7 +159,7 @@
                         class="nav-pref-input" 
                         type="checkbox" 
                         checked={!navsVisible}
-                        on:change={handleNavToggle} 
+                        onchange={handleNavToggle} 
                         aria-label="Show only the selected tab" 
                       />
                       <span class="switch-bg"></span>
@@ -184,12 +189,12 @@
               Create a shareable link for your current customization, or select specific parts of the page to share.
             </div>
             
-            <button class="share-action-btn primary start-share-btn" on:click={onstartShare}>
+            <button class="share-action-btn primary start-share-btn" onclick={onstartShare}>
               <span class="btn-icon">{@html getShareIcon()}</span>
               <span>Select elements to share</span>
             </button>
             
-            <button class="share-action-btn copy-url-btn" on:click={copyShareUrl}>
+            <button class="share-action-btn copy-url-btn" onclick={copyShareUrl}>
               <span class="btn-icon">
                 {#if copySuccess}
                   {@html getTickIcon()}
@@ -212,7 +217,7 @@
 
     <footer class="footer">
       {#if showReset}
-        <button class="reset-btn" title="Reset to Default" on:click={onreset}>
+        <button class="reset-btn" title="Reset to Default" onclick={onreset}>
           <span class="reset-btn-icon {isResetting ? 'spinning' : ''}">
             {@html getResetIcon()}
           </span>
@@ -227,7 +232,7 @@
         <span>View on GitHub</span>
       </a>
 
-      <button class="done-btn" on:click={onclose}>Done</button>
+      <button class="done-btn" onclick={onclose}>Done</button>
     </footer>
   </div>
 </div>

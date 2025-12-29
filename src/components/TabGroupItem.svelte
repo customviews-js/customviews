@@ -21,7 +21,7 @@
     id="tab-group-{group.id}" 
     class="select" 
     value={activeTabId} 
-    on:change={onChange}
+    onchange={onChange}
   >
     {#each group.tabs as tab}
       <option value={tab.id}>{tab.label || tab.id}</option>
