@@ -8,6 +8,7 @@
     <div class="nav-component slim-scroll">
       <site-nav>
 * [Contributing]({{baseUrl}}/devGuide/devGuide.html)
+* [Framework]({{baseUrl}}/devGuide/framework.html)
 * [Making Releases]({{baseUrl}}/devGuide/releases.html)
 * Tests
   * [Local Components]({{baseUrl}}/devGuide/tests/localComponents.html)
