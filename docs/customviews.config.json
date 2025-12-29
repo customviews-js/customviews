@@ -3,8 +3,8 @@
     "toggles": [
       {"id": "lt","label": "Local Toggle","isLocal": true},
       {"id": "localToggle","label": "Local Toggle Label","isLocal": true},
-      {"id": "mac","label": "MacOS"},
-      {"id": "linux","label": "Linux"},
+      {"id": "mac","label": "MacOS", "description": "Show content for macOS users"},
+      {"id": "linux","label": "Linux", "description": "Show content for Linux users"},
       {"id": "windows","label": "Windows"}
     ],
     "tabGroups": [

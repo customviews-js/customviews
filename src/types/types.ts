@@ -68,6 +68,8 @@ export interface ToggleConfig {
   label?: string;
   /** Determines if the toggle is only shown on pages where it's used. */
   isLocal?: boolean;
+  /** Optional description to display below functionality */
+  description?: string;
 }
 
 /**
