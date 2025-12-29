@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { State } from '../types/types'; // Assuming types are here or I need to import them from widget.ts interface
-  // I likely need to export Data Interfaces from a central place or redefine them. 
-  // For now I'll use 'any' for core if types are hard to reach, but let's try to be safe.
+  import type { State } from '../types/types';
+  import type { CustomViewsCore } from '../core/core';
+  import type { WidgetOptions } from '../core/widget';
   
   import WidgetIcon from './WidgetIcon.svelte';
   import Modal from './Modal.svelte';
@@ -11,10 +11,9 @@
   import { ToastManager } from '../core/toast-manager';
   import { TabManager } from '../core/tab-manager';
 
-  export let core: any; // Using any for CustomViewsCore to avoid circular dependency issues if types aren't cleanly separated
-  // In a perfect world, we'd have a separate types package.
+  export let core: CustomViewsCore;
   
-  export let options: any = {}; // WidgetOptions
+  export let options: WidgetOptions;
 
   // Configuration State
   let allToggles: any[] = [];
@@ -74,7 +73,7 @@
       return true;
     });
 
-    hasVisibleConfig = visibleToggles.length > 0 || (options.showTabGroups && visibleTabGroups.length > 0);
+    hasVisibleConfig = visibleToggles.length > 0 || (!!options.showTabGroups && visibleTabGroups.length > 0);
   }
 
   export function refreshState() {

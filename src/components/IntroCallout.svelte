@@ -1,9 +1,9 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
 
-  export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right' = 'middle-left';
-  export let message: string = 'Customize your reading experience here.';
-  export let onclose: () => void = () => {};
+  export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right' | undefined = 'middle-left';
+  export let message: string | undefined = 'Customize your reading experience here.';
+  export let onclose: (() => void) | undefined = () => {};
 
   // Map widget position to callout position logic
   /*
@@ -15,7 +15,7 @@
   */
 
   function getTransitionParams() {
-    if (position.includes('right')) return { x: 20, duration: 300 };
+    if (position && position.includes('right')) return { x: 20, duration: 300 };
     return { x: -20, duration: 300 };
   }
 </script>

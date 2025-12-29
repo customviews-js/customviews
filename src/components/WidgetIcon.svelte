@@ -1,7 +1,7 @@
 <script lang="ts">
-  export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right' = 'middle-left';
-  export let title: string = 'Customize View';
-  export let pulse: boolean = false;
+  export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right' | undefined = 'middle-left';
+  export let title: string | undefined = 'Customize View';
+  export let pulse: boolean | undefined = false;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->

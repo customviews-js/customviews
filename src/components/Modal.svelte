@@ -5,10 +5,10 @@
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
 
-  export let title: string = 'Customize View';
-  export let description: string = '';
-  export let showReset: boolean = true;
-  export let showTabGroups: boolean = true;
+  export let title: string | undefined = 'Customize View';
+  export let description: string | undefined = '';
+  export let showReset: boolean | undefined = true;
+  export let showTabGroups: boolean | undefined = true;
   
   // Data
   export let toggles: ToggleConfig[] = [];
