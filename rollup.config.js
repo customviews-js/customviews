@@ -21,7 +21,7 @@ const sveltePlugin = svelte({
   preprocess: sveltePreprocess(),
   emitCss: false, // Injects styles into JS strings instead of separate css files
   compilerOptions: {
-    // Wraps component class in standard HTMLElement wrapper enforcing style isolation,
+    // Do not wrap component class in standard HTMLElement wrapper by default.
     // Use <svelte:options customElement="tag-name" /> to wrap components (opt-in individual files).
     customElement: false 
   }

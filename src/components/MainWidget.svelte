@@ -40,6 +40,9 @@
     refreshConfig();
     refreshState();
     
+    // Subscribe to core updates
+    core.addStateChangeListener(refreshState);
+
     // Check for callout
     if (options.showWelcome && hasVisibleConfig) {
       checkIntro();
@@ -49,9 +52,13 @@
     if (options.theme === 'dark') {
       document.body.classList.add('cv-widget-theme-dark'); // Should be scoped but for modal overlays...
     }
+
+    return () => {
+      core.removeStateChangeListener(refreshState);
+    };
   });
 
-  export function refreshConfig() {
+  function refreshConfig() {
     // Filter toggles and tab groups based on page presence (logic ported from widget.ts)
     const config = core.getConfig();
     allToggles = config?.toggles || [];
@@ -76,7 +83,7 @@
     hasVisibleConfig = visibleToggles.length > 0 || (!!options.showTabGroups && visibleTabGroups.length > 0);
   }
 
-  export function refreshState() {
+  function refreshState() {
      const currentState = core.getCurrentState();
      shownToggles = currentState.shownToggles || [];
      peekToggles = currentState.peekToggles || [];
@@ -102,7 +109,9 @@
            showPulse = true;
         }, 1000);
       }
-    } catch (e) {}
+    } catch (e) {
+      /* Ignore localStorage errors (e.g. disabled/full) */
+    }
   }
 
   function dismissCallout() {
@@ -110,7 +119,9 @@
     showPulse = false;
     try {
       localStorage.setItem('cv-intro-shown', 'true');
-    } catch (e) {}
+    } catch (e) {
+      /* Ignore localStorage errors (e.g. disabled/full) */
+    }
   }
 
   function openModal() {
@@ -118,7 +129,9 @@
     // Mark as seen
     try {
        localStorage.setItem('cv-intro-shown', 'true');
-    } catch (e) {}
+    } catch (e) {
+      /* Ignore localStorage errors (e.g. disabled/full) */
+    }
 
     refreshState(); // Ensure fresh state
     isModalOpen = true;
