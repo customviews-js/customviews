@@ -11,7 +11,7 @@
 
 CustomViews uses **Svelte** for HTML-like declarative UI and **TypeScript** for the core logic.
 
-* Initially, **Vanilla JavaScript, HTML, CSS** was used to build the widget. Direct DOM manipulation was used to update the UI based on state changes, to keep the runtime as small as possible and widget lightweight and ensure fast load times. Howeverm te codebase became difficult to maintain, and the codebase became verbose and complex. Additionally, keeping the UI in sync with internal state was error-prone. Additionally, there was potential style bleeding issues.
+* Initially, **Vanilla JavaScript, HTML, CSS** was used to build the widget. Direct DOM manipulation was used to update the UI based on state changes, to keep the runtime as small as possible and widget lightweight and ensure fast load times. However, the codebase became difficult to maintain, and the codebase became verbose and complex. Additionally, keeping the UI in sync with internal state was error-prone. Additionally, there was potential style bleeding issues.
 
 
 ## Why Svelte?
