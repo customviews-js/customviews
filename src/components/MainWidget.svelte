@@ -141,13 +141,10 @@
     }, 600);
   }
 
+  // Construct the new State and pass to Core, which triggers dom updates
   function handleToggleChange(detail: any) {
     const { toggleId, value } = detail;
-    
-    // We update local state optimistically, but the REAL source is Core.
-    // However, Core.applyState triggers dom updates. 
-    // We should construct the new State and pass to Core.
-    
+  
     // Update lists
     let newShown = [...shownToggles];
     let newPeek = [...peekToggles];
