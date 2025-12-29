@@ -37,22 +37,24 @@ const plugins = [
   typescript({ sourceMap: true, inlineSources: true })
 ];
 
-// Suppress circular dependency warnings from node_modules
-// TODO LATER: Remove this once resolved circular dependencies, if any
 const onwarn = (warning, warn) => {
+  // According to Svelte GitHub Issue #10140 
+  // Circular Dependency Warnings during compilation (Cause TBD) 
+  // Warnings clutter compilation logs, but are otherwise harmless.
+  // Hide Svelte circular dependency warnings from node_modules
   if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('node_modules')) {
     return;
   }
   warn(warning);
 };
 
-// Run build 5 times to create different files
+// Run build 3 times to create different files
 const builds = [
-  // ESM build for core API (for bundlers/advanced usage)
+  // ESM build (for bundlers)
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/custom-views.core.esm.js',
+      file: 'dist/custom-views.esm.js',
       format: 'esm',
       banner,
       sourcemap: true
@@ -60,11 +62,11 @@ const builds = [
     plugins
   },
   
-  // CommonJS build for core API (for Node.js/advanced usage)
+  // CommonJS build (for Node.js)
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/custom-views.core.cjs.js',
+      file: 'dist/custom-views.cjs.js',
       format: 'cjs',
       banner,
       sourcemap: true,
@@ -73,20 +75,7 @@ const builds = [
     plugins
   },
   
-  // Main UMD build (unminified)
-  {
-    input: 'src/index.ts',
-    output: {
-      file: 'dist/custom-views.js',
-      format: 'umd',
-      name: 'CustomViews',
-      banner,
-      sourcemap: true
-    },
-    plugins
-  },
-  
-  // Main UMD build (minified)
+  // Browser UMD build (minified)
   {
     input: 'src/index.ts',
     output: {
@@ -100,18 +89,6 @@ const builds = [
       ...plugins,
       terser()
     ]
-  },
-  
-  // ESM build for browser module scripts
-  {
-    input: 'src/index.ts',
-    output: {
-      file: 'dist/custom-views.esm.js',
-      format: 'esm',
-      banner,
-      sourcemap: true
-    },
-    plugins
   }
 ];
 
