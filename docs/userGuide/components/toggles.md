@@ -74,8 +74,8 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 {
   "config": {
     "toggles": [
-      { "id": "mac", "label": "MacOS" },
-      { "id": "linux", "label": "Linux" },
+      { "id": "mac", "label": "MacOS", "description": "Show content for macOS users" },
+      { "id": "linux", "label": "Linux", "description": "Show content for Linux users" },
       { "id": "windows", "label": "Windows" }
     ],
     "defaultState": {
@@ -90,7 +90,7 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 
 | Field | Description |
 |--------|-------------|
-| `config.toggles` | An array of toggle objects. Each object must have an `id` and can have an optional `label` and `isLocal` flag. |
+| `config.toggles` | An array of toggle objects. Each object must have an `id` and can have an optional `label`, `description`, and `isLocal` flag. |
 | `config.defaultState.shownToggles` | An array of toggle `id`s that should be active (fully visible) by default on first load. |
 | `config.defaultState.peekToggles` | An array of toggle `id`s that should be in peek mode by default. |
 

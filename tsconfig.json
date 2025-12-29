@@ -28,7 +28,7 @@
     "skipLibCheck": true,              // Skip type checking of declaration files
 
     // Types (empty unless you want to include global types)
-    "types": [],
+    "types": ["svelte"],
   },
   "include": ["src"],                 
   "exclude": ["node_modules", "dist", "test", "docs"] 
