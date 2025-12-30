@@ -1,5 +1,5 @@
 import type { CustomViewsCore } from "./core.svelte";
-import MainWidget from "../components/MainWidget.svelte";
+import MainWidget from "../components/widget/MainWidget.svelte";
 import { mount, unmount } from "svelte";
 
 export interface WidgetOptions {

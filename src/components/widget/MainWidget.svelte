@@ -1,15 +1,15 @@
 <script lang="ts">
   import { onMount, mount, unmount } from 'svelte';
-  import type { CustomViewsCore } from '../core/core.svelte'; // Updated import
-  import type { WidgetOptions } from '../core/widget';
+  import type { CustomViewsCore } from '../../core/core.svelte'; // Updated import
+  import type { WidgetOptions } from '../../core/widget';
   
   import WidgetIcon from './WidgetIcon.svelte';
-  import Modal from './Modal.svelte';
+  import Modal from '../modal/Modal.svelte';
   import IntroCallout from './IntroCallout.svelte';
-  import { URLStateManager } from '../core/url-state-manager';
-  import { ToastManager } from '../core/toast-manager';
-  import { TabManager } from '../core/tab-manager';
-  import { ScrollManager } from '../utils/scroll-manager';
+  import { URLStateManager } from '../../core/url-state-manager';
+  import { ToastManager } from '../../core/toast-manager';
+  import { TabManager } from '../../core/tab-manager';
+  import { ScrollManager } from '../../utils/scroll-manager';
 
   let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
 

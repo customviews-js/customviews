@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ToggleConfig } from '../types/types';
+  import type { ToggleConfig } from '../../types/types';
 
   export let toggle: ToggleConfig;
   export let value: 'show' | 'hide' | 'peek' = 'hide';
