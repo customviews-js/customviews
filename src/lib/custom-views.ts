@@ -1,4 +1,4 @@
-import { CustomViewsCore, type CustomViewsOptions } from "../core/core";
+import { CustomViewsCore, type CustomViewsOptions } from "../core/core.svelte";
 import { AssetsManager } from "../core/assets-manager";
 import type { CustomViewAsset, Config } from "../types/types";
 import { prependBaseUrl } from "../utils/url-utils";
