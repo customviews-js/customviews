@@ -21,13 +21,20 @@ export class ToggleManager {
       const shouldShow = categories.some(cat => activeToggles.includes(cat));
       const shouldPeek = !shouldShow && categories.some(cat => peekToggles.includes(cat));
 
-      if (!shouldPeek) {
-        this.expandedPeekElements.delete(el);
-      }
+      if (el.tagName === 'CV-TOGGLE') {
+        // New Component Logic: Set props directly
+        (el as any).visible = shouldShow;
+        (el as any).peek = shouldPeek;
+      } else {
+        // Legacy Logic
+        if (!shouldPeek) {
+          this.expandedPeekElements.delete(el);
+        }
 
-      // If locally expanded, treat as shown (override peek)
-      // Note: If neither show nor peek is active (i.e. hidden), local expansion is ignored/cleared effectively
-      this.applyToggleVisibility(el, shouldShow || (shouldPeek && this.expandedPeekElements.has(el)), shouldPeek && !this.expandedPeekElements.has(el));
+        // If locally expanded, treat as shown (override peek)
+        // Note: If neither show nor peek is active (i.e. hidden), local expansion is ignored/cleared effectively
+        this.applyToggleVisibility(el, shouldShow || (shouldPeek && this.expandedPeekElements.has(el)), shouldPeek && !this.expandedPeekElements.has(el));
+      }
     });
   }
 

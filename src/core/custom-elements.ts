@@ -1,6 +1,4 @@
-/**
- * Defines the custom elements used by CustomViews.
- */
+import '../components/elements/Toggle.svelte';
 
 /**
  * `<cv-tab>`: A custom element representing a single tab panel within a tab group.
@@ -27,15 +25,6 @@ class CVTabgroup extends HTMLElement {
       });
       this.dispatchEvent(event);
     }, 0);
-  }
-}
-
-/**
- * `<cv-toggle>`: A custom element for creating a toggleable content block.
- */
-class CVToggle extends HTMLElement {
-  connectedCallback() {
-    // Element is managed by Core
   }
 }
 
@@ -71,9 +60,7 @@ export function registerCustomElements(): void {
     customElements.define('cv-tabgroup', CVTabgroup);
   }
 
-  if (!customElements.get('cv-toggle')) {
-    customElements.define('cv-toggle', CVToggle);
-  }
+  // cv-toggle is registered by the imported Svelte component.
 
   if (!customElements.get('cv-tab-header')) {
     customElements.define('cv-tab-header', CVTabHeader);
