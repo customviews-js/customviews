@@ -6,8 +6,6 @@ export const TOGGLE_STYLES = `
 /* Core toggle visibility transitions */
 [data-cv-toggle], [data-customviews-toggle], cv-toggle {
   display: block;
-  overflow: hidden;
-  /* Removed transitions for instant toggling */
 }
 
 /* Open State */
