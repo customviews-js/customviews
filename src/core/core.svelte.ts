@@ -259,36 +259,41 @@ export class CustomViewsCore {
   }
 
   private initializeNewComponents(): void {
-    TabManager.buildNavs(
-      Array.from(this.componentRegistry.tabGroups),
-      this.store.config.tabGroups,
-      // Single click: Local Only
-      (groupId, tabId, groupEl) => {
-        TabManager.applyTabLocalOnly(groupEl, tabId);
-        TabManager.updateNavActiveState(groupEl, tabId);
-        // Custom event for anyone listening (optional)
-        document.dispatchEvent(new CustomEvent('customviews:tab-change', {
-            detail: { groupId, tabId, synced: false },
-            bubbles: true
-        }));
-      },
-      // Double click: Sync to Store
-      (groupId, tabId, groupEl) => {
-          // 1. Record position before state change
-          const navHeader = groupEl.querySelector('.cv-tabs-nav');
-          const anchorElement = navHeader instanceof HTMLElement ? navHeader : groupEl;
-          const initialTop = anchorElement.getBoundingClientRect().top;
+    const groups = Array.from(this.componentRegistry.tabGroups);
+    groups.forEach((groupEl) => {
+        if ((groupEl as any)._listenersAttached) return;
+        (groupEl as any)._listenersAttached = true;
 
-          // 2. Sync to store
-          this.store.setTab(groupId, tabId);
-          
-          // 3. Restore position after DOM update (wait for effect)
-          // Using queueMicrotask to run after Svelte's effect which runs on microtask
-          queueMicrotask(() => {
-              ScrollManager.handleScrollAnchor({ element: anchorElement, top: initialTop });
-          });
-      }
-    );
+        groupEl.addEventListener('tabchange', (e: any) => {
+            const { tabId, groupId } = e.detail;
+            TabManager.applyTabLocalOnly(groupEl, tabId);
+            
+            // Custom event for anyone listening (optional)
+            document.dispatchEvent(new CustomEvent('customviews:tab-change', {
+                detail: { groupId, tabId, synced: false },
+                bubbles: true
+            }));
+        });
+
+        groupEl.addEventListener('tabdblclick', (e: any) => {
+            const { tabId, groupId } = e.detail;
+            
+            // 1. Record position before state change
+            // Use groupEl as anchor since nav info is internal
+            const anchorElement = groupEl;
+            const initialTop = anchorElement.getBoundingClientRect().top;
+
+            // 2. Sync to store
+            if (groupId) {
+               this.store.setTab(groupId, tabId);
+            }
+            
+            // 3. Restore position after DOM update (wait for effect)
+            queueMicrotask(() => {
+                ScrollManager.handleScrollAnchor({ element: anchorElement, top: initialTop });
+            });
+        });
+    });
   }
 
   private initObserver() {

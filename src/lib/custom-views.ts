@@ -2,7 +2,7 @@ import { CustomViewsCore, type CustomViewsOptions } from "../core/core.svelte";
 import { AssetsManager } from "../core/assets-manager";
 import type { CustomViewAsset, Config } from "../types/types";
 import { prependBaseUrl } from "../utils/url-utils";
-import { registerCustomElements } from "../core/custom-elements";
+import '../registry';
 
 /**
  * Options for initializing CustomViews from JSON
@@ -30,9 +30,6 @@ export class CustomViews {
    * @returns Promise resolving to the CustomViewsCore instance or null if initialization fails
    */
   static async init(opts: initOptions): Promise<CustomViewsCore | null> {
-    // Register custom elements
-    registerCustomElements();
-
     // Load assets JSON if provided
     let assetsManager: AssetsManager | undefined;
     const baseURL = opts.baseURL || '';
