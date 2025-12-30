@@ -4,8 +4,8 @@ import initializeFromScript from "./entry/browser-entry";
 import { CustomViewsWidget } from "./core/widget";
 
 // Export public API
-export { CustomViewsCore } from "./core/core";
-export type { CustomViewsOptions } from "./core/core";
+export { CustomViewsCore } from "./core/core.svelte";
+export type { CustomViewsOptions } from "./core/core.svelte";
 export { CustomViewsWidget } from "./core/widget";
 export type { WidgetOptions } from "./core/widget";
 export { CustomViews } from "./lib/custom-views";
