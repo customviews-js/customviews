@@ -1,4 +1,4 @@
-import type { Config, State, ToggleId } from "../types/types";
+import type { Config, State, ToggleId } from "../../types/types";
 
 
 /**

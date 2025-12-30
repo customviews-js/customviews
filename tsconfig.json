@@ -30,6 +30,6 @@
     // Types (empty unless you want to include global types)
     "types": ["svelte"],
   },
-  "include": ["src"],                 
+  "include": ["src", "svelte.config.js"],                 
   "exclude": ["node_modules", "dist", "test", "docs"] 
 }

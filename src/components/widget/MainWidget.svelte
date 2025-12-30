@@ -6,9 +6,9 @@
   import WidgetIcon from './WidgetIcon.svelte';
   import Modal from '../modal/Modal.svelte';
   import IntroCallout from './IntroCallout.svelte';
-  import { URLStateManager } from '../../core/url-state-manager';
-  import { ToastManager } from '../../core/toast-manager';
-  import { TabManager } from '../../core/tab-manager';
+  import { URLStateManager } from '../../core/state/url-state-manager';
+  import { ToastManager } from '../../core/managers/toast-manager';
+  import { TabManager } from '../../core/managers/tab-manager';
   import { ScrollManager } from '../../utils/scroll-manager';
 
   let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();

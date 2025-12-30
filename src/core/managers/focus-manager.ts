@@ -4,7 +4,7 @@
  */
 import { ToastManager } from './toast-manager';
 import { AnchorEngine } from './anchor-engine';
-import { TOAST_CLASS } from '../styles/toast-styles';
+import { TOAST_CLASS } from '../../styles/toast-styles';
 import {
     FOCUS_MODE_STYLES,
     FOCUS_MODE_STYLE_ID,
@@ -13,7 +13,7 @@ import {
     FOCUSED_CLASS,
     DIVIDER_CLASS,
     EXIT_BANNER_ID
-} from '../styles/focus-mode-styles';
+} from '../../styles/focus-mode-styles';
 
 const FOCUS_PARAM = 'cv-focus';
 
