@@ -1,7 +1,8 @@
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
 import svelte from 'rollup-plugin-svelte';
-import { sveltePreprocess } from 'svelte-preprocess';
+import svelteConfig from './svelte.config.js';
+
 import resolve from '@rollup/plugin-node-resolve';
 import { readFileSync } from 'fs';
 // terser is minifier, ts and sv for rollup to compile ts and svelte files
@@ -17,13 +18,22 @@ const banner = `/*!
  * Released under the ${pkg.license} License.
  */`;
 
-const sveltePlugin = svelte({
-  preprocess: sveltePreprocess(),
-  emitCss: false, // Injects styles into JS strings instead of separate css files
+// Custom Web Component Elements (only files in components/elements)
+const sveltePluginCustomElements = svelte({
+  ...svelteConfig,
+  include: 'src/components/elements/**/*.svelte',
+});
+
+// Regular Svelte components and Svelte 5 modules (e.g. .svelte.ts)
+const sveltePluginRegular = svelte({
+  ...svelteConfig,
+  extensions: ['.svelte', '.svelte.ts', '.svelte.js'],
+  include: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
+  exclude: 'src/components/elements/**/*.svelte',
+  // Regular non-custom components
   compilerOptions: {
-    // Do not wrap component class in standard HTMLElement wrapper by default.
-    // Use <svelte:options customElement="tag-name" /> to wrap components (opt-in individual files).
-    customElement: false 
+    ...svelteConfig.compilerOptions,
+    customElement: false
   }
 });
 
@@ -33,7 +43,8 @@ const plugins = [
     browser: true,      // Build is for browser
     dedupe: ['svelte']  // Prevents bundling Svelte multiple times
   }),
-  sveltePlugin,
+  sveltePluginRegular,
+  sveltePluginCustomElements,
   typescript({ sourceMap: true, inlineSources: true })
 ];
 
