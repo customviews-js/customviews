@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade, scale } from 'svelte/transition';
-  import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon } from '../utils/icons';
-  import type { ToggleConfig, TabGroupConfig } from '../types/types';
+  import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon } from '../../utils/icons';
+  import type { ToggleConfig, TabGroupConfig } from '../../types/types';
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
 
