@@ -71,12 +71,12 @@
     
     const elements = slotEl.assignedElements().filter(el => el.tagName.toLowerCase() === 'cv-tab');
     
-    // ... same logic ...
+
     tabs = elements.map((el, index) => {
       const element = el as HTMLElement;
       let rawId = element.getAttribute('id');
       
-      // If tab has no id, generate one based on position (parity with TabManager)
+      // If tab has no id, generate one based on position (parity with Core logic)
       if (!rawId) {
         rawId = `${tabGroupId || 'tabgroup'}-tab-${index}`;
         element.setAttribute('data-cv-internal-id', rawId);
@@ -111,9 +111,7 @@
 
     if (!initialized && tabs.length > 0) {
       if (!activeTabId) {
-        // Default to activeTab if passed, else first tab
-        // If activeTab is already set (e.g. via prop), use it.
-        // Wait, if activeTab is '', set to first.
+        // Default to first tab if activeTab is not set
         if (!activeTabId) {
              activeTabId = tabs[0]!.id;
              dispatch('tabchange', { groupId: tabGroupId, tabId: activeTabId });
@@ -148,7 +146,7 @@
             tab.element.classList.remove('cv-hidden');
             tab.element.classList.add('cv-visible');
         } else {
-            tab.element.removeAttribute('active'); // or set to false
+            tab.element.removeAttribute('active');
             tab.element.setAttribute('active', 'false');
             tab.element.classList.add('cv-hidden');
             tab.element.classList.remove('cv-visible');
@@ -174,13 +172,13 @@
    */
   function handleTabDoubleClick(tabId: string, event: MouseEvent) {
       event.preventDefault();
-      // Dispatch double click for "pinning" logic which is handled externally by TabManager/Core
-      dispatch('tabdblclick', { groupId: tabGroupId, tabId: tabId });
+    // Dispatch double-click for "pinning" logic which is handled externally by CustomViewsCore
+    dispatch('tabdblclick', { groupId: tabGroupId, tabId: tabId });
   }
 
   /**
    * Public API: Check if this tab group contains a tab with the given ID.
-   * Useful for the TabManager to determine if this group should be synced.
+   * Useful for the Core to determine if this group should be synced.
    */
   export function hasTab(tabId: string): boolean {
       return tabs.some(t => {
@@ -191,6 +189,8 @@
 
 </script>
 
+
+<!-- Container for the tab group -->
 <div class="cv-tabgroup-container">
   <!-- Nav -->
   {#if tabs.length > 0 && isTabGroupNavHeadingVisible}
@@ -222,7 +222,7 @@
     </ul>
   {/if}
 
-  <!-- Content -->
+  <!-- Content i.e. tab elements -->
   <div class="cv-tabgroup-content" bind:this={contentWrapper}>
       <slot></slot>
   </div>
@@ -242,7 +242,7 @@
     flex-wrap: wrap;
     padding-left: 0;
     margin-top: 0.5rem;
-    margin-bottom: 0; /* Bootstrap default is usually marginBottom */
+    margin-bottom: 0;
     list-style: none;
     border-bottom: 1px solid #dee2e6;
     align-items: stretch;

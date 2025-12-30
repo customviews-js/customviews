@@ -1,10 +1,9 @@
-import type { Config, TabGroupElement } from "../types/types";
+import type { Config, TabGroupElement, TabGroupConfig } from "../types/types";
 import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
 import { VisibilityManager } from "./managers/visibility-manager";
-import { TabManager } from "./managers/tab-manager";
 import { ToggleManager } from "./managers/toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
@@ -15,6 +14,7 @@ import { DataStore } from "./state/data-store.svelte";
 
 const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
 const TABGROUP_SELECTOR = 'cv-tabgroup';
+const TAB_SELECTOR = 'cv-tab';
 
 interface ComponentRegistry {
   toggles: Set<HTMLElement>;
@@ -53,6 +53,11 @@ export class CustomViewsCore {
     toggles: new Set(),
     tabGroups: new Set(),
   };
+
+  /**
+   * Map to store cleanup functions for reactive effects attached to dynamic components.
+   */
+  private componentEffects = new Map<HTMLElement, () => void>();
 
   private destroyEffectRoot?: () => void;
 
@@ -131,14 +136,12 @@ export class CustomViewsCore {
       this.store.isTabGroupNavHeadingVisible = navPref;
     }
     
-    // Setup Reactivity using $effect.root
+    // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
-        // Effect 1: Render DOM (Tabs, Toggles)
+        // Effect 1: Render Declarative Components (Toggles)
+        // Note: TabGroups are now handled by individual effects in initializeNewComponents
         $effect(() => {
             this.render();
-            
-            // Sync nav visibility to components
-            this.updateTabGroupNavVisibility();
         });
 
         // Effect 2: Update URL
@@ -172,36 +175,24 @@ export class CustomViewsCore {
   }
   
   /**
-   * The main DOM rendering effect.
+   * The main DOM rendering effect for non-granular components (mainly Toggles for now).
    * 
    * This method is called automatically by Svelte whenever `this.store.state` changes.
-   * It takes the pure state from the Store and imperatively updates the DOM 
-   * via TabManager and ToggleManager.
    */
   private render() {
       // pause observer to avoid loops? 
-      // In Svelte 5 effects used to be synchronous in Svelte 4, 
-      // but here we are in an effect. 
-      // The original code disconnected observer.
-      
       this.observer?.disconnect();
       
-      const { shownToggles, peekToggles, tabs } = this.store.state;
+      const { shownToggles, peekToggles } = this.store.state;
       
       // Filter visible toggles
       const finalToggles = this.visibilityManager.filterVisibleToggles(shownToggles || []);
       
       const allToggleElements = Array.from(this.componentRegistry.toggles);
-      const tabGroupElements = Array.from(this.componentRegistry.tabGroups);
 
       // Apply Toggles
       ToggleManager.applyTogglesVisibility(allToggleElements, finalToggles, peekToggles || []);
       ToggleManager.renderToggleAssets(allToggleElements, finalToggles, this.assetsManager);
-
-      // Apply Tabs
-      TabManager.applyTabSelections(tabGroupElements, tabs || {}, this.store.config.tabGroups);
-      TabManager.updateAllNavActiveStates(tabGroupElements, tabs || {}, this.store.config.tabGroups);
-      TabManager.updatePinIcons(tabGroupElements, tabs || {});
 
       this.observer?.observe(this.rootEl, {
         childList: true,
@@ -250,27 +241,81 @@ export class CustomViewsCore {
   }
   
   private unscan(element: HTMLElement): void {
-      // Simplified unscan - ideally we should remove from store registry too if count drops to 0
-      // For now, removing from internal componentRegistry is enough for DOM updates
-      
       const toggles = Array.from(element.querySelectorAll(TOGGLE_SELECTOR));
       if (element.matches(TOGGLE_SELECTOR)) toggles.unshift(element);
       toggles.forEach(t => this.componentRegistry.toggles.delete(t as HTMLElement));
       
       const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
       if (element.matches(TABGROUP_SELECTOR)) tabGroups.unshift(element);
-      tabGroups.forEach(t => this.componentRegistry.tabGroups.delete(t as TabGroupElement));
+      
+      tabGroups.forEach(t => {
+          const groupEl = t as TabGroupElement;
+          this.componentRegistry.tabGroups.delete(groupEl);
+          
+          // Cleanup Effects
+          const destroy = this.componentEffects.get(groupEl);
+          if (destroy) {
+              destroy();
+              this.componentEffects.delete(groupEl);
+          }
+      });
   }
 
   private initializeNewComponents(): void {
     const groups = Array.from(this.componentRegistry.tabGroups);
     groups.forEach((groupEl) => {
+        // Setup Reactivity if not already setup
+        if (!this.componentEffects.has(groupEl)) {
+             const cleanup = $effect.root(() => {
+                $effect(() => {
+                    const groupId = groupEl.getAttribute('id');
+                    const tabsState = this.store.state.tabs || {};
+
+                    // 1. Resolve Active Tab
+                    let activeTabId: string | null = null;
+                    if (groupId) {
+                        activeTabId = this.resolveActiveTabForGroup(groupId, tabsState, this.store.config.tabGroups, groupEl as HTMLElement);
+                    } else {
+                         // Standalone logic
+                         activeTabId = this.resolveActiveTabForStandalone(groupEl as HTMLElement);
+                    }
+
+                    if (activeTabId) {
+                        groupEl.activeTabId = activeTabId;
+                    }
+
+                    // 2. Resolve Pinned Tab
+                    if (groupId && tabsState[groupId]) {
+                        groupEl.pinnedTabId = tabsState[groupId];
+                    } else {
+                        groupEl.pinnedTabId = '';
+                    }
+
+                    // 3. Resolve Nav Visibility
+                    groupEl.isTabGroupNavHeadingVisible = this.store.isTabGroupNavHeadingVisible;
+                });
+             });
+             this.componentEffects.set(groupEl, cleanup);
+        }
+
         if (groupEl._listenersAttached) return;
         groupEl._listenersAttached = true;
 
         groupEl.addEventListener('tabchange', (e: any) => {
-            const { tabId, groupId } = e.detail;
-            TabManager.applyTabLocalOnly(groupEl, tabId);
+            const { tabId } = e.detail;
+            const groupId = e.detail.groupId || groupEl.getAttribute('id');
+
+            // Local update is handled by the component via prop, but we also ensure consistency?
+            // Actually, if we update store, the effect triggers and updates the prop again.
+            // This is "Controlled Component" pattern.
+            
+            // However, the component updates its local state immediately on click. 
+            // We just need to notify others if synced.
+            
+            // Note: We don't need to manually set `groupEl.activeTabId` here because the component does it on click
+            // BUT if we want true "Single Source of Truth", component should invoke callback and waiting for prop update?
+            // Currently TabGroup.svelte: `activeTabId = tabId` then dispatch.
+            // So it's optimistic.
             
             // Custom event for anyone listening (optional)
             document.dispatchEvent(new CustomEvent('customviews:tab-change', {
@@ -280,10 +325,10 @@ export class CustomViewsCore {
         });
 
         groupEl.addEventListener('tabdblclick', (e: any) => {
-            const { tabId, groupId } = e.detail;
+            const { tabId } = e.detail;
+            const groupId = e.detail.groupId || groupEl.getAttribute('id');
             
             // 1. Record position before state change
-            // Use groupEl as anchor since nav info is internal
             const anchorElement = groupEl;
             const initialTop = anchorElement.getBoundingClientRect().top;
 
@@ -292,12 +337,59 @@ export class CustomViewsCore {
                this.store.setTab(groupId, tabId);
             }
             
-            // 3. Restore position after DOM update (wait for effect)
-            queueMicrotask(() => {
+            // 3. Restore position after DOM update (wait for tick)
+            // Since we are using Svelte effects, we might need to wait for them to flush.
+             queueMicrotask(() => { // or tick()
                 ScrollManager.handleScrollAnchor({ element: anchorElement, top: initialTop });
             });
         });
     });
+  }
+
+  /**
+   * Resolve the active tab for a group based on state, config, and DOM
+   */
+  private resolveActiveTabForGroup(
+    groupId: string,
+    tabs: Record<string, string>,
+    cfgGroups: TabGroupConfig[] | undefined,
+    groupEl: HTMLElement
+  ): string | null {
+    // 1. Check state
+    if (tabs[groupId]) {
+      return tabs[groupId];
+    }
+
+    // 2. Check config for first tab
+    if (cfgGroups) {
+      const groupCfg = cfgGroups.find(g => g.id === groupId);
+      if (groupCfg) {
+        // Fallback to first tab in config
+        const firstConfigTab = groupCfg.tabs[0];
+        if (firstConfigTab) {
+          return firstConfigTab.id;
+        }
+      }
+    }
+
+    // 3. Fallback to first direct cv-tab child in DOM
+    return this.resolveActiveTabForStandalone(groupEl);
+  }
+
+  /**
+   * Helper to resolve active tab for standalone (non-synced) groups or fallback
+   */
+  private resolveActiveTabForStandalone(groupEl: HTMLElement): string | null {
+        const firstTab = Array.from(groupEl.children).find(
+          (child) => child.tagName.toLowerCase() === TAB_SELECTOR
+        );
+        if (firstTab) {
+          // Use id or internal id
+          const tabId = firstTab.getAttribute('id') || firstTab.getAttribute('data-cv-internal-id') || '';
+          const splitIds = tabId.split(/[\s|]+/).filter(id => id.trim() !== '').map(id => id.trim());
+          return splitIds[0] || null;
+        }
+        return null;
   }
 
   private initObserver() {
@@ -318,15 +410,7 @@ export class CustomViewsCore {
 
       if (newComponentsFound) {
         this.initializeNewComponents();
-        // Force re-render to apply state to new components
-        // Svelte effects might not trigger if state didn't change.
-        // But render() depends on componentRegistry too?
-        // Actually, render() iterates componentRegistry. 
-        // If state doesn't change, effect won't run.
-        // We need to trigger render or make registry reactive.
-        // Making `componentRegistry` sets reactive ($state) would solve this!
-        // But Set internal mutation doesn't trigger updates in Svelte 5 unless you reassign new Set or use Svelte Set.
-        // Quick fix: Just call render() manually here since the observer is imperative anyway.
+        // Force re-render for Toggles
         this.render();
       }
     });
@@ -351,13 +435,11 @@ export class CustomViewsCore {
 
   public destroy() {
       this.destroyEffectRoot?.();
-      this.observer?.disconnect();
-  }
+      
+      // Destroy all component effects
+      this.componentEffects.forEach(destroy => destroy());
+      this.componentEffects.clear();
 
-  private updateTabGroupNavVisibility() {
-      const visible = this.store.isTabGroupNavHeadingVisible;
-      this.componentRegistry.tabGroups.forEach(group => {
-          group.isTabGroupNavHeadingVisible = visible;
-      });
+      this.observer?.disconnect();
   }
 }
