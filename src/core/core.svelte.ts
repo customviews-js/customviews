@@ -1,17 +1,17 @@
 import type { Config } from "../types/types";
-import type { AssetsManager } from "./assets-manager";
+import type { AssetsManager } from "./managers/assets-manager";
 
-import { PersistenceManager } from "./persistence";
-import { URLStateManager } from "./url-state-manager";
-import { VisibilityManager } from "./visibility-manager";
-import { TabManager } from "./tab-manager";
-import { ToggleManager } from "./toggle-manager";
+import { PersistenceManager } from "./state/persistence";
+import { URLStateManager } from "./state/url-state-manager";
+import { VisibilityManager } from "./managers/visibility-manager";
+import { TabManager } from "./managers/tab-manager";
+import { ToggleManager } from "./managers/toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
 import { injectCoreStyles } from "../styles/styles";
-import { ShareManager } from "./share-manager";
-import { FocusManager } from "./focus-manager";
-import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './config';
-import { DataStore } from "./data-store.svelte";
+import { ShareManager } from "./managers/share-manager";
+import { FocusManager } from "./managers/focus-manager";
+import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './state/config';
+import { DataStore } from "./state/data-store.svelte";
 
 const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
 const TABGROUP_SELECTOR = 'cv-tabgroup';

@@ -9,7 +9,7 @@ import {
   HOVER_HELPER_ID,
   HIGHLIGHT_TARGET_CLASS,
   SELECTED_CLASS
-} from '../styles/share-mode-styles';
+} from '../../styles/share-mode-styles';
 
 const CV_CUSTOM_ELEMENTS = 'cv-tabgroup, cv-toggle';
 const SHAREABLE_SELECTOR = 'div, p, blockquote, pre, li, h1, h2, h3, h4, h5, h6, [data-share], ' + CV_CUSTOM_ELEMENTS;

@@ -1,4 +1,4 @@
-import type { State } from "../types/types";
+import type { State } from "../../types/types";
 
 /**
  * Manages persistence of custom views state using browser localStorage

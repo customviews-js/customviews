@@ -1,4 +1,4 @@
-import type { ToggleId } from "../types/types";
+import type { ToggleId } from "../../types/types";
 
 /**
  * Keeps track of which toggles are hidden and which are visible in memory.

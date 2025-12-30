@@ -1,4 +1,4 @@
-import type { TabGroupConfig } from "../types/types";
+import type { TabGroupConfig } from "../../types/types";
 
 // Constants for selectors
 const TABGROUP_SELECTOR = 'cv-tabgroup';

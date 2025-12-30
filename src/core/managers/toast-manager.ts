@@ -1,4 +1,4 @@
-import { TOAST_STYLES, TOAST_STYLE_ID, TOAST_CLASS } from '../styles/toast-styles';
+import { TOAST_STYLES, TOAST_STYLE_ID, TOAST_CLASS } from '../../styles/toast-styles';
 
 /**
  * Manages toast notifications for the application.

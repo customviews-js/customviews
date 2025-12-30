@@ -1,7 +1,7 @@
-import type { ToggleId } from "../types/types";
+import type { ToggleId } from "../../types/types";
 import { AssetsManager } from "./assets-manager";
-import { renderAssetInto } from "./render";
-import { getChevronDownIcon, getChevronUpIcon } from "../utils/icons";
+import { renderAssetInto } from "../render";
+import { getChevronDownIcon, getChevronUpIcon } from "../../utils/icons";
 
 /**
  * ToggleManager handles discovery, visibility, and asset rendering for toggle elements
