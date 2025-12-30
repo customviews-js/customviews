@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, mount, unmount } from 'svelte';
+  import { onMount } from 'svelte';
   import type { CustomViewsCore } from '../../core/core.svelte'; // Updated import
   import type { WidgetOptions } from '../../core/widget';
   
@@ -85,8 +85,8 @@
     const currentShown = store.state.shownToggles || [];
     const currentPeek = store.state.peekToggles || [];
 
-    const newShown = currentShown.filter(id => id !== toggleId);
-    const newPeek = currentPeek.filter(id => id !== toggleId);
+    const newShown = currentShown.filter((id: string) => id !== toggleId);
+    const newPeek = currentPeek.filter((id: string) => id !== toggleId);
 
     if (value === 'show') newShown.push(toggleId);
     if (value === 'peek') newPeek.push(toggleId);
