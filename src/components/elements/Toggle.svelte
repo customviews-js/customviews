@@ -5,8 +5,6 @@
 
   export let visible: boolean = false;
   export let peek: boolean = false;
-  // Category is read from the attribute by ToggleManager, so we don't strictly need it as a prop unless we use it in the template.
-  // export let category: string = '';
 
   let localExpanded = false;
 

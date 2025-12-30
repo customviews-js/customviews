@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { CustomViewsCore } from '../../core/core.svelte'; // Updated import
+  import type { CustomViewsCore } from '../../core/core.svelte';
   import type { WidgetOptions } from '../../core/widget';
   
   import WidgetIcon from './WidgetIcon.svelte';
@@ -8,7 +8,6 @@
   import IntroCallout from './IntroCallout.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
   import { ToastManager } from '../../core/managers/toast-manager';
-  import { TabManager } from '../../core/managers/tab-manager';
   import { ScrollManager } from '../../utils/scroll-manager';
 
   let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
@@ -33,12 +32,8 @@
     }
     
     // Check Nav Visibility
-    const persisted = core.getPersistedTabNavVisibility();
-    if (persisted !== null) {
-        navsVisible = persisted;
-    } else {
-        navsVisible = TabManager.areNavsVisible(document.body);
-    }
+    // Store is the single source of truth, handled by Core's persistence effect
+    navsVisible = store.isTabGroupNavHeadingVisible;
   });
 
   function checkIntro() {
@@ -73,6 +68,9 @@
   function handleReset() {
     isResetting = true;
     core.resetToDefault();
+    // Sync local state
+    navsVisible = true; 
+    
     ToastManager.show('Settings reset to default');
     
     setTimeout(() => {
@@ -111,8 +109,8 @@
 
   function handleNavToggle(visible: boolean) {
     navsVisible = visible;
-    core.persistTabNavVisibility(visible);
-    TabManager.setNavsVisibility(document.body, visible);
+    // Core's effect will capture this change and persist it
+    store.isTabGroupNavHeadingVisible = visible;
   }
 
   function handleCopyShareUrl() {
