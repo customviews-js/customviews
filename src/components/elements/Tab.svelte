@@ -1,9 +1,8 @@
 <svelte:options customElement="cv-tab" />
 
 <script lang="ts">
-  export let header: string = '';
-  // Internal ID used by TabGroup if no ID is provided
-  export let internalId: string = '';
+  // export let header: string = '';
+  // export let internalId: string = '';
   export let active: boolean = false;
 
   // We need to expose the ability for the parent to read the header content if it's passed via slot
@@ -21,24 +20,51 @@
     display: block;
   }
 
-  /* When not active, valid to hide the host entirely or just the content?
-     The logic in TabManager uses 'cv-hidden' class on the host. 
-     If we use the `hidden` attribute on the host, it's native.
+  /* When not active, hide the host entirely? 
+     TabManager logic uses 'cv-hidden' class on the host. 
+     TabGroup also writes to 'cv-hidden'.
+     
+     If we want full parity with tab-styles.ts:
+     cv-tab.cv-hidden { display: none !important; }
+     cv-tab.cv-visible { display: block !important; }
   */
 
+  :host(.cv-hidden) {
+    display: none !important;
+  }
+  
+  :host(.cv-visible) {
+    display: block !important;
+  }
+
+  /* 
+     Also existing logic used `active` attribute.
+     We can keep this for internal styling consistency.
+  */
   :host([active="true"]) {
     display: block;
   }
   
-  /* Reflect the prop to attribute for styling if needed, or rely on internal logic */
-
   .cv-tab-content {
     display: block;
     animation: fade-in 0.2s ease-in-out;
+    padding: 1rem 0.5rem 0.5rem 0.5rem;
   }
 
   .cv-tab-content[hidden] {
     display: none;
+  }
+
+  /* Handle slotted content styling previously in tab-styles.ts */
+  
+  /* Hide cv-tab-header source element; content is extracted to nav link */
+  ::slotted(cv-tab-header) {
+    display: none !important;
+  }
+
+  /* Allow cv-tab-body to flow naturally */
+  ::slotted(cv-tab-body) {
+    display: block;
   }
 
   @keyframes fade-in {

@@ -1,13 +1,10 @@
 import { TOGGLE_STYLES } from './toggle-styles';
-import { TAB_STYLES } from './tab-styles';
 
 /**
  * Combined core styles for toggles and tabs
  */
 const CORE_STYLES = `
 ${TOGGLE_STYLES}
-
-${TAB_STYLES}
 `;
 
 /**
@@ -24,6 +21,5 @@ export function injectCoreStyles(): void {
 
 // Export individual style modules for flexibility
 export { TOGGLE_STYLES } from './toggle-styles';
-export { TAB_STYLES } from './tab-styles';
 
 
