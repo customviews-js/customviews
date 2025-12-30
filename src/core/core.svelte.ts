@@ -1,4 +1,4 @@
-import type { Config } from "../types/types";
+import type { Config, TabGroupElement } from "../types/types";
 import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";
@@ -18,7 +18,7 @@ const TABGROUP_SELECTOR = 'cv-tabgroup';
 
 interface ComponentRegistry {
   toggles: Set<HTMLElement>;
-  tabGroups: Set<HTMLElement>;
+  tabGroups: Set<TabGroupElement>;
 }
 
 export interface CustomViewsOptions {
@@ -128,7 +128,7 @@ export class CustomViewsCore {
 
     const navPref = this.persistenceManager.getPersistedTabNavVisibility();
     if (navPref !== null) {
-      TabManager.setNavsVisibility(this.rootEl, navPref);
+      this.store.isTabGroupNavHeadingVisible = navPref;
     }
     
     // Setup Reactivity using $effect.root
@@ -136,6 +136,9 @@ export class CustomViewsCore {
         // Effect 1: Render DOM (Tabs, Toggles)
         $effect(() => {
             this.render();
+            
+            // Sync nav visibility to components
+            this.updateTabGroupNavVisibility();
         });
 
         // Effect 2: Update URL
@@ -151,6 +154,7 @@ export class CustomViewsCore {
         // Effect 3: Persistence
         $effect(() => {
             this.persistenceManager.persistState(this.store.state);
+            this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
         });
     });
 
@@ -232,8 +236,8 @@ export class CustomViewsCore {
     
     tabGroups.forEach((el) => {
         const groupEl = el as HTMLElement;
-      if (!this.componentRegistry.tabGroups.has(groupEl)) {
-        this.componentRegistry.tabGroups.add(groupEl);
+      if (!this.componentRegistry.tabGroups.has(groupEl as TabGroupElement)) {
+        this.componentRegistry.tabGroups.add(groupEl as TabGroupElement);
         newComponentsFound = true;
         
         // Update Store Registry
@@ -255,14 +259,14 @@ export class CustomViewsCore {
       
       const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
       if (element.matches(TABGROUP_SELECTOR)) tabGroups.unshift(element);
-      tabGroups.forEach(t => this.componentRegistry.tabGroups.delete(t as HTMLElement));
+      tabGroups.forEach(t => this.componentRegistry.tabGroups.delete(t as TabGroupElement));
   }
 
   private initializeNewComponents(): void {
     const groups = Array.from(this.componentRegistry.tabGroups);
     groups.forEach((groupEl) => {
-        if ((groupEl as any)._listenersAttached) return;
-        (groupEl as any)._listenersAttached = true;
+        if (groupEl._listenersAttached) return;
+        groupEl._listenersAttached = true;
 
         groupEl.addEventListener('tabchange', (e: any) => {
             const { tabId, groupId } = e.detail;
@@ -341,31 +345,19 @@ export class CustomViewsCore {
   public resetToDefault() {
       this.persistenceManager.clearAll();
       this.store.reset();
-      TabManager.setNavsVisibility(this.rootEl, true);
+      this.store.isTabGroupNavHeadingVisible = true;
       URLStateManager.clearURL();
-  }
-
-  public persistTabNavVisibility(visible: boolean) {
-      this.persistenceManager.persistTabNavVisibility(visible);
-  }
-
-  public getPersistedTabNavVisibility(): boolean | null {
-      return this.persistenceManager.getPersistedTabNavVisibility();
-  }
-  
-  public setOption(flag: string, value: unknown) {
-      if (flag === 'showUrl') {
-          this.showUrlEnabled = Boolean(value);
-          // Effect 2 will handle update/clear automatically when showUrlEnabled changes
-          // Wait, showUrlEnabled is not reactive.
-          // I should make it reactive or just call logic.
-          if (this.showUrlEnabled) URLStateManager.updateURL(this.store.state);
-          else URLStateManager.clearURL();
-      }
   }
 
   public destroy() {
       this.destroyEffectRoot?.();
       this.observer?.disconnect();
+  }
+
+  private updateTabGroupNavVisibility() {
+      const visible = this.store.isTabGroupNavHeadingVisible;
+      this.componentRegistry.tabGroups.forEach(group => {
+          group.isTabGroupNavHeadingVisible = visible;
+      });
   }
 }

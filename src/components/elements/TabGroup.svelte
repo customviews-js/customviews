@@ -6,7 +6,7 @@
 
   export let tabGroupId: string = '';
   export let activeTabId: string = '';
-  export let isNavsVisible: boolean = true;
+  export let isTabGroupNavHeadingVisible: boolean = true;
   export let pinnedTabId: string = '';
 
   /**
@@ -193,7 +193,7 @@
 
 <div class="cv-tabgroup-container">
   <!-- Nav -->
-  {#if tabs.length > 0 && isNavsVisible}
+  {#if tabs.length > 0 && isTabGroupNavHeadingVisible}
     <ul class="cv-tabs-nav nav-tabs" role="tablist">
       {#each tabs as tab}
         {@const splitIds = splitTabIds(tab.rawId)}

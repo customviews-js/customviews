@@ -1,9 +1,9 @@
-import type { TabGroupConfig } from "../../types/types";
+import type { TabGroupConfig, TabGroupElement } from "../../types/types";
 
 // Constants for selectors
 const TABGROUP_SELECTOR = 'cv-tabgroup';
 const TAB_SELECTOR = 'cv-tab';
-const NAV_HIDE_ROOT_CLASS = 'cv-hide-tab-navs';
+
 
 
 export class TabManager {
@@ -48,7 +48,7 @@ export class TabManager {
 
       if (activeTabId) {
           // Set property on Custom Element
-          (groupEl as any).activeTabId = activeTabId;
+          (groupEl as TabGroupElement).activeTabId = activeTabId;
       }
     });
   }
@@ -95,29 +95,7 @@ export class TabManager {
     return null;
   }
 
-  /**
-   * Toggle nav visibility for all tab groups (viewer-controlled)
-   */
-  public static setNavsVisibility(rootEl: HTMLElement, visible: boolean): void {
-    if (visible) {
-      rootEl.classList.remove(NAV_HIDE_ROOT_CLASS);
-    } else {
-      rootEl.classList.add(NAV_HIDE_ROOT_CLASS);
-    }
-    
-    // Update all tabgroups
-    const groups =  rootEl.querySelectorAll(TABGROUP_SELECTOR);
-    groups.forEach(g => {
-        (g as any).isNavsVisible = visible;
-    });
-  }
 
-  /**
-   * Read current nav visibility (viewer preference)
-   */
-  public static areNavsVisible(rootEl: HTMLElement): boolean {
-    return !rootEl.classList.contains(NAV_HIDE_ROOT_CLASS);
-  }
 
   /**
    * Update active states for all tab groups based on current state
@@ -135,7 +113,7 @@ export class TabManager {
    * Used for single-click behavior to update only the clicked tabgroup.
    */
   public static applyTabLocalOnly(groupEl: HTMLElement, activeTabId: string): void {
-      (groupEl as any).activeTabId = activeTabId;
+      (groupEl as TabGroupElement).activeTabId = activeTabId;
   }
 
   /**
@@ -190,9 +168,9 @@ export class TabManager {
 
         const persistedTabId = tabs[groupId];
         if (persistedTabId) {
-             (groupEl as any).pinnedTabId = persistedTabId;
+             (groupEl as TabGroupElement).pinnedTabId = persistedTabId;
         } else {
-             (groupEl as any).pinnedTabId = '';
+             (groupEl as TabGroupElement).pinnedTabId = '';
         }
       });
     }
