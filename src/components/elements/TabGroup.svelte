@@ -4,11 +4,15 @@
   import { onMount } from 'svelte';
   import { getPinIcon } from '../../utils/icons';
 
-  export let id: string = '';
-  export let activeTab: string = '';
-  export let navsVisible: boolean = true;
-  export let pinnedTab: string = '';
+  export let tabGroupId: string = '';
+  export let activeTabId: string = '';
+  export let isNavsVisible: boolean = true;
+  export let pinnedTabId: string = '';
 
+  /**
+   * Helper to dispatch custom events from the component.
+   * Dispatches events from the `contentWrapper` to ensure they bubble correctly from the Shadow DOM / component boundary.
+   */
   function dispatch(name: string, detail: any) {
     if (!contentWrapper) return;
     contentWrapper.dispatchEvent(new CustomEvent(name, {
@@ -43,14 +47,25 @@
      }
   });
 
-  $: if (activeTab) {
+  $: if (activeTabId) {
     updateVisibility();
   }
 
+  /**
+   * Split a tab ID string into an array of individual IDs.
+   * Handles space or pipe delimiters.
+   * @param tabId - The raw ID string (e.g., "python java")
+   */
   function splitTabIds(tabId: string): string[] {
     return tabId.split(/[\s|]+/).filter(id => id.trim() !== '').map(id => id.trim());
   }
 
+  /**
+   * Handier for the slotchange event.
+   * Scans the assigned elements in the slot to find `<cv-tab>` components.
+   * Builds the internal `tabs` state used to render the navigation.
+   * Also initializes the active tab if not already set.
+   */
   function handleSlotChange() {
     if (!slotEl) return;
     
@@ -63,7 +78,7 @@
       
       // If tab has no id, generate one based on position (parity with TabManager)
       if (!rawId) {
-        rawId = `${id || 'tabgroup'}-tab-${index}`;
+        rawId = `${tabGroupId || 'tabgroup'}-tab-${index}`;
         element.setAttribute('data-cv-internal-id', rawId);
       }
 
@@ -73,7 +88,7 @@
       // Extract Header
       let header = '';
       
-      // Check for <cv-tab-header> (new syntax)
+      // Check for <cv-tab-header>
       const headerEl = element.querySelector('cv-tab-header');
       if (headerEl) {
         header = headerEl.innerHTML.trim();
@@ -95,13 +110,13 @@
     });
 
     if (!initialized && tabs.length > 0) {
-      if (!activeTab) {
+      if (!activeTabId) {
         // Default to activeTab if passed, else first tab
         // If activeTab is already set (e.g. via prop), use it.
         // Wait, if activeTab is '', set to first.
-        if (!activeTab) {
-             activeTab = tabs[0]!.id;
-             dispatch('tabchange', { groupId: id, tabId: activeTab });
+        if (!activeTabId) {
+             activeTabId = tabs[0]!.id;
+             dispatch('tabchange', { groupId: tabGroupId, tabId: activeTabId });
         } else {
              updateVisibility();
         }
@@ -115,15 +130,17 @@
     }
   }
 
-  // ... rest of functions ...
 
-
+  /**
+   * Updates the visibility of the child `<cv-tab>` elements based on the current `activeTab`.
+   * Sets the `active` attribute and `cv-visible`/`cv-hidden` classes on the child elements.
+   */
   function updateVisibility() {
     if (!tabs.length) return;
 
     tabs.forEach(tab => {
         const splitIds = splitTabIds(tab.rawId);
-        const isActive = splitIds.includes(activeTab);
+        const isActive = splitIds.includes(activeTabId);
         
         // Pass active state to child
         if (isActive) {
@@ -139,21 +156,32 @@
     });
   }
 
+  /**
+   * Handles click events on the navigation tabs.
+   * Updates the local active tab and dispatches a 'tabchange' event.
+   */
   function handleTabClick(tabId: string, event: MouseEvent) {
     event.preventDefault();
-    if (activeTab === tabId) return; // No change
+    if (activeTabId === tabId) return; // No change
 
-    activeTab = tabId;
-    dispatch('tabchange', { groupId: id, tabId: activeTab });
+    activeTabId = tabId;
+    dispatch('tabchange', { groupId: tabGroupId, tabId: activeTabId });
   }
 
+  /**
+   * Handles double-click events on the navigation tabs.
+   * Dispatches a 'tabdblclick' event which is used by the Core to "pin" the selection globally.
+   */
   function handleTabDoubleClick(tabId: string, event: MouseEvent) {
       event.preventDefault();
       // Dispatch double click for "pinning" logic which is handled externally by TabManager/Core
-      dispatch('tabdblclick', { groupId: id, tabId: tabId });
+      dispatch('tabdblclick', { groupId: tabGroupId, tabId: tabId });
   }
 
-  // Exposed method for external managers to find if a tab exists here
+  /**
+   * Public API: Check if this tab group contains a tab with the given ID.
+   * Useful for the TabManager to determine if this group should be synced.
+   */
   export function hasTab(tabId: string): boolean {
       return tabs.some(t => {
           const splitIds = splitTabIds(t.rawId);
@@ -165,12 +193,12 @@
 
 <div class="cv-tabgroup-container">
   <!-- Nav -->
-  {#if tabs.length > 0 && navsVisible}
+  {#if tabs.length > 0 && isNavsVisible}
     <ul class="cv-tabs-nav nav-tabs" role="tablist">
       {#each tabs as tab}
         {@const splitIds = splitTabIds(tab.rawId)}
-        {@const isActive = splitIds.includes(activeTab)}
-        {@const isPinned = pinnedTab && splitIds.includes(pinnedTab)}
+        {@const isActive = splitIds.includes(activeTabId)}
+        {@const isPinned = pinnedTabId && splitIds.includes(pinnedTabId)}
         <li class="nav-item">
           <a class="nav-link" 
              href={'#' + tab.id} 
@@ -182,7 +210,7 @@
              title="Double-click a tab to 'pin' it in all similar tab groups."
              data-tab-id={tab.id}
              data-raw-tab-id={tab.rawId}
-             data-group-id={id}
+             data-group-id={tabGroupId}
           >
             <span class="cv-tab-header-container">
                <span class="cv-tab-header-text">{@html tab.header}</span>
@@ -208,46 +236,51 @@
     margin-bottom: 24px;
   }
   
-  /* Inherit global styles for navs or define them here if not global.
-     The generic .nav-tabs classes usually come from bootstrap or site-wide CSS.
-     Since this is a shadow DOM component, global styles WON'T leak in unless we use <link> or @import.
-     However, customviews seems to rely on being injected into pages that might have these styles,
-     OR it provides them. Check toggle-styles.ts or similar.
-     
-     If this is a Custom Element with Shadow DOM, we MUST provide the styles for the nav here.
-     The previous implementation was vanilla Light DOM custom element, so it used global styles.
-     
-     Svelte custom elements use Shadow DOM by default.
-     We need to copy the relevant nav styles here.
-  */
-  
+  /* Tab navigation styles */
   ul.nav-tabs {
     display: flex;
     flex-wrap: wrap;
     padding-left: 0;
-    margin-bottom: 0;
+    margin-top: 0.5rem;
+    margin-bottom: 0; /* Bootstrap default is usually marginBottom */
     list-style: none;
     border-bottom: 1px solid #dee2e6;
+    align-items: stretch;
   }
 
   .nav-item {
     margin-bottom: -1px;
+    list-style: none;
+    display: flex;
+    align-items: stretch;
   }
 
   .nav-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0.5rem 1rem;
+    color: #495057;
+    text-decoration: none;
+    background-color: transparent;
     border: 1px solid transparent;
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
-    text-decoration: none;
-    color: #495057;
-    background-color: transparent;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
     cursor: pointer;
+    min-height: 2.5rem;
+    box-sizing: border-box;
   }
 
-  .nav-link:hover {
+  .nav-link :global(p) {
+    margin: 0;
+    display: inline;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus {
     border-color: #e9ecef #e9ecef #dee2e6;
+    isolation: isolate;
   }
 
   .nav-link.active {
@@ -256,19 +289,41 @@
     border-color: #dee2e6 #dee2e6 #fff;
   }
 
+  .nav-link:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
   .cv-tab-header-container {
       display: flex;
       align-items: center;
       gap: 6px;
   }
 
+  .cv-tab-header-text {
+    flex: 1;
+  }
+
   .cv-tab-pin-icon {
       display: inline-flex;
       align-items: center;
+      line-height: 0;
+      flex-shrink: 0;
   }
 
-  /* Support for hiding navs via class on body is tricky in Shadow DOM 
-     because we can't easily see body class.
-     But we can check a prop or attribute on the host. 
-  */
+  .cv-tab-pin-icon :global(svg) {
+    vertical-align: middle;
+    width: 14px;
+    height: 14px;
+  }
+
+  .cv-tabgroup-bottom-border {
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  @media print {
+    ul.cv-tabs-nav {
+      display: none !important;
+    }
+  }
 </style>
