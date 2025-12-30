@@ -37,6 +37,11 @@ export class DataStore {
      */
     activeTabGroups = $state<Set<string>>(new Set());
 
+    /**
+     * Controls the visibility of the tab navigation headers globally.
+     */
+    isTabGroupNavHeadingVisible = $state(true);
+
     // Derived: Filtered lists based on what's active on the page
     visibleToggles = $derived.by(() => {
         if (!this.config.toggles) return [];
