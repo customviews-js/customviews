@@ -17,7 +17,7 @@ export class DataStore {
 
     /**
      * Mutable application state representing user choices.
-     * Use actions like `setTab` or `setToggles` to modify this.
+     * Use actions like `setPinnedTab` or `setToggles` to modify this.
      */
     state = $state<State>({
         shownToggles: [],
@@ -73,12 +73,12 @@ export class DataStore {
     // --- Actions ---
 
     /**
-     * Set the active tab for a specific tab group.
+     * Set the pinned tab for a specific tab group.
+     * This syncs across all tab groups with the same ID.
      * @param groupId The ID of the tab group.
-     * @param tabId The ID of the tab to select.
+     * @param tabId The ID of the tab to pin.
      */
-    setTab(groupId: string, tabId: string) {
-        // Create a new object to ensure reactivity triggers if nested (though proxies handle fine usually)
+    setPinnedTab(groupId: string, tabId: string) {
         if (!this.state.tabs) this.state.tabs = {};
         this.state.tabs[groupId] = tabId;
     }
