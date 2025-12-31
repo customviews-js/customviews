@@ -1,4 +1,4 @@
-import type { Config, TabGroupElement, TabGroupConfig } from "../types/types";
+import type { Config, TabGroupElement } from "../types/types";
 import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";
@@ -14,7 +14,6 @@ import { DataStore, initStore } from "./state/data-store.svelte";
 
 const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
 const TABGROUP_SELECTOR = 'cv-tabgroup';
-const TAB_SELECTOR = 'cv-tab';
 
 interface ComponentRegistry {
   toggles: Set<HTMLElement>;
@@ -271,27 +270,17 @@ export class CustomViewsCore {
                     const groupId = groupEl.getAttribute('id');
                     const tabsState = this.store.state.tabs || {};
 
-                    // 1. Resolve Active Tab
-                    let activeTabId: string | null = null;
-                    if (groupId) {
-                        activeTabId = this.resolveActiveTabForGroup(groupId, tabsState, this.store.config.tabGroups, groupEl as HTMLElement);
-                    } else {
-                         // Standalone logic
-                         activeTabId = this.resolveActiveTabForStandalone(groupEl as HTMLElement);
-                    }
+                    // Note: activeTabId is now derived from store inside TabGroup component
+                    // No need to set groupEl.activeTabId anymore
 
-                    if (activeTabId) {
-                        groupEl.activeTabId = activeTabId;
-                    }
-
-                    // 2. Resolve Pinned Tab
+                    // 1. Resolve Pinned Tab
                     if (groupId && tabsState[groupId]) {
                         groupEl.pinnedTabId = tabsState[groupId];
                     } else {
                         groupEl.pinnedTabId = '';
                     }
 
-                    // 3. Resolve Nav Visibility
+                    // 2. Resolve Nav Visibility
                     groupEl.isTabGroupNavHeadingVisible = this.store.isTabGroupNavHeadingVisible;
                 });
              });
@@ -300,29 +289,6 @@ export class CustomViewsCore {
 
         if (groupEl._listenersAttached) return;
         groupEl._listenersAttached = true;
-
-        groupEl.addEventListener('tabchange', (e: any) => {
-            const { tabId } = e.detail;
-            const groupId = e.detail.groupId || groupEl.getAttribute('id');
-
-            // Local update is handled by the component via prop, but we also ensure consistency?
-            // Actually, if we update store, the effect triggers and updates the prop again.
-            // This is "Controlled Component" pattern.
-            
-            // However, the component updates its local state immediately on click. 
-            // We just need to notify others if synced.
-            
-            // Note: We don't need to manually set `groupEl.activeTabId` here because the component does it on click
-            // BUT if we want true "Single Source of Truth", component should invoke callback and waiting for prop update?
-            // Currently TabGroup.svelte: `activeTabId = tabId` then dispatch.
-            // So it's optimistic.
-            
-            // Custom event for anyone listening (optional)
-            document.dispatchEvent(new CustomEvent('customviews:tab-change', {
-                detail: { groupId, tabId, synced: false },
-                bubbles: true
-            }));
-        });
 
         groupEl.addEventListener('tabdblclick', (e: any) => {
             const { tabId } = e.detail;
@@ -334,7 +300,7 @@ export class CustomViewsCore {
 
             // 2. Sync to store
             if (groupId) {
-               this.store.setTab(groupId, tabId);
+               this.store.setPinnedTab(groupId, tabId);
             }
             
             // 3. Restore position after DOM update (wait for tick)
@@ -344,52 +310,6 @@ export class CustomViewsCore {
             });
         });
     });
-  }
-
-  /**
-   * Resolve the active tab for a group based on state, config, and DOM
-   */
-  private resolveActiveTabForGroup(
-    groupId: string,
-    tabs: Record<string, string>,
-    cfgGroups: TabGroupConfig[] | undefined,
-    groupEl: HTMLElement
-  ): string | null {
-    // 1. Check state
-    if (tabs[groupId]) {
-      return tabs[groupId];
-    }
-
-    // 2. Check config for first tab
-    if (cfgGroups) {
-      const groupCfg = cfgGroups.find(g => g.id === groupId);
-      if (groupCfg) {
-        // Fallback to first tab in config
-        const firstConfigTab = groupCfg.tabs[0];
-        if (firstConfigTab) {
-          return firstConfigTab.id;
-        }
-      }
-    }
-
-    // 3. Fallback to first direct cv-tab child in DOM
-    return this.resolveActiveTabForStandalone(groupEl);
-  }
-
-  /**
-   * Helper to resolve active tab for standalone (non-synced) groups or fallback
-   */
-  private resolveActiveTabForStandalone(groupEl: HTMLElement): string | null {
-        const firstTab = Array.from(groupEl.children).find(
-          (child) => child.tagName.toLowerCase() === TAB_SELECTOR
-        );
-        if (firstTab) {
-          // Use id or internal id
-          const tabId = firstTab.getAttribute('id') || firstTab.getAttribute('data-cv-internal-id') || '';
-          const splitIds = tabId.split(/[\s|]+/).filter(id => id.trim() !== '').map(id => id.trim());
-          return splitIds[0] || null;
-        }
-        return null;
   }
 
   private initObserver() {

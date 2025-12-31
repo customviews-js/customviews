@@ -3,11 +3,16 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getPinIcon } from '../../utils/icons';
+  import { store } from '../../core/state/data-store.svelte';
 
-  export let tabGroupId: string = '';
-  export let activeTabId: string = '';
-  export let isTabGroupNavHeadingVisible: boolean = true;
-  export let pinnedTabId: string = '';
+  // Props using Svelte 5 runes
+  let { 
+    isTabGroupNavHeadingVisible = true,
+    pinnedTabId = ''
+  }: { 
+    isTabGroupNavHeadingVisible?: boolean;
+    pinnedTabId?: string;
+  } = $props();
 
   /**
    * Helper to dispatch custom events from the component.
@@ -27,17 +32,42 @@
     rawId: string,
     header: string,
     element: HTMLElement
-  }> = [];
+  }> = $state([]);
 
-  let contentWrapper: HTMLElement;
-  let slotEl: HTMLSlotElement | null = null;
-  let initialized = false;
+  let contentWrapper: HTMLElement | undefined = $state();
+  let slotEl: HTMLSlotElement | null = $state(null);
+  let initialized = $state(false);
+  let hostElement: HTMLElement | null = $state(null);
+
+  // Derive tabGroupId from the host element's id attribute
+  let tabGroupId = $derived.by(() => hostElement?.getAttribute('id') || '');
+
+  // Local active tab state (independent per group instance)
+  let localActiveTabId = $state('');
+
+  // Derive pinned tab from store (shared across groups with same ID)
+  let pinnedTab = $derived.by(() => {
+    const tabs$ = store.state.tabs ?? {};
+    return (tabGroupId && tabs$[tabGroupId]) ? tabs$[tabGroupId] : null;
+  });
+
+  // When pinned tab changes, sync local state to it
+  $effect(() => {
+    if (pinnedTab) {
+      localActiveTabId = pinnedTab;
+      updateVisibility();
+    }
+  });
 
   // Icons
   const pinIconHtml = getPinIcon(true);
 
   onMount(() => {
      if (contentWrapper) {
+         // Get the host element (the <cv-tabgroup> custom element)
+         const root = contentWrapper.getRootNode() as ShadowRoot;
+         hostElement = root.host as HTMLElement;
+         
          slotEl = contentWrapper.querySelector('slot');
          if (slotEl) {
              slotEl.addEventListener('slotchange', handleSlotChange);
@@ -47,9 +77,12 @@
      }
   });
 
-  $: if (activeTabId) {
+  // React to active tab changes
+  $effect(() => {
+    // Run whenever localActiveTabId changes (including value changes)
+    localActiveTabId; // Track the value
     updateVisibility();
-  }
+  });
 
   /**
    * Split a tab ID string into an array of individual IDs.
@@ -61,7 +94,7 @@
   }
 
   /**
-   * Handier for the slotchange event.
+   * Handler for the slotchange event.
    * Scans the assigned elements in the slot to find `<cv-tab>` components.
    * Builds the internal `tabs` state used to render the navigation.
    * Also initializes the active tab if not already set.
@@ -110,14 +143,10 @@
     });
 
     if (!initialized && tabs.length > 0) {
-      if (!activeTabId) {
-        // Default to first tab if activeTab is not set
-        if (!activeTabId) {
-             activeTabId = tabs[0]!.id;
-             dispatch('tabchange', { groupId: tabGroupId, tabId: activeTabId });
-        } else {
-             updateVisibility();
-        }
+      // Initialize active tab by dispatching event if none is set
+      if (!localActiveTabId) {
+        const firstTabId = tabs[0]!.id;
+        localActiveTabId = firstTabId;
       } else {
         updateVisibility();
       }
@@ -138,32 +167,21 @@
 
     tabs.forEach(tab => {
         const splitIds = splitTabIds(tab.rawId);
-        const isActive = splitIds.includes(activeTabId);
-        
-        // Pass active state to child
-        if (isActive) {
-            tab.element.setAttribute('active', 'true');
-            tab.element.classList.remove('cv-hidden');
-            tab.element.classList.add('cv-visible');
-        } else {
-            tab.element.removeAttribute('active');
-            tab.element.setAttribute('active', 'false');
-            tab.element.classList.add('cv-hidden');
-            tab.element.classList.remove('cv-visible');
-        }
+        const isActive = splitIds.includes(localActiveTabId);
+        // Set property directly to trigger Svelte component reactivity
+        (tab.element as any).active = isActive;
     });
   }
 
   /**
    * Handles click events on the navigation tabs.
-   * Updates the local active tab and dispatches a 'tabchange' event.
+   * Updates the local active tab (visibility is updated automatically via $effect).
    */
   function handleTabClick(tabId: string, event: MouseEvent) {
     event.preventDefault();
-    if (activeTabId === tabId) return; // No change
+    if (localActiveTabId === tabId) return; // No change
 
-    activeTabId = tabId;
-    dispatch('tabchange', { groupId: tabGroupId, tabId: activeTabId });
+    localActiveTabId = tabId;
   }
 
   /**
@@ -197,7 +215,7 @@
     <ul class="cv-tabs-nav nav-tabs" role="tablist">
       {#each tabs as tab}
         {@const splitIds = splitTabIds(tab.rawId)}
-        {@const isActive = splitIds.includes(activeTabId)}
+        {@const isActive = splitIds.includes(localActiveTabId)}
         {@const isPinned = pinnedTabId && splitIds.includes(pinnedTabId)}
         <li class="nav-item">
           <a class="nav-link" 
@@ -205,8 +223,8 @@
              class:active={isActive}
              role="tab"
              aria-selected={isActive}
-             on:click={(e) => handleTabClick(tab.id, e)}
-             on:dblclick={(e) => handleTabDoubleClick(tab.id, e)}
+             onclick={(e) => handleTabClick(tab.id, e)}
+             ondblclick={(e) => handleTabDoubleClick(tab.id, e)}
              title="Double-click a tab to 'pin' it in all similar tab groups."
              data-tab-id={tab.id}
              data-raw-tab-id={tab.rawId}

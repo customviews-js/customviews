@@ -1,13 +1,14 @@
 <svelte:options customElement="cv-tab" />
 
 <script lang="ts">
-
-  export let active: boolean = false;
+  // Props using Svelte 5 runes
+  let { active = false }: { active?: boolean } = $props();
 
   // Component is a container that toggles visibility.
+  // The parent (TabGroup) will set the .active property directly.
 </script>
 
-<div class="cv-tab-content" class:active={active} hidden={!active}>
+<div class="cv-tab-content" class:active={active}>
   <slot></slot>
 </div>
 
@@ -29,13 +30,13 @@
   }
   
   .cv-tab-content {
-    display: block;
+    display: none;
     animation: fade-in 0.2s ease-in-out;
     padding: 1rem 0.5rem 0.5rem 0.5rem;
   }
 
-  .cv-tab-content[hidden] {
-    display: none;
+  .cv-tab-content.active {
+    display: block;
   }
 
   /* Hide cv-tab-header source element; content is extracted to nav link */
