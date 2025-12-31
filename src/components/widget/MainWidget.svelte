@@ -102,7 +102,7 @@
     // Scroll Logic: Capture target before state update
     const groupToScrollTo = ScrollManager.findHighestVisibleTabGroup();
 
-    store.setTab(groupId, tabId);
+    store.setPinnedTab(groupId, tabId);
 
     // Restore scroll after update
     if (groupToScrollTo) {
