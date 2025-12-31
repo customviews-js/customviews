@@ -46,7 +46,7 @@
     <button 
       class="cv-expand-btn" 
       aria-label={localExpanded ? "Collapse content" : "Expand content"}
-      on:click={toggleExpand}
+      onclick={toggleExpand}
     >
       {@html localExpanded ? getChevronUpIcon() : getChevronDownIcon()}
     </button>
