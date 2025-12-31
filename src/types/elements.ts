@@ -3,7 +3,6 @@
  * Has both HTMLElement and the Svelte component props.
  */
 export interface TabGroupElement extends HTMLElement {
-  tabGroupId?: string;
   activeTabId?: string;
   isTabGroupNavHeadingVisible?: boolean;
   pinnedTabId?: string;
