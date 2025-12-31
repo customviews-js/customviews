@@ -24,6 +24,11 @@
   // Nav Visibility
   let navsVisible = $state(true);
 
+  // Reactively track store state for passing to Modal
+  let shownToggles = $derived(store.state.shownToggles ?? []);
+  let peekToggles = $derived(store.state.peekToggles ?? []);
+  let activeTabs = $derived(store.state.tabs ?? {});
+
   // Init
   onMount(() => {
     // Check for callout
@@ -157,9 +162,9 @@
       toggles={store.visibleToggles}
       tabGroups={store.visibleTabGroups}
       
-      shownToggles={store.state.shownToggles || []}
-      peekToggles={store.state.peekToggles || []}
-      activeTabs={store.state.tabs || {}}
+      shownToggles={shownToggles}
+      peekToggles={peekToggles}
+      activeTabs={activeTabs}
       navsVisible={navsVisible}
       isResetting={isResetting}
 

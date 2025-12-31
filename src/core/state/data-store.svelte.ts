@@ -179,3 +179,28 @@ export class DataStore {
         };
     }
 }
+
+// Hollow Singleton - created immediately with empty state
+// Runs once once, cached and returns same store instance.
+export const store = new DataStore({});
+
+/**
+ * Initialize the store with actual configuration.
+ * This populates the hollow singleton with real data.
+ */
+export function initStore(config: Config): DataStore {
+    // Mutate config in place to preserve reactivity
+    Object.assign(store.config, config);
+    
+    // Compute new state
+    const newState = config.defaultState 
+        ? store['cloneState'](config.defaultState)
+        : store['computeDefaultState']();
+    
+    // Mutate state properties in place to preserve reactivity
+    store.state.shownToggles = newState.shownToggles ?? [];
+    store.state.peekToggles = newState.peekToggles ?? [];
+    store.state.tabs = newState.tabs ?? {};
+    
+    return store;
+}

@@ -10,7 +10,7 @@ import { injectCoreStyles } from "../styles/styles";
 import { ShareManager } from "./managers/share-manager";
 import { FocusManager } from "./managers/focus-manager";
 import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './state/config';
-import { DataStore } from "./state/data-store.svelte";
+import { DataStore, initStore } from "./state/data-store.svelte";
 
 const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
 const TABGROUP_SELECTOR = 'cv-tabgroup';
@@ -68,8 +68,8 @@ export class CustomViewsCore {
     this.visibilityManager = new VisibilityManager();
     this.showUrlEnabled = opt.showUrl ?? false;
     
-    // Initialize Reactive Store
-    this.store = new DataStore(opt.config);
+    // Initialize Reactive Store Singleton
+    this.store = initStore(opt.config);
 
     // Initial State Resolution: URL > Persistence > Default
     this.resolveInitialState();
