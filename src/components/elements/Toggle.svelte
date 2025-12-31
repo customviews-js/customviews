@@ -2,15 +2,34 @@
 
 <script lang="ts">
   import { getChevronDownIcon, getChevronUpIcon } from '../../utils/icons';
+  import { store } from '../../core/state/data-store.svelte';
 
-  export let visible: boolean = false;
-  export let peek: boolean = false;
+  // Props using Svelte 5 runes
+  let { visible = false, peek = false, category = '' }: { visible?: boolean; peek?: boolean; category?: string } = $props();
 
-  let localExpanded = false;
+  let localExpanded = $state(false);
 
-  $: showContent = visible || (peek && localExpanded);
-  $: isPeeking = !visible && peek && !localExpanded;
-  $: isHidden = !visible && !peek;
+  // Derive categories from category prop
+  let categories = $derived((category || '').split(/\s+/).filter(Boolean));
+
+  // Derive visibility from store state
+  let storeVisible = $derived.by(() => {
+      const shownToggles = store.state.shownToggles ?? [];
+      return categories.some(cat => shownToggles.includes(cat));
+  });
+
+  let storePeek = $derived.by(() => {
+      const peekToggles = store.state.peekToggles ?? [];
+      return !storeVisible && categories.some(cat => peekToggles.includes(cat));
+  });
+
+  // Combine component props (overrides) with store state
+  let effectiveVisible = $derived(visible || storeVisible);
+  let effectivePeek = $derived(peek || storePeek);
+
+  let showContent = $derived(effectiveVisible || (effectivePeek && localExpanded));
+  let isPeeking = $derived(!effectiveVisible && effectivePeek && !localExpanded);
+  let isHidden = $derived(!effectiveVisible && !effectivePeek);
 
   function toggleExpand(e: MouseEvent) {
     e.stopPropagation();

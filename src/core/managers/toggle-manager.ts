@@ -17,11 +17,7 @@ export class ToggleManager {
       const shouldShow = categories.some(cat => activeToggles.includes(cat));
       const shouldPeek = !shouldShow && categories.some(cat => peekToggles.includes(cat));
 
-      if (el.tagName === 'CV-TOGGLE') {
-        // New Component Logic: Set props directly
-        (el as any).visible = shouldShow;
-        (el as any).peek = shouldPeek;
-      } else {
+      if (el.tagName !== 'CV-TOGGLE') {
         // Legacy Logic: Delegated to Renderer
         LegacyToggleRenderer.update(el, shouldShow, shouldPeek);
       }
