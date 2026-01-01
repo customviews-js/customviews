@@ -49,13 +49,6 @@ You're viewing macOS-specific installation steps. Install using Homebrew:
 </cv-toggle>
 
 
-<cv-toggle toggle-id="linux" >
-
-linux cv-toggles
-
-
-</cv-toggle>
-
 
 <cv-toggle toggle-id="linux" >
 

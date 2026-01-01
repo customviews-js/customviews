@@ -70,7 +70,7 @@
     }, 2000);
   }
 
-  function getToggleValue(id: string, currentShown: string[], currentPeek: string[]): 'show' | 'hide' | 'peek' {
+  function computeToggleState(id: string, currentShown: string[], currentPeek: string[]): 'show' | 'hide' | 'peek' {
     if (currentShown.includes(id)) return 'show';
     if (currentPeek.includes(id)) return 'peek';
     return 'hide';
@@ -125,7 +125,7 @@
                 {#each toggles as toggle (toggle.id)}
                   <ToggleItem 
                     toggle={toggle} 
-                    value={getToggleValue(toggle.id, shownToggles, peekToggles)} 
+                    value={computeToggleState(toggle.id, shownToggles, peekToggles)} 
                     onchange={handleToggleChange}
                   />
                 {/each}

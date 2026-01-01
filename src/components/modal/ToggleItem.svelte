@@ -24,7 +24,7 @@
           name="cv-toggle-{toggle.id}" 
           value="hide" 
           bind:group={value}
-          onchange={() => onchange({ toggleId: toggle.id, value })}
+          onchange={() => onchange({ toggleId: toggle.id, value: 'hide' })}
         />
         <span>Hide</span>
       </label>
@@ -35,7 +35,7 @@
           name="cv-toggle-{toggle.id}" 
           value="peek" 
           bind:group={value}
-          onchange={() => onchange({ toggleId: toggle.id, value })}
+          onchange={() => onchange({ toggleId: toggle.id, value: 'peek' })}
         />
         <span>Peek</span>
       </label>
@@ -46,7 +46,7 @@
           name="cv-toggle-{toggle.id}" 
           value="show" 
           bind:group={value}
-          onchange={() => onchange({ toggleId: toggle.id, value })}
+          onchange={() => onchange({ toggleId: toggle.id, value: 'show' })}
         />
         <span>Show</span>
       </label>

@@ -176,6 +176,9 @@ export class FocusService {
 
         // "Wrapper Problem": Don't hide a container if it contains structural components
         // e.g. <div id="footer-wrap"><footer>...</footer></div>
+        // Limitation: This simple check prevents hiding ANY element containing these tags,
+        // even if they are deep descendants or irrelevant. 
+        // A more robust solution may check visibility/size.
         if (el.querySelector('header, footer, nav') !== null) return;
 
         el.classList.add(HIDDEN_CLASS);
@@ -231,6 +234,8 @@ export class FocusService {
         let curr: Element | null = firstHidden;
         let expanded = 0;
 
+        // Safety: ensure we only expand up to `count` elements AND they are actually the ones we hid
+        // The DOM might have changed, so we check for the class.
         while (curr && expanded < count) {
             if (curr instanceof HTMLElement && curr.classList.contains(HIDDEN_CLASS)) {
                 curr.classList.remove(HIDDEN_CLASS);

@@ -83,7 +83,7 @@ export function handleScrollAnchor(scrollAnchor: { element: HTMLElement; top: nu
     const { element, top: initialTop } = scrollAnchor;
     
     // Check if element is still in document
-    if (!document.contains(element)) return;
+    if (!element || !document.contains(element)) return;
 
     const newTop = element.getBoundingClientRect().top;
     const scrollDelta = newTop - initialTop;
