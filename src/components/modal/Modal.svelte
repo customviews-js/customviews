@@ -70,9 +70,9 @@
     }, 2000);
   }
 
-  function getToggleValue(id: string): 'show' | 'hide' | 'peek' {
-    if (shownToggles.includes(id)) return 'show';
-    if (peekToggles.includes(id)) return 'peek';
+  function getToggleValue(id: string, currentShown: string[], currentPeek: string[]): 'show' | 'hide' | 'peek' {
+    if (currentShown.includes(id)) return 'show';
+    if (currentPeek.includes(id)) return 'peek';
     return 'hide';
   }
 </script>
@@ -125,7 +125,7 @@
                 {#each toggles as toggle (toggle.id)}
                   <ToggleItem 
                     toggle={toggle} 
-                    value={getToggleValue(toggle.id)} 
+                    value={getToggleValue(toggle.id, shownToggles, peekToggles)} 
                     onchange={handleToggleChange}
                   />
                 {/each}
