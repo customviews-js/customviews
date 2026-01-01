@@ -5,28 +5,6 @@
   import { getPinIcon } from '../../utils/icons';
   import { store } from '../../core/state/data-store.svelte';
 
-  // Props using Svelte 5 runes
-  let { 
-    isTabGroupNavHeadingVisible = true,
-    pinnedTabId = ''
-  }: { 
-    isTabGroupNavHeadingVisible?: boolean;
-    pinnedTabId?: string;
-  } = $props();
-
-  /**
-   * Helper to dispatch custom events from the component.
-   * Dispatches events from the `contentWrapper` to ensure they bubble correctly from the Shadow DOM / component boundary.
-   */
-  function dispatch(name: string, detail: any) {
-    if (!contentWrapper) return;
-    contentWrapper.dispatchEvent(new CustomEvent(name, {
-      detail,
-      bubbles: true,
-      composed: true
-    }));
-  }
-
   let tabs: Array<{
     id: string,
     rawId: string,
@@ -39,8 +17,8 @@
   let initialized = $state(false);
   let hostElement: HTMLElement | null = $state(null);
 
-  // Derive tabGroupId from the host element's id attribute
-  let tabGroupId = $derived.by(() => hostElement?.getAttribute('id') || '');
+  // Derive tabGroupId from the host element's group-id attribute
+  let tabGroupId = $derived.by(() => hostElement?.getAttribute('group-id') || '');
 
   // Local active tab state (independent per group instance)
   let localActiveTabId = $state('');
@@ -59,6 +37,9 @@
     }
   });
 
+  // Sync isTabGroupNavHeadingVisible from store
+  let navHeadingVisible = $derived(store.isTabGroupNavHeadingVisible);
+
   // Icons
   const pinIconHtml = getPinIcon(true);
 
@@ -67,6 +48,11 @@
          // Get the host element (the <cv-tabgroup> custom element)
          const root = contentWrapper.getRootNode() as ShadowRoot;
          hostElement = root.host as HTMLElement;
+         
+         // Self-register with store
+         if (tabGroupId) {
+           store.registerTabGroup(tabGroupId);
+         }
          
          slotEl = contentWrapper.querySelector('slot');
          if (slotEl) {
@@ -107,9 +93,9 @@
 
     tabs = elements.map((el, index) => {
       const element = el as HTMLElement;
-      let rawId = element.getAttribute('id');
+      let rawId = element.getAttribute('tab-id');
       
-      // If tab has no id, generate one based on position (parity with Core logic)
+      // If tab has no tab-id, generate one based on position
       if (!rawId) {
         rawId = `${tabGroupId || 'tabgroup'}-tab-${index}`;
         element.setAttribute('data-cv-internal-id', rawId);
@@ -129,8 +115,8 @@
         // Attribute syntax
         header = element.getAttribute('header') || '';
         if (!header) {
-           // Fallback to ID or default
-           header = element.getAttribute('id') ? primaryId : `Tab ${index + 1}`;
+           // Fallback to tab-id or default
+           header = element.getAttribute('tab-id') ? primaryId : `Tab ${index + 1}`;
         }
       }
 
@@ -186,23 +172,15 @@
 
   /**
    * Handles double-click events on the navigation tabs.
-   * Dispatches a 'tabdblclick' event which is used by the Core to "pin" the selection globally.
+   * Updates the store to "pin" the tab globally across all tab groups with the same ID.
    */
   function handleTabDoubleClick(tabId: string, event: MouseEvent) {
-      event.preventDefault();
-    // Dispatch double-click for "pinning" logic which is handled externally by CustomViewsCore
-    dispatch('tabdblclick', { groupId: tabGroupId, tabId: tabId });
-  }
-
-  /**
-   * Public API: Check if this tab group contains a tab with the given ID.
-   * Useful for the Core to determine if this group should be synced.
-   */
-  export function hasTab(tabId: string): boolean {
-      return tabs.some(t => {
-          const splitIds = splitTabIds(t.rawId);
-          return splitIds.includes(tabId);
-      });
+    event.preventDefault();
+    
+    if (!tabGroupId) return;
+    
+    // Update store directly - this will sync to all tab groups with same group-id
+    store.setPinnedTab(tabGroupId, tabId);
   }
 
 </script>
@@ -211,12 +189,12 @@
 <!-- Container for the tab group -->
 <div class="cv-tabgroup-container">
   <!-- Nav -->
-  {#if tabs.length > 0 && isTabGroupNavHeadingVisible}
+  {#if tabs.length > 0 && navHeadingVisible}
     <ul class="cv-tabs-nav nav-tabs" role="tablist">
       {#each tabs as tab}
         {@const splitIds = splitTabIds(tab.rawId)}
         {@const isActive = splitIds.includes(localActiveTabId)}
-        {@const isPinned = pinnedTabId && splitIds.includes(pinnedTabId)}
+        {@const isPinned = pinnedTab && splitIds.includes(pinnedTab)}
         <li class="nav-item">
           <a class="nav-link" 
              href={'#' + tab.id} 
