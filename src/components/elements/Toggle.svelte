@@ -8,7 +8,7 @@
 
 <script lang="ts">
   import { getChevronDownIcon, getChevronUpIcon } from '../../utils/icons';
-  import { store } from '../../core/state/data-store.svelte';
+  import { store } from '../../core/stores/main-store.svelte';
   import { renderAssetInto } from '../../core/render';
 
   // Props using Svelte 5 runes
