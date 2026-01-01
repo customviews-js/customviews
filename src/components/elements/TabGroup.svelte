@@ -75,16 +75,12 @@
   });
 
 
-
-
-  /**
-   * Split a tab ID string into an array of individual IDs.
-   * Handles space or pipe delimiters.
-   * @param tabId - The raw ID string (e.g., "python java")
-   */
   function splitTabIds(tabId: string): string[] {
     return tabId.split(/[\s|]+/).filter(id => id.trim() !== '').map(id => id.trim());
   }
+
+  // Todo: For handleSlotChange(), consider if there is a svelte way 
+  // to do this without the need for the slotchange event.
 
   /**
    * Handler for the slotchange event.

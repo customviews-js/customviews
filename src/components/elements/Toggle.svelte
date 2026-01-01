@@ -1,4 +1,10 @@
-<svelte:options customElement="cv-toggle" />
+<svelte:options customElement={{
+    tag: 'cv-toggle',
+    props: {
+      toggleId: { reflect: true, type: 'String', attribute: 'toggle-id' },
+      assetId: { reflect: true, type: 'String', attribute: 'asset-id' }
+    }
+  }} />
 
 <script lang="ts">
   import { getChevronDownIcon, getChevronUpIcon } from '../../utils/icons';
@@ -7,13 +13,15 @@
 
   // Props using Svelte 5 runes
   let { toggleId = '', assetId = '' }: { toggleId?: string; assetId?: string } = $props();
+  // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
+  let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
+  $effect(() => {
+    toggleIds.forEach(id => store.registerToggle(id));
+  });
 
   let localExpanded = $state(false);
   let hasRendered = $state(false);
   let contentEl: HTMLDivElement;
-
-  // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
-  let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
 
   // Derive visibility from store state
   let showState = $derived.by(() => {
