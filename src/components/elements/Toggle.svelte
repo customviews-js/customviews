@@ -6,25 +6,25 @@
   import { renderAssetInto } from '../../core/render';
 
   // Props using Svelte 5 runes
-  let { category = '', assetId = '' }: { category?: string; assetId?: string } = $props();
+  let { toggleId = '', assetId = '' }: { toggleId?: string; assetId?: string } = $props();
 
   let localExpanded = $state(false);
   let hasRendered = $state(false);
   let contentEl: HTMLDivElement;
 
-  // Derive categories from category prop
-  let categories = $derived((category || '').split(/\s+/).filter(Boolean));
+  // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
+  let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
 
   // Derive visibility from store state
   let showState = $derived.by(() => {
       const shownToggles = store.state.shownToggles ?? [];
-      return categories.some(cat => shownToggles.includes(cat));
+      return toggleIds.some(id => shownToggles.includes(id));
   });
 
   // Derive peek state from store state
   let peekState = $derived.by(() => {
       const peekToggles = store.state.peekToggles ?? [];
-      return !showState && categories.some(cat => peekToggles.includes(cat));
+      return !showState && toggleIds.some(id => peekToggles.includes(id));
   });
 
   let showFullContent = $derived(showState || (peekState && localExpanded));
