@@ -12,12 +12,12 @@
 
 The **Tabs** component lets you define **mutually exclusive content sections** that users can toggle between — perfect for organizing platform-specific, step-based, or categorized documentation.  
 
-When multiple tab groups (`<cv-tabgroup/>`) share the same `id` attribute, they stay synchronized automatically across the entire page.
+When multiple tab groups (`<cv-tabgroup/>`) share the same `group-id` attribute, they stay synchronized automatically across the entire page.
 
 
-<cv-tabgroup id="fruit" >
+<cv-tabgroup group-id="fruit" >
   
-  <cv-tab id="apple" header="Apple">
+  <cv-tab tab-id="apple" header="Apple">
   
   **Apple Information**
 
@@ -28,7 +28,7 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `id` attribute, they 
   </box>
 
   </cv-tab>
-  <cv-tab id="orange" header="Orange">
+  <cv-tab tab-id="orange" header="Orange">
   
   **Orange Information**
 
@@ -39,7 +39,7 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `id` attribute, they 
   </box>
 
   </cv-tab>
-  <cv-tab id="pear" header="Pear">
+  <cv-tab tab-id="pear" header="Pear">
   
   **Pear Information**
 
@@ -51,8 +51,8 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `id` attribute, they 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="fruit">
-  <cv-tab id="apple">
+<cv-tabgroup group-id="fruit">
+  <cv-tab tab-id="apple">
   <cv-tab-header>
 
 :fa-solid-heart: Apple Types
@@ -62,7 +62,7 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `id` attribute, they 
 Apple types include **Granny Smith** and the **Cosmic Crisp**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="orange">
+  <cv-tab tab-id="orange">
   <cv-tab-header>
 
 :fa-solid-circle: Orange Types
@@ -72,7 +72,7 @@ Apple types include **Granny Smith** and the **Cosmic Crisp**.
 Orange types include the **Blood orange** and **Valencia orange**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="pear">
+  <cv-tab tab-id="pear">
   <cv-tab-header>
 
 :fa-solid-leaf: Pear Types
@@ -89,8 +89,8 @@ Pear types include the **Asian pear** and the **European pear**
 <!-- ------------------------ CODE OUTPUT ---------------------------- -->
 
 ```html
-<cv-tabgroup id="fruit">
-  <cv-tab id="apple" header="Apple">
+<cv-tabgroup group-id="fruit">
+  <cv-tab tab-id="apple" header="Apple">
   
 **Apple Information**
 
@@ -101,7 +101,7 @@ Apples are crisp, sweet fruits that come in many varieties. They are rich in fib
 </box>
 
   </cv-tab>
-  <cv-tab id="orange" header="Orange">
+  <cv-tab tab-id="orange" header="Orange">
   
 **Orange Information**
 
@@ -112,7 +112,7 @@ Oranges are citrus fruits known for their high vitamin C content and refreshing 
 </box>
 
   </cv-tab>
-  <cv-tab id="pear" header="Pear">
+  <cv-tab tab-id="pear" header="Pear">
   
 **Pear Information**
 
@@ -125,8 +125,8 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="fruit">
-  <cv-tab id="apple">
+<cv-tabgroup group-id="fruit">
+  <cv-tab tab-id="apple">
   <cv-tab-header>
 
 :fa-solid-heart: Apple Types
@@ -136,7 +136,7 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   Apple types include **Granny Smith** and the **Cosmic Crisp**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="orange">
+  <cv-tab tab-id="orange">
   <cv-tab-header>
 
 :fa-solid-circle: Orange Types
@@ -146,7 +146,7 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   Orange types include the **Blood orange** and **Valencia orange**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="pear">
+  <cv-tab tab-id="pear">
   <cv-tab-header>
 
 :fa-solid-leaf: Pear Types
@@ -220,31 +220,31 @@ You can create a single tab that represents multiple alternative IDs by specifyi
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="lang" >
-  <cv-tab id="python" header="Python">
+<cv-tabgroup group-id="lang" >
+  <cv-tab tab-id="python" header="Python">
 
 Python is a high-level, interpreted programming language known for its simplicity and readability.
 
   </cv-tab>
-  <cv-tab id="java" header="Java">
+  <cv-tab tab-id="java" header="Java">
 
 Java is a statically-typed, compiled language known for its robustness and platform independence.
 
   </cv-tab>
-  <cv-tab id="javascript" header="JavaScript">
+  <cv-tab tab-id="javascript" header="JavaScript">
 
 JavaScript is a dynamic language primarily used for web development.
 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="lang" >
-  <cv-tab id="python java" header="Python/Java Installation">
+<cv-tabgroup group-id="lang" >
+  <cv-tab tab-id="python java" header="Python/Java Installation">
 
 Both Python and Java are easy to install. Download from their official websites.
 
   </cv-tab>
-  <cv-tab id="javascript" header="JS Installation">
+  <cv-tab tab-id="javascript" header="JS Installation">
 
 Install JavaScript by downloading Node.js from nodejs.org.
 
@@ -252,31 +252,31 @@ Install JavaScript by downloading Node.js from nodejs.org.
 </cv-tabgroup>
 </variable>
 <variable name="output">
-<cv-tabgroup id="lang" >
-  <cv-tab id="python" header="Python">
+<cv-tabgroup group-id="lang" >
+  <cv-tab tab-id="python" header="Python">
 
 Python is a high-level, interpreted programming language known for its simplicity and readability.
 
   </cv-tab>
-  <cv-tab id="java" header="Java">
+  <cv-tab tab-id="java" header="Java">
 
 Java is a statically-typed, compiled language known for its robustness and platform independence.
 
   </cv-tab>
-  <cv-tab id="javascript" header="JavaScript">
+  <cv-tab tab-id="javascript" header="JavaScript">
 
 JavaScript is a dynamic language primarily used for web development.
 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="lang" >
-  <cv-tab id="python java" header="Python/Java Installation">
+<cv-tabgroup group-id="lang" >
+  <cv-tab tab-id="python java" header="Python/Java Installation">
 
 Both Python and Java are easy to install. Download from their official websites.
 
   </cv-tab>
-  <cv-tab id="javascript" header="JS Installation">
+  <cv-tab tab-id="javascript" header="JS Installation">
 
 Install JavaScript by downloading Node.js from nodejs.org.
 
@@ -337,7 +337,7 @@ This is useful when you need:
 
 **Structure:**
 ```html
-<cv-tab id="tab-id">
+<cv-tab tab-id="tab-id">
   <cv-tab-header>Header content (supports HTML)</cv-tab-header>
   <cv-tab-body>Tab body content (both can be used together)</cv-tab-body>
   Tab body content (both can be used together)
@@ -351,15 +351,15 @@ This is useful when you need:
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="docs" >
-  <cv-tab id="overview">
+<cv-tabgroup group-id="docs" >
+  <cv-tab tab-id="overview">
     <cv-tab-header><strong>Overview</strong></cv-tab-header>
     <cv-tab-body>
       Start here to learn the basics.
     </cv-tab-body>
   </cv-tab>
   
-  <cv-tab id="advanced">
+  <cv-tab tab-id="advanced">
     <cv-tab-header><em>Advanced Topics</em></cv-tab-header>
     <cv-tab-body>
       Dive deeper into powerful features.
@@ -368,15 +368,15 @@ This is useful when you need:
 </cv-tabgroup>
 </variable>
 <variable name="output">
-<cv-tabgroup id="docs" >
-  <cv-tab id="overview">
+<cv-tabgroup group-id="docs" >
+  <cv-tab tab-id="overview">
     <cv-tab-header><strong>Overview</strong></cv-tab-header>
     <cv-tab-body>
       Start here to learn the basics.
     </cv-tab-body>
   </cv-tab>
   
-  <cv-tab id="advanced">
+  <cv-tab tab-id="advanced">
     <cv-tab-header><em>Advanced Topics</em></cv-tab-header>
     <cv-tab-body>
       Dive deeper into powerful features.
@@ -452,8 +452,8 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup id="status">
-<cv-tab id="enabled">
+<cv-tabgroup group-id="status">
+<cv-tab tab-id="enabled">
   <cv-tab-header>
   
   :fa-solid-virus: Enabled
@@ -463,7 +463,7 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
   </cv-tab-body>
 </cv-tab>
 
-<cv-tab id="disabled">
+<cv-tab tab-id="disabled">
   <cv-tab-header>
   
   :fa-solid-virus-slash: Disabled
@@ -473,7 +473,7 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
   </cv-tab-body>
 </cv-tab>
 
-  <cv-tab id="pending">
+  <cv-tab tab-id="pending">
   <cv-tab-header>
   
   :fa-solid-hourglass-end: Pending
@@ -486,8 +486,8 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
 </variable>
 <variable name="output">
 
-<cv-tabgroup id="status">
-<cv-tab id="enabled">
+<cv-tabgroup group-id="status">
+<cv-tab tab-id="enabled">
 <cv-tab-header>
 
 :fa-solid-virus: Enabled
@@ -498,7 +498,7 @@ This feature is currently enabled and active.
 </cv-tab-body>
 </cv-tab>
 
-<cv-tab id="disabled">
+<cv-tab tab-id="disabled">
 <cv-tab-header>
 
 :fa-solid-virus-slash: Disabled
@@ -509,7 +509,7 @@ This feature is currently disabled.
 </cv-tab-body>
 </cv-tab>
 
-<cv-tab id="pending">
+<cv-tab tab-id="pending">
 <cv-tab-header>
 
 :fa-solid-hourglass-end: Pending
@@ -525,7 +525,7 @@ This feature is pending review.
 
 **Example with direct HTML:**
 ```html
-<cv-tab id="enabled">
+<cv-tab tab-id="enabled">
   <cv-tab-header><i class="fa-solid fa-virus"></i> Enabled</cv-tab-header>
   <cv-tab-body>This feature is enabled.</cv-tab-body>
 </cv-tab>
@@ -641,14 +641,14 @@ To mark a tab group as local, add `"isLocal": true` to its configuration.
 
 For example, this tab group is only specific to this page:
 
-<cv-tabgroup id="ltab">
-<cv-tab id="lt1">
+<cv-tabgroup group-id="ltab">
+<cv-tab tab-id="lt1">
   Tab 1
 </cv-tab>
-<cv-tab id="lt2">
+<cv-tab tab-id="lt2">
   Tab 2
 </cv-tab>
-<cv-tab id="lt3">
+<cv-tab tab-id="lt3">
   Tab 3
 </cv-tab>
 </cv-tabgroup>
@@ -656,14 +656,14 @@ For example, this tab group is only specific to this page:
 <panel header="Code for above Tab Group">
 
 ```html
-<cv-tabgroup id="ltab">
-<cv-tab id="lt1">
+<cv-tabgroup group-id="ltab">
+<cv-tab tab-id="lt1">
   Tab 1
 </cv-tab>
-<cv-tab id="lt2">
+<cv-tab tab-id="lt2">
   Tab 2
 </cv-tab>
-<cv-tab id="lt3">
+<cv-tab tab-id="lt3">
   Tab 3
 </cv-tab>
 </cv-tabgroup>

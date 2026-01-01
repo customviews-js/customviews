@@ -131,10 +131,10 @@ Now you can declaratively use CustomViews attributes directly in your .md or .mb
 </div>
 
 <!-- Tab group example -->
-<cv-tabgroup id="fruit" nav="auto">
-  <cv-tab id="apple" header="Apple">Apple info here...</cv-tab>
-  <cv-tab id="orange" header="Orange">Orange info here...</cv-tab>
-  <cv-tab id="pear" header="Pear">Pear info here...</cv-tab>
+<cv-tabgroup group-id="fruit" nav="auto">
+  <cv-tab tab-id="apple" header="Apple">Apple info here...</cv-tab>
+  <cv-tab tab-id="orange" header="Orange">Orange info here...</cv-tab>
+  <cv-tab tab-id="pear" header="Pear">Pear info here...</cv-tab>
 </cv-tabgroup>
 ```
 

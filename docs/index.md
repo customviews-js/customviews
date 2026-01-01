@@ -33,8 +33,9 @@ Whether you are building a static site, a dashboard, or a documentation portal, 
 
 Choose your operating system to see platform-specific content:
 
+<cv-toggle category="mac" >
 
-<box data-cv-toggle="mac">
+<box>
 
 #### Mac
 
@@ -45,9 +46,20 @@ You're viewing macOS-specific installation steps. Install using Homebrew:
 
 </box>
 
+</cv-toggle>
 
 
-<box data-cv-toggle="linux">
+<cv-toggle category="linux" >
+
+linux cv-toggles
+
+
+</cv-toggle>
+
+
+<cv-toggle category="linux" >
+
+<box>
 
 #### Linux
 
@@ -57,8 +69,12 @@ You're viewing Linux-specific installation steps. Install using your package man
 `sudo apt-get install customviews`
 </box>
 
+</cv-toggle>
 
-<box data-cv-toggle="windows">
+
+<cv-toggle category="windows" >
+
+<box>
 
 #### Windows
 
@@ -68,13 +84,15 @@ You're viewing Windows-specific installation steps. Install using npm:
 `npm install customviews`
 </box>
 
+</cv-toggle>
+
 
 ### Tabs
 
 Select a fruit to learn more:
 
-<cv-tabgroup id="fruit" nav="auto">
-  <cv-tab id="apple" header="Apple">
+<cv-tabgroup group-id="fruit" nav="auto">
+  <cv-tab tab-id="apple" header="Apple">
 
 **Apple Information**
 
@@ -83,7 +101,7 @@ Apples are crisp, sweet fruits that come in many varieties. They are rich in fib
 :fa-solid-star: **Did you know?** An apple a day keeps the doctor away!
 
   </cv-tab>
-  <cv-tab id="orange" header="Orange">
+  <cv-tab tab-id="orange" header="Orange">
 
 **Orange Information**
 
@@ -92,7 +110,7 @@ Oranges are citrus fruits known for their high vitamin C content and refreshing 
 :fa-solid-star: **Did you know?** The color orange was named after the fruit, not the other way around!
 
   </cv-tab>
-  <cv-tab id="pear" header="Pear">
+  <cv-tab tab-id="pear" header="Pear">
 
 **Pear Information**
 

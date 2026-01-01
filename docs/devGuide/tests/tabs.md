@@ -22,8 +22,8 @@ Test Content goes here:
 Non preload.
 
 
-<cv-tabgroup id="fruit">
-<cv-tab id="apple">
+<cv-tabgroup group-id="fruit">
+<cv-tab tab-id="apple">
 <cv-tab-header>
 
 :fa-solid-heart: Apple Types
@@ -33,7 +33,7 @@ Non preload.
 Apple types include **Granny Smith** and the **Cosmic Crisp**.
 </cv-tab-body>
 </cv-tab>
-<cv-tab id="orange">
+<cv-tab tab-id="orange">
 <cv-tab-header>
 
 :fa-solid-circle: Orange Types
@@ -43,7 +43,7 @@ Apple types include **Granny Smith** and the **Cosmic Crisp**.
 Orange types include the **Blood orange** and **Valencia orange**.
 </cv-tab-body>
 </cv-tab>
-<cv-tab id="pear">
+<cv-tab tab-id="pear">
 <cv-tab-header>
 
 :fa-solid-leaf: Pear Types
@@ -66,8 +66,8 @@ Pear types include other pears.
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 
-<cv-tabgroup id="fruit">
-  <cv-tab id="apple" header="Apple">
+<cv-tabgroup group-id="fruit">
+  <cv-tab tab-id="apple" header="Apple">
   
 **Apple Information**
 
@@ -78,7 +78,7 @@ Apples are crisp, sweet fruits that come in many varieties. They are rich in fib
 </box>
 
   </cv-tab>
-  <cv-tab id="orange" header="Orange">
+  <cv-tab tab-id="orange" header="Orange">
   
 **Orange Information**
 
@@ -89,7 +89,7 @@ Oranges are citrus fruits known for their high vitamin C content and refreshing 
 </box>
 
   </cv-tab>
-  <cv-tab id="pear" header="Pear">
+  <cv-tab tab-id="pear" header="Pear">
   
 **Pear Information**
 
@@ -102,8 +102,8 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="fruit">
-  <cv-tab id="apple">
+<cv-tabgroup group-id="fruit">
+  <cv-tab tab-id="apple">
   <cv-tab-header>
 
 :fa-solid-heart: Apple Types
@@ -113,7 +113,7 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   Apple types include **Granny Smith** and the **Cosmic Crisp**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="orange">
+  <cv-tab tab-id="orange">
   <cv-tab-header>
 
 :fa-solid-circle: Orange Types
@@ -123,7 +123,7 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   Orange types include the **Blood orange** and **Valencia orange**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="pear">
+  <cv-tab tab-id="pear">
   <cv-tab-header>
 
 :fa-solid-leaf: Pear Types
@@ -134,9 +134,9 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
 </variable>
 <variable name="output">
 
-<cv-tabgroup id="fruit" >
+<cv-tabgroup group-id="fruit" >
   
-  <cv-tab id="apple" header="Apple">
+  <cv-tab tab-id="apple" header="Apple">
   
   **Apple Information**
 
@@ -147,7 +147,7 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   </box>
 
   </cv-tab>
-  <cv-tab id="orange" header="Orange">
+  <cv-tab tab-id="orange" header="Orange">
   
   **Orange Information**
 
@@ -158,7 +158,7 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   </box>
 
   </cv-tab>
-  <cv-tab id="pear" header="Pear">
+  <cv-tab tab-id="pear" header="Pear">
   
   **Pear Information**
 
@@ -170,8 +170,8 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="fruit">
-  <cv-tab id="apple">
+<cv-tabgroup group-id="fruit">
+  <cv-tab tab-id="apple">
   <cv-tab-header>
 
 :fa-solid-heart: Apple Types
@@ -181,7 +181,7 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
 Apple types include **Granny Smith** and the **Cosmic Crisp**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="orange">
+  <cv-tab tab-id="orange">
   <cv-tab-header>
 
 :fa-solid-circle: Orange Types
@@ -191,7 +191,7 @@ Apple types include **Granny Smith** and the **Cosmic Crisp**.
 Orange types include the **Blood orange** and **Valencia orange**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="pear">
+  <cv-tab tab-id="pear">
   <cv-tab-header>
 
 :fa-solid-leaf: Pear Types
@@ -215,9 +215,9 @@ Pear types include the **Asian pear** and the **European pear**
 ## Fruits Tabs
 
 
-<cv-tabgroup id="fruit" >
+<cv-tabgroup group-id="fruit" >
   
-  <cv-tab id="apple" header="Apple">
+  <cv-tab tab-id="apple" header="Apple">
   
   **Apple Information**
 
@@ -273,7 +273,7 @@ The standard Lorem Ipsum passage, used since the 1500s
   </box>
 
   </cv-tab>
-  <cv-tab id="orange" header="Orange">
+  <cv-tab tab-id="orange" header="Orange">
   
   **Orange Information**
 
@@ -284,7 +284,7 @@ The standard Lorem Ipsum passage, used since the 1500s
   </box>
 
   </cv-tab>
-  <cv-tab id="pear" header="Pear">
+  <cv-tab tab-id="pear" header="Pear">
   
   **Pear Information**
 
@@ -296,8 +296,8 @@ The standard Lorem Ipsum passage, used since the 1500s
   </cv-tab>
 </cv-tabgroup>
 
-<cv-tabgroup id="fruit">
-  <cv-tab id="apple">
+<cv-tabgroup group-id="fruit">
+  <cv-tab tab-id="apple">
   <cv-tab-header>
 
 :fa-solid-heart: Apple Types
@@ -307,7 +307,7 @@ The standard Lorem Ipsum passage, used since the 1500s
 Apple types include **Granny Smith** and the **Cosmic Crisp**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="orange">
+  <cv-tab tab-id="orange">
   <cv-tab-header>
 
 :fa-solid-circle: Orange Types
@@ -317,7 +317,7 @@ Apple types include **Granny Smith** and the **Cosmic Crisp**.
 Orange types include the **Blood orange** and **Valencia orange**.
   </cv-tab-body>
   </cv-tab>
-  <cv-tab id="pear">
+  <cv-tab tab-id="pear">
   <cv-tab-header>
 
 :fa-solid-leaf: Pear Types

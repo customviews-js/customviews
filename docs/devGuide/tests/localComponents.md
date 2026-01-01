@@ -25,14 +25,14 @@ Local Toggle content
 
 ### Local Tab Groups 
 
-<cv-tabgroup id="ltabs">
-<cv-tab id="lt1">
+<cv-tabgroup group-id="ltabs">
+<cv-tab tab-id="lt1">
   Tab 1
 </cv-tab>
-<cv-tab id="lt2">
+<cv-tab tab-id="lt2">
   Tab 2
 </cv-tab>
-<cv-tab id="lt3">
+<cv-tab tab-id="lt3">
   Tab 3
 </cv-tab>
 </cv-tabgroup>
