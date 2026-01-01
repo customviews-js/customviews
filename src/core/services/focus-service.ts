@@ -1,7 +1,7 @@
 import { mount, unmount } from 'svelte';
 import { focusStore } from '../stores/focus-store';
 import { showToast } from '../stores/toast-store';
-import { AnchorEngine } from '../managers/anchor-engine';
+import { DomElementLocator } from '../utils/dom-element-locator';
 import FocusDivider from '../../components/focus/FocusDivider.svelte';
 
 const FOCUS_PARAM = 'cv-focus';
@@ -73,13 +73,13 @@ export class FocusService {
             this.exitFocusMode();
         }
 
-        const descriptors = AnchorEngine.deserialize(encodedDescriptors);
+        const descriptors = DomElementLocator.deserialize(encodedDescriptors);
         if (!descriptors || descriptors.length === 0) return;
 
         // Resolve anchors to DOM elements
         const targets: HTMLElement[] = [];
         descriptors.forEach(desc => {
-            const el = AnchorEngine.resolve(this.rootEl, desc);
+            const el = DomElementLocator.resolve(this.rootEl, desc);
             if (el) {
                 targets.push(el);
             }

@@ -1,5 +1,5 @@
 import { writable, get, derived } from 'svelte/store';
-import { AnchorEngine } from '../managers/anchor-engine';
+import { DomElementLocator } from '../utils/dom-element-locator';
 import { showToast } from './toast-store';
 
 export const SELECTED_CLASS = 'cv-share-selected';
@@ -113,8 +113,8 @@ function createShareStore() {
         return;
       }
 
-      const descriptors = Array.from(state.selectedElements).map(el => AnchorEngine.createDescriptor(el));
-      const serialized = AnchorEngine.serialize(descriptors);
+      const descriptors = Array.from(state.selectedElements).map(el => DomElementLocator.createDescriptor(el));
+      const serialized = DomElementLocator.serialize(descriptors);
 
       const url = new URL(window.location.href);
       url.searchParams.set('cv-focus', serialized);
@@ -134,8 +134,8 @@ function createShareStore() {
         return;
       }
 
-      const descriptors = Array.from(state.selectedElements).map(el => AnchorEngine.createDescriptor(el));
-      const serialized = AnchorEngine.serialize(descriptors);
+      const descriptors = Array.from(state.selectedElements).map(el => DomElementLocator.createDescriptor(el));
+      const serialized = DomElementLocator.serialize(descriptors);
 
       const url = new URL(window.location.href);
       url.searchParams.set('cv-focus', serialized);
