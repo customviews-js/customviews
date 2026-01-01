@@ -23,17 +23,29 @@
   // Local active tab state (independent per group instance)
   let localActiveTabId = $state('');
 
-  // Derive pinned tab from store (shared across groups with same ID)
+  // Derive pinnedTab from store (shared across groups with same ID)
   let pinnedTab = $derived.by(() => {
     const tabs$ = store.state.tabs ?? {};
     return (tabGroupId && tabs$[tabGroupId]) ? tabs$[tabGroupId] : null;
   });
 
-  // When pinned tab changes, sync local state to it
+  // Track the last seen store state to detect real changes
+  let lastSeenStoreState = $state<string | null>(null);
+
+  // Authoritative Sync: Only sync when store actually changes
   $effect(() => {
-    if (pinnedTab) {
-      localActiveTabId = pinnedTab;
-      updateVisibility();
+    // If store state has changed from what we last saw
+    if (pinnedTab !== lastSeenStoreState) {
+      lastSeenStoreState = pinnedTab;
+      
+      // If there is a pinned tab, it overrides local state
+      if (pinnedTab) {
+        // Check if we actually need to update (avoid redundant DOM work)
+        if (localActiveTabId !== pinnedTab) {
+            localActiveTabId = pinnedTab;
+            updateVisibility();
+        }
+      }
     }
   });
 
@@ -49,26 +61,21 @@
          const root = contentWrapper.getRootNode() as ShadowRoot;
          hostElement = root.host as HTMLElement;
          
-         // Self-register with store
-         if (tabGroupId) {
-           store.registerTabGroup(tabGroupId);
-         }
-         
          slotEl = contentWrapper.querySelector('slot');
          if (slotEl) {
              slotEl.addEventListener('slotchange', handleSlotChange);
-             // Initial check
              handleSlotChange();
          }
      }
   });
 
-  // React to active tab changes
+  // Self-register with store when tabGroupId becomes available
   $effect(() => {
-    // Run whenever localActiveTabId changes (including value changes)
-    localActiveTabId; // Track the value
-    updateVisibility();
+    if (tabGroupId) {
+      store.registerTabGroup(tabGroupId);
+    }
   });
+
 
   /**
    * Split a tab ID string into an array of individual IDs.
@@ -163,11 +170,15 @@
    * Handles click events on the navigation tabs.
    * Updates the local active tab (visibility is updated automatically via $effect).
    */
+
   function handleTabClick(tabId: string, event: MouseEvent) {
     event.preventDefault();
-    if (localActiveTabId === tabId) return; // No change
-
-    localActiveTabId = tabId;
+    
+    // Optimistic Update: Update local state immediately
+    if (localActiveTabId !== tabId) {
+      localActiveTabId = tabId;
+      updateVisibility();
+    }
   }
 
   /**
@@ -287,7 +298,6 @@
 
   .nav-link:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
   }
 
   .cv-tab-header-container {
