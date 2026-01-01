@@ -1,9 +1,22 @@
-<svelte:options customElement="cv-tabgroup" />
+<svelte:options
+  customElement={{
+    tag: 'cv-tabgroup',
+    props: {
+      groupId: { reflect: true, type: 'String', attribute: 'group-id' }
+    }
+  }}
+/>
 
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getPinIcon } from '../../utils/icons';
   import { store } from '../../core/state/data-store.svelte';
+
+  //  ID of the tabgroup Group
+  let { groupId } = $props<{ groupId?: string }>();
+  $effect(() => {
+    if (groupId) store.registerTabGroup(groupId);
+  });
 
   let tabs: Array<{
     id: string,
@@ -15,10 +28,6 @@
   let contentWrapper: HTMLElement | undefined = $state();
   let slotEl: HTMLSlotElement | null = $state(null);
   let initialized = $state(false);
-  let hostElement: HTMLElement | null = $state(null);
-
-  // Derive tabGroupId from the host element's group-id attribute
-  let tabGroupId = $derived.by(() => hostElement?.getAttribute('group-id') || '');
 
   // Local active tab state (independent per group instance)
   let localActiveTabId = $state('');
@@ -26,7 +35,7 @@
   // Derive pinnedTab from store (shared across groups with same ID)
   let pinnedTab = $derived.by(() => {
     const tabs$ = store.state.tabs ?? {};
-    return (tabGroupId && tabs$[tabGroupId]) ? tabs$[tabGroupId] : null;
+    return (groupId && tabs$[groupId]) ? tabs$[groupId] : null;
   });
 
   // Track the last seen store state to detect real changes
@@ -57,10 +66,6 @@
 
   onMount(() => {
      if (contentWrapper) {
-         // Get the host element (the <cv-tabgroup> custom element)
-         const root = contentWrapper.getRootNode() as ShadowRoot;
-         hostElement = root.host as HTMLElement;
-         
          slotEl = contentWrapper.querySelector('slot');
          if (slotEl) {
              slotEl.addEventListener('slotchange', handleSlotChange);
@@ -69,12 +74,7 @@
      }
   });
 
-  // Self-register with store when tabGroupId becomes available
-  $effect(() => {
-    if (tabGroupId) {
-      store.registerTabGroup(tabGroupId);
-    }
-  });
+
 
 
   /**
@@ -104,7 +104,7 @@
       
       // If tab has no tab-id, generate one based on position
       if (!rawId) {
-        rawId = `${tabGroupId || 'tabgroup'}-tab-${index}`;
+        rawId = `${groupId || 'tabgroup'}-tab-${index}`;
         element.setAttribute('data-cv-internal-id', rawId);
       }
 
@@ -188,10 +188,10 @@
   function handleTabDoubleClick(tabId: string, event: MouseEvent) {
     event.preventDefault();
     
-    if (!tabGroupId) return;
+    if (!groupId) return;
     
     // Update store directly - this will sync to all tab groups with same group-id
-    store.setPinnedTab(tabGroupId, tabId);
+    store.setPinnedTab(groupId, tabId);
   }
 
 </script>
@@ -217,7 +217,7 @@
              title="Double-click a tab to 'pin' it in all similar tab groups."
              data-tab-id={tab.id}
              data-raw-tab-id={tab.rawId}
-             data-group-id={tabGroupId}
+             data-group-id={groupId}
           >
             <span class="cv-tab-header-container">
                <span class="cv-tab-header-text">{@html tab.header}</span>
