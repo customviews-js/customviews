@@ -2,9 +2,8 @@
  * Manages the "Focus Mode" (Presentation View).
  * Parses the URL for robust anchors, resolves them, hides irrelevant content, and inserts context dividers.
  */
-import { ToastManager } from './toast-manager';
+import { showToast, TOAST_CLASS } from '../stores/toast-store';
 import { AnchorEngine } from './anchor-engine';
-import { TOAST_CLASS } from '../../styles/toast-styles';
 import {
     FOCUS_MODE_STYLES,
     FOCUS_MODE_STYLE_ID,
@@ -73,12 +72,12 @@ export class FocusManager {
         });
 
         if (targets.length === 0) {
-            ToastManager.show("Some shared sections could not be found.");
+            showToast("Some shared sections could not be found.");
             return;
         }
 
         if (targets.length < descriptors.length) {
-            ToastManager.show("Some shared sections could not be found.");
+            showToast("Some shared sections could not be found.");
         }
 
         this.injectStyles();
