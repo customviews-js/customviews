@@ -1,5 +1,5 @@
 
-import { ToastManager } from './toast-manager';
+import { showToast } from '../stores/toast-store';
 import { AnchorEngine } from './anchor-engine';
 
 import {
@@ -391,23 +391,23 @@ export class ShareManager {
   private async generateLink(): Promise<void> {
     const url = this.getShareUrl();
     if (!url) {
-      ToastManager.show('Please select at least one item.');
+      showToast('Please select at least one item.');
       return;
     }
 
     try {
       await navigator.clipboard.writeText(url.toString());
-      ToastManager.show('Link copied to clipboard!');
+      showToast('Link copied to clipboard!');
     } catch (e) {
       console.error('Clipboard failed', e);
-      ToastManager.show('Failed to copy link.');
+      showToast('Failed to copy link.');
     }
   }
 
   private previewLink(): void {
     const url = this.getShareUrl();
     if (!url) {
-      ToastManager.show('Please select at least one item.');
+      showToast('Please select at least one item.');
       return;
     }
     window.open(url.toString(), '_blank');

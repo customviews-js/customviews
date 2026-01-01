@@ -7,7 +7,8 @@
   import Modal from '../modal/Modal.svelte';
   import IntroCallout from './IntroCallout.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
-  import { ToastManager } from '../../core/managers/toast-manager';
+  import { showToast } from '../../core/stores/toast-store';
+  import Toast from '../elements/Toast.svelte';
   import { ScrollManager } from '../../utils/scroll-manager';
 
   let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
@@ -76,7 +77,7 @@
     // Sync local state
     navsVisible = true; 
     
-    ToastManager.show('Settings reset to default');
+    showToast('Settings reset to default');
     
     setTimeout(() => {
       isResetting = false;
@@ -121,9 +122,9 @@
   function handleCopyShareUrl() {
     const url = URLStateManager.generateShareableURL(store.state);
     navigator.clipboard.writeText(url).then(() => {
-      ToastManager.show('Link copied to clipboard!');
+      showToast('Link copied to clipboard!');
     }).catch(() => {
-      ToastManager.show('Failed to copy URL!');
+      showToast('Failed to copy URL!');
     });
   }
 
@@ -142,6 +143,9 @@
       onclose={dismissCallout} 
     />
   {/if}
+
+  <!-- Toast Container -->
+  <Toast />
 
   <!-- Widget Icon -->
   <WidgetIcon 
