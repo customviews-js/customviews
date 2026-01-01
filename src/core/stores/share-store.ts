@@ -1,5 +1,5 @@
 import { writable, get, derived } from 'svelte/store';
-import { DomElementLocator } from '../utils/dom-element-locator';
+import * as DomElementLocator from '../utils/dom-element-locator';
 import { showToast } from './toast-store';
 
 export const SELECTED_CLASS = 'cv-share-selected';

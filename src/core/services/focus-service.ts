@@ -1,7 +1,7 @@
 import { mount, unmount } from 'svelte';
 import { focusStore } from '../stores/focus-store';
 import { showToast } from '../stores/toast-store';
-import { DomElementLocator } from '../utils/dom-element-locator';
+import * as DomElementLocator from '../utils/dom-element-locator';
 import FocusDivider from '../../components/focus/FocusDivider.svelte';
 
 const FOCUS_PARAM = 'cv-focus';
