@@ -10,7 +10,9 @@
 
 <script lang="ts">
   // Props using Svelte 5 runes
-  let { active = false, tabId = '', header = '' }: { active?: boolean; tabId?: string; header?: string } = $props();
+  // tabId and header are used in TabGroup directly.
+  // let { active = false, tabId = '', header = '' }: { active?: boolean; tabId?: string; header?: string } = $props();
+  let { active = false }: { active?: boolean } = $props();
 
   // Component is a container that toggles visibility.
   // The parent (TabGroup) will set the .active property directly.
