@@ -95,7 +95,7 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
 | `category` | string | **required** | Defines the category for the cv-toggle element. Example: `category="mac"`. |
-| `data-cv-id` / `data-customviews-id` | string | - | Marks the element as an asset render target. When visible, matching assets from `assets.json` will be dynamically inserted. |
+| `assetId` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `assetId="mac-assets"`. |
 
 
 ### Visibility Resolution Order

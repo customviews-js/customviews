@@ -1,4 +1,5 @@
 import type { Config, State, ToggleId } from "../../types/types";
+import type { AssetsManager } from "../managers/assets-manager";
 
 
 /**
@@ -41,6 +42,11 @@ export class DataStore {
      * Controls the visibility of the tab navigation headers globally.
      */
     isTabGroupNavHeadingVisible = $state(true);
+
+    /**
+     * Assets manager for rendering dynamic content into toggle elements.
+     */
+    assetsManager = $state<AssetsManager | undefined>(undefined);
 
     // Derived: Filtered lists based on what's active on the page
     visibleToggles = $derived.by(() => {
@@ -140,6 +146,13 @@ export class DataStore {
     clearRegistry() {
         this.activeToggles.clear();
         this.activeTabGroups.clear();
+    }
+
+    /**
+     * Sets the assets manager for dynamic content rendering.
+     */
+    setAssetsManager(manager: AssetsManager) {
+        this.assetsManager = manager;
     }
 
     // --- Helpers ---

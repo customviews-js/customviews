@@ -3,11 +3,14 @@
 <script lang="ts">
   import { getChevronDownIcon, getChevronUpIcon } from '../../utils/icons';
   import { store } from '../../core/state/data-store.svelte';
+  import { renderAssetInto } from '../../core/render';
 
   // Props using Svelte 5 runes
-  let { category = '' }: { category?: string } = $props();
+  let { category = '', assetId = '' }: { category?: string; assetId?: string } = $props();
 
   let localExpanded = $state(false);
+  let hasRendered = $state(false);
+  let contentEl: HTMLDivElement;
 
   // Derive categories from category prop
   let categories = $derived((category || '').split(/\s+/).filter(Boolean));
@@ -32,10 +35,18 @@
     e.stopPropagation();
     localExpanded = !localExpanded;
   }
+
+  // Reactive asset rendering - renders assets when toggle becomes visible
+  $effect(() => {
+    if (showFullContent && assetId && !hasRendered && store.assetsManager && contentEl) {
+      renderAssetInto(contentEl, assetId, store.assetsManager);
+      hasRendered = true;
+    }
+  });
 </script>
 
 <div class="cv-toggle-wrapper" class:expanded={showFullContent && !showPeekContent} class:peeking={showPeekContent} class:hidden={isHidden}>
-  <div class="cv-toggle-content">
+  <div class="cv-toggle-content" bind:this={contentEl}>
     <slot></slot>
   </div>
 

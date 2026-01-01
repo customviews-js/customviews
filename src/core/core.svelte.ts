@@ -3,18 +3,15 @@ import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
-import { ToggleManager } from "./managers/toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
 import { ShareManager } from "./managers/share-manager";
 import { FocusManager } from "./managers/focus-manager";
 import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './state/config';
 import { DataStore, initStore } from "./state/data-store.svelte";
 
-const TOGGLE_SELECTOR = "cv-toggle";
 const TABGROUP_SELECTOR = 'cv-tabgroup';
 
 interface ComponentRegistry {
-  toggles: Set<HTMLElement>;
   tabGroups: Set<TabGroupElement>;
 }
 
@@ -37,7 +34,6 @@ export class CustomViewsCore {
   public store: DataStore;
   
   private rootEl: HTMLElement;
-  private assetsManager: AssetsManager;
   private persistenceManager: PersistenceManager;
   private observer: MutationObserver | null = null;
   private shareManager: ShareManager;
@@ -46,7 +42,6 @@ export class CustomViewsCore {
   private showUrlEnabled: boolean;
 
   private componentRegistry: ComponentRegistry = {
-    toggles: new Set(),
     tabGroups: new Set(),
   };
 
@@ -58,13 +53,15 @@ export class CustomViewsCore {
   private destroyEffectRoot?: () => void;
 
   constructor(opt: CustomViewsOptions) {
-    this.assetsManager = opt.assetsManager;
     this.rootEl = opt.rootEl || document.body;
     this.persistenceManager = new PersistenceManager();
     this.showUrlEnabled = opt.showUrl ?? false;
     
     // Initialize Reactive Store Singleton
     this.store = initStore(opt.config);
+    
+    // Store assetsManager in global store for component access
+    this.store.setAssetsManager(opt.assetsManager);
 
     // Initial State Resolution: URL > Persistence > Default
     this.resolveInitialState();
@@ -132,13 +129,8 @@ export class CustomViewsCore {
     
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
-        // Effect 1: Render Declarative Components (Toggles)
-        // Note: TabGroups are now handled by individual effects in initializeNewComponents
-        $effect(() => {
-            this.render();
-        });
 
-        // Effect 2: Update URL
+        // Effect 1: Update URL
         $effect(() => {
             if (this.showUrlEnabled) {
                 // Ensure we pass a snapshot or clone if updateURL mutates (it shouldn't)
@@ -148,7 +140,7 @@ export class CustomViewsCore {
             }
         });
 
-        // Effect 3: Persistence
+        // Effect 2: Persistence
         $effect(() => {
             this.persistenceManager.persistState(this.store.state);
             this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
@@ -168,48 +160,12 @@ export class CustomViewsCore {
     this.initObserver();
   }
   
-  /**
-   * The main DOM rendering effect for non-granular components (mainly Toggles for now).
-   * 
-   * This method is called automatically by Svelte whenever `this.store.state` changes.
-   */
-  private render() {
-      // pause observer to avoid loops? 
-      this.observer?.disconnect();
-      
-      const { shownToggles } = this.store.state;
-      
-      const allToggleElements = Array.from(this.componentRegistry.toggles);
 
-      // Render assets for visible toggles (cv-toggle elements self-manage visibility via store)
-      ToggleManager.renderToggleAssets(allToggleElements, shownToggles || [], this.assetsManager);
-
-      this.observer?.observe(this.rootEl, {
-        childList: true,
-        subtree: true,
-      });
-  }
 
   // --- Scanning Logic (Kept mostly same, but updates global set in Store) ---
 
   private scan(element: HTMLElement): boolean {
     let newComponentsFound = false;
-
-    // Scan for toggles
-    const toggles = Array.from(element.querySelectorAll(TOGGLE_SELECTOR));
-    if (element.matches(TOGGLE_SELECTOR)) toggles.unshift(element);
-    
-    toggles.forEach((el) => {
-        const toggleEl = el as HTMLElement;
-      if (!this.componentRegistry.toggles.has(toggleEl)) {
-        this.componentRegistry.toggles.add(toggleEl);
-        newComponentsFound = true;
-        
-        // Update Store Registry
-        const id = toggleEl.getAttribute('category');
-        if (id) this.store.registerToggle(id);
-      }
-    });
 
     // Scan for tab groups
     const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
@@ -231,10 +187,6 @@ export class CustomViewsCore {
   }
   
   private unscan(element: HTMLElement): void {
-      const toggles = Array.from(element.querySelectorAll(TOGGLE_SELECTOR));
-      if (element.matches(TOGGLE_SELECTOR)) toggles.unshift(element);
-      toggles.forEach(t => this.componentRegistry.toggles.delete(t as HTMLElement));
-      
       const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
       if (element.matches(TABGROUP_SELECTOR)) tabGroups.unshift(element);
       
@@ -321,8 +273,6 @@ export class CustomViewsCore {
 
       if (newComponentsFound) {
         this.initializeNewComponents();
-        // Force re-render for Toggles
-        this.render();
       }
     });
 
