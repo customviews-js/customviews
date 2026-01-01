@@ -14,9 +14,14 @@
 </script>
 
 <div class="root">
-  <label class="label" for="tab-group-{group.id}">
-    {group.label || group.id}
-  </label>
+  <div class="header">
+    <label class="label" for="tab-group-{group.id}">
+      {group.label || group.id}
+    </label>
+    {#if group.description}
+      <p class="description">{group.description}</p>
+    {/if}
+  </div>
   <select 
     id="tab-group-{group.id}" 
     class="select" 
@@ -34,14 +39,22 @@
   .root {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
     padding: 0.75rem;
     background: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
   }
 
+  /* Remove special handling for last child since they are now separate cards */
   .root:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .label {
@@ -52,6 +65,13 @@
     font-weight: 500;
     display: block;
     cursor: pointer;
+  }
+
+  .description {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+    line-height: 1.4;
   }
 
   .select {
@@ -85,6 +105,10 @@
 
   :global(.cv-widget-theme-dark) .label {
     color: #e2e8f0;
+  }
+
+  :global(.cv-widget-theme-dark) .description {
+    color: rgba(255, 255, 255, 0.6);
   }
 
   :global(.cv-widget-theme-dark) .select {

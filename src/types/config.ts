@@ -22,6 +22,8 @@ export interface TabGroupConfig {
   tabs: TabConfig[];
   /** Determines if the tab group is only shown on pages where it's used. */
   isLocal?: boolean;
+  /** Optional description to display below label */
+  description?: string;
 }
 
 /**

@@ -512,10 +512,7 @@
 .tab-groups-list {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 0.5rem;
-  overflow: hidden;
+  gap: 0.75rem;
 }
 
 /* Footer */
