@@ -13,7 +13,7 @@
   import Toast from '../elements/Toast.svelte';
   import ShareOverlay from '../share/ShareOverlay.svelte';
   import FocusBanner from '../focus/FocusBanner.svelte';
-  import { ScrollManager } from '../../utils/scroll-manager';
+  import { findHighestVisibleElement, scrollToElement } from '../../utils/scroll-utils';
 
   let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
 
@@ -111,14 +111,14 @@
   function handleTabGroupChange(detail: any) {
     const { groupId, tabId } = detail;
     // Scroll Logic: Capture target before state update
-    const groupToScrollTo = ScrollManager.findHighestVisibleTabGroup();
+    const groupToScrollTo = findHighestVisibleElement('cv-tabgroup');
 
     store.setPinnedTab(groupId, tabId);
 
     // Restore scroll after update
     if (groupToScrollTo) {
         queueMicrotask(() => {
-             ScrollManager.scrollToTabGroup(groupToScrollTo);
+             scrollToElement(groupToScrollTo);
         });
     }
   }
