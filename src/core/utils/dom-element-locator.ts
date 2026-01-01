@@ -104,6 +104,12 @@ export function deserialize(encoded: string): AnchorDescriptor[] {
     }
 }
 
+const SCORE_EXACT_HASH = 50;
+const SCORE_SNIPPET_START = 30;
+const SCORE_INDEX_MATCH = 10;
+const SCORE_PERFECT = 60;
+const SCORE_THRESHOLD = 30;
+
 /**
  * Finds the best DOM element match for a descriptor.
  */
@@ -153,18 +159,18 @@ export function resolve(root: HTMLElement, descriptor: AnchorDescriptor): HTMLEl
 
         // Content Match
         if (hashCode(text) === descriptor.textHash) {
-            score += 50;
+            score += SCORE_EXACT_HASH;
         } else if (text.startsWith(descriptor.textSnippet)) {
-            score += 30;
+            score += SCORE_SNIPPET_START;
         }
 
         // Structural Match (Re-calculated index)
         if (i === descriptor.index) {
-            score += 10;
+            score += SCORE_INDEX_MATCH;
         }
         
         // Early Exit: If we find a very high score (Hash + Index), we can stop.
-        if (score >= 60) {
+        if (score >= SCORE_PERFECT) {
             return candidate;
         }
 
@@ -175,5 +181,5 @@ export function resolve(root: HTMLElement, descriptor: AnchorDescriptor): HTMLEl
     }
 
     // Threshold check
-    return highestScore > 30 ? bestMatch : null;
+    return highestScore > SCORE_THRESHOLD ? bestMatch : null;
 }

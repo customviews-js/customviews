@@ -10,6 +10,8 @@
   {#each $toast as t (t.id)}
     <div 
       class="{TOAST_CLASS} toast-item"
+      role="alert" 
+      aria-live="polite"
       in:fly="{{ y: -20, duration: 300 }}"
       out:fade="{{ duration: 200 }}"
       animate:flip

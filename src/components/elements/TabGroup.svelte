@@ -44,6 +44,7 @@
   // Authoritative Sync: Only sync when store actually changes
   $effect(() => {
     // If store state has changed from what we last saw
+    // Note: strict inequality works here because both are strings or null
     if (pinnedTab !== lastSeenStoreState) {
       lastSeenStoreState = pinnedTab;
       
