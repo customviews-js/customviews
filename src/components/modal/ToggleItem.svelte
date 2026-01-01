@@ -5,10 +5,7 @@
   export let value: 'show' | 'hide' | 'peek' = 'hide';
   export let onchange: (detail: { toggleId: string, value: 'show' | 'hide' | 'peek' }) => void = () => {};
 
-  function onChange(newValue: 'show' | 'hide' | 'peek') {
-    value = newValue;
-    onchange({ toggleId: toggle.id, value: newValue });
-  }
+
 </script>
 
 <div class="card">
@@ -26,8 +23,8 @@
           type="radio" 
           name="cv-toggle-{toggle.id}" 
           value="hide" 
-          checked={value === 'hide'}
-          onchange={() => onChange('hide')}
+          bind:group={value}
+          onchange={() => onchange({ toggleId: toggle.id, value })}
         />
         <span>Hide</span>
       </label>
@@ -37,8 +34,8 @@
           type="radio" 
           name="cv-toggle-{toggle.id}" 
           value="peek" 
-          checked={value === 'peek'}
-          onchange={() => onChange('peek')}
+          bind:group={value}
+          onchange={() => onchange({ toggleId: toggle.id, value })}
         />
         <span>Peek</span>
       </label>
@@ -48,8 +45,8 @@
           type="radio" 
           name="cv-toggle-{toggle.id}" 
           value="show" 
-          checked={value === 'show'}
-          onchange={() => onChange('show')}
+          bind:group={value}
+          onchange={() => onchange({ toggleId: toggle.id, value })}
         />
         <span>Show</span>
       </label>
