@@ -33,7 +33,7 @@ Whether you are building a static site, a dashboard, or a documentation portal, 
 
 Choose your operating system to see platform-specific content:
 
-<cv-toggle category="mac" >
+<cv-toggle toggle-id="mac" >
 
 <box>
 
@@ -49,7 +49,7 @@ You're viewing macOS-specific installation steps. Install using Homebrew:
 </cv-toggle>
 
 
-<cv-toggle category="linux" >
+<cv-toggle toggle-id="linux" >
 
 linux cv-toggles
 
@@ -57,7 +57,7 @@ linux cv-toggles
 </cv-toggle>
 
 
-<cv-toggle category="linux" >
+<cv-toggle toggle-id="linux" >
 
 <box>
 
@@ -72,7 +72,7 @@ You're viewing Linux-specific installation steps. Install using your package man
 </cv-toggle>
 
 
-<cv-toggle category="windows" >
+<cv-toggle toggle-id="windows" >
 
 <box>
 

@@ -14,40 +14,40 @@ Toggles let you show or hide sections of a page based on a category (for example
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-toggle category="mac">
+<cv-toggle toggle-id="mac">
     <h2>macOS</h2>
     <p>macOS-specific install steps...</p>
 </cv-toggle>
 
-<cv-toggle category="linux">
+<cv-toggle toggle-id="linux">
     <h2>Linux</h2>
     <p>Linux-specific install steps...</p>
 </cv-toggle>
 
-<cv-toggle category="windows">
+<cv-toggle toggle-id="windows">
     <h2>Windows</h2>
     <p>Windows-specific install steps...</p>
 </cv-toggle>
 </variable>
 <variable name="output">
-<cv-toggle category="mac">
+<cv-toggle toggle-id="mac">
     <h3>macOS</h3>
     <p>macOS-specific install steps...</p>
 </cv-toggle>
 
-<cv-toggle category="linux">
+<cv-toggle toggle-id="linux">
     <h3>Linux</h3>
     <p>Linux-specific install steps...</p>
 </cv-toggle>
 
-<cv-toggle category="windows">
+<cv-toggle toggle-id="windows">
     <h3>Windows</h3>
     <p>Windows-specific install steps...</p>
 </cv-toggle>
 </variable>
 </include>
 
-When the active toggle state includes `mac`, only the `<cv-toggle category="mac">` element will be visible. The component reactively updates based on the global toggle state.
+When the active toggle state includes `mac`, only the `<cv-toggle toggle-id="mac">` element will be visible. The component reactively updates based on the global toggle state.
 
 ## Multi-ID Toggles 
 
@@ -55,7 +55,7 @@ You can apply multiple toggles to a single element by separating categories with
 This allows content to appear as long as one toggle category is active.
 
 ```html
-<cv-toggle category="mac linux">
+<cv-toggle toggle-id="mac linux">
   This section appears for both macOS and Linux users.
 </cv-toggle>
 ```
@@ -94,7 +94,7 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
-| `category` | string | **required** | Defines the category for the cv-toggle element. Example: `category="mac"`. |
+| `category` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
 | `assetId` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `assetId="mac-assets"`. |
 
 
@@ -135,7 +135,7 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 And present on this page:
 
 ```html
-<cv-toggle category="localToggle">
+<cv-toggle toggle-id="localToggle">
 
 Local Toggle content 
 
@@ -143,7 +143,7 @@ Local Toggle content
 ```
 
 
-<cv-toggle category="localToggle">
+<cv-toggle toggle-id="localToggle">
 
 Local Toggle content 
 
@@ -187,7 +187,7 @@ This will ensure that the specified local toggles appear in the configuration wi
 	* Check that your `config.toggles` array is correctly formatted with `id` and `label` for each toggle.
 
 * No effect when toggling?
-	* Ensure the element uses `<cv-toggle category="...">` and the category matches a configured toggle ID.
+	* Ensure the element uses `<cv-toggle toggle-id="...">` and the category matches a configured toggle ID.
 
 * URL state not persisting in URL bar?
 	* Enable showUrl in the configuration.
