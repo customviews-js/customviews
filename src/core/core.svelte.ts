@@ -1,19 +1,12 @@
-import type { Config, TabGroupElement } from "../types/types";
+import type { Config } from "../types/types";
 import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
-import { ScrollManager } from "../utils/scroll-manager";
 import { ShareManager } from "./managers/share-manager";
 import { FocusManager } from "./managers/focus-manager";
 import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './state/config';
 import { DataStore, initStore } from "./state/data-store.svelte";
-
-const TABGROUP_SELECTOR = 'cv-tabgroup';
-
-interface ComponentRegistry {
-  tabGroups: Set<TabGroupElement>;
-}
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -23,9 +16,9 @@ export interface CustomViewsOptions {
 }
 
 /**
- * The Reactive Binder for CustomViews, coordinates interaction between DataStore and other components. (DOM, URL, Persistence)
- * It uses Svelte 5 Effects ($effect) to automatically apply state changes 
- * from `this.store` to the DOM/URL.
+ * The Reactive Binder for CustomViews, coordinates interaction between DataStore and other components.
+ * Uses Svelte 5 Effects ($effect) to automatically apply state changes from the store to URL and persistence.
+ * Components (Toggle, TabGroup) are self-contained and self-managing via the global store.
  */
 export class CustomViewsCore {
   /**
@@ -35,21 +28,10 @@ export class CustomViewsCore {
   
   private rootEl: HTMLElement;
   private persistenceManager: PersistenceManager;
-  private observer: MutationObserver | null = null;
   private shareManager: ShareManager;
   private focusManager: FocusManager;
   
   private showUrlEnabled: boolean;
-
-  private componentRegistry: ComponentRegistry = {
-    tabGroups: new Set(),
-  };
-
-  /**
-   * Map to store cleanup functions for reactive effects attached to dynamic components.
-   */
-  private componentEffects = new Map<HTMLElement, () => void>();
-
   private destroyEffectRoot?: () => void;
 
   constructor(opt: CustomViewsOptions) {
@@ -112,16 +94,11 @@ export class CustomViewsCore {
   /**
    * Initializes the CustomViews core.
    * 
-   * 1. Injects core styles.
-   * 2. Scans the DOM for components.
-   * 3. Sets up Svelte Reactivity Root ($effect.root).
-   * 4. Binds history events.
+   * Components (Toggle, TabGroup) self-register during their mount lifecycle.
+   * Core only manages global reactivity for URL state and persistence.
    */
   public async init() {
-    this.scan(this.rootEl);
-
-    this.initializeNewComponents();
-
+    // Restore tab nav visibility preference
     const navPref = this.persistenceManager.getPersistedTabNavVisibility();
     if (navPref !== null) {
       this.store.isTabGroupNavHeadingVisible = navPref;
@@ -129,11 +106,9 @@ export class CustomViewsCore {
     
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
-
         // Effect 1: Update URL
         $effect(() => {
             if (this.showUrlEnabled) {
-                // Ensure we pass a snapshot or clone if updateURL mutates (it shouldn't)
                 URLStateManager.updateURL(this.store.state);
             } else {
                 URLStateManager.clearURL();
@@ -157,128 +132,6 @@ export class CustomViewsCore {
     });
 
     this.focusManager.init();
-    this.initObserver();
-  }
-  
-
-
-  // --- Scanning Logic (Kept mostly same, but updates global set in Store) ---
-
-  private scan(element: HTMLElement): boolean {
-    let newComponentsFound = false;
-
-    // Scan for tab groups
-    const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
-    if (element.matches(TABGROUP_SELECTOR)) tabGroups.unshift(element);
-    
-    tabGroups.forEach((el) => {
-        const groupEl = el as HTMLElement;
-      if (!this.componentRegistry.tabGroups.has(groupEl as TabGroupElement)) {
-        this.componentRegistry.tabGroups.add(groupEl as TabGroupElement);
-        newComponentsFound = true;
-        
-        // Update Store Registry
-        const id = groupEl.id;
-        if (id) this.store.registerTabGroup(id);
-      }
-    });
-
-    return newComponentsFound;
-  }
-  
-  private unscan(element: HTMLElement): void {
-      const tabGroups = Array.from(element.querySelectorAll(TABGROUP_SELECTOR));
-      if (element.matches(TABGROUP_SELECTOR)) tabGroups.unshift(element);
-      
-      tabGroups.forEach(t => {
-          const groupEl = t as TabGroupElement;
-          this.componentRegistry.tabGroups.delete(groupEl);
-          
-          // Cleanup Effects
-          const destroy = this.componentEffects.get(groupEl);
-          if (destroy) {
-              destroy();
-              this.componentEffects.delete(groupEl);
-          }
-      });
-  }
-
-  private initializeNewComponents(): void {
-    const groups = Array.from(this.componentRegistry.tabGroups);
-    groups.forEach((groupEl) => {
-        // Setup Reactivity if not already setup
-        if (!this.componentEffects.has(groupEl)) {
-             const cleanup = $effect.root(() => {
-                $effect(() => {
-                    const groupId = groupEl.getAttribute('id');
-                    const tabsState = this.store.state.tabs || {};
-
-                    // Note: activeTabId is now derived from store inside TabGroup component
-                    // No need to set groupEl.activeTabId anymore
-
-                    // 1. Resolve Pinned Tab
-                    if (groupId && tabsState[groupId]) {
-                        groupEl.pinnedTabId = tabsState[groupId];
-                    } else {
-                        groupEl.pinnedTabId = '';
-                    }
-
-                    // 2. Resolve Nav Visibility
-                    groupEl.isTabGroupNavHeadingVisible = this.store.isTabGroupNavHeadingVisible;
-                });
-             });
-             this.componentEffects.set(groupEl, cleanup);
-        }
-
-        if (groupEl._listenersAttached) return;
-        groupEl._listenersAttached = true;
-
-        groupEl.addEventListener('tabdblclick', (e: any) => {
-            const { tabId } = e.detail;
-            const groupId = e.detail.groupId || groupEl.getAttribute('id');
-            
-            // 1. Record position before state change
-            const anchorElement = groupEl;
-            const initialTop = anchorElement.getBoundingClientRect().top;
-
-            // 2. Sync to store
-            if (groupId) {
-               this.store.setPinnedTab(groupId, tabId);
-            }
-            
-            // 3. Restore position after DOM update (wait for tick)
-            // Since we are using Svelte effects, we might need to wait for them to flush.
-             queueMicrotask(() => { // or tick()
-                ScrollManager.handleScrollAnchor({ element: anchorElement, top: initialTop });
-            });
-        });
-    });
-  }
-
-  private initObserver() {
-    this.observer = new MutationObserver((mutations) => {
-      let newComponentsFound = false;
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
-          mutation.addedNodes.forEach((node) => {
-            if (node instanceof Element && this.scan(node as HTMLElement)) {
-                newComponentsFound = true;
-            }
-          });
-          mutation.removedNodes.forEach((node) => {
-             if (node instanceof Element) this.unscan(node as HTMLElement);
-          });
-        }
-      }
-
-      if (newComponentsFound) {
-        this.initializeNewComponents();
-      }
-    });
-
-    if (this.rootEl) {
-      this.observer.observe(this.rootEl, { childList: true, subtree: true });
-    }
   }
 
   // --- Public APIs for Widget/Other ---
@@ -296,11 +149,5 @@ export class CustomViewsCore {
 
   public destroy() {
       this.destroyEffectRoot?.();
-      
-      // Destroy all component effects
-      this.componentEffects.forEach(destroy => destroy());
-      this.componentEffects.clear();
-
-      this.observer?.disconnect();
   }
 }
