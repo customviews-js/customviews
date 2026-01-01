@@ -3,10 +3,10 @@ import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
-import { ShareManager } from "./managers/share-manager";
+
 import { FocusManager } from "./managers/focus-manager";
 import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './state/config';
-import { DataStore, initStore } from "./state/data-store.svelte";
+import { DataStore, initStore } from "./stores/main-store.svelte";
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -28,7 +28,6 @@ export class CustomViewsCore {
   
   private rootEl: HTMLElement;
   private persistenceManager: PersistenceManager;
-  private shareManager: ShareManager;
   private focusManager: FocusManager;
   
   private showUrlEnabled: boolean;
@@ -53,7 +52,6 @@ export class CustomViewsCore {
     const excludedIds = [...DEFAULT_EXCLUDED_IDS, ...(opt.config.shareExclusions?.ids || [])];
     const commonOptions = { excludedTags, excludedIds };
 
-    this.shareManager = new ShareManager(commonOptions);
     this.focusManager = new FocusManager(this.rootEl, commonOptions);
   }
 
@@ -75,13 +73,7 @@ export class CustomViewsCore {
      // 3. Defaults handled by Store constructor
   }
 
-  public getShareManager(): ShareManager {
-    return this.shareManager;
-  }
 
-  public toggleShareMode(): void {
-    this.shareManager.toggleShareMode();
-  }
 
   public getConfig(): Config {
     return this.store.config;
