@@ -1,6 +1,6 @@
 <script lang="ts">
   import { shareStore, shareCount } from '../../core/stores/share-store';
-  import { fade, fly } from 'svelte/transition';
+  import { fly } from 'svelte/transition';
 
   function handleClear() {
     shareStore.clearSelection();

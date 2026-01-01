@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { shareStore, SHAREABLE_SELECTOR, HIGHLIGHT_TARGET_CLASS, SELECTED_CLASS } from '../../core/stores/share-store';
+  import { shareStore, SHAREABLE_SELECTOR } from '../../core/stores/share-store';
   import ShareToolbar from './ShareToolbar.svelte';
   import HoverHelper from './HoverHelper.svelte';
 
