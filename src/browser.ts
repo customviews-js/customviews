@@ -1,6 +1,6 @@
-import { CustomViews } from "./lib/custom-views";
+import { CustomViews } from "./CustomViews";
 import { getScriptAttributes, fetchConfig, initializeWidget } from "./utils/init-utils";
-import type { initOptions } from "./lib/custom-views";
+import type { initOptions } from "./CustomViews";
 
 
 // --- Public API Exports ---
