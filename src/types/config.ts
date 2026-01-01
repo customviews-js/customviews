@@ -41,6 +41,14 @@ export interface ToggleConfig {
 /**
  * Configuration for the site, has default state and list of toggles
  */
+export interface ShareExclusions {
+  tags?: string[];
+  ids?: string[];
+}
+
+/**
+ * Configuration for the site, has default state and list of toggles
+ */
 export interface Config {
   /** All available toggle categories */
   toggles?: ToggleConfig[];
@@ -49,10 +57,7 @@ export interface Config {
   /** Optional tab group configurations */
   tabGroups?: TabGroupConfig[];
   /** Excluded tags and IDs for Share/Focus modes */
-  shareExclusions?: {
-    tags?: string[];
-    ids?: string[];
-  };
+  shareExclusions?: ShareExclusions;
 }
 
 /**

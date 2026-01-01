@@ -9,9 +9,10 @@
   import { URLStateManager } from '../../core/state/url-state-manager';
   import { showToast } from '../../core/stores/toast-store';
   import { shareStore } from '../../core/stores/share-store';
-  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/state/config';
+  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/constants';
   import Toast from '../elements/Toast.svelte';
   import ShareOverlay from '../share/ShareOverlay.svelte';
+  import FocusBanner from '../focus/FocusBanner.svelte';
   import { ScrollManager } from '../../utils/scroll-manager';
 
   let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
@@ -159,6 +160,8 @@
   {#if $shareStore.isActive}
     <ShareOverlay {excludedTags} {excludedIds} />
   {/if}
+
+  <FocusBanner />
 
   <!-- Widget Icon -->
   <WidgetIcon 
