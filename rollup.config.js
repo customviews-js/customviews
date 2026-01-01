@@ -88,7 +88,7 @@ const builds = [
   
   // Browser UMD build (minified)
   {
-    input: 'src/index.ts',
+    input: 'src/browser.ts',
     output: {
       file: 'dist/custom-views.min.js',
       format: 'umd',

@@ -1,8 +1,3 @@
-// Import from new modules
-import { CustomViews } from "./lib/custom-views";
-import initializeFromScript from "./entry/browser-entry";
-import { CustomViewsWidget } from "./core/widget";
-
 // Export public API
 export { CustomViewsCore } from "./core/core.svelte";
 export type { CustomViewsOptions } from "./core/core.svelte";
@@ -16,12 +11,5 @@ export { AssetsManager } from "./core/managers/assets-manager";
 export type { Config } from "./types/types";
 export type { ConfigFile } from "./types/types";
 
-// Set up globals and auto-initialization
-if (typeof window !== "undefined") {
-  // Expose to window to enable usage (e.g. const app = new window.CustomViews(...))
-  window.CustomViews = CustomViews;
-  window.CustomViewsWidget = CustomViewsWidget;
-  
-  // Run auto-initialization
-  initializeFromScript();
-}
+// Note: No auto-initialization here. 
+// For browser script tag usage, use dist/custom-views.min.js (built from src/entry/browser-entry.ts)
