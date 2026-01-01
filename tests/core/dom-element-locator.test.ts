@@ -1,10 +1,10 @@
 // @vitest-environment jsdom
-import { AnchorEngine } from '../../src/core/anchor-engine';
+import * as DomElementLocator from '../../src/core/utils/dom-element-locator';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 // Mock DOM environment is assumed (jsdom)
 
-describe('AnchorEngine', () => {
+describe('DomElementLocator', () => {
     let container: HTMLElement;
 
     beforeEach(() => {
@@ -25,11 +25,12 @@ describe('AnchorEngine', () => {
                 <p>Third paragraph</p>
             `;
             const target = document.getElementById('target')!;
-            const descriptor = AnchorEngine.createDescriptor(target);
+            const descriptor = DomElementLocator.createDescriptor(target);
 
             expect(descriptor.tag).toBe('P');
             expect(descriptor.index).toBe(1); // 0-indexed, so 2nd p is index 1
             expect(descriptor.parentId).toBe('test-container');
+            // Check starts with because textSnippet is truncated
             expect(descriptor.textSnippet).toBe('Target paragraph with specific t'); // 32 chars
             expect(descriptor.textHash).not.toBe(0);
         });
@@ -43,7 +44,7 @@ describe('AnchorEngine', () => {
                 </div>
             `;
             const target = document.getElementById('target')!;
-            const descriptor = AnchorEngine.createDescriptor(target);
+            const descriptor = DomElementLocator.createDescriptor(target);
 
             expect(descriptor.parentId).toBe('wrapper');
         });
@@ -53,7 +54,7 @@ describe('AnchorEngine', () => {
                 <p id="target">  Lots   of    spaces   </p>
             `;
             const target = document.getElementById('target')!;
-            const descriptor = AnchorEngine.createDescriptor(target);
+            const descriptor = DomElementLocator.createDescriptor(target);
 
             expect(descriptor.textSnippet).toBe('Lots of spaces');
         });
@@ -69,8 +70,8 @@ describe('AnchorEngine', () => {
                 textHash: 123456
             };
 
-            const serialized = AnchorEngine.serialize([original]);
-            const deserializedList = AnchorEngine.deserialize(serialized);
+            const serialized = DomElementLocator.serialize([original]);
+            const deserializedList = DomElementLocator.deserialize(serialized);
 
             expect(deserializedList).toHaveLength(1);
             expect(deserializedList[0]).toEqual(original);
@@ -85,8 +86,8 @@ describe('AnchorEngine', () => {
                 textHash: 123
             };
 
-            const serialized = AnchorEngine.serialize([original]);
-            const deserializedList = AnchorEngine.deserialize(serialized);
+            const serialized = DomElementLocator.serialize([original]);
+            const deserializedList = DomElementLocator.deserialize(serialized);
 
             expect(deserializedList[0].textSnippet).toBe('Hello 🌍');
         });
@@ -101,9 +102,9 @@ describe('AnchorEngine', () => {
             `;
             const targetEl = container.querySelectorAll('p')[1] as HTMLElement;
             // Manually creating descriptor to simulate "previous state"
-            const descriptor = AnchorEngine.createDescriptor(targetEl);
+            const descriptor = DomElementLocator.createDescriptor(targetEl);
 
-            const resolved = AnchorEngine.resolve(container, descriptor);
+            const resolved = DomElementLocator.resolve(container, descriptor);
             expect(resolved).toBe(targetEl);
         });
 
@@ -115,25 +116,21 @@ describe('AnchorEngine', () => {
             `;
             // Original descriptor was index 1, "Correct One"
             // Now "Correct One" is index 2.
-            const descriptor = {
-                tag: 'P',
-                index: 1, // Old index
-                parentId: 'test-container',
-                textSnippet: 'Correct One',
-                textHash: -1109673238 // Hash of "Correct One" (calculated roughly or ignored if simulated)
-            };
-
-            // Recalculate hash for test correctness or mock it? 
-            // Let's rely on createDescriptor to give us a valid hash first from a "past" state
+            
+            // We create a temporary element to get a valid hash/snippet
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = '<p>Correct One</p>';
-            const validDescriptor = AnchorEngine.createDescriptor(tempDiv.querySelector('p')!);
-            validDescriptor.index = 1; // Force old index
-            validDescriptor.parentId = 'test-container';
+            const baseDescriptor = DomElementLocator.createDescriptor(tempDiv.querySelector('p')!);
+            
+            const descriptor = {
+                ...baseDescriptor,
+                index: 1, // Old index (where "Wrong One" is now)
+                parentId: 'test-container',
+            };
 
-            const resolved = AnchorEngine.resolve(container, validDescriptor);
+            const resolved = DomElementLocator.resolve(container, descriptor);
 
-            // Should still find it because text match (+50) > structure match failure
+            // Should still find it because content match
             expect(resolved?.textContent).toBe('Correct One');
         });
 
@@ -146,7 +143,7 @@ describe('AnchorEngine', () => {
                 textSnippet: 'Missing content',
                 textHash: 99999
             };
-            const resolved = AnchorEngine.resolve(container, descriptor);
+            const resolved = DomElementLocator.resolve(container, descriptor);
             expect(resolved).toBeNull();
         });
     });
