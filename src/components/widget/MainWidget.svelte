@@ -8,7 +8,10 @@
   import IntroCallout from './IntroCallout.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
   import { showToast } from '../../core/stores/toast-store';
+  import { shareStore } from '../../core/stores/share-store';
+  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/state/config';
   import Toast from '../elements/Toast.svelte';
+  import ShareOverlay from '../share/ShareOverlay.svelte';
   import { ScrollManager } from '../../utils/scroll-manager';
 
   let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
@@ -25,6 +28,12 @@
   // Nav Visibility
   let navsVisible = $state(true);
 
+  // Computed Props for ShareOverlay
+  const config = $derived(core.store.config);
+  const shareExclusions = $derived(config.shareExclusions || {});
+  const excludedTags = $derived([...DEFAULT_EXCLUDED_TAGS, ...(shareExclusions.tags || [])]);
+  const excludedIds = $derived([...DEFAULT_EXCLUDED_IDS, ...(shareExclusions.ids || [])]);
+  
   // Reactively track store state for passing to Modal
   let shownToggles = $derived(store.state.shownToggles ?? []);
   let peekToggles = $derived(store.state.peekToggles ?? []);
@@ -130,7 +139,7 @@
 
   function handleStartShare() {
     closeModal();
-    core.toggleShareMode();
+    shareStore.toggleActive(true);
   }
 </script>
 
@@ -146,6 +155,10 @@
 
   <!-- Toast Container -->
   <Toast />
+
+  {#if $shareStore.isActive}
+    <ShareOverlay {excludedTags} {excludedIds} />
+  {/if}
 
   <!-- Widget Icon -->
   <WidgetIcon 
