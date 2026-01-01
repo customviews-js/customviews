@@ -23,7 +23,7 @@ interface AnchorDescriptor {
  * The anchor is then resolved by searching for the element in the DOM using the serialized string.
  *  
  */
-export class AnchorEngine {
+export class DomElementLocator {
 
     /**
      * Generates a simple hash code for a string.
