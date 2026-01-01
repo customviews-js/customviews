@@ -7,49 +7,47 @@
 
 ## Toggles
 
-`<cv-toggle>` `<div data-cv-toggle="category">`
+`<cv-toggle>`
 
 Toggles let you show or hide sections of a page based on a category (for example: `mac`, `linux`, `windows`). They are ideal for platform-specific content, progressive disclosure, or audience-targeted sections.
 
 <include src="codeAndOutputSeparate.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<section data-cv-toggle="mac">
+<cv-toggle category="mac">
     <h2>macOS</h2>
     <p>macOS-specific install steps...</p>
-</section>
+</cv-toggle>
 
-<section data-cv-toggle="linux">
+<cv-toggle category="linux">
     <h2>Linux</h2>
     <p>Linux-specific install steps...</p>
-</section>
+</cv-toggle>
 
-<section data-cv-toggle="windows">
+<cv-toggle category="windows">
     <h2>Windows</h2>
     <p>Windows-specific install steps...</p>
-</section>
+</cv-toggle>
 </variable>
 <variable name="output">
-<section data-cv-toggle="mac">
+<cv-toggle category="mac">
     <h3>macOS</h3>
     <p>macOS-specific install steps...</p>
-</section>
+</cv-toggle>
 
-<section data-cv-toggle="linux">
+<cv-toggle category="linux">
     <h3>Linux</h3>
     <p>Linux-specific install steps...</p>
-</section>
+</cv-toggle>
 
-<section data-cv-toggle="windows">
+<cv-toggle category="windows">
     <h3>Windows</h3>
     <p>Windows-specific install steps...</p>
-</section>
+</cv-toggle>
 </variable>
 </include>
 
-When the active toggle state includes `mac`, only the element with `data-cv-toggle="mac"` will be visible. CustomViews applies `.cv-visible` and `.cv-hidden` classes to animate visibility transitions.
-
-> Other attribute names are supported as well: `data-customviews-toggle` behaves the same as `data-cv-toggle`.
+When the active toggle state includes `mac`, only the `<cv-toggle category="mac">` element will be visible. The component reactively updates based on the global toggle state.
 
 ## Multi-ID Toggles 
 
@@ -57,10 +55,6 @@ You can apply multiple toggles to a single element by separating categories with
 This allows content to appear as long as one toggle category is active.
 
 ```html
-<div data-cv-toggle="mac linux">
-  This section appears for both macOS and Linux users.
-</div>
-
 <cv-toggle category="mac linux">
   This section appears for both macOS and Linux users.
 </cv-toggle>
@@ -100,8 +94,7 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
-| `data-cv-toggle` | string | **required** for data attribute usage | Defines the category for the element. Example: `data-cv-toggle="mac"`. |
-| `category` | string | **required** for `<cv-toggle>` | Defines the category for the cv-toggle element. Example: `category="mac"`. |
+| `category` | string | **required** | Defines the category for the cv-toggle element. Example: `category="mac"`. |
 | `data-cv-id` / `data-customviews-id` | string | - | Marks the element as an asset render target. When visible, matching assets from `assets.json` will be dynamically inserted. |
 
 
@@ -142,15 +135,15 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 And present on this page:
 
 ```html
-<box data-cv-toggle="localToggle">
+<cv-toggle category="localToggle">
 
 Local Toggle content 
 
-</box>
+</cv-toggle>
 ```
 
 
-<box data-cv-toggle="localToggle">
+<cv-toggle category="localToggle">
 
 Local Toggle content 
 
@@ -169,7 +162,7 @@ Scroll within this panel to review additional best practices:
 - Consider a sensible default combination of toggles for new visitors.
 These extra lines ensure the box remains scrollable while conveying useful guidance.
 
-</box>
+</cv-toggle>
 
 ## Registering Local Toggles for the Widget
 
@@ -194,7 +187,7 @@ This will ensure that the specified local toggles appear in the configuration wi
 	* Check that your `config.toggles` array is correctly formatted with `id` and `label` for each toggle.
 
 * No effect when toggling?
-	* Ensure the element uses data-cv-toggle and matches an active toggle ID.
+	* Ensure the element uses `<cv-toggle category="...">` and the category matches a configured toggle ID.
 
 * URL state not persisting in URL bar?
 	* Enable showUrl in the configuration.

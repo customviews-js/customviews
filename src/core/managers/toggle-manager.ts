@@ -1,28 +1,11 @@
 import type { ToggleId } from "../../types/types";
 import { AssetsManager } from "./assets-manager";
 import { renderAssetInto } from "../render";
-import { LegacyToggleRenderer } from "./legacy-toggle-renderer";
 
 /**
- * ToggleManager handles discovery, visibility, and asset rendering for toggle elements
+ * ToggleManager handles discovery and asset rendering for toggle elements
  */
 export class ToggleManager {
-
-  /**
-   * Apply toggle visibility to a given list of toggle elements
-   */
-  public static applyTogglesVisibility(allToggleElements: HTMLElement[], activeToggles: ToggleId[], peekToggles: ToggleId[] = []): void {
-    allToggleElements.forEach(el => {
-      const categories = this.getToggleCategories(el);
-      const shouldShow = categories.some(cat => activeToggles.includes(cat));
-      const shouldPeek = !shouldShow && categories.some(cat => peekToggles.includes(cat));
-
-      if (el.tagName !== 'CV-TOGGLE') {
-        // Legacy Logic: Delegated to Renderer
-        LegacyToggleRenderer.update(el, shouldShow, shouldPeek);
-      }
-    });
-  }
 
   /**
    * Render assets into a given list of toggle elements that are currently visible
@@ -45,17 +28,12 @@ export class ToggleManager {
   }
 
   /**
-   * Get toggle categories from an element (supports both data attributes and cv-toggle elements)
+   * Get toggle categories from a cv-toggle element.
    * Note: a toggle can have multiple categories.
    */
   private static getToggleCategories(el: HTMLElement): string[] {
-    if (el.tagName.toLowerCase() === 'cv-toggle') {
-      const category = el.getAttribute('category');
-      return (category || '').split(/\s+/).filter(Boolean);
-    } else {
-      const data = el.dataset.cvToggle || el.dataset.customviewsToggle;
-      return (data || '').split(/\s+/).filter(Boolean);
-    }
+    const category = el.getAttribute('category');
+    return (category || '').split(/\s+/).filter(Boolean);
   }
 
   /**
@@ -67,7 +45,7 @@ export class ToggleManager {
 
   /**
    * Scans a given DOM subtree for toggle elements and initializes them.
-   * This includes applying visibility and rendering assets.
+   * This includes rendering assets for visible toggles.
    */
   public static initializeToggles(
     root: HTMLElement,
@@ -75,14 +53,13 @@ export class ToggleManager {
     assetsManager: AssetsManager
   ): void {
     const allToggleElements: HTMLElement[] = [];
-    if (root.matches('[data-cv-toggle], [data-customviews-toggle], cv-toggle')) {
+    if (root.matches('cv-toggle')) {
       allToggleElements.push(root);
     }
-    root.querySelectorAll('[data-cv-toggle], [data-customviews-toggle], cv-toggle').forEach(el => allToggleElements.push(el as HTMLElement));
+    root.querySelectorAll('cv-toggle').forEach(el => allToggleElements.push(el as HTMLElement));
 
     if (allToggleElements.length === 0) return;
 
-    this.applyTogglesVisibility(allToggleElements, activeToggles);
     this.renderToggleAssets(allToggleElements, activeToggles, assetsManager);
   }
 }
