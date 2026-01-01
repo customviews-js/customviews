@@ -3,16 +3,14 @@ import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
-import { VisibilityManager } from "./managers/visibility-manager";
 import { ToggleManager } from "./managers/toggle-manager";
 import { ScrollManager } from "../utils/scroll-manager";
-import { injectCoreStyles } from "../styles/styles";
 import { ShareManager } from "./managers/share-manager";
 import { FocusManager } from "./managers/focus-manager";
 import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './state/config';
 import { DataStore, initStore } from "./state/data-store.svelte";
 
-const TOGGLE_SELECTOR = "[data-cv-toggle], [data-customviews-toggle], cv-toggle";
+const TOGGLE_SELECTOR = "cv-toggle";
 const TABGROUP_SELECTOR = 'cv-tabgroup';
 
 interface ComponentRegistry {
@@ -41,7 +39,6 @@ export class CustomViewsCore {
   private rootEl: HTMLElement;
   private assetsManager: AssetsManager;
   private persistenceManager: PersistenceManager;
-  private visibilityManager: VisibilityManager;
   private observer: MutationObserver | null = null;
   private shareManager: ShareManager;
   private focusManager: FocusManager;
@@ -64,7 +61,6 @@ export class CustomViewsCore {
     this.assetsManager = opt.assetsManager;
     this.rootEl = opt.rootEl || document.body;
     this.persistenceManager = new PersistenceManager();
-    this.visibilityManager = new VisibilityManager();
     this.showUrlEnabled = opt.showUrl ?? false;
     
     // Initialize Reactive Store Singleton
@@ -125,7 +121,6 @@ export class CustomViewsCore {
    * 4. Binds history events.
    */
   public async init() {
-    injectCoreStyles();
     this.scan(this.rootEl);
 
     this.initializeNewComponents();
@@ -182,16 +177,12 @@ export class CustomViewsCore {
       // pause observer to avoid loops? 
       this.observer?.disconnect();
       
-      const { shownToggles, peekToggles } = this.store.state;
-      
-      // Filter visible toggles
-      const finalToggles = this.visibilityManager.filterVisibleToggles(shownToggles || []);
+      const { shownToggles } = this.store.state;
       
       const allToggleElements = Array.from(this.componentRegistry.toggles);
 
-      // Apply Toggles
-      ToggleManager.applyTogglesVisibility(allToggleElements, finalToggles, peekToggles || []);
-      ToggleManager.renderToggleAssets(allToggleElements, finalToggles, this.assetsManager);
+      // Render assets for visible toggles (cv-toggle elements self-manage visibility via store)
+      ToggleManager.renderToggleAssets(allToggleElements, shownToggles || [], this.assetsManager);
 
       this.observer?.observe(this.rootEl, {
         childList: true,
@@ -215,7 +206,7 @@ export class CustomViewsCore {
         newComponentsFound = true;
         
         // Update Store Registry
-        const id = toggleEl.dataset.cvToggle || toggleEl.dataset.customviewsToggle || toggleEl.getAttribute('cv-toggle');
+        const id = toggleEl.getAttribute('category');
         if (id) this.store.registerToggle(id);
       }
     });
