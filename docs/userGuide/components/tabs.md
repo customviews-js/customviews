@@ -617,6 +617,7 @@ The TabGroupConfig object is for defining tabgroups in JSON configuration.
 | `id` | string | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
 | `label` | string | - | Display name shown in the widget. |
 | `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the widget on pages where it's used. |
+| `description` | string | - | Optional description to display below functionality. |
 | `tabs` | TabConfig[] | **(required)** | Array of tab configurations. |
 
 #### TabConfig
