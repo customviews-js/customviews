@@ -5,7 +5,7 @@
   import { store } from '../../core/state/data-store.svelte';
 
   // Props using Svelte 5 runes
-  let { visible = false, peek = false, category = '' }: { visible?: boolean; peek?: boolean; category?: string } = $props();
+  let { category = '' }: { category?: string } = $props();
 
   let localExpanded = $state(false);
 
@@ -13,23 +13,20 @@
   let categories = $derived((category || '').split(/\s+/).filter(Boolean));
 
   // Derive visibility from store state
-  let storeVisible = $derived.by(() => {
+  let showState = $derived.by(() => {
       const shownToggles = store.state.shownToggles ?? [];
       return categories.some(cat => shownToggles.includes(cat));
   });
 
-  let storePeek = $derived.by(() => {
+  // Derive peek state from store state
+  let peekState = $derived.by(() => {
       const peekToggles = store.state.peekToggles ?? [];
-      return !storeVisible && categories.some(cat => peekToggles.includes(cat));
+      return !showState && categories.some(cat => peekToggles.includes(cat));
   });
 
-  // Combine component props (overrides) with store state
-  let effectiveVisible = $derived(visible || storeVisible);
-  let effectivePeek = $derived(peek || storePeek);
-
-  let showContent = $derived(effectiveVisible || (effectivePeek && localExpanded));
-  let isPeeking = $derived(!effectiveVisible && effectivePeek && !localExpanded);
-  let isHidden = $derived(!effectiveVisible && !effectivePeek);
+  let showFullContent = $derived(showState || (peekState && localExpanded));
+  let showPeekContent = $derived(!showState && peekState && !localExpanded);
+  let isHidden = $derived(!showState && !peekState);
 
   function toggleExpand(e: MouseEvent) {
     e.stopPropagation();
@@ -37,12 +34,12 @@
   }
 </script>
 
-<div class="cv-toggle-wrapper" class:expanded={showContent && !isPeeking} class:peeking={isPeeking} class:hidden={isHidden}>
+<div class="cv-toggle-wrapper" class:expanded={showFullContent && !showPeekContent} class:peeking={showPeekContent} class:hidden={isHidden}>
   <div class="cv-toggle-content">
     <slot></slot>
   </div>
 
-  {#if isPeeking || (peek && localExpanded)}
+  {#if peekState}
     <button 
       class="cv-expand-btn" 
       aria-label={localExpanded ? "Collapse content" : "Expand content"}
