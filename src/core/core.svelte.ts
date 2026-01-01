@@ -4,8 +4,7 @@ import type { AssetsManager } from "./managers/assets-manager";
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
 
-import { FocusManager } from "./managers/focus-manager";
-import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from './state/config';
+import { FocusService } from "./services/focus-service";
 import { DataStore, initStore } from "./stores/main-store.svelte";
 
 export interface CustomViewsOptions {
@@ -28,7 +27,7 @@ export class CustomViewsCore {
   
   private rootEl: HTMLElement;
   private persistenceManager: PersistenceManager;
-  private focusManager: FocusManager;
+  private focusService: FocusService;
   
   private showUrlEnabled: boolean;
   private destroyEffectRoot?: () => void;
@@ -48,11 +47,9 @@ export class CustomViewsCore {
     this.resolveInitialState();
 
     // Resolve Exclusions
-    const excludedTags = [...DEFAULT_EXCLUDED_TAGS, ...(opt.config.shareExclusions?.tags || [])];
-    const excludedIds = [...DEFAULT_EXCLUDED_IDS, ...(opt.config.shareExclusions?.ids || [])];
-    const commonOptions = { excludedTags, excludedIds };
-
-    this.focusManager = new FocusManager(this.rootEl, commonOptions);
+    this.focusService = new FocusService(this.rootEl, { 
+       shareExclusions: opt.config.shareExclusions || {}
+    });
   }
 
   private resolveInitialState() {
@@ -120,10 +117,10 @@ export class CustomViewsCore {
        if (urlState) {
           this.store.applyState(urlState);
        }
-       this.focusManager.handleUrlChange();
+       this.focusService.handleUrlChange();
     });
 
-    this.focusManager.init();
+    this.focusService.init();
   }
 
   // --- Public APIs for Widget/Other ---
@@ -141,5 +138,7 @@ export class CustomViewsCore {
 
   public destroy() {
       this.destroyEffectRoot?.();
+      this.focusService.destroy();
   }
 }
+
