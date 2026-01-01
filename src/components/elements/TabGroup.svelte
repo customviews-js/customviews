@@ -10,7 +10,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { getPinIcon } from '../../utils/icons';
-  import { store } from '../../core/state/data-store.svelte';
+  import { store } from '../../core/stores/main-store.svelte';
 
   //  ID of the tabgroup Group
   let { groupId } = $props<{ groupId?: string }>();
