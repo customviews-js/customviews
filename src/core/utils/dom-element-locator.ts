@@ -81,7 +81,8 @@ export function serialize(descriptors: AnchorDescriptor[]): string {
         h: d.textHash
     }));
     const json = JSON.stringify(minified);
-    return btoa(encodeURIComponent(json));
+    // Standard approach for UTF-8 to Base64
+    return btoa(unescape(encodeURIComponent(json)));
 }
 
 /**
@@ -89,7 +90,8 @@ export function serialize(descriptors: AnchorDescriptor[]): string {
  */
 export function deserialize(encoded: string): AnchorDescriptor[] {
     try {
-        const json = decodeURIComponent(atob(encoded));
+        // Standard approach for Base64 to UTF-8
+        const json = decodeURIComponent(escape(atob(encoded)));
         const minified = JSON.parse(json);
         return minified.map((m: any) => ({
             tag: m.t,
