@@ -546,16 +546,23 @@ This feature is pending review.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `id` | string | **(required)** | Unique identifier for the tab group. Tab groups with the same ID will synchronize. |
+| `group-id` | string | **(required)** | Unique identifier for the tab group. Tab groups with the same ID will synchronize. |
 | `nav` | string | `"auto"` | Navigation display mode. Use `"none"` to hide navigation headers. |
 
 ### `<cv-tab>` Attributes
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `id` | string | **(required)** | Unique identifier for the tab within its group. |
+| `tab-id` | string | **(required)** | Unique identifier for the tab within its group. |
 | `header` | string | Tab ID | Display label for the tab in the navigation bar. Plain text only (no icons or HTML). Use `<cv-tab-header>` for rich formatting. |
 
+### `<cv-tab-header>` Attributes
+
+No required attributes, just a container for the tab header content.
+
+### `<cv-tab-body>` Attributes
+
+No required attributes, just a container for the tab body content.
 
 # Configuration
 

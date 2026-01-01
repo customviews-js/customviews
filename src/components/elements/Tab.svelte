@@ -1,8 +1,16 @@
-<svelte:options customElement="cv-tab" />
+<svelte:options
+  customElement={{
+    tag: 'cv-tab',
+    props: {
+      tabId: { reflect: true, type: 'String', attribute: 'tab-id' },
+      header: { reflect: true, type: 'String', attribute: 'header' }
+    }
+  }}
+/>
 
 <script lang="ts">
   // Props using Svelte 5 runes
-  let { active = false }: { active?: boolean } = $props();
+  let { active = false, tabId = '', header = '' }: { active?: boolean; tabId?: string; header?: string } = $props();
 
   // Component is a container that toggles visibility.
   // The parent (TabGroup) will set the .active property directly.

@@ -15,34 +15,50 @@ Toggles let you show or hide sections of a page based on a category (for example
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 <cv-toggle toggle-id="mac">
-    <h2>macOS</h2>
-    <p>macOS-specific install steps...</p>
+
+**macOS**
+macOS-specific install steps...
+
 </cv-toggle>
 
 <cv-toggle toggle-id="linux">
-    <h2>Linux</h2>
-    <p>Linux-specific install steps...</p>
+
+**Linux**
+Linux-specific install steps...
+
 </cv-toggle>
 
 <cv-toggle toggle-id="windows">
-    <h2>Windows</h2>
-    <p>Windows-specific install steps...</p>
+
+**Windows**
+Windows-specific install steps...
+
 </cv-toggle>
+
 </variable>
 <variable name="output">
 <cv-toggle toggle-id="mac">
-    <h3>macOS</h3>
-    <p>macOS-specific install steps...</p>
+
+**macOS**
+
+macOS-specific install steps...
+
 </cv-toggle>
 
 <cv-toggle toggle-id="linux">
-    <h3>Linux</h3>
-    <p>Linux-specific install steps...</p>
+
+**Linux**
+
+Linux-specific install steps...
+
 </cv-toggle>
 
 <cv-toggle toggle-id="windows">
-    <h3>Windows</h3>
-    <p>Windows-specific install steps...</p>
+
+**Windows**
+
+Windows-specific install steps...
+
 </cv-toggle>
 </variable>
 </include>
@@ -94,8 +110,8 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
-| `category` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
-| `assetId` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `assetId="mac-assets"`. |
+| `toggle-id` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
+| `asset-id` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
 
 
 ### Visibility Resolution Order
