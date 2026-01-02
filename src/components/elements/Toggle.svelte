@@ -172,12 +172,14 @@
   .has-border {
     box-sizing: border-box; /* Ensure padding/border doesn't increase width */
     
-    /* Stronger border for better visibility */
-    border: 1px solid rgba(0, 0, 0, 0.25);
+    /* Dashed border */
+    border: 2px dashed rgba(0, 0, 0, 0.15);
     border-bottom: none;
     
-    /* Clearer shadow */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); 
+    /* Inner shadow to look like it's going into something + outer shadow */
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.05), /* Subtle outer */
+      inset 0 -15px 10px -10px rgba(0, 0, 0, 0.1); /* Inner bottom shadow */
     
     border-radius: 8px 8px 0 0;
     
@@ -193,9 +195,10 @@
 
   /* When expanded, complete the border */
   .has-border.expanded {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.15);
     border-radius: 8px; /* Round all corners */
     padding-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Remove inner shadow when expanded */
   }
 
   /* Peek State */
