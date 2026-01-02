@@ -25,7 +25,8 @@ A checklist for updating git-mastery...
 - [ ] Change usage of `id` to `tabId` for tabs
 - [ ] Change usage of `defaultState` to `default` for tab groups
 - [ ] Change usage of `defaultState` to `default` for toggles
-- [ ] Change usage of `widget` to `settings` for settings
+- [ ] Change usage of `widget` to `settings` for settings (config.widget becomes config.settings)
+- [ ] Usage of `icon` customizations (new customizations: config.settings.icon.color, backgroundColor, opacity, scale)
 
 **Find and Replace Patterns:**
 | Find | Replace | Notes |

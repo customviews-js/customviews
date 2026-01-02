@@ -97,5 +97,16 @@ export interface ConfigFile {
     welcomeMessage?: string;
     /** Whether to show tab groups section in widget (default: true) */
     showTabGroups?: boolean;
+    /** Custom icon styling options */
+    icon?: {
+      /** Custom icon color */
+      color?: string;
+      /** Custom background color */
+      backgroundColor?: string;
+      /** Custom opacity (0-1) */
+      opacity?: number;
+      /** Custom scale factor */
+      scale?: number;
+    };
   };
 }

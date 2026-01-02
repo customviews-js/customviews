@@ -168,7 +168,12 @@
     position={options.position} 
     title={options.title} 
     pulse={showPulse} 
-    onclick={openModal} 
+    onclick={openModal}
+    
+    iconColor={options.icon?.color}
+    backgroundColor={options.icon?.backgroundColor}
+    opacity={options.icon?.opacity}
+    scale={options.icon?.scale}
   />
 
   <!-- Modal -->

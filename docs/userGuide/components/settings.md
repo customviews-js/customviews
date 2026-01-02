@@ -56,7 +56,14 @@ Enable and configure the settings in your `customviews.config.json`:
       "title": "Customize View",
       "description": "Toggle different content sections to customize your view.",
       "showWelcome": true,
-      "welcomeMessage": "Custom Welcome Message"
+      "welcomeMessage": "Custom Welcome Message",
+      "showTabGroups": true,
+      "icon": {
+        "color": "#333",
+        "backgroundColor": "#fff",
+        "opacity": 0.8,
+        "scale": 1.2
+      }
     }
   }
 }
@@ -65,15 +72,20 @@ Enable and configure the settings in your `customviews.config.json`:
 ## Settings Options
 
 | Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `enabled` | boolean | `true` | Whether to show the settings widget on the page. |
-| `position` | string | `"middle-left"` | Widget position: `"top-right"`, `"top-left"`, `"bottom-right"`, `"bottom-left"`, `"middle-left"`, `"middle-right"`. |
-| `theme` | string | `"light"` | Widget theme: `"light"` or `"dark"`. |
-| `showReset` | boolean | `true` | Whether to show the reset to default button. |
-| `title` | string | `"Custom Views"` | Title shown in the settings icon tooltip and modal header. |
-| `description` | string | `null` | Optional description text shown in the modal. When not set, the description section is omitted entirely. |
-| `showWelcome` | boolean | `false` | Whether to show a welcome modal on first visit. |
-| `welcomeMessage` | string | Welcome message HTML | Message shown in the welcome callout. |
+| :--- | :--- | :--- | :--- |
+| `enabled` | `boolean` | `true` | Enables or disables the settings widget. |
+| `position` | `string` | `'middle-left'` | Position of the widget icon. Options: `top-left`, `top-right`, `bottom-left`, `bottom-right`, `middle-left`, `middle-right`. |
+| `theme` | `string` | `'light'` | Theme of the widget. Options: `light`, `dark`. |
+| `showReset` | `boolean` | `true` | Whether to show the reset to default button. |
+| `title` | `string` | `'Customize View'` | Title displayed in the settings modal. |
+| `description` | `string` | - | Description text displayed in the settings modal. |
+| `showWelcome` | `boolean` | `false` | Whether to show a welcome callout on first visit. |
+| `welcomeMessage` | `string` | - | Message to display in the welcome callout. |
+| `showTabGroups` | `boolean` | `true` | Whether to show the "Tab Groups" section in the settings panel. |
+| `icon.color` | `string` | `rgba(0, 0, 0, 0.9)` | Custom color for the settings icon. |
+| `icon.backgroundColor` | `string` | `rgba(255, 255, 255, 0.92)` | Custom background color for the settings icon. |
+| `icon.opacity` | `number` | `0.6` | Opacity of the settings icon (0-1). |
+| `icon.scale` | `number` | `1` | Scale factor for the settings icon. |
 
 
 ## Integration with Toggles and Tabs

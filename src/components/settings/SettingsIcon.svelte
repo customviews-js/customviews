@@ -3,6 +3,12 @@
   export let title: string | undefined = 'Customize View';
   export let pulse: boolean | undefined = false;
   export let onclick: (() => void) | undefined = undefined;
+  
+  // Custom Styles
+  export let iconColor: string | undefined = undefined;
+  export let backgroundColor: string | undefined = undefined;
+  export let opacity: number | undefined = undefined;
+  export let scale: number | undefined = undefined;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -14,6 +20,10 @@
   tabindex="0"
   aria-label="Open Custom Views Settings"
   {onclick}
+  style:--cv-icon-color={iconColor}
+  style:--cv-icon-bg={backgroundColor}
+  style:--cv-icon-opacity={opacity}
+  style:transform={scale && scale !== 1 ? `translateY(-50%) scale(${scale})` : null}
 >
   ⚙
 </div>
@@ -21,9 +31,9 @@
 <style>
   .cv-settings-icon {
     position: fixed;
-    background: rgba(255, 255, 255, 0.92);
-    color: rgba(0, 0, 0, 0.9);
-    opacity: 0.6;
+    background: var(--cv-icon-bg, rgba(255, 255, 255, 0.92));
+    color: var(--cv-icon-color, rgba(0, 0, 0, 0.9));
+    opacity: var(--cv-icon-opacity, 0.6);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -39,8 +49,8 @@
   }
 
   .cv-settings-icon:hover {
-    background: rgba(255, 255, 255, 1);
-    color: rgba(0, 0, 0, 1);
+    background: var(--cv-icon-bg, rgba(255, 255, 255, 1));
+    color: var(--cv-icon-color, rgba(0, 0, 0, 1));
     opacity: 1;
     border-color: rgba(0, 0, 0, 0.3);
   }

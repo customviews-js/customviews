@@ -32,11 +32,26 @@ export interface SettingsOptions {
 
   /** Whether to show tab groups section in widget (default: true) */
   showTabGroups?: boolean;
+
+  /** Custom icon styling options */
+  icon?: {
+    /** Custom icon color (e.g. #000, rgba(0,0,0,1)) */
+    color?: string;
+
+    /** Custom background color (e.g. #fff, rgba(255,255,255,1)) */
+    backgroundColor?: string;
+
+    /** Custom opacity (0-1) */
+    opacity?: number;
+
+    /** Custom scale factor (default 1) */
+    scale?: number;
+  };
 }
 
 export class CustomViewsSettings {
   private app: ReturnType<typeof mount> | null = null;
-  private options: Required<SettingsOptions>;
+  private options: Required<Omit<SettingsOptions, 'container' | 'position' | 'theme' | 'showReset' | 'title' | 'description' | 'showWelcome' | 'welcomeMessage' | 'showTabGroups' | 'icon'>> & Omit<SettingsOptions, 'container'> & { container: HTMLElement };
 
   constructor(options: SettingsOptions) {
     // Set defaults
@@ -50,8 +65,14 @@ export class CustomViewsSettings {
       description: options.description || '',
       showWelcome: options.showWelcome ?? false,
       welcomeMessage: options.welcomeMessage || 'Customize your reading experience (theme, toggles, tabs) here.',
-      showTabGroups: options.showTabGroups ?? true
-    };
+      showTabGroups: options.showTabGroups ?? true,
+      icon: {
+        color: options.icon?.color,
+        backgroundColor: options.icon?.backgroundColor,
+        opacity: options.icon?.opacity,
+        scale: options.icon?.scale ?? 1
+      }
+    } as any;
   }
 
   /**
