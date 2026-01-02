@@ -99,15 +99,15 @@
     height: auto;
   }
 
-  :global(.cv-widget-theme-dark) .card {
+  :global(.cv-settings-theme-dark) .card {
     background: #101722;
   }
 
-  :global(.cv-widget-theme-dark) .title {
+  :global(.cv-settings-theme-dark) .title {
     color: #e2e8f0;
   }
 
-  :global(.cv-widget-theme-dark) .description {
+  :global(.cv-settings-theme-dark) .description {
     color: rgba(255, 255, 255, 0.6);
   }
 </style>

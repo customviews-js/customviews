@@ -1,12 +1,12 @@
 import type { CustomViewsCore } from "./core.svelte";
-import MainWidget from "../components/widget/MainWidget.svelte";
+import Settings from "../components/settings/Settings.svelte";
 import { mount, unmount } from "svelte";
 
-export interface WidgetOptions {
+export interface SettingsOptions {
   /** The CustomViews core instance to control */
   core: CustomViewsCore;
 
-  /** Container element where the widget should be rendered */
+  /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
 
   /** Widget position: 'top-right', 'top-left', 'bottom-right', 'bottom-left', 'middle-left', 'middle-right' */
@@ -34,11 +34,11 @@ export interface WidgetOptions {
   showTabGroups?: boolean;
 }
 
-export class CustomViewsWidget {
+export class CustomViewsSettings {
   private app: ReturnType<typeof mount> | null = null;
-  private options: Required<WidgetOptions>;
+  private options: Required<SettingsOptions>;
 
-  constructor(options: WidgetOptions) {
+  constructor(options: SettingsOptions) {
     // Set defaults
     this.options = {
       core: options.core,
@@ -55,7 +55,7 @@ export class CustomViewsWidget {
   }
 
   /**
-   * Render the widget
+   * Render the settings widget
    */
   public renderModalIcon(): void {
     if (this.app) {
@@ -63,7 +63,7 @@ export class CustomViewsWidget {
     }
 
     // Mount Svelte App using Svelte 5 API
-    this.app = mount(MainWidget, {
+    this.app = mount(Settings, {
       target: this.options.container,
       props: {
         core: this.options.core,
@@ -73,7 +73,7 @@ export class CustomViewsWidget {
   }
 
   /**
-   * Remove the widget from DOM
+   * Remove the settings widget from DOM
    */
   public destroy(): void {
     if (this.app) {

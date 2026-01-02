@@ -12,7 +12,7 @@
   * [MarkBind]({{baseUrl}}/userGuide/integrations/setupWithMarkbind.html)
 * [Configuration]({{baseUrl}}/userGuide/configuration.html)
 * [Components]({{baseUrl}}/userGuide/components/all.html)
-  * [Widget]({{baseUrl}}/userGuide/components/widget.html)
+  * [Settings]({{baseUrl}}/userGuide/components/settings.html)
   * [Toggles]({{baseUrl}}/userGuide/components/toggles.html)
   * [Tabs]({{baseUrl}}/userGuide/components/tabs.html)
   * [Share & Focus]({{baseUrl}}/userGuide/components/share.html)

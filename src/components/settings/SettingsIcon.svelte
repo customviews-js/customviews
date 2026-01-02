@@ -6,19 +6,20 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div 
-  class="cv-widget-icon cv-widget-{position} {pulse ? 'cv-pulse' : ''}" 
+  class="cv-settings-icon cv-settings-{position} {pulse ? 'cv-pulse' : ''}" 
   {title} 
   role="button"
   tabindex="0"
-  aria-label="Open Custom Views"
+  aria-label="Open Custom Views Settings"
   {onclick}
 >
   ⚙
 </div>
 
 <style>
-  .cv-widget-icon {
+  .cv-settings-icon {
     position: fixed;
     background: rgba(255, 255, 255, 0.92);
     color: rgba(0, 0, 0, 0.9);
@@ -35,14 +36,14 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
-  .cv-widget-icon:hover {
+  .cv-settings-icon:hover {
     background: rgba(255, 255, 255, 1);
     color: rgba(0, 0, 0, 1);
     opacity: 1;
   }
 
   /* Top-right */
-  .cv-widget-top-right {
+  .cv-settings-top-right {
     top: 20px;
     right: 0;
     border-radius: 18px 0 0 18px;
@@ -51,7 +52,7 @@
   }
 
   /* Top-left */
-  .cv-widget-top-left {
+  .cv-settings-top-left {
     top: 20px;
     left: 0;
     border-radius: 0 18px 18px 0;
@@ -60,7 +61,7 @@
   }
 
   /* Bottom-right */
-  .cv-widget-bottom-right {
+  .cv-settings-bottom-right {
     bottom: 20px;
     right: 0;
     border-radius: 18px 0 0 18px;
@@ -69,7 +70,7 @@
   }
 
   /* Bottom-left */
-  .cv-widget-bottom-left {
+  .cv-settings-bottom-left {
     bottom: 20px;
     left: 0;
     border-radius: 0 18px 18px 0;
@@ -78,7 +79,7 @@
   }
 
   /* Middle-left */
-  .cv-widget-middle-left {
+  .cv-settings-middle-left {
     top: 50%;
     left: 0;
     transform: translateY(-50%);
@@ -88,7 +89,7 @@
   }
 
   /* Middle-right */
-  .cv-widget-middle-right {
+  .cv-settings-middle-right {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
@@ -97,22 +98,22 @@
     justify-content: flex-start;
   }
 
-  .cv-widget-top-right,
-  .cv-widget-middle-right,
-  .cv-widget-bottom-right,
-  .cv-widget-top-left,
-  .cv-widget-middle-left,
-  .cv-widget-bottom-left {
+  .cv-settings-top-right,
+  .cv-settings-middle-right,
+  .cv-settings-bottom-right,
+  .cv-settings-top-left,
+  .cv-settings-middle-left,
+  .cv-settings-bottom-left {
     height: 36px;
     width: 36px;
   }
 
-  .cv-widget-middle-right:hover,
-  .cv-widget-top-right:hover,
-  .cv-widget-bottom-right:hover,
-  .cv-widget-top-left:hover,
-  .cv-widget-middle-left:hover,
-  .cv-widget-bottom-left:hover {
+  .cv-settings-middle-right:hover,
+  .cv-settings-top-right:hover,
+  .cv-settings-bottom-right:hover,
+  .cv-settings-top-left:hover,
+  .cv-settings-middle-left:hover,
+  .cv-settings-bottom-left:hover {
     width: 55px;
   }
 
@@ -133,34 +134,34 @@
   }
 
   @media (max-width: 768px) {
-    .cv-widget-top-right,
-    .cv-widget-top-left {
+    .cv-settings-top-right,
+    .cv-settings-top-left {
       top: 10px;
     }
 
-    .cv-widget-bottom-right,
-    .cv-widget-bottom-left {
+    .cv-settings-bottom-right,
+    .cv-settings-bottom-left {
       bottom: 10px;
     }
 
-    .cv-widget-top-right,
-    .cv-widget-bottom-right,
-    .cv-widget-middle-right {
+    .cv-settings-top-right,
+    .cv-settings-bottom-right,
+    .cv-settings-middle-right {
       right: 0;
     }
 
-    .cv-widget-top-left,
-    .cv-widget-bottom-left,
-    .cv-widget-middle-left {
+    .cv-settings-top-left,
+    .cv-settings-bottom-left,
+    .cv-settings-middle-left {
       left: 0;
     }
 
-    .cv-widget-icon {
+    .cv-settings-icon {
       width: 60px;
       height: 32px;
     }
 
-    .cv-widget-icon:hover {
+    .cv-settings-icon:hover {
       width: 75px;
     }
   }

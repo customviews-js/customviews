@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { CustomViewsCore } from '../../core/core.svelte';
-  import type { WidgetOptions } from '../../core/widget';
+  import type { SettingsOptions } from '../../core/settings';
   
-  import WidgetIcon from './WidgetIcon.svelte';
+  import SettingsIcon from './SettingsIcon.svelte';
   import Modal from '../modal/Modal.svelte';
   import IntroCallout from './IntroCallout.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
@@ -15,7 +15,7 @@
   import FocusBanner from '../focus/FocusBanner.svelte';
   import { findHighestVisibleElement, scrollToElement } from '../../utils/scroll-utils';
 
-  let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
+  let { core, options } = $props<{ core: CustomViewsCore, options: SettingsOptions }>();
 
   // Derived state
   const store = $derived(core.store);
@@ -164,7 +164,7 @@
   <FocusBanner />
 
   <!-- Widget Icon -->
-  <WidgetIcon 
+  <SettingsIcon 
     position={options.position} 
     title={options.title} 
     pulse={showPulse} 

@@ -119,7 +119,7 @@
     transform: translateY(-50%);
   }
 
-  :global(.cv-widget-theme-dark) .callout {
+  :global(.cv-settings-theme-dark) .callout {
     background: #1f2937;
     color: #f3f4f6;
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -127,10 +127,10 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
   
-  :global(.cv-widget-theme-dark) .close-btn {
+  :global(.cv-settings-theme-dark) .close-btn {
     color: #9ca3af;
   }
 
-  :global(.cv-widget-theme-dark) .close-btn:hover {
+  :global(.cv-settings-theme-dark) .close-btn:hover {
     color: #e5e7eb;
   }</style>

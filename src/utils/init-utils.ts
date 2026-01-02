@@ -1,6 +1,6 @@
 import { prependBaseUrl } from "./url-utils";
 import type { ConfigFile } from "../types/types";
-import { CustomViewsWidget } from "../core/widget";
+import { CustomViewsSettings } from "../core/settings";
 import type { CustomViewsCore } from "../core/core.svelte";
 
 /**
@@ -52,7 +52,7 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
   // Default minimal config
   const fallbackConfig: ConfigFile = { 
     config: {},
-    widget: { enabled: true }
+    settings: { enabled: true }
   };
 
   try {
@@ -76,19 +76,19 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
 }
 
 /**
- * Initializes the widget if enabled in the config.
+ * Initializes the settings if enabled in the config.
  */
-export function initializeWidget(core: CustomViewsCore, config: ConfigFile): CustomViewsWidget | undefined {
-  if (config.widget?.enabled !== false) {
-    const widget = new CustomViewsWidget({
+export function initializeWidget(core: CustomViewsCore, config: ConfigFile): CustomViewsSettings | undefined {
+  if (config.settings?.enabled !== false) {
+    const settings = new CustomViewsSettings({
       core,
-      ...config.widget
+      ...config.settings
     });
-    widget.renderModalIcon();
-    console.log('[CustomViews] Widget initialized and rendered');
-    return widget;
+    settings.renderModalIcon();
+    console.log('[CustomViews] Settings initialized and rendered');
+    return settings;
   } else {
-    console.log('[CustomViews] Widget disabled in config - skipping initialization');
+    console.log('[CustomViews] Settings disabled in config - skipping initialization');
     return undefined;
   }
 }

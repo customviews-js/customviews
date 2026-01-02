@@ -23,12 +23,12 @@ This page lists the available components and how to use them.
 
 [Using Tabs :fa-solid-arrow-up-right-from-square:]({{baseUrl}}/userGuide/components/tabs.html)
   </card>
-  <card header="**Widget**">
-    The widget provides a floating interface for users to customize their view. <br><br>
+  <card header="**Settings**">
+    The settings component provides a floating interface for users to customize their view. <br><br>
 
-<img src="{{baseUrl}}/assets/components/widget.svg" alt="Widget icon" style="display: block; margin: 0 auto; width: 50px; height: 50px;"> <br>
+<img src="{{baseUrl}}/assets/components/settings.svg" alt="Settings icon" style="display: block; margin: 0 auto; width: 50px; height: 50px;"> <br>
 
-[Using the Widget :fa-solid-arrow-up-right-from-square:]({{baseUrl}}/userGuide/components/widget.html)
+[Using Settings :fa-solid-arrow-up-right-from-square:]({{baseUrl}}/userGuide/components/settings.html)
   </card>
   <card header="**Share**">
     The share component allows users to share their custom view with others. <br><br>

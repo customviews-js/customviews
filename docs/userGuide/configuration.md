@@ -37,7 +37,8 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
     ]
   },
   "baseUrl": "/website-baseUrl",
-  "widget": {
+  "baseUrl": "/website-baseUrl",
+  "settings": {
     "enabled": true,
     "position": "middle-left",
     "theme": "light",
@@ -46,7 +47,7 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
     "description": "Toggle different content sections to customize your view.",
     "showWelcome": false,
     "welcomeTitle": "Site Customization",
-    "welcomeMessage": "This site uses CustomViews. Use the widget to customize your experience.",
+    "welcomeMessage": "This site uses CustomViews. Use the settings to customize your experience.",
     "showTabGroups": true
   }
 }
@@ -68,7 +69,7 @@ Refer to individual components for more details on each configuration option.
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `groupId` | `string` | Yes | Unique identifier for the tab group. |
-| `label` | `string` | No | Display name for the tab group (shown in widget). |
+| `label` | `string` | No | Display name for the tab group (shown in settings). |
 | `tabs` | `object[]` | Yes | Array of tab configurations. |
 | `tabs[].tabId` | `string` | Yes | Unique identifier for the tab. |
 | `tabs[].label` | `string` | No | Display label for the tab. |
@@ -99,19 +100,19 @@ When no user preferences are saved, CustomViews determines the initial state fro
 | `baseUrl` | `string` | `/` | Base URL for resolving relative paths (can also be `baseURL`). Specifies the website's base URL (for example `/docs`). |
 | `showUrl` | `boolean` | `false` | Whether to encode state in the URL for shareable links. |
 
-### Widget Configuration (`widget`)
+### Settings Configuration (`settings`)
 
 | Field | Type | Default | Description |
 |-------|------|---------|-------------|
-| `enabled` | `boolean` | `true` | Whether to show the floating widget on the page. |
+| `enabled` | `boolean` | `true` | Whether to show the floating settings widget on the page. |
 | `position` | `string` | `"middle-left"` | Widget position: `"top-right"`, `"top-left"`, `"bottom-right"`, `"bottom-left"`, `"middle-left"`, `"middle-right"`. |
 | `theme` | `string` | `"light"` | Widget theme: `"light"` or `"dark"`. |
 | `showReset` | `boolean` | `true` | Whether to show the reset to default button. |
-| `title` | `string` | `"Custom Views"` | Title shown in widget tooltip and modal header. |
-| `description` | `string` | `"Toggle different content sections..."` | Description text shown in the main widget modal. |
+| `title` | `string` | `"Custom Views"` | Title shown in settings tooltip and modal header. |
+| `description` | `string` | `"Toggle different content sections..."` | Description text shown in the main settings modal. |
 | `showWelcome` | `boolean` | `false` | Whether to show a welcome callout on first visit. |
 | `welcomeMessage` | `string` | `"Customize your reading experience..."` | Message shown in the welcome callout. |
-| `showTabGroups` | `boolean` | `true` | Whether to show tab groups section in widget. |
+| `showTabGroups` | `boolean` | `true` | Whether to show tab groups section in settings. |
 
 ## Script Tag Attributes
 

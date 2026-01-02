@@ -78,8 +78,8 @@ export interface ConfigFile {
   showUrl?: boolean;
 
   /** Widget configuration options */
-  widget?: {
-    /** Whether the widget is enabled */
+  settings?: {
+    /** Whether the settings widget is enabled */
     enabled?: boolean;
     /** Widget position */
     position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';

@@ -1,5 +1,5 @@
 /**
- * Icon utilities for CustomViews widget
+ * Icon utilities for CustomViews settings
  * Centralized SVG icons for better maintainability and reusability
  */
 

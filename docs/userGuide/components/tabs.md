@@ -571,7 +571,7 @@ No required attributes, just a container for the tab body content.
 Tab groups work out of the box with no setup — just use the `<cv-tabgroup>` and `<cv-tab>` elements.  
 By default, the first tab is shown.
 
-For more control (such as widget integration or default selections), configure them in your `customviews.config.json`.
+For more control (such as settings integration or default selections), configure them in your `customviews.config.json`.
 
 ```json
 {
@@ -613,9 +613,9 @@ The TabGroupConfig object is for defining tabgroups in JSON configuration.
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `groupId` | string | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
-| `label` | string | - | Display name shown in the widget. |
+| `label` | string | - | Display name shown in the settings. |
 | `description` | string | - | Optional description to display below functionality. |
-| `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the widget on pages where it's used. |
+| `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the settings on pages where it's used. |
 | `default` | string | - | The `tabId` of the tab that should be selected by default. |
 | `tabs` | TabConfig[] | **(required)** | Array of tab configurations. |
 
@@ -626,21 +626,21 @@ The TabConfig object is for defining tabs in JSON configuration.
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `tabId` | string | **(required)** | Tab identifier (must match HTML `cv-tab` id). |
-| `label` | string | - | Display label for the tab (used in widget and as fallback for header). |
+| `label` | string | - | Display label for the tab (used in settings and as fallback for header). |
 
 
 
 <box type="info">
 
-**Note:** Configuration is completely optional. Tab groups will work fine without being added to the config file—they'll just default to showing the first tab and won't appear in the widget.
+**Note:** Configuration is completely optional. Tab groups will work fine without being added to the config file—they'll just default to showing the first tab and won't appear in the settings.
 </box>
 
 
 # Global vs. Local Tab Groups
 
-By default, all tab groups defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
+By default, all tab groups defined in your configuration are **global**—they will appear in the settings on every page of your site.
 
-You can mark a tab group as **local** to make it appear in the widget *only* on pages where that specific tab group is actually used. This is useful for keeping the widget clean and only showing relevant options to the user.
+You can mark a tab group as **local** to make it appear in the settings *only* on pages where that specific tab group is actually used. This is useful for keeping the settings clean and only showing relevant options to the user.
 
 To mark a tab group as local, add `"isLocal": true` to its configuration.
 
@@ -679,7 +679,7 @@ For example, this tab group is only specific to this page:
 
 <br>
 
-By setting it as **local** in the configuration, the "Local Tab Configuration" option will only show up in the widget on pages containing that tab group.
+By setting it as **local** in the configuration, the "Local Tab Configuration" option will only show up in the settings on pages containing that tab group.
 
 If all tab configurations (and other component configurations) are local, and a given page has no configured elements, neither the modal nor the modal icon will appear.
 
@@ -706,14 +706,14 @@ If all tab configurations (and other component configurations) are local, and a 
 
 # Defining Local Components
 
-You can ensure that specific local tab groups are always available in the widget, even if they are not initially visible on the page. This is useful for tab groups that are loaded dynamically (e.g., inside a dropdown menu) and might not be detected by the plugin otherwise.
+You can ensure that specific local tab groups are always available in the settings, even if they are not initially visible on the page. This is useful for tab groups that are loaded dynamically (e.g., inside a dropdown menu) and might not be detected by the plugin otherwise.
 
 To do this, add a `data-cv-page-local-tabs` attribute to any element (an empty `<div>` is a good choice). The value of this attribute should be a comma-separated list of the local tab group IDs you want to register.
 
-For example, to make the local tab groups with IDs `OS` and `language` available in the widget, add the following to your page:
+For example, to make the local tab groups with IDs `OS` and `language` available in the settings, add the following to your page:
 
 ```html
 <div data-cv-page-local-tabs="OS, language"></div>
 ```
 
-This will ensure that the specified local tab groups appear in the configuration widget, allowing users to control them even if they are not immediately visible on the page.
+This will ensure that the specified local tab groups appear in the configuration settings, allowing users to control them even if they are not immediately visible on the page.

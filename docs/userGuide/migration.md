@@ -1,3 +1,11 @@
+<span id="title" class="d-none">{{ title }}</span>
+
+<frontmatter>
+  title: "User Guide - {{ title }}"
+  layout: userGuide.md
+  pageNav: 2
+</frontmatter>
+
 # Migration Guide
 
 For most recent changes... (sorry for the confusion)
@@ -9,6 +17,7 @@ A checklist for updating git-mastery...
 - [ ] Change usage of `data-cv-toggle` to use `<cv-toggle>` components
 - [ ] Change usage of `<cv-tabgroup id="XXX">` to use `<cv-tabgroup group-id="XXX">`
 - [ ] Change usage of `<cv-tab id="XXX">` to use `<cv-tab tab-id="XXX">`
+- [ ] Change usage of `<cv-toggle category="XXX">` to use `<cv-toggle toggle-id="XXX">`
 
 **Configuration side:**
 - [ ] Change usage of `id` to `toggleId` for toggles
@@ -16,6 +25,7 @@ A checklist for updating git-mastery...
 - [ ] Change usage of `id` to `tabId` for tabs
 - [ ] Change usage of `defaultState` to `default` for tab groups
 - [ ] Change usage of `defaultState` to `default` for toggles
+- [ ] Change usage of `widget` to `settings` for settings
 
 **Find and Replace Patterns:**
 | Find | Replace | Notes |
@@ -98,6 +108,29 @@ The configuration format has been updated to match the new attribute names and s
 *   **New**: Define defaults directly on the component configuration.
     *   **Toggles**: Add `"default": "show" | "peek" | "hide"`. (Implicit default is now `"show"`).
     *   **Tab Groups**: Add `"default": "tabId"` to specify the default tab.
+
+### Widget Configuration Rename
+
+*   **Renamed**: The top-level configuration key `widget` has been renamed to `settings`.
+*   **Class**: `CustomViewsWidget` is now `CustomViewsSettings`.
+
+**Before:**
+```json
+{
+  "widget": {
+    "enabled": true
+  }
+}
+```
+
+**After:**
+```json
+{
+  "settings": {
+    "enabled": true
+  }
+}
+```
 
 **Before:**
 ```json

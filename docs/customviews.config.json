@@ -34,6 +34,7 @@
       {
         "groupId": "fruit",
         "label": "Fruit Selection",
+        "description": "Select your favorite fruit.",
         "isLocal": false,
         "default": "pear",
         "tabs": [
@@ -45,9 +46,10 @@
     ]
   },
   "baseUrl": "/customviews",
-  "widget": {
+  "settings": {
     "position": "middle-left",
-    "title": "Custom Views Widget",
+    "title": "Custom Views Settings Panel",
+    "description": "Customize your view by toggling different content sections.",
     "showWelcome": true,
     "showTabGroups": true
   }
