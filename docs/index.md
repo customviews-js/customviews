@@ -33,7 +33,7 @@ Whether you are building a static site, a dashboard, or a documentation portal, 
 
 Choose your operating system to see platform-specific content:
 
-<cv-toggle toggle-id="mac" peek-border show-label>
+<cv-toggle toggle-id="mac" show-peek-border show-label>
 
 <box>
 

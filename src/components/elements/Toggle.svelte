@@ -3,7 +3,7 @@
     props: {
       toggleId: { reflect: true, type: 'String', attribute: 'toggle-id' },
       assetId: { reflect: true, type: 'String', attribute: 'asset-id' },
-      peekBorder: { reflect: true, type: 'Boolean', attribute: 'peek-border' },
+      showPeekBorder: { reflect: true, type: 'Boolean', attribute: 'show-peek-border' },
       showLabel: { reflect: true, type: 'Boolean', attribute: 'show-label' }
     }
   }} />
@@ -14,26 +14,25 @@
   import { renderAssetInto } from '../../core/render';
 
   // Props using Svelte 5 runes
-  let { toggleId = '', assetId = '', peekBorder = false, showLabel = false }: { toggleId?: string; assetId?: string; peekBorder?: boolean; showLabel?: boolean } = $props();
+  let { toggleId = '', assetId = '', showPeekBorder = false, showLabel = false }: { toggleId?: string; assetId?: string; showPeekBorder?: boolean; showLabel?: boolean } = $props();
   // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
   let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
+  let toggleConfig = $derived(store.config.toggles?.find(t => t.toggleId === toggleIds[0]));
+  
   $effect(() => {
     toggleIds.forEach(id => store.registerToggle(id));
   });
 
   // Derive label text from config
   let labelText = $derived.by(() => {
-      if (!store.config.toggles || toggleIds.length === 0) return '';
-      // Find the first matching toggle config
-      const toggleConfig = store.config.toggles.find(t => t.toggleId === toggleIds[0]);
-      return toggleConfig?.label || toggleIds[0];
+      if (!toggleConfig) return '';
+      return toggleConfig.label || toggleIds[0];
   });
 
   let localExpanded = $state(false);
   let hasRendered = $state(false);
   let contentEl: HTMLDivElement;
   let scrollHeight = $state(0);
-  let resizeObserver: ResizeObserver;
 
   // Derive visibility from store state
   let showState = $derived.by(() => {
@@ -52,22 +51,22 @@
 
   // Setup ResizeObserver to track content height changes (e.g. images loading, window resize)
   $effect(() => {
-    if (contentEl) {
-       resizeObserver = new ResizeObserver(() => {
-          scrollHeight = contentEl.scrollHeight;
-          // If content shrinks below peek height, update small content state
-          if (peekState) {
-             isSmallContent = scrollHeight <= PEEK_HEIGHT;
-          }
-       });
-       resizeObserver.observe(contentEl);
-       
-       // Initial measurement
-       scrollHeight = contentEl.scrollHeight;
-    }
+    if (!contentEl) return;
+
+    const observer = new ResizeObserver(() => {
+        scrollHeight = contentEl.scrollHeight;
+        // If content shrinks below peek height, update small content state
+        if (peekState) {
+            isSmallContent = scrollHeight <= PEEK_HEIGHT;
+        }
+    });
+    observer.observe(contentEl);
     
+    // Initial measurement
+    scrollHeight = contentEl.scrollHeight;
+
     return () => {
-       resizeObserver?.disconnect();
+       observer.disconnect();
     };
   });
 
@@ -80,7 +79,7 @@
   let currentMaxHeight = $derived.by(() => {
       if (isHidden) return '0px';
       if (showPeekContent) return `${PEEK_HEIGHT}px`;
-      if (showFullContent) return scrollHeight > 0 ? `${scrollHeight}px` : 'none'; 
+      if (showFullContent) return scrollHeight > 0 ? `${scrollHeight}px` : '9999px'; 
       return '0px';
   });
 
@@ -104,7 +103,7 @@
   class:peeking={showPeekContent} 
   class:peek-mode={peekState}
   class:hidden={isHidden} 
-  class:has-border={peekBorder && peekState}
+  class:has-border={showPeekBorder && peekState}
 >
   {#if showLabel && labelText && !isHidden}
      <div class="cv-toggle-label">{labelText}</div>
@@ -182,7 +181,7 @@
     
     border-radius: 8px 8px 0 0;
     
-    padding: 12px 12px 0 12px; /* Top padding matched to bottom padding */
+    padding: 12px 12px 0 12px; /* bottom 0 px until expanded */
     margin-top: 4px;
   }
   
@@ -219,7 +218,7 @@
     padding: 2px 8px;
     border-radius: 4px;
     z-index: 10;
-    pointer-events: none;
+    pointer-events: auto;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
 

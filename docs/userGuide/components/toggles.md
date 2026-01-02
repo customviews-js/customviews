@@ -76,6 +76,18 @@ This allows content to appear as long as one toggle category is active.
 </cv-toggle>
 ```
 
+### Toggles with Peek Mode
+
+You can set a toggle to "peek" mode, where it shows a preview of the content.
+Use `show-peek-border` to add a border to the peek view to make it stand out.
+We recommend `show-label` to add a label to the toggle, so users know what it is.
+
+```html
+<cv-toggle toggle-id="toggle1" show-peek-border show-label>
+  <p>This content is in peek mode!</p>
+</cv-toggle>
+```
+
 **Precedence Behaviour**:
 
 When multiple IDs are used, the effective visibility is determined by the most "positive" state among all matching IDs. The order of precedence is:
@@ -103,7 +115,7 @@ This means that "Show" overrides "Peek", and "Peek" overrides "Hide". Explicit i
 |------|------|----------|-------------|
 | `toggle-id` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
 | `asset-id` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
-| `peek-border` | boolean | `false` | If present, adds a subtle border to the top and sides of the toggle content. Only visible when the toggle is in peek mode (collapsed or expanded). |
+| `show-peek-border` | boolean | `false` | If present, adds a subtle border to the top and sides of the toggle content. The border is only applied while the toggle is in Peek mode (whether collapsed or user‑expanded). When the toggle is fully shown (non‑Peek), no border is rendered even if this attribute is set. |
 | `show-label` | boolean | `false` | If present, displays the category label (e.g. "MacOS") at the top-left corner of the toggle. |
 
 ## Configuration 
