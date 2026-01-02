@@ -295,7 +295,7 @@ Install JavaScript by downloading Node.js from nodejs.org.
 
 By default, the **first tab** in a group is selected when the page loads (unless the user has previously selected a different tab, in which case their selection is restored).
 
-You can override this default behavior and specify which tab should be initially selected using the `customviews.config.json`, in the `defaultState` property.
+You can override this default behavior and specify which tab should be initially selected using the `customviews.config.json`, by adding a `default` property to the `tabGroup`.
 
 **Default Tab Example Configuration:**
 To make the "orange" tab selected by default for the "fruit" group:
@@ -303,11 +303,13 @@ To make the "orange" tab selected by default for the "fruit" group:
 ```json
 {
   "config": {
-    "defaultState": {
-      "tabs": {
-        "fruit": "orange"
+    "tabGroups": [
+      {
+        "groupId": "fruit",
+        "default": "orange",
+        "tabs": [...]
       }
-    }
+    ]
   }
 }
 ```
@@ -579,6 +581,7 @@ For more control (such as widget integration or default selections), configure t
         "groupId": "fruit",
         "label": "Fruit Selection",
         "isLocal": false,
+        "default": "apple",
         "tabs": [
           { "tabId": "apple", "label": "Apple" },
           { "tabId": "orange", "label": "Orange" },
@@ -589,19 +592,14 @@ For more control (such as widget integration or default selections), configure t
         "groupId": "localTabGroup",
         "label": "Page specific tabgroup",
         "isLocal": true,
+        "default": "c",
         "tabs": [
           { "tabId": "a", "label": "Alpha" },
           { "tabId": "b", "label": "Beta" },
           { "tabId": "c", "label": "Charlie" }
         ]
       },
-    ],
-    "defaultState": {
-      "tabs": {
-        "fruit": "apple",
-        "localTabGroup": "c"
-      }
-    },
+    ]
   }
 }
 ```
@@ -618,6 +616,7 @@ The TabGroupConfig object is for defining tabgroups in JSON configuration.
 | `label` | string | - | Display name shown in the widget. |
 | `description` | string | - | Optional description to display below functionality. |
 | `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the widget on pages where it's used. |
+| `default` | string | - | The `tabId` of the tab that should be selected by default. |
 | `tabs` | TabConfig[] | **(required)** | Array of tab configurations. |
 
 #### TabConfig

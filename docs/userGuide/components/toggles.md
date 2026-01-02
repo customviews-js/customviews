@@ -93,15 +93,11 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 {
   "config": {
     "toggles": [
-      { "toggleId": "mac", "label": "MacOS", "description": "Show content for macOS users" },
-      { "toggleId": "linux", "label": "Linux", "description": "Show content for Linux users" },
-      { "toggleId": "windows", "label": "Windows" },
+      { "toggleId": "mac", "label": "MacOS", "description": "Show content for macOS users", "default": "show" },
+      { "toggleId": "linux", "label": "Linux", "description": "Show content for Linux users", "default": "peek" },
+      { "toggleId": "windows", "label": "Windows", "default": "hide" },
       { "toggleId": "localToggle", "label": "Local Toggle", "description": "Show content for local users", "isLocal": true }
-    ],
-    "defaultState": {
-      "shownToggles": ["mac"],
-      "peekToggles": ["linux"]
-    }
+    ]
   }
 }
 ```
@@ -115,6 +111,7 @@ Also refer to the [Configuration](configuration.md) section for a summary of all
 | `toggleId` | string | **required** | Defines the category for the cv-toggle element. Example: `toggleId="mac"`. |
 | `label` | string | - | Label for the toggle in the widget. |
 | `description` | string | - | Description for the toggle in the widget. |
+| `default` | string | `show` | Default state: `"show"`, `"hide"`, or `"peek"`. |
 | `isLocal` | boolean | false | Whether the toggle is local (only appears in the widget on pages where it is used). |
 
 
@@ -122,7 +119,7 @@ Also refer to the [Configuration](configuration.md) section for a summary of all
 
 1. URL state (if `showUrl` is enabled)
 2. Persisted local storage state
-3. Default configuration (`config.defaultState`)
+3. Default configuration (per-item `default`)
 
 Elements whose toggles match the active state are shown; all others are hidden.
 

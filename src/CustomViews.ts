@@ -53,7 +53,7 @@ export class CustomViews {
     } else {
       console.error("No config provided, using minimal default config");
       // Create a minimal default config
-      config = { toggles: [], defaultState: {} };
+      config = {};
     }
 
     const coreOptions: CustomViewsOptions = {
