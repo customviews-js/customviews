@@ -20,20 +20,15 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
 {
   "config": {
     "toggles": [
-      { "toggleId": "toggle1", "label": "Toggle 1", "description": "Description for Toggle 1" }, 
-      { "toggleId": "toggle2", "label": "Toggle 2", "description": "Description for Toggle 2" },
+      { "toggleId": "toggle1", "label": "Toggle 1", "description": "Description for Toggle 1", "default": "show" }, 
+      { "toggleId": "toggle2", "label": "Toggle 2", "description": "Description for Toggle 2", "default": "hide" },
       { "toggleId": "localToggle", "label": "Local Toggle", "description": "Description for Local Toggle", "isLocal": true },
     ],
-    "defaultState": {
-      "shownToggles": ["toggle1"],
-      "tabs": {
-        "group1": "tabA"
-      }
-    },
     "tabGroups": [
       {
         "groupId": "group1",
         "label": "Group 1",
+        "default": "tabA",
         "tabs": [
           { "tabId": "tabA", "label": "Tab A" },
           { "tabId": "tabB", "label": "Tab B" }
@@ -66,10 +61,6 @@ Refer to individual components for more details on each configuration option.
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `toggles` | `object[]` | No | Array of toggle configurations. Each object must have a `toggleId`. |
-| `defaultState` | `object` | No | Default state when no user preferences are saved. If omitted, the system will auto-generate a default state with all toggles enabled and all tab groups set to their first tab. |
-| `defaultState.shownToggles` | `string[]` | No | Toggles enabled (fully visible) by default. |
-| `defaultState.peekToggles` | `string[]` | No | Toggles in peek mode (preview) by default. |
-| `defaultState.tabs` | `object` | No | Default tab selections: `{groupId: tabId}`. |
 | `tabGroups` | `object[]` | No | Array of tab group configurations. |
 
 ### Tab Group Configuration
@@ -81,6 +72,7 @@ Refer to individual components for more details on each configuration option.
 | `tabs` | `object[]` | Yes | Array of tab configurations. |
 | `tabs[].tabId` | `string` | Yes | Unique identifier for the tab. |
 | `tabs[].label` | `string` | No | Display label for the tab. |
+| `default` | `string` | No | The `tabId` of the tab that should be selected by default. If omitted, the first tab is selected. |
 
 ### Toggles Configuration
 
@@ -90,14 +82,17 @@ Refer to individual components for more details on each configuration option.
 | `label` | `string` | No | Display label for the toggle. |
 | `description` | `string` | No | Description for the toggle. |
 | `isLocal` | `boolean` | No | Whether the toggle is a local toggle. |
+| `default` | `string` | No | Default state: `"show"`, `"hide"`, or `"peek"`. Implicit default is `"show"`. |
 
 
 ## Default State Behavior
 
-When `defaultState` is not provided or is omitted from the config, CustomViews automatically generates a default state:
+## Default State Behavior
+ 
+When no user preferences are saved, CustomViews determines the initial state from the configuration:
 
-- **Toggles**: All toggles from configuration are enabled
-- **Tabs**: All tab groups are set to their first tab
+- **Toggles**: Toggles are enabled by default. Toggles with `"default": "peek"` are in peek mode. Toggles with `"default": "hide"` are hidden.
+- **Tabs**: Tab groups select the tab specified in `default`, or the first tab if not specified.
 
 ### Example: Auto-generated Default State
 
@@ -105,13 +100,14 @@ When `defaultState` is not provided or is omitted from the config, CustomViews a
 {
   "config": {
     "toggles": [
-      { "toggleId": "mac", "label": "MacOS" },
-      { "toggleId": "linux", "label": "Linux" },
-      { "toggleId": "windows", "label": "Windows" }
+      { "toggleId": "mac", "label": "MacOS", "default": "show" },
+      { "toggleId": "linux", "label": "Linux", "default": "peek" },
+      { "toggleId": "windows", "label": "Windows", "default": "show" }
     ],
     "tabGroups": [
       {
         "groupId": "os",
+        "default": "first",
         "tabs": [
           { "tabId": "first", "label": "First Tab" },
           { "tabId": "second", "label": "Second Tab" }
@@ -232,9 +228,8 @@ import { CustomViews } from './lib/custom-views';
 const core = await CustomViews.init({
   config: {
     toggles: [
-      { toggleId: 'toggle1', label: 'Toggle 1' }
-    ],
-    defaultState: { shownToggles: ['toggle1'] }
+      { toggleId: 'toggle1', label: 'Toggle 1', default: 'show' }
+    ]
   },
   assetsJsonPath: '/assets.json',
   baseUrl: '/customviews'

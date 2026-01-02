@@ -1,4 +1,4 @@
-import type { Config, State, ToggleId } from "../../types/types";
+import type { Config, State } from "../../types/types";
 import type { AssetsManager } from "../managers/assets-manager";
 
 
@@ -69,11 +69,7 @@ export class DataStore {
 
     constructor(initialConfig: Config = {}) {
         this.config = initialConfig;
-        if (initialConfig.defaultState) {
-            this.state = this.cloneState(initialConfig.defaultState);
-        } else {
-            this.state = this.computeDefaultState();
-        }
+        this.state = this.computeDefaultState();
     }
 
     // --- Actions ---
@@ -87,16 +83,6 @@ export class DataStore {
     setPinnedTab(groupId: string, tabId: string) {
         if (!this.state.tabs) this.state.tabs = {};
         this.state.tabs[groupId] = tabId;
-    }
-
-    /**
-     * Update the visibility of toggles.
-     * @param shown List of IDs for toggles in "Show" state.
-     * @param peek List of IDs for toggles in "Peek" state.
-     */
-    setToggles(shown: ToggleId[], peek: ToggleId[]) {
-        this.state.shownToggles = shown;
-        this.state.peekToggles = peek;
     }
 
     /**
@@ -156,22 +142,34 @@ export class DataStore {
     }
 
     // --- Helpers ---
+    public computeDefaultState(): State {
+        const shownToggles: string[] = [];
+        const peekToggles: string[] = [];
+        const tabs: Record<string, string> = {};
 
-    private cloneState(state: State): State {
-        return JSON.parse(JSON.stringify(state));
-    }
-
-    private computeDefaultState(): State {
-        if (this.config.defaultState) {
-             return this.cloneState(this.config.defaultState);
+        // 1. Process Toggles
+        if (this.config.toggles) {
+            this.config.toggles.forEach(toggle => {
+                if (toggle.default === 'peek') {
+                    peekToggles.push(toggle.toggleId);
+                } else if (toggle.default === 'hide') {
+                    // Start hidden
+                } else {
+                    // 'show' is the implicit default (or if explicitly set to 'show')
+                    shownToggles.push(toggle.toggleId);
+                }
+            });
         }
 
-        const tabs: Record<string, string> = {};
-        
-        // Default: First tab of each group
+        // 2. Process Tab Groups
         if (this.config.tabGroups) {
             this.config.tabGroups.forEach(group => {
-                if (group.tabs && group.tabs.length > 0) {
+                // If a specific default tab is configured, use it
+                if (group.default) {
+                    tabs[group.groupId] = group.default;
+                } 
+                // Fallback: Use the first tab if no specific default is set
+                else if (group.tabs && group.tabs.length > 0) {
                      const firstTab = group.tabs[0];
                      if (firstTab?.tabId) {
                          tabs[group.groupId] = firstTab.tabId;
@@ -180,14 +178,9 @@ export class DataStore {
             });
         }
 
-        // Default: All toggles shown (if logic implies all enabled by default, 
-        // essentially we assume empty shownToggles means none explicitly shown unless logic dictates otherwise. 
-        // Original core logic: "all toggles on". Let's match original logic.)
-        const shownToggles = this.config.toggles?.map(t => t.toggleId) || [];
-
         return {
             shownToggles,
-            peekToggles: [],
+            peekToggles,
             tabs
         };
     }
@@ -206,9 +199,7 @@ export function initStore(config: Config): DataStore {
     Object.assign(store.config, config);
     
     // Compute new state
-    const newState = config.defaultState 
-        ? store['cloneState'](config.defaultState)
-        : store['computeDefaultState']();
+    const newState = store.computeDefaultState();
     
     // Mutate state properties in place to preserve reactivity
     store.state.shownToggles = newState.shownToggles ?? [];

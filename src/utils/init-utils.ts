@@ -51,7 +51,7 @@ export function getScriptAttributes(): ScriptAttributes {
 export async function fetchConfig(configPath: string, baseURL: string): Promise<ConfigFile> {
   // Default minimal config
   const fallbackConfig: ConfigFile = { 
-    config: { toggles: [], defaultState: {}},
+    config: {},
     widget: { enabled: true }
   };
 

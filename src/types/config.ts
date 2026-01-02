@@ -1,4 +1,4 @@
-import type { State } from './state';
+
 
 /**
  * Configuration for a single tab within a tab group
@@ -24,6 +24,8 @@ export interface TabGroupConfig {
   isLocal?: boolean;
   /** Optional description to display below label */
   description?: string;
+  /** Default tab ID to select */
+  default?: string;
 }
 
 /**
@@ -38,6 +40,8 @@ export interface ToggleConfig {
   isLocal?: boolean;
   /** Optional description to display below functionality */
   description?: string;
+  /** Default state for this toggle: 'show', 'hide', or 'peek' */
+  default?: 'show' | 'hide' | 'peek';
 }
 
 /**
@@ -54,8 +58,6 @@ export interface ShareExclusions {
 export interface Config {
   /** All available toggle categories */
   toggles?: ToggleConfig[];
-  /** Default state for the site */
-  defaultState?: State;
   /** Optional tab group configurations */
   tabGroups?: TabGroupConfig[];
   /** Excluded tags and IDs for Share/Focus modes */

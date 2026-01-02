@@ -2,10 +2,10 @@
   "config": {
     "toggles": [
       {"toggleId": "lt","label": "Local Toggle","isLocal": true},
-      {"toggleId": "localToggle","label": "Local Toggle Label","isLocal": true},
-      {"toggleId": "mac","label": "MacOS", "description": "Show content for macOS users"},
+      {"toggleId": "localToggle","label": "Local Toggle Label","isLocal": true, "default": "peek"},
+      {"toggleId": "mac","label": "MacOS", "description": "Show content for macOS users", "default": "peek"},
       {"toggleId": "linux","label": "Linux", "description": "Show content for Linux users"},
-      {"toggleId": "windows","label": "Windows"}
+      {"toggleId": "windows","label": "Windows", "default": "show"}
     ],
     "tabGroups": [
       {
@@ -13,6 +13,7 @@
         "label": "Local Tab Configuration",
         "description": "This is a local tab group, that only appears on pages where it's used.This is a local tab group, that only appears on pages where it's used.This is a local tab group, that only appears on pages where it's used.This is a local tab group, that only appears on pages where it's used.",
         "isLocal": true,
+        "default": "lt1",
         "tabs": [
           {"tabId": "lt1","label": "Tab Option 1"},
           {"tabId": "lt2","label": "Tab Option 2"},  
@@ -34,21 +35,14 @@
         "groupId": "fruit",
         "label": "Fruit Selection",
         "isLocal": false,
+        "default": "pear",
         "tabs": [
           {"tabId": "apple","label": "Apple"},
           {"tabId": "orange","label": "Orange"},
           {"tabId": "pear","label": "Pear"}
         ]
       }
-    ],
-    "defaultState": {
-      "shownToggles": ["windows"],
-      "peekToggles": ["mac", "localToggle"],
-      "tabs": {
-        "fruit": "pear",
-        "ltab": "lt1"
-      }
-    }
+    ]
   },
   "baseUrl": "/customviews",
   "widget": {
