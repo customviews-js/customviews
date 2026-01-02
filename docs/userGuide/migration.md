@@ -19,6 +19,9 @@ A checklist for updating git-mastery...
 - [ ] Change usage of `<cv-tab id="XXX">` to use `<cv-tab tab-id="XXX">`
 - [ ] Change usage of `<cv-toggle category="XXX">` to use `<cv-toggle toggle-id="XXX">`
 
+- [ ] New attribute `show-peek-border` for `<cv-toggle>`
+- [ ] New attribute `show-label` for `<cv-toggle>`
+
 **Configuration side:**
 - [ ] Change usage of `id` to `toggleId` for toggles
 - [ ] Change usage of `id` to `groupId` for tab groups
