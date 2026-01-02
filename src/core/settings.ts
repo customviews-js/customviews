@@ -33,9 +33,9 @@ export interface SettingsOptions {
     /** Whether to enable pulse animation */
     enablePulse?: boolean;
     /** Custom background color */
-    backgroundColor?: string;
+    backgroundColor?: string | undefined;
     /** Custom text color */
-    textColor?: string;
+    textColor?: string | undefined;
   };
 
   /** Custom icon styling options */
@@ -43,22 +43,42 @@ export interface SettingsOptions {
     /** Widget position (default: middle-left) */
     position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
     /** Custom icon color (e.g. #000, rgba(0,0,0,1)) */
-    color?: string;
+    color?: string | undefined;
 
     /** Custom background color (e.g. #fff, rgba(255,255,255,1)) */
-    backgroundColor?: string;
+    backgroundColor?: string | undefined;
 
     /** Custom opacity (0-1) */
-    opacity?: number;
+    opacity?: number | undefined;
 
     /** Custom scale factor (default 1) */
     scale?: number;
   };
 }
 
+export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
+  container: HTMLElement;
+  theme: NonNullable<SettingsOptions['theme']>;
+  panel: Required<NonNullable<SettingsOptions['panel']>>;
+  callout: {
+    show: boolean;
+    message: string;
+    enablePulse: boolean;
+    backgroundColor?: string | undefined;
+    textColor?: string | undefined;
+  };
+  icon: {
+    position: NonNullable<NonNullable<SettingsOptions['icon']>['position']>;
+    color?: string | undefined;
+    backgroundColor?: string | undefined;
+    opacity?: number | undefined;
+    scale: number;
+  };
+};
+
 export class CustomViewsSettings {
   private app: ReturnType<typeof mount> | null = null;
-  private options: Required<Omit<SettingsOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'>> & Omit<SettingsOptions, 'container'> & { container: HTMLElement };
+  private options: ResolvedSettingsOptions;
 
   constructor(options: SettingsOptions) {
     // Set defaults
@@ -86,7 +106,7 @@ export class CustomViewsSettings {
         opacity: options.icon?.opacity,
         scale: options.icon?.scale ?? 1
       }
-    } as any;
+    };
   }
 
   /**

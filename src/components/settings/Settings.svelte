@@ -3,9 +3,9 @@
   import type { CustomViewsCore } from '../../core/core.svelte';
   import type { SettingsOptions } from '../../core/settings';
   
+  import IntroCallout from './IntroCallout.svelte';
   import SettingsIcon from './SettingsIcon.svelte';
   import Modal from '../modal/Modal.svelte';
-  import IntroCallout from './IntroCallout.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
   import { showToast } from '../../core/stores/toast-store';
   import { shareStore } from '../../core/stores/share-store';
@@ -25,6 +25,7 @@
   let showCallout = $state(false);
   let isResetting = $state(false);
   let showPulse = $state(false);
+  let settingsIcon: { resetPosition: () => void } | undefined = $state();
 
   // Nav Visibility
   let navsVisible = $state(true);
@@ -84,6 +85,7 @@
   function handleReset() {
     isResetting = true;
     core.resetToDefault();
+    settingsIcon?.resetPosition();
     // Sync local state
     navsVisible = true; 
     
@@ -168,11 +170,11 @@
 
   <!-- Widget Icon -->
   <SettingsIcon 
+    bind:this={settingsIcon}
     position={options.icon.position} 
     title={options.panel.title} 
     pulse={showPulse} 
     onclick={openModal}
-    
     iconColor={options.icon?.color}
     backgroundColor={options.icon?.backgroundColor}
     opacity={options.icon?.opacity}
