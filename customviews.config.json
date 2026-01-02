@@ -1,52 +1,48 @@
 {
   "config": {
     "toggles": [
-      {"id": "lt","label": "Local Toggle","isLocal": true},
-      {"id": "localToggle","label": "Local Toggle Label","isLocal": true},
-      {"id": "mac","label": "MacOS"},
-      {"id": "linux","label": "Linux"},
-      {"id": "windows","label": "Windows"}
+      {"toggleId": "lt","label": "Local Toggle","isLocal": true},
+      {"toggleId": "localToggle","label": "Local Toggle Label","isLocal": true, "default": "peek"},
+      {"toggleId": "mac","label": "MacOS", "description": "Show content for macOS users", "default": "peek"},
+      {"toggleId": "linux","label": "Linux", "description": "Show content for Linux users"},
+      {"toggleId": "windows","label": "Windows", "default": "show"}
     ],
     "tabGroups": [
       {
-        "id": "ltab",
+        "groupId": "ltab",
         "label": "Local Tab Configuration",
+        "description": "This is a local tab group, that only appears on pages where it's used.",
         "isLocal": true,
+        "default": "lt1",
         "tabs": [
-          {"id": "lt1","label": "Tab Option 1"},
-          {"id": "lt2","label": "Tab Option 2"},  
-          {"id": "lt3","label": "Tab Option 3"}
+          {"tabId": "lt1","label": "Tab Option 1"},
+          {"tabId": "lt2","label": "Tab Option 2"},  
+          {"tabId": "lt3","label": "Tab Option 3"}
         ]
       },
       {
-        "id": "localTabGroup",
+        "groupId": "localTabGroup",
         "label": "Page specific tabgroup",
+        "description": "This is a local tab group, that only appears on pages where it's used.",
         "isLocal": true,
         "tabs": [
-          { "id": "a", "label": "Alpha" },
-          { "id": "b", "label": "Beta" },
-          { "id": "c", "label": "Charlie" }
+          { "tabId": "a", "label": "Alpha" },
+          { "tabId": "b", "label": "Beta" },
+          { "tabId": "c", "label": "Charlie" }
         ]
       },
       {
-        "id": "fruit",
+        "groupId": "fruit",
         "label": "Fruit Selection",
         "isLocal": false,
+        "default": "pear",
         "tabs": [
-          {"id": "apple","label": "Apple"},
-          {"id": "orange","label": "Orange"},
-          {"id": "pear","label": "Pear"}
+          {"tabId": "apple","label": "Apple"},
+          {"tabId": "orange","label": "Orange"},
+          {"tabId": "pear","label": "Pear"}
         ]
       }
-    ],
-    "defaultState": {
-      "shownToggles": ["windows"],
-      "peekToggles": ["mac", "localToggle"],
-      "tabs": {
-        "fruit": "pear",
-        "ltab": "lt1"
-      }
-    }
+    ]
   },
   "baseUrl": "/customviews",
   "widget": {

@@ -36,6 +36,15 @@
       "headingKeywords": {}
     },
     {
+      "src": "devGuide/framework.md",
+      "title": "Architectural Overview",
+      "headings": {
+        "architectural-overview": "Architectural Overview",
+        "why-svelte": "Why Svelte?"
+      },
+      "headingKeywords": {}
+    },
+    {
       "src": "devGuide/index.md",
       "headings": {},
       "headingKeywords": {}
@@ -50,6 +59,19 @@
         "using-the-beta-release": "Using the beta release",
         "2-production-release-stable": "2. Production Release (Stable)",
         "using-the-production-release": "Using the production release"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/shareFunction.md",
+      "title": "Developer Guide - Share Functionality",
+      "headings": {
+        "share-function": "Share Function",
+        "architecture": "Architecture",
+        "1-state-management-share-store-ts": "1. State Management (share-store.ts)",
+        "2-the-overlay-shareoverlay-svelte": "2. The Overlay (ShareOverlay.svelte)",
+        "3-element-location-domelementlocator-ts": "3. Element Location (DomElementLocator.ts)",
+        "usage-flow": "Usage Flow"
       },
       "headingKeywords": {}
     },
@@ -148,6 +170,8 @@
         "attributes-and-amp-options": "Attributes &amp; Options",
         "cv-tabgroup-attributes": "&lt;cv-tabgroup&gt; Attributes",
         "cv-tab-attributes": "&lt;cv-tab&gt; Attributes",
+        "cv-tab-header-attributes": "&lt;cv-tab-header&gt; Attributes",
+        "cv-tab-body-attributes": "&lt;cv-tab-body&gt; Attributes",
         "configuration": "Configuration",
         "json-configuration-option-types": "JSON Configuration Option Types",
         "global-vs-local-tab-groups": "Global vs. Local Tab Groups",
@@ -160,13 +184,10 @@
       "title": "CustomViews - Toggle Component",
       "headings": {
         "toggles": "Toggles",
-        "macos": "macOS",
-        "linux": "Linux",
-        "windows": "Windows",
         "multi-id-toggles": "Multi-ID Toggles",
+        "attributes-and-amp-options-of-cv-toggle": "Attributes &amp; Options of &lt;cv-toggle&gt;",
         "configuration": "Configuration",
-        "key-fields": "Key Fields",
-        "attributes-and-amp-options": "Attributes &amp; Options",
+        "key-configuration-fields-in-customviews-config-json-for-toggles": "Key Configuration Fields in customviews.config.json for Toggles",
         "visibility-resolution-order": "Visibility Resolution Order",
         "global-vs-local-toggles": "Global vs. Local Toggles",
         "registering-local-toggles-for-the-widget": "Registering Local Toggles for the Widget",
@@ -180,7 +201,6 @@
       "headings": {
         "widget": "Widget",
         "welcome-modal": "Welcome Modal",
-        "site-customization": "Site Customization",
         "conditional-section-display": "Conditional Section Display",
         "configuration": "Configuration",
         "widget-options": "Widget Options",
@@ -196,11 +216,11 @@
         "configuration-reference": "Configuration Reference",
         "configuration-file-customviews-config-json": "Configuration File (customviews.config.json)",
         "basic-structure": "Basic Structure",
-        "configuration-options": "Configuration Options",
+        "summary-of-configuration-options": "Summary of Configuration Options",
         "core-configuration-config": "Core Configuration (config)",
         "tab-group-configuration": "Tab Group Configuration",
+        "toggles-configuration": "Toggles Configuration",
         "default-state-behavior": "Default State Behavior",
-        "example-auto-generated-default-state": "Example: Auto-generated Default State",
         "global-options": "Global Options",
         "widget-configuration-widget": "Widget Configuration (widget)",
         "script-tag-attributes": "Script Tag Attributes",
@@ -239,6 +259,18 @@
         "3-create-customviews-config-json": "3. Create customviews.config.json",
         "4-verify-installation": "4. Verify Installation",
         "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "userGuide/migration.md",
+      "headings": {
+        "migration-guide": "Migration Guide",
+        "summary": "Summary:",
+        "more-detailed": "More Detailed:",
+        "html-attributes-update": "HTML Attributes Update",
+        "2-configuration-file-customviews-config-json": "2. Configuration File (customviews.config.json)",
+        "default-state": "Default State"
       },
       "headingKeywords": {}
     }
