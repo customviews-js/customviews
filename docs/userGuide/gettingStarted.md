@@ -57,8 +57,18 @@ Create a `customviews.config.json` file in the same directory as your site root.
         ]
       }
     ]
+  "config": {
+    "toggles": [
+      {
+        "id": "os",
+        "options": [
+          { "value": "mac", "label": "macOS" },
+          { "value": "win", "label": "Windows" }
+        ]
+      }
+    ]
   },
-  "widget": {
+  "settings": {
     "enabled": true,
     "title": "Customize View"
   }
@@ -101,7 +111,7 @@ npm install @customviews-js/customviews
 In your application entry point (e.g., `main.js` or `index.ts`):
 
 ```javascript
-import { CustomViews, CustomViewsWidget } from '@customviews-js/customviews';
+import { CustomViews, CustomViewsSettings } from '@customviews-js/customviews';
 
 // Initialize Core
 CustomViews.init({
@@ -111,12 +121,12 @@ CustomViews.init({
     ]
   }
 }).then(core => {
-  // Initialize Widget (Optional)
-  const widget = new CustomViewsWidget({
+  // Initialize Settings (Optional)
+  const settings = new CustomViewsSettings({
     core: core,
     container: document.body
   });
-  widget.renderModalIcon();
+  settings.renderModalIcon();
 });
 ```
 
@@ -126,13 +136,13 @@ CustomViews.init({
 
 Open your HTML file in a browser. If installed correctly:
 
-1.  You should see the **CustomViews Widget** (a gear icon) on your page.
-2.  Clicking the widget should open the customization panel.
+1.  You should see the **CustomViews Settings** (a gear icon) on your page.
+2.  Clicking the icon should open the customization panel.
 3.  Toggling options in the panel should show/hide the corresponding content on your page.
 
 <panel header=":fa-solid-lightbulb: Troubleshooting">
 
-**Widget not appearing?**
+**Settings icon not appearing?**
 - Check your browser console for errors.
 - Ensure `customviews.config.json` is accessible (check the Network tab).
 - If using a local file (file:// protocol), browser security policies might block loading the JSON config. strongly recommend using a local server (like `http-server` or VS Code's Live Server).

@@ -78,24 +78,47 @@ export interface ConfigFile {
   showUrl?: boolean;
 
   /** Widget configuration options */
-  widget?: {
-    /** Whether the widget is enabled */
+  settings?: {
+    /** Whether the settings widget is enabled */
     enabled?: boolean;
-    /** Widget position */
-    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
-    /** Widget theme */
-    theme?: 'light' | 'dark';
-    /** Whether to show reset button */
-    showReset?: boolean;
-    /** Widget title */
-    title?: string;
-    /** Widget description text */
-    description?: string;
-    /** Whether to show welcome modal on first visit */
-    showWelcome?: boolean;
-    /** Welcome modal message */
-    welcomeMessage?: string;
-    /** Whether to show tab groups section in widget (default: true) */
-    showTabGroups?: boolean;
+    /** Settings panel configuration */
+    panel?: {
+      /** Widget title */
+      title?: string;
+      /** Widget description text */
+      description?: string;
+      /** Whether to show tab groups section in widget (default: true) */
+      showTabGroups?: boolean;
+      /** Whether to show reset button */
+      showReset?: boolean;
+      /** Widget theme */
+      theme?: 'light' | 'dark';
+    };
+    /** Callout configuration options */
+    callout?: {
+      /** Whether to show the callout (default: false) */
+      show?: boolean;
+      /** Message to display in the callout */
+      message?: string;
+      /** Whether to enable pulse animation */
+      enablePulse?: boolean;
+      /** Custom background color */
+      backgroundColor?: string;
+      /** Custom text color */
+      textColor?: string;
+    };
+    /** Custom icon styling options */
+    icon?: {
+      /** Widget position */
+      position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
+      /** Custom icon color */
+      color?: string;
+      /** Custom background color */
+      backgroundColor?: string;
+      /** Custom opacity (0-1) */
+      opacity?: number;
+      /** Custom scale factor */
+      scale?: number;
+    };
   };
 }

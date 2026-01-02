@@ -19,7 +19,7 @@ CustomViews uses **Svelte** for HTML-like declarative UI and **TypeScript** for 
 This is because unlike React or Vue, which require heavy runtimes, **Svelte** compiles components directly into standard Web components (HTML tags) that can be used in any environment. It is a compiler that does work during the build step, and not at runtime. 
 
 
-* Svelte is a compiler that generates Web Components (Custom Elements). This allows us to author code in a modern, component-based developer environment while publishing a standard, framework-agnostic HTML tag (e.g., `<cv-widget>`) for end-users.
+* Svelte is a compiler that generates Web Components (Custom Elements). This allows us to author code in a modern, component-based developer environment while publishing a standard, framework-agnostic HTML tag (e.g., `<cv-settings>`) for end-users.
 
 
 * **Key Benefits for this Project**

@@ -101,10 +101,6 @@
     </header>
 
     <main class="main">
-      {#if description}
-        <p class="description">{description}</p>
-      {/if}
-
       <div class="tabs">
         <button 
           class="tab {activeTab === 'customize' ? 'active' : ''}" 
@@ -118,6 +114,9 @@
 
       {#if activeTab === 'customize'}
         <div class="tab-content active" in:fade={{ duration: 150 }}>
+          {#if description}
+            <p class="description">{description}</p>
+          {/if}
           {#if toggles.length > 0}
             <div class="section">
               <div class="section-heading">Toggles</div>
@@ -653,76 +652,76 @@
 }
 
 /* Dark Theme Overrides */
-:global(.cv-widget-theme-dark) .modal-box {
+:global(.cv-settings-theme-dark) .modal-box {
   background: #101722;
   color: #e2e8f0;
 }
 
-:global(.cv-widget-theme-dark) .header {
+:global(.cv-settings-theme-dark) .header {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-:global(.cv-widget-theme-dark) .title {
+:global(.cv-settings-theme-dark) .title {
   color: #e2e8f0;
 }
 
-:global(.cv-widget-theme-dark) .close-btn {
+:global(.cv-settings-theme-dark) .close-btn {
   color: rgba(255, 255, 255, 0.6);
 }
 
-:global(.cv-widget-theme-dark) .close-btn:hover {
+:global(.cv-settings-theme-dark) .close-btn:hover {
   background: rgba(62, 132, 244, 0.2);
   color: #3e84f4;
 }
 
-:global(.cv-widget-theme-dark) .description {
+:global(.cv-settings-theme-dark) .description {
   color: rgba(255, 255, 255, 0.8);
 }
 
-:global(.cv-widget-theme-dark) .section-heading {
+:global(.cv-settings-theme-dark) .section-heading {
   color: #e2e8f0;
 }
 
-:global(.cv-widget-theme-dark) .toggles-container,
-:global(.cv-widget-theme-dark) .tabgroups-container {
+:global(.cv-settings-theme-dark) .toggles-container,
+:global(.cv-settings-theme-dark) .tabgroups-container {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-:global(.cv-widget-theme-dark) .tabgroup-card {
+:global(.cv-settings-theme-dark) .tabgroup-card {
   background: #101722;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-:global(.cv-widget-theme-dark) .tabgroup-title {
+:global(.cv-settings-theme-dark) .tabgroup-title {
   color: #e2e8f0;
 }
 
-:global(.cv-widget-theme-dark) .tabgroup-description {
+:global(.cv-settings-theme-dark) .tabgroup-description {
   color: rgba(255, 255, 255, 0.6);
 }
 
-:global(.cv-widget-theme-dark) .footer {
+:global(.cv-settings-theme-dark) .footer {
   border-color: rgba(255, 255, 255, 0.1);
   background: #101722;
 }
 
-:global(.cv-widget-theme-dark) .footer-link {
+:global(.cv-settings-theme-dark) .footer-link {
   color: rgba(255, 255, 255, 0.6);
 }
 
-:global(.cv-widget-theme-dark) .reset-btn {
+:global(.cv-settings-theme-dark) .reset-btn {
   color: #f87171;
 }
 
-:global(.cv-widget-theme-dark) .reset-btn:hover {
+:global(.cv-settings-theme-dark) .reset-btn:hover {
   background: rgba(248, 113, 113, 0.1);
 }
 
-:global(.cv-widget-theme-dark) .tab-groups-list {
+:global(.cv-settings-theme-dark) .tab-groups-list {
   border-color: rgba(255, 255, 255, 0.1);
 }
 
-:global(.cv-widget-theme-dark) .nav-icon {
+:global(.cv-settings-theme-dark) .nav-icon {
   color: rgba(255, 255, 255, 0.8);
 }
 </style>

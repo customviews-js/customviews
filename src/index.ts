@@ -1,8 +1,8 @@
 // Export public API
 export { CustomViewsCore } from "./core/core.svelte";
 export type { CustomViewsOptions } from "./core/core.svelte";
-export { CustomViewsWidget } from "./core/widget";
-export type { WidgetOptions } from "./core/widget";
+export { CustomViewsSettings } from "./core/settings";
+export type { SettingsOptions } from "./core/settings";
 export { CustomViews } from "./CustomViews";
 export type { initOptions } from "./CustomViews";
 export { PersistenceManager } from "./core/state/persistence";

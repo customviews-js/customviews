@@ -98,20 +98,20 @@
   }
 
   /* Dark Theme */
-  :global(.cv-widget-theme-dark) .root {
+  :global(.cv-settings-theme-dark) .root {
     background: #101722;
     border-color: rgba(255, 255, 255, 0.1);
   }
 
-  :global(.cv-widget-theme-dark) .label {
+  :global(.cv-settings-theme-dark) .label {
     color: #e2e8f0;
   }
 
-  :global(.cv-widget-theme-dark) .description {
+  :global(.cv-settings-theme-dark) .description {
     color: rgba(255, 255, 255, 0.6);
   }
 
-  :global(.cv-widget-theme-dark) .select {
+  :global(.cv-settings-theme-dark) .select {
     background: #101722;
     border-color: rgba(255, 255, 255, 0.2);
     color: #e2e8f0;
