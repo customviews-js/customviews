@@ -22,7 +22,7 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
     "toggles": [
       { "toggleId": "toggle1", "label": "Toggle 1", "description": "Description for Toggle 1", "default": "show" }, 
       { "toggleId": "toggle2", "label": "Toggle 2", "description": "Description for Toggle 2", "default": "hide" },
-      { "toggleId": "localToggle", "label": "Local Toggle", "description": "Description for Local Toggle", "isLocal": true },
+      { "toggleId": "localToggle", "label": "Local Toggle", "description": "Description for Local Toggle", "isLocal": true }
     ],
     "tabGroups": [
       {
@@ -84,47 +84,12 @@ Refer to individual components for more details on each configuration option.
 | `isLocal` | `boolean` | No | Whether the toggle is a local toggle. |
 | `default` | `string` | No | Default state: `"show"`, `"hide"`, or `"peek"`. Implicit default is `"show"`. |
 
-
-## Default State Behavior
-
 ## Default State Behavior
  
 When no user preferences are saved, CustomViews determines the initial state from the configuration:
 
 - **Toggles**: Toggles are enabled by default. Toggles with `"default": "peek"` are in peek mode. Toggles with `"default": "hide"` are hidden.
 - **Tabs**: Tab groups select the tab specified in `default`, or the first tab if not specified.
-
-### Example: Auto-generated Default State
-
-```json
-{
-  "config": {
-    "toggles": [
-      { "toggleId": "mac", "label": "MacOS", "default": "show" },
-      { "toggleId": "linux", "label": "Linux", "default": "peek" },
-      { "toggleId": "windows", "label": "Windows", "default": "show" }
-    ],
-    "tabGroups": [
-      {
-        "groupId": "os",
-        "default": "first",
-        "tabs": [
-          { "tabId": "first", "label": "First Tab" },
-          { "tabId": "second", "label": "Second Tab" }
-        ]
-      }
-    ]
-  }
-}
-```
-
-This configuration will auto-generate:
-```javascript
-{
-  shownToggles: ["mac", "linux", "windows"],
-  tabs: { os: "first" }
-}
-```
 
 ## Global Options
 

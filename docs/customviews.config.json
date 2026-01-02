@@ -11,7 +11,7 @@
       {
         "groupId": "ltab",
         "label": "Local Tab Configuration",
-        "description": "This is a local tab group, that only appears on pages where it's used.This is a local tab group, that only appears on pages where it's used.This is a local tab group, that only appears on pages where it's used.This is a local tab group, that only appears on pages where it's used.",
+        "description": "This is a local tab group, that only appears on pages where it's used.",
         "isLocal": true,
         "default": "lt1",
         "tabs": [
