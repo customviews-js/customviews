@@ -54,6 +54,7 @@
     "callout": {
       "show": true,
       "enablePulse": true,
+      "message": "Open the CustomViews settings to customize your view.",
       "backgroundColor": "#198755",
       "textColor": "#ffffff"
     },
@@ -61,7 +62,7 @@
       "position": "middle-left",
       "color": "#ffffff",
       "backgroundColor": "#198755",
-      "opacity": 1.0,
+      "opacity": 0.9,
       "scale": 1.1
     }
   }

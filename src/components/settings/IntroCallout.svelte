@@ -27,16 +27,18 @@
   */
 </script>
 
-<div 
-  class="callout pos-{position} {enablePulse ? 'cv-pulse' : ''}" 
-  role="alert" 
-  style:--cv-callout-bg={backgroundColor}
-  style:--cv-callout-text={textColor}
->
-  <button class="close-btn" aria-label="Dismiss intro" onclick={onclose}>
-    ×
-  </button>
-  <p class="text">{message}</p>
+<div class="callout-wrapper pos-{position}">
+  <div 
+    class="callout {enablePulse ? 'cv-pulse' : ''}" 
+    role="alert" 
+    style:--cv-callout-bg={backgroundColor}
+    style:--cv-callout-text={textColor}
+  >
+    <button class="close-btn" aria-label="Dismiss intro" onclick={onclose}>
+      ×
+    </button>
+    <p class="text">{message}</p>
+  </div>
 </div>
 
 <style>
@@ -52,35 +54,28 @@
     100% { opacity: 1; transform: scale(1); }
   }
 
-  /* Pulse Animation */
-  :global(.cv-pulse.callout) {
-    animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, pulse Callout 2s infinite 0.3s;
-  }
-  
-  /* Need separate pulse for vertical popIn ones to avoid overwriting transform */
-  .pos-top-right.cv-pulse, .pos-bottom-right.cv-pulse, .pos-top-left.cv-pulse, .pos-bottom-left.cv-pulse {
-      animation: popInVertical 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, pulseCalloutVertical 2s infinite 0.3s;
-  }
-
-  @keyframes pulseCallout {
-    0% { transform: scale(1) translateY(-50%); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0.7); }
-    70% { transform: scale(1) translateY(-50%); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 10px rgba(62, 132, 244, 0); }
-    100% { transform: scale(1) translateY(-50%); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0); }
-  }
-  
-  @keyframes pulseCalloutVertical {
+  /* Simplified Pulse Animation - Shadow Only */
+  @keyframes pulse {
     0% { transform: scale(1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 10px rgba(62, 132, 244, 0); }
+    50% { transform: scale(1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 10px rgba(62, 132, 244, 0); }
     100% { transform: scale(1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0); }
   }
 
-  .callout {
+  /* Wrapper handles Positioning & Entry Animation */
+  .callout-wrapper {
     position: fixed;
+    z-index: 9999;
+    
+    /* Default animation (centered ones) */
+    animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* Inner handles Visuals & Pulse Animation */
+  .callout {
     background: var(--cv-callout-bg, white);
     padding: 1rem 1.25rem;
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    z-index: 9999;
     max-width: 250px;
     font-size: 0.9rem;
     line-height: 1.5;
@@ -89,10 +84,12 @@
     align-items: flex-start;
     gap: 0.75rem;
     font-family: inherit;
-    border: 2px solid rgba(0,0,0,0.2);
-    
-    /* Animation defaults */
-    animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    border: 2px solid rgba(0,0,0,0.1); /* Subtle border */
+  }
+
+  /* Apply pulse to inner callout if enabled */
+  .callout.cv-pulse {
+    animation: pulse 2s infinite 0.5s;
   }
 
   /* Arrow Base */
@@ -103,7 +100,7 @@
     height: 1rem;
     background: var(--cv-callout-bg, white);
     transform: rotate(45deg);
-    border: 2px solid rgba(0,0,0,0.2);
+    border: 2px solid rgba(0,0,0,0.1);
     z-index: -1;
   }
 
@@ -133,14 +130,10 @@
   }
 
   /* 
-     Position Specifics 
-     Note: Icon is roughly 50px x 50px. 
-     We assume 60px offset from edge for the icon center/edge.
-     We need to position the callout relative to that.
+     Position Specifics (Applied to Wrapper)
   */
 
   /* Right-side positions (Icon on Right -> Callout on Left) */
-  /* Arrow is on RIGHT. X should be on LEFT. */
   .pos-top-right, .pos-middle-right, .pos-bottom-right {
     right: 80px;
   }
@@ -149,7 +142,7 @@
      animation-name: popInVertical; 
   }
   
-  /* X Button on Left (Default order) - tweaks for spacing */
+  /* X Button Spacing Adjustments */
   .pos-top-right .close-btn, 
   .pos-middle-right .close-btn, 
   .pos-bottom-right .close-btn {
@@ -157,9 +150,7 @@
      margin-left: -0.5rem;
   }
 
-
   /* Left-side positions (Icon on Left -> Callout on Right) */
-  /* Arrow is on LEFT. X should be on RIGHT. */
   .pos-top-left, .pos-middle-left, .pos-bottom-left {
     left: 80px; 
   }
@@ -179,7 +170,7 @@
   /* Vertical Alignment */
   .pos-middle-right, .pos-middle-left {
     top: 50%;
-    /* transform handled by animation */
+    /* transform handled by popIn animation (translateY -50%) */
   }
 
   .pos-top-right, .pos-top-left {
@@ -191,37 +182,37 @@
   }
 
 
-  /* Arrow Positioning */
+  /* Arrow Positioning (Child of .callout, dependent on Wrapper .pos-*) */
   
-  /* Pointing Right (for callouts regarding right-side icons) */
-  .pos-top-right::before, 
-  .pos-middle-right::before, 
-  .pos-bottom-right::before {
-    right: -0.5rem; /* Adjusted for larger size */
+  /* Pointing Right */
+  .pos-top-right .callout::before, 
+  .pos-middle-right .callout::before, 
+  .pos-bottom-right .callout::before {
+    right: -0.5rem; 
     border-left: none;
     border-bottom: none;
   }
 
-  /* Pointing Left (for callouts regarding left-side icons) */
-  .pos-top-left::before, 
-  .pos-middle-left::before, 
-  .pos-bottom-left::before {
-    left: -0.5rem; /* Adjusted for larger size */
+  /* Pointing Left */
+  .pos-top-left .callout::before, 
+  .pos-middle-left .callout::before, 
+  .pos-bottom-left .callout::before {
+    left: -0.5rem; 
     border-right: none;
     border-top: none;
   }
 
-  /* Vertical placement of arrow on the box */
-  .pos-middle-right::before, .pos-middle-left::before {
+  /* Vertical placement of arrow */
+  .pos-middle-right .callout::before, .pos-middle-left .callout::before {
     top: 50%;
-    margin-top: -0.5rem; /* Center larger arrow */
+    margin-top: -0.5rem; 
   }
 
-  .pos-top-right::before, .pos-top-left::before {
+  .pos-top-right .callout::before, .pos-top-left .callout::before {
     top: 1.25rem;
   }
 
-  .pos-bottom-right::before, .pos-bottom-left::before {
+  .pos-bottom-right .callout::before, .pos-bottom-left .callout::before {
     bottom: 1.25rem;
   }
 
