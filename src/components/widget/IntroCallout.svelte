@@ -32,42 +32,58 @@
 </div>
 
 <style>
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(99, 102, 241, 0.4);
+    }
+    70% {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), 0 0 0 10px rgba(99, 102, 241, 0);
+    }
+    100% {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), 0 0 0 0 rgba(99, 102, 241, 0);
+    }
+  }
+
   .callout {
     position: fixed;
     background: white;
-    padding: 12px 16px;
+    padding: 16px 20px; /* Slight increase in padding */
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); /* Stronger base shadow */
     z-index: 9999;
-    max-width: 260px;
-    font-size: 14px;
+    max-width: 280px; /* Slight increase */
+    font-size: 15px; /* Slight increase */
     line-height: 1.5;
-    color: #333;
+    color: #1a1a1a;
     display: flex;
     align-items: flex-start;
-    gap: 10px;
+    gap: 12px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    border-left: 4px solid #6366f1; /* Indigo accent */
+    animation: pulse 2s infinite;
   }
 
   .close-btn {
     background: transparent;
     border: none;
-    color: #999;
-    font-size: 18px;
+    color: #9ca3af;
+    font-size: 20px;
     line-height: 1;
     cursor: pointer;
-    padding: 0;
-    margin-right: -4px;
-    margin-top: -2px;
+    padding: 2px;
+    margin-right: -8px;
+    margin-top: -4px;
+    transition: color 0.2s;
   }
 
   .close-btn:hover {
-    color: #333;
+    color: #4b5563;
   }
 
   .text {
     margin: 0;
     flex: 1;
+    font-weight: 500;
   }
 
   /* Position specifics */
@@ -104,16 +120,17 @@
   }
 
   :global(.cv-widget-theme-dark) .callout {
-    background: #101722;
-    color: #e2e8f0;
+    background: #1f2937;
+    color: #f3f4f6;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #818cf8; /* Lighter indigo for dark mode */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
   }
   
   :global(.cv-widget-theme-dark) .close-btn {
-    color: rgba(255, 255, 255, 0.5);
+    color: #9ca3af;
   }
 
   :global(.cv-widget-theme-dark) .close-btn:hover {
-    color: rgba(255, 255, 255, 0.9);
-  }
-</style>
+    color: #e5e7eb;
+  }</style>
