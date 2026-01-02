@@ -632,7 +632,7 @@ The TabConfig object is for defining tabs in JSON configuration.
 
 <box type="info">
 
-**Note:** Configuration is completely optional. Tab groups will work  fine without being added to the config file—they'll just default to showing the first tab and won't appear in the widget.
+**Note:** Configuration is completely optional. Tab groups will work fine without being added to the config file—they'll just default to showing the first tab and won't appear in the widget.
 </box>
 
 
