@@ -76,6 +76,15 @@ This allows content to appear as long as one toggle category is active.
 </cv-toggle>
 ```
 
+
+## Attributes & Options of `<cv-toggle>`
+
+| Name | Type | Default | Description |
+|------|------|----------|-------------|
+| `toggle-id` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
+| `asset-id` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
+
+
 ## Configuration 
 
 To make toggles discoverable by the CustomViews widget, you must define them in your `customviews.config.json`.
@@ -84,9 +93,10 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 {
   "config": {
     "toggles": [
-      { "id": "mac", "label": "MacOS", "description": "Show content for macOS users" },
-      { "id": "linux", "label": "Linux", "description": "Show content for Linux users" },
-      { "id": "windows", "label": "Windows" }
+      { "toggleId": "mac", "label": "MacOS", "description": "Show content for macOS users" },
+      { "toggleId": "linux", "label": "Linux", "description": "Show content for Linux users" },
+      { "toggleId": "windows", "label": "Windows" },
+      { "toggleId": "localToggle", "label": "Local Toggle", "description": "Show content for local users", "isLocal": true }
     ],
     "defaultState": {
       "shownToggles": ["mac"],
@@ -96,22 +106,16 @@ To make toggles discoverable by the CustomViews widget, you must define them in 
 }
 ```
 
-## Key Fields
+## Key Configuration Fields in `customviews.config.json` for Toggles
 
-| Field | Description |
-|--------|-------------|
-| `config.toggles` | An array of toggle objects. Each object must have an `id` and can have an optional `label`, `description`, and `isLocal` flag. |
-| `config.defaultState.shownToggles` | An array of toggle `id`s that should be active (fully visible) by default on first load. |
-| `config.defaultState.peekToggles` | An array of toggle `id`s that should be in peek mode by default. |
-
----
-
-## Attributes & Options
+Also refer to the [Configuration](configuration.md) section for a summary of all configuration options.
 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
-| `toggle-id` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
-| `asset-id` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
+| `toggleId` | string | **required** | Defines the category for the cv-toggle element. Example: `toggleId="mac"`. |
+| `label` | string | - | Label for the toggle in the widget. |
+| `description` | string | - | Description for the toggle in the widget. |
+| `isLocal` | boolean | false | Whether the toggle is local (only appears in the widget on pages where it is used). |
 
 
 ### Visibility Resolution Order
@@ -139,10 +143,10 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 {
   "config": {
     "toggles": [
-      { "id": "localToggle", "label": "Local Toggle", "isLocal": true},
-      { "id": "mac", "label": "MacOS", "isLocal": false},
-      { "id": "linux", "label": "Linux" },
-      { "id": "windows", "label": "Windows" }
+      { "toggleId": "localToggle", "label": "Local Toggle", "isLocal": true},
+      { "toggleId": "mac", "label": "MacOS", "isLocal": false},
+      { "toggleId": "linux", "label": "Linux" },
+      { "toggleId": "windows", "label": "Windows" }
     ]
   }
 }
@@ -200,7 +204,7 @@ This will ensure that the specified local toggles appear in the configuration wi
 # Troubleshooting
 
 * Toggles not appearing in widget?
-	* Check that your `config.toggles` array is correctly formatted with `id` and `label` for each toggle.
+	* Check that your `config.toggles` array is correctly formatted with `toggleId` and `label` for each toggle.
 
 * No effect when toggling?
 	* Ensure the element uses `<cv-toggle toggle-id="...">` and the category matches a configured toggle ID.

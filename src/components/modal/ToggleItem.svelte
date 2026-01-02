@@ -11,7 +11,7 @@
 <div class="card">
   <div class="content">
     <div>
-      <p class="title">{toggle.label || toggle.id}</p>
+      <p class="title">{toggle.label || toggle.toggleId}</p>
       {#if toggle.description}
         <p class="description">{toggle.description}</p>
       {/if}
@@ -21,10 +21,10 @@
         <input 
           class="toggle-input" 
           type="radio" 
-          name="cv-toggle-{toggle.id}" 
+          name="cv-toggle-{toggle.toggleId}" 
           value="hide" 
           bind:group={value}
-          onchange={() => onchange({ toggleId: toggle.id, value: 'hide' })}
+          onchange={() => onchange({ toggleId: toggle.toggleId, value: 'hide' })}
         />
         <span>Hide</span>
       </label>
@@ -32,10 +32,10 @@
         <input 
           class="toggle-input" 
           type="radio" 
-          name="cv-toggle-{toggle.id}" 
+          name="cv-toggle-{toggle.toggleId}" 
           value="peek" 
           bind:group={value}
-          onchange={() => onchange({ toggleId: toggle.id, value: 'peek' })}
+          onchange={() => onchange({ toggleId: toggle.toggleId, value: 'peek' })}
         />
         <span>Peek</span>
       </label>
@@ -43,10 +43,10 @@
         <input 
           class="toggle-input" 
           type="radio" 
-          name="cv-toggle-{toggle.id}" 
+          name="cv-toggle-{toggle.toggleId}" 
           value="show" 
           bind:group={value}
-          onchange={() => onchange({ toggleId: toggle.id, value: 'show' })}
+          onchange={() => onchange({ toggleId: toggle.toggleId, value: 'show' })}
         />
         <span>Show</span>
       </label>
