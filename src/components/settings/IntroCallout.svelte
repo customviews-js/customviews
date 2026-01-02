@@ -236,4 +236,5 @@
   :global(.cv-settings-theme-dark) .close-btn:hover {
     color: #f3f4f6;
   }
+
 </style>

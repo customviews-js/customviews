@@ -52,25 +52,26 @@ Enable and configure the settings in your `customviews.config.json`:
 {
   "config": {
     "settings": {
-    "panel": {
-      "title": "Custom Views Settings Dialog",
-      "description": "Toggle different content sections to customize your view.",
-      "showTabGroups": true,
-      "showReset": true
-    },
-    "callout": {
-      "show": true,
-      "message": "Open the CustomViews settings to customize your view.",
-      "enablePulse": true,
-      "backgroundColor": "#198755",
-      "textColor": "#ffffff"
-    },
-    "icon": {
-      "position": "middle-left",
-      "color": "#ffffff",
-      "backgroundColor": "#198755",
-      "opacity": 1.0,
-      "scale": 1.1
+      "panel": {
+        "title": "Custom Views Settings Dialog",
+        "description": "Toggle different content sections to customize your view.",
+        "showTabGroups": true,
+        "showReset": true
+      },
+      "callout": {
+        "show": true,
+        "message": "Open the CustomViews settings to customize your view.",
+        "enablePulse": true,
+        "backgroundColor": "#198755",
+        "textColor": "#ffffff"
+      },
+      "icon": {
+        "position": "middle-left",
+        "color": "#ffffff",
+        "backgroundColor": "#198755",
+        "opacity": 1.0,
+        "scale": 1.1
+      }
     }
   }
 }
