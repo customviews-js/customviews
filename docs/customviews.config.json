@@ -48,9 +48,20 @@
   "baseUrl": "/customviews",
   "settings": {
     "position": "middle-left",
-    "title": "Custom Views Settings Panel",
-    "description": "Customize your view by toggling different content sections.",
-    "showWelcome": true,
+    "title": "Custom Views Settings Dialog",
+    "description": "Toggle different content sections to customize your view.",
+    "callout": {
+      "show": true,
+      "enablePulse": true,
+      "backgroundColor": "#198755",
+      "textColor": "#ffffff"
+    },
+    "icon": {
+      "color": "#ffffff",
+      "backgroundColor": "#198755",
+      "opacity": 1.0,
+      "scale": 1.1
+    },
     "showTabGroups": true
   }
 }

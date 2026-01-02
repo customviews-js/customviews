@@ -23,7 +23,7 @@ The settings modal allows users to:
 
 ## Intro Callout
  
-When `showCallout` is enabled, the settings component displays an introductory callout on the user's first visit to introduce them to the customization features. The callout:
+When `callout.show` is enabled, the settings component displays an introductory callout on the user's first visit to introduce them to the customization features. The callout:
  
 - **Appears automatically** on first visit (tracked via localStorage)
 - **Points to the settings icon**
@@ -55,9 +55,9 @@ Enable and configure the settings in your `customviews.config.json`:
       "position": "middle-left",
       "title": "Customize View",
       "description": "Toggle different content sections to customize your view.",
-      "showCallout": true,
       "callout": {
-        "message": "Customize your reading experience here.",
+        "show": true,
+        "message": "Open the CustomViews settings to customize your view.",
         "enablePulse": true,
         "backgroundColor": "#198755",
         "textColor": "#ffffff"
@@ -84,9 +84,9 @@ Enable and configure the settings in your `customviews.config.json`:
 | `showReset` | `boolean` | `true` | Whether to show the reset to default button. |
 | `title` | `string` | `'Customize View'` | Title displayed in the settings modal. |
 | `description` | `string` | - | Description text displayed in the settings modal. |
-| `showCallout` | `boolean` | `false` | Whether to show an intro callout on first visit. |
-| `callout.message` | `string` | - | Message to display in the callout. |
-| `callout.enablePulse` | `boolean` | `false` | Whether the callout should pulse to grab attention. |
+| `callout.show` | `boolean` | `false` | Whether to show an intro callout on first visit. |
+| `callout.message` | `string` | "Customize your reading experience here." | Message to display in the callout. |
+| `callout.enablePulse` | `boolean` | `true` | Whether the callout should pulse to grab attention. |
 | `callout.backgroundColor` | `string` | `white` | Custom background color for the callout. |
 | `callout.textColor` | `string` | `#1a1a1a` | Custom text color for the callout. |
 | `showTabGroups` | `boolean` | `true` | Whether to show the "Tab Groups" section in the settings panel. |

@@ -43,7 +43,7 @@
   // Init
   onMount(() => {
     // Check for callout
-    if (options.showWelcome && store.hasActiveComponents) {
+    if (options.callout?.show && store.hasActiveComponents) {
       checkIntro();
     }
     
@@ -149,7 +149,10 @@
   {#if showCallout}
     <IntroCallout 
       position={options.position} 
-      message={options.welcomeMessage}
+      message={options.callout?.message}
+      enablePulse={options.callout?.enablePulse}
+      backgroundColor={options.callout?.backgroundColor}
+      textColor={options.callout?.textColor}
       onclose={dismissCallout} 
     />
   {/if}

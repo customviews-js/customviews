@@ -24,11 +24,19 @@ export interface SettingsOptions {
   /** Widget description text */
   description?: string;
 
-  /** Whether to show welcome callout on first visit */
-  showWelcome?: boolean;
-
-  /** Welcome callout message (only used if showWelcome is true) */
-  welcomeMessage?: string;
+  /** Callout configuration options */
+  callout?: {
+    /** Whether to show the callout */
+    show?: boolean;
+    /** Message to display in the callout */
+    message?: string;
+    /** Whether to enable pulse animation */
+    enablePulse?: boolean;
+    /** Custom background color */
+    backgroundColor?: string;
+    /** Custom text color */
+    textColor?: string;
+  };
 
   /** Whether to show tab groups section in widget (default: true) */
   showTabGroups?: boolean;
@@ -51,7 +59,7 @@ export interface SettingsOptions {
 
 export class CustomViewsSettings {
   private app: ReturnType<typeof mount> | null = null;
-  private options: Required<Omit<SettingsOptions, 'container' | 'position' | 'theme' | 'showReset' | 'title' | 'description' | 'showWelcome' | 'welcomeMessage' | 'showTabGroups' | 'icon'>> & Omit<SettingsOptions, 'container'> & { container: HTMLElement };
+  private options: Required<Omit<SettingsOptions, 'container' | 'position' | 'theme' | 'showReset' | 'title' | 'description' | 'callout' | 'showTabGroups' | 'icon'>> & Omit<SettingsOptions, 'container'> & { container: HTMLElement };
 
   constructor(options: SettingsOptions) {
     // Set defaults
@@ -63,8 +71,13 @@ export class CustomViewsSettings {
       showReset: options.showReset ?? true,
       title: options.title || 'Customize View',
       description: options.description || '',
-      showWelcome: options.showWelcome ?? false,
-      welcomeMessage: options.welcomeMessage || 'Customize your reading experience (theme, toggles, tabs) here.',
+      callout: {
+        show: options.callout?.show ?? false,
+        message: options.callout?.message || 'Customize your reading experience here.',
+        enablePulse: options.callout?.enablePulse ?? true,
+        backgroundColor: options.callout?.backgroundColor,
+        textColor: options.callout?.textColor
+      },
       showTabGroups: options.showTabGroups ?? true,
       icon: {
         color: options.icon?.color,

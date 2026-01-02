@@ -91,10 +91,19 @@ export interface ConfigFile {
     title?: string;
     /** Widget description text */
     description?: string;
-    /** Whether to show welcome modal on first visit */
-    showWelcome?: boolean;
-    /** Welcome modal message */
-    welcomeMessage?: string;
+    /** Callout configuration options */
+    callout?: {
+      /** Whether to show the callout (default: false) */
+      show?: boolean;
+      /** Message to display in the callout */
+      message?: string;
+      /** Whether to enable pulse animation */
+      enablePulse?: boolean;
+      /** Custom background color */
+      backgroundColor?: string;
+      /** Custom text color */
+      textColor?: string;
+    };
     /** Whether to show tab groups section in widget (default: true) */
     showTabGroups?: boolean;
     /** Custom icon styling options */

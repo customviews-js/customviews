@@ -1,17 +1,23 @@
 <script lang="ts">
-  export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right' | undefined = 'middle-left';
-  export let message: string | undefined = 'Customize your reading experience here.';
-  export let onclose: (() => void) | undefined = () => {};
+  interface Props {
+    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
+    message?: string;
+    onclose?: () => void;
+    enablePulse?: boolean;
+    backgroundColor?: string;
+    textColor?: string;
+  }
+
+  let { 
+    position = 'middle-left', 
+    message = 'Customize your reading experience here.', 
+    onclose = () => {},
+    enablePulse = true,
+    backgroundColor = undefined,
+    textColor = undefined
+  }: Props = $props();
 
   // Map widget position to callout position logic
-  /*
-    Positions need to be adjusted based on the widget icon location.
-    "right" positions -> callout appears to the left of the icon
-    "left" positions -> callout appears to the right of the icon
-    "top" -> aligned top
-    "bottom" -> aligned bottom
-  */
-
   /*
     Positions need to be adjusted based on the widget icon location.
     "right" positions -> callout appears to the left of the icon
@@ -22,8 +28,10 @@
 </script>
 
 <div 
-  class="callout pos-{position}" 
+  class="callout pos-{position} {enablePulse ? 'cv-pulse' : ''}" 
   role="alert" 
+  style:--cv-callout-bg={backgroundColor}
+  style:--cv-callout-text={textColor}
 >
   <button class="close-btn" aria-label="Dismiss intro" onclick={onclose}>
     ×
@@ -44,9 +52,31 @@
     100% { opacity: 1; transform: scale(1); }
   }
 
+  /* Pulse Animation */
+  :global(.cv-pulse.callout) {
+    animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, pulse Callout 2s infinite 0.3s;
+  }
+  
+  /* Need separate pulse for vertical popIn ones to avoid overwriting transform */
+  .pos-top-right.cv-pulse, .pos-bottom-right.cv-pulse, .pos-top-left.cv-pulse, .pos-bottom-left.cv-pulse {
+      animation: popInVertical 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards, pulseCalloutVertical 2s infinite 0.3s;
+  }
+
+  @keyframes pulseCallout {
+    0% { transform: scale(1) translateY(-50%); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0.7); }
+    70% { transform: scale(1) translateY(-50%); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 10px rgba(62, 132, 244, 0); }
+    100% { transform: scale(1) translateY(-50%); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0); }
+  }
+  
+  @keyframes pulseCalloutVertical {
+    0% { transform: scale(1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 10px rgba(62, 132, 244, 0); }
+    100% { transform: scale(1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba(62, 132, 244, 0); }
+  }
+
   .callout {
     position: fixed;
-    background: white;
+    background: var(--cv-callout-bg, white);
     padding: 1rem 1.25rem;
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -54,7 +84,7 @@
     max-width: 250px;
     font-size: 0.9rem;
     line-height: 1.5;
-    color: #1a1a1a;
+    color: var(--cv-callout-text, #1a1a1a);
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
@@ -71,7 +101,7 @@
     position: absolute;
     width: 1rem;
     height: 1rem;
-    background: white;
+    background: var(--cv-callout-bg, white);
     transform: rotate(45deg);
     border: 2px solid rgba(0,0,0,0.2);
     z-index: -1;
@@ -80,18 +110,20 @@
   .close-btn {
     background: transparent;
     border: none;
-    color: #6b7280;
+    color: currentColor;
+    opacity: 0.7;
     font-size: 1.25rem;
     line-height: 1;
     cursor: pointer;
     padding: 0;
     margin: -0.25rem -0.5rem 0 0;
-    transition: color 0.15s;
+    transition: opacity 0.15s;
     flex-shrink: 0;
   }
 
   .close-btn:hover {
-    color: #111827;
+    color: currentColor;
+    opacity: 1;
   }
 
   .text {
