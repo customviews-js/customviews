@@ -93,6 +93,7 @@
   class="cv-toggle-wrapper" 
   class:expanded={showFullContent && !showPeekContent} 
   class:peeking={showPeekContent} 
+  class:peek-mode={peekState}
   class:hidden={isHidden} 
   class:has-border={borderedPeek && peekState}
 >
@@ -118,7 +119,6 @@
 <style>
   :host {
     display: block;
-    margin-bottom: 24px;
     position: relative;
     z-index: 1;
     overflow: visible;
@@ -133,6 +133,15 @@
     position: relative;
     width: 100%;
     transition: all 0.3s ease;
+    margin-bottom: 4px;
+  }
+
+  .cv-toggle-wrapper.hidden {
+    margin-bottom: 0;
+  }
+
+  .cv-toggle-wrapper.peek-mode {
+    margin-bottom: 24px;
   }
 
   .cv-toggle-content {

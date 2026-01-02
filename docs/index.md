@@ -45,12 +45,11 @@ You're viewing macOS-specific installation steps. Install using Homebrew:
 `brew install customviews`
 
 </box>
-
 </cv-toggle>
 
 
 
-<cv-toggle toggle-id="linux" >
+<cv-toggle toggle-id="linux" bordered-peek>
 
 <box>
 
