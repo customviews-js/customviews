@@ -139,6 +139,19 @@
       "headingKeywords": {}
     },
     {
+      "src": "userGuide/components/settings.md",
+      "title": "CustomViews - Settings",
+      "headings": {
+        "settings-dialog": "Settings Dialog",
+        "intro-callout": "Intro Callout",
+        "conditional-section-display": "Conditional Section Display",
+        "configuration": "Configuration",
+        "settings-options": "Settings Options",
+        "integration-with-toggles-and-tabs": "Integration with Toggles and Tabs"
+      },
+      "headingKeywords": {}
+    },
+    {
       "src": "userGuide/components/share.md",
       "title": "User Guide - Sharing",
       "headings": {
@@ -185,27 +198,14 @@
       "headings": {
         "toggles": "Toggles",
         "multi-id-toggles": "Multi-ID Toggles",
+        "toggles-with-peek-mode": "Toggles with Peek Mode",
         "attributes-and-amp-options-of-cv-toggle": "Attributes &amp; Options of &lt;cv-toggle&gt;",
         "configuration": "Configuration",
         "key-configuration-fields-in-customviews-config-json-for-toggles": "Key Configuration Fields in customviews.config.json for Toggles",
         "visibility-resolution-order": "Visibility Resolution Order",
         "global-vs-local-toggles": "Global vs. Local Toggles",
-        "registering-local-toggles-for-the-widget": "Registering Local Toggles for the Widget",
+        "registering-local-toggles-for-settings": "Registering Local Toggles for Settings",
         "troubleshooting": "Troubleshooting"
-      },
-      "headingKeywords": {}
-    },
-    {
-      "src": "userGuide/components/widget.md",
-      "title": "CustomViews - Widget",
-      "headings": {
-        "widget": "Widget",
-        "welcome-modal": "Welcome Modal",
-        "conditional-section-display": "Conditional Section Display",
-        "configuration": "Configuration",
-        "widget-options": "Widget Options",
-        "programmatic-usage": "Programmatic Usage",
-        "integration-with-toggles-and-tabs": "Integration with Toggles and Tabs"
       },
       "headingKeywords": {}
     },
@@ -222,14 +222,10 @@
         "toggles-configuration": "Toggles Configuration",
         "default-state-behavior": "Default State Behavior",
         "global-options": "Global Options",
-        "widget-configuration-widget": "Widget Configuration (widget)",
+        "settings-configuration-settings": "Settings Configuration (settings)",
         "script-tag-attributes": "Script Tag Attributes",
-        "html-attributes": "HTML Attributes",
-        "toggle-attributes": "Toggle Attributes",
-        "asset-insertion-attributes": "Asset Insertion Attributes",
         "assets-configuration-assets-json": "Assets Configuration (assets.json)",
-        "asset-properties": "Asset Properties",
-        "programmatic-configuration": "Programmatic Configuration"
+        "asset-properties": "Asset Properties"
       },
       "headingKeywords": {}
     },
@@ -264,13 +260,15 @@
     },
     {
       "src": "userGuide/migration.md",
+      "title": "User Guide - ",
       "headings": {
         "migration-guide": "Migration Guide",
         "summary": "Summary:",
         "more-detailed": "More Detailed:",
         "html-attributes-update": "HTML Attributes Update",
         "2-configuration-file-customviews-config-json": "2. Configuration File (customviews.config.json)",
-        "default-state": "Default State"
+        "default-state": "Default State",
+        "widget-configuration-rename": "Widget Configuration Rename"
       },
       "headingKeywords": {}
     }
