@@ -86,6 +86,16 @@ export class DataStore {
     }
 
     /**
+     * Update the visibility of toggles.
+     * @param shown List of IDs for toggles in "Show" state.
+     * @param peek List of IDs for toggles in "Peek" state.
+     */
+    setToggles(shown: string[], peek: string[]) {
+        this.state.shownToggles = shown;
+        this.state.peekToggles = peek;
+    }
+
+    /**
      * Updates the full state (e.g. from URL or Persistence).
      * Merges the new state with computed defaults to ensure completeness.
      * @param newState Partial state object to apply.
