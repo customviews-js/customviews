@@ -5,7 +5,7 @@ import type { State } from './state';
  */
 export interface TabConfig {
   /** Tab identifier */
-  id: string;
+  tabId: string;
   /** Display label for the tab */
   label?: string;
 }
@@ -15,7 +15,7 @@ export interface TabConfig {
  */
 export interface TabGroupConfig {
   /** Group identifier (stable across the page) */
-  id: string;
+  groupId: string;
   /** Display name for widget/nav */
   label?: string;
   /** Available tabs in this group */
@@ -31,7 +31,7 @@ export interface TabGroupConfig {
  */
 export interface ToggleConfig {
   /** Toggle identifier */
-  id: string;
+  toggleId: string;
   /** Display label for the toggle */
   label?: string;
   /** Determines if the toggle is only shown on pages where it's used. */

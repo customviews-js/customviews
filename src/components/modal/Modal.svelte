@@ -122,10 +122,10 @@
             <div class="section">
               <div class="section-heading">Toggles</div>
               <div class="toggles-container">
-                {#each toggles as toggle (toggle.id)}
+                {#each toggles as toggle (toggle.toggleId)}
                   <ToggleItem 
                     toggle={toggle} 
-                    value={computeToggleState(toggle.id, shownToggles, peekToggles)} 
+                    value={computeToggleState(toggle.toggleId, shownToggles, peekToggles)} 
                     onchange={handleToggleChange}
                   />
                 {/each}
@@ -170,10 +170,10 @@
 
                 <!-- Tab Groups List -->
                 <div class="tab-groups-list">
-                  {#each tabGroups as group (group.id)}
+                  {#each tabGroups as group (group.groupId)}
                     <TabGroupItem 
                       group={group} 
-                      activeTabId={activeTabs[group.id] || group.tabs[0]?.id} 
+                      activeTabId={activeTabs[group.groupId] || group.tabs[0]?.tabId} 
                       onchange={handleTabGroupChange}
                     />
                   {/each}

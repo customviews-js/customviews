@@ -9,27 +9,27 @@
   function onChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     activeTabId = target.value;
-    onchange({ groupId: group.id, tabId: activeTabId });
+    onchange({ groupId: group.groupId, tabId: activeTabId });
   }
 </script>
 
 <div class="root">
   <div class="header">
-    <label class="label" for="tab-group-{group.id}">
-      {group.label || group.id}
+    <label class="label" for="tab-group-{group.groupId}">
+      {group.label || group.groupId}
     </label>
     {#if group.description}
       <p class="description">{group.description}</p>
     {/if}
   </div>
   <select 
-    id="tab-group-{group.id}" 
+    id="tab-group-{group.groupId}" 
     class="select" 
     value={activeTabId} 
     onchange={onChange}
   >
     {#each group.tabs as tab}
-      <option value={tab.id}>{tab.label || tab.id}</option>
+      <option value={tab.tabId}>{tab.label || tab.tabId}</option>
     {/each}
   </select>
 </div>

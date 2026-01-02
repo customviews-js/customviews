@@ -52,14 +52,14 @@ export class DataStore {
     visibleToggles = $derived.by(() => {
         if (!this.config.toggles) return [];
         return this.config.toggles.filter(t => 
-            !t.isLocal || this.activeToggles.has(t.id)
+            !t.isLocal || this.activeToggles.has(t.toggleId)
         );
     });
 
     visibleTabGroups = $derived.by(() => {
         if (!this.config.tabGroups) return [];
         return this.config.tabGroups.filter(g => 
-            !g.isLocal || this.activeTabGroups.has(g.id)
+            !g.isLocal || this.activeTabGroups.has(g.groupId)
         );
     });
 
@@ -173,8 +173,8 @@ export class DataStore {
             this.config.tabGroups.forEach(group => {
                 if (group.tabs && group.tabs.length > 0) {
                      const firstTab = group.tabs[0];
-                     if (firstTab?.id) {
-                         tabs[group.id] = firstTab.id;
+                     if (firstTab?.tabId) {
+                         tabs[group.groupId] = firstTab.tabId;
                      }
                 }
             });
@@ -183,7 +183,7 @@ export class DataStore {
         // Default: All toggles shown (if logic implies all enabled by default, 
         // essentially we assume empty shownToggles means none explicitly shown unless logic dictates otherwise. 
         // Original core logic: "all toggles on". Let's match original logic.)
-        const shownToggles = this.config.toggles?.map(t => t.id) || [];
+        const shownToggles = this.config.toggles?.map(t => t.toggleId) || [];
 
         return {
             shownToggles,

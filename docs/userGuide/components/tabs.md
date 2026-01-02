@@ -576,23 +576,23 @@ For more control (such as widget integration or default selections), configure t
   "config": {
     "tabGroups": [
       {
-        "id": "fruit",
+        "groupId": "fruit",
         "label": "Fruit Selection",
         "isLocal": false,
         "tabs": [
-          { "id": "apple", "label": "Apple" },
-          { "id": "orange", "label": "Orange" },
-          { "id": "pear", "label": "Pear" }
+          { "tabId": "apple", "label": "Apple" },
+          { "tabId": "orange", "label": "Orange" },
+          { "tabId": "pear", "label": "Pear" }
         ]
       },
       {
-        "id": "localTabGroup",
+        "groupId": "localTabGroup",
         "label": "Page specific tabgroup",
         "isLocal": true,
         "tabs": [
-          { "id": "a", "label": "Alpha" },
-          { "id": "b", "label": "Beta" },
-          { "id": "c", "label": "Charlie" }
+          { "tabId": "a", "label": "Alpha" },
+          { "tabId": "b", "label": "Beta" },
+          { "tabId": "c", "label": "Charlie" }
         ]
       },
     ],
@@ -614,10 +614,10 @@ The TabGroupConfig object is for defining tabgroups in JSON configuration.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `id` | string | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
+| `groupId` | string | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
 | `label` | string | - | Display name shown in the widget. |
-| `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the widget on pages where it's used. |
 | `description` | string | - | Optional description to display below functionality. |
+| `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the widget on pages where it's used. |
 | `tabs` | TabConfig[] | **(required)** | Array of tab configurations. |
 
 #### TabConfig
@@ -626,14 +626,14 @@ The TabConfig object is for defining tabs in JSON configuration.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `id` | string | **(required)** | Tab identifier (must match HTML `cv-tab` id). |
+| `tabId` | string | **(required)** | Tab identifier (must match HTML `cv-tab` id). |
 | `label` | string | - | Display label for the tab (used in widget and as fallback for header). |
 
 
 
 <box type="info">
 
-**Note:** Configuration is completely optional. Tab groups will work perfectly fine without being added to the config file—they'll just default to showing the first tab and won't appear in the widget.
+**Note:** Configuration is completely optional. Tab groups will work  fine without being added to the config file—they'll just default to showing the first tab and won't appear in the widget.
 </box>
 
 
@@ -690,13 +690,13 @@ If all tab configurations (and other component configurations) are local, and a 
   "config": {
     "tabGroups": [
       {
-        "id": "ltab",
+        "groupId": "ltab",
         "label": "Local Tab Configuration",
         "isLocal": true, // This makes the group local
         "tabs": [
-          { "id": "lt1", "label": "Tab Option 1" },
-          { "id": "lt2", "label": "Tab Option 2" },
-          { "id": "lt3", "label": "Tab Option 3" }
+          { "tabId": "lt1", "label": "Tab Option 1" },
+          { "tabId": "lt2", "label": "Tab Option 2" },
+          { "tabId": "lt3", "label": "Tab Option 3" }
         ]
       },
     ]
