@@ -3,7 +3,7 @@
     props: {
       toggleId: { reflect: true, type: 'String', attribute: 'toggle-id' },
       assetId: { reflect: true, type: 'String', attribute: 'asset-id' },
-      borderedPeek: { reflect: true, type: 'Boolean', attribute: 'bordered-peek' }
+      peekBorder: { reflect: true, type: 'Boolean', attribute: 'peek-border' }
     }
   }} />
 
@@ -13,7 +13,7 @@
   import { renderAssetInto } from '../../core/render';
 
   // Props using Svelte 5 runes
-  let { toggleId = '', assetId = '', borderedPeek = false }: { toggleId?: string; assetId?: string; borderedPeek?: boolean } = $props();
+  let { toggleId = '', assetId = '', peekBorder = false }: { toggleId?: string; assetId?: string; peekBorder?: boolean } = $props();
   // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
   let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
   $effect(() => {
@@ -95,7 +95,7 @@
   class:peeking={showPeekContent} 
   class:peek-mode={peekState}
   class:hidden={isHidden} 
-  class:has-border={borderedPeek && peekState}
+  class:has-border={peekBorder && peekState}
 >
   <div 
     class="cv-toggle-content" 

@@ -103,7 +103,7 @@ This means that "Show" overrides "Peek", and "Peek" overrides "Hide". Explicit i
 |------|------|----------|-------------|
 | `toggle-id` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
 | `asset-id` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
-| `bordered-peek` | boolean | `false` | If present, adds a subtle border to the top and sides of the toggle content. Only visible when the toggle is in peek mode (collapsed or expanded). |
+| `peek-border` | boolean | `false` | If present, adds a subtle border to the top and sides of the toggle content. Only visible when the toggle is in peek mode (collapsed or expanded). |
 
 
 ## Configuration 

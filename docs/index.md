@@ -33,7 +33,7 @@ Whether you are building a static site, a dashboard, or a documentation portal, 
 
 Choose your operating system to see platform-specific content:
 
-<cv-toggle toggle-id="mac" bordered-peek>
+<cv-toggle toggle-id="mac" peek-border>
 
 <box>
 
@@ -49,7 +49,7 @@ You're viewing macOS-specific installation steps. Install using Homebrew:
 
 
 
-<cv-toggle toggle-id="linux" bordered-peek>
+<cv-toggle toggle-id="linux" peek-border>
 
 <box>
 
