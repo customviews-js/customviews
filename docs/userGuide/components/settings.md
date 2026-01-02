@@ -5,9 +5,9 @@
   pageNavTitle: "Topics"
 </frontmatter>
 
-## Settings
+## Settings Dialog
 
-The **Settings** component provides a floating user interface that allows visitors to customize their view of the page. It appears as a gear icon (⚙) positioned on the side of the screen, giving users control over content visibility and tab selections.
+The **Settings Dialog** component provides a floating user interface that allows visitors to customize their view of the page. It appears as a gear icon (⚙) positioned on the side of the screen, giving users control over content visibility and tab selections.
 
 The settings widget is enabled by default, and will appear if not explicitly disabled in the configuration file, as long as the Custom Views script is present in the page. The settings interface adapts based on your configuration - sections for description, toggles, and tab groups are only displayed when relevant content is available.
 
@@ -21,16 +21,16 @@ The settings modal allows users to:
 - Reset to default view
 - Copy a shareable URL with their current selections
 
-## Welcome Modal
-
-When `showWelcome` is enabled, the settings component displays a welcome modal on the user's first visit to introduce them to the customization features. The welcome modal:
-
+## Intro Callout
+ 
+When `showCallout` is enabled, the settings component displays an introductory callout on the user's first visit to introduce them to the customization features. The callout:
+ 
 - **Appears automatically** on first visit (tracked via localStorage)
-- **Shows a preview** of the settings icon with instructions
-- **Includes customizable content** via `welcomeMessage`
-- **Dismisses permanently** after the user clicks "Got it!" or closes the modal
-
-The welcome modal helps users discover the customization features and understand how to use the settings.
+- **Points to the settings icon**
+- **Includes customizable content** via `callout.message`
+- **Dismisses permanently** after the user clicks "X" or opens the settings
+ 
+The callout helps users discover the customization features and understand how to use the settings.
 
 
 ## Conditional Section Display
@@ -55,14 +55,19 @@ Enable and configure the settings in your `customviews.config.json`:
       "position": "middle-left",
       "title": "Customize View",
       "description": "Toggle different content sections to customize your view.",
-      "showWelcome": true,
-      "welcomeMessage": "Custom Welcome Message",
+      "showCallout": true,
+      "callout": {
+        "message": "Customize your reading experience here.",
+        "enablePulse": true,
+        "backgroundColor": "#198755",
+        "textColor": "#ffffff"
+      },
       "showTabGroups": true,
       "icon": {
-        "color": "#333",
-        "backgroundColor": "#fff",
-        "opacity": 0.8,
-        "scale": 1.2
+        "color": "#ffffff",
+        "backgroundColor": "#198755",
+        "opacity": 1.0,
+        "scale": 1.1
       }
     }
   }
@@ -79,8 +84,11 @@ Enable and configure the settings in your `customviews.config.json`:
 | `showReset` | `boolean` | `true` | Whether to show the reset to default button. |
 | `title` | `string` | `'Customize View'` | Title displayed in the settings modal. |
 | `description` | `string` | - | Description text displayed in the settings modal. |
-| `showWelcome` | `boolean` | `false` | Whether to show a welcome callout on first visit. |
-| `welcomeMessage` | `string` | - | Message to display in the welcome callout. |
+| `showCallout` | `boolean` | `false` | Whether to show an intro callout on first visit. |
+| `callout.message` | `string` | - | Message to display in the callout. |
+| `callout.enablePulse` | `boolean` | `false` | Whether the callout should pulse to grab attention. |
+| `callout.backgroundColor` | `string` | `white` | Custom background color for the callout. |
+| `callout.textColor` | `string` | `#1a1a1a` | Custom text color for the callout. |
 | `showTabGroups` | `boolean` | `true` | Whether to show the "Tab Groups" section in the settings panel. |
 | `icon.color` | `string` | `rgba(0, 0, 0, 0.9)` | Custom color for the settings icon. |
 | `icon.backgroundColor` | `string` | `rgba(255, 255, 255, 0.92)` | Custom background color for the settings icon. |
