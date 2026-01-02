@@ -107,7 +107,7 @@ This means that "Show" overrides "Peek", and "Peek" overrides "Hide". Explicit i
 
 ## Configuration 
 
-To make toggles discoverable by the CustomViews widget, you must define them in your `customviews.config.json`.
+To make toggles discoverable by the settings, you must define them in your `customviews.config.json`.
 
 ```json
 {
@@ -129,10 +129,10 @@ Also refer to the [Configuration](configuration.md) section for a summary of all
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
 | `toggleId` | string | **required** | Defines the category for the cv-toggle element. Example: `toggleId="mac"`. |
-| `label` | string | - | Label for the toggle in the widget. |
-| `description` | string | - | Description for the toggle in the widget. |
+| `label` | string | - | Label for the toggle in the settings. |
+| `description` | string | - | Description for the toggle in the settings. |
 | `default` | string | `show` | Default state: `"show"`, `"hide"`, or `"peek"`. |
-| `isLocal` | boolean | false | Whether the toggle is local (only appears in the widget on pages where it is used). |
+| `isLocal` | boolean | false | Whether the toggle is local (only appears in the settings on pages where it is used). |
 
 
 ### Visibility Resolution Order
@@ -146,15 +146,15 @@ Elements whose toggles match the active state are shown; all others are hidden.
 
 ## Global vs. Local Toggles
 
-By default, all toggles defined in your configuration are **global**—they will appear in the settings widget on every page of your site.
+By default, all toggles defined in your configuration are **global**—they will appear in the settings on every page of your site.
 
-You can mark a toggle as **local** to make it appear in the widget *only* on pages where that specific toggle is actually used. This is useful for keeping the widget clean and only showing relevant options to the user.
+You can mark a toggle as **local** to make it appear in the settings *only* on pages where that specific toggle is actually used. This is useful for keeping the settings clean and only showing relevant options to the user.
 
 To mark a toggle as local, add `"isLocal": true` to its configuration.
 
 **Example:**
 
-If you have a `mac` toggle that is only used on a few pages, setting it as local ensures the "MacOS" option only appears in the widget on those pages.
+If you have a `mac` toggle that is only used on a few pages, setting it as local ensures the "MacOS" option only appears in the settings on those pages.
 
 ```json
 {
@@ -201,26 +201,26 @@ These extra lines ensure the box remains scrollable while conveying useful guida
 
 </cv-toggle>
 
-## Registering Local Toggles for the Widget
+## Registering Local Toggles for Settings
 
-You can ensure that specific local toggles are always available in the widget, even if they are not initially visible on the page. This is useful for toggles that are loaded dynamically (e.g., inside a dropdown menu) and might not be detected by the plugin otherwise.
+You can ensure that specific local toggles are always available in the settings, even if they are not initially visible on the page. This is useful for toggles that are loaded dynamically (e.g., inside a dropdown menu) and might not be detected by the plugin otherwise.
 
 To do this, add a `data-cv-page-local-toggles` attribute to any element (an empty `<div>` is a good choice). The value of this attribute should be a comma-separated list of the local toggle IDs you want to register.
 
-For example, to make the local toggles with IDs `advanced` and `dark-mode` available in the widget, add the following to your page:
+For example, to make the local toggles with IDs `advanced` and `dark-mode` available in the settings, add the following to your page:
 
 ```html
 <div data-cv-page-local-toggles="advanced, dark-mode"></div>
 ```
 
-This will ensure that the specified local toggles appear in the configuration widget, allowing users to control them even if they are not immediately visible on the page.
+This will ensure that the specified local toggles appear in the configuration settings, allowing users to control them even if they are not immediately visible on the page.
 
 
 
 
 # Troubleshooting
 
-* Toggles not appearing in widget?
+* Toggles not appearing in settings?
 	* Check that your `config.toggles` array is correctly formatted with `toggleId` and `label` for each toggle.
 
 * No effect when toggling?
@@ -229,7 +229,7 @@ This will ensure that the specified local toggles appear in the configuration wi
 * URL state not persisting in URL bar?
 	* Enable showUrl in the configuration.
 
-* Widget not loading?
+* Settings icon not loading?
 	* Verify the script is included and customviews.config.json is accessible.
 
 

@@ -24,7 +24,7 @@ The documentation includes a fully functional demo that demonstrates:
 - Persistence across sessions
 - Widget-based user interaction
 
-Use the "Custom Views" widget in the middle-left corner to interact with the demo.
+Use the "Custom Views" settings icon in the middle-left corner to interact with the demo.
 
 
 ## Development Notes

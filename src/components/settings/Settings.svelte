@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { CustomViewsCore } from '../../core/core.svelte';
-  import type { WidgetOptions } from '../../core/widget';
+  import type { SettingsOptions } from '../../core/settings';
   
-  import WidgetIcon from './WidgetIcon.svelte';
-  import Modal from '../modal/Modal.svelte';
   import IntroCallout from './IntroCallout.svelte';
+  import SettingsIcon from './SettingsIcon.svelte';
+  import Modal from '../modal/Modal.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
   import { showToast } from '../../core/stores/toast-store';
   import { shareStore } from '../../core/stores/share-store';
@@ -15,7 +15,7 @@
   import FocusBanner from '../focus/FocusBanner.svelte';
   import { findHighestVisibleElement, scrollToElement } from '../../utils/scroll-utils';
 
-  let { core, options } = $props<{ core: CustomViewsCore, options: WidgetOptions }>();
+  let { core, options } = $props<{ core: CustomViewsCore, options: SettingsOptions }>();
 
   // Derived state
   const store = $derived(core.store);
@@ -25,6 +25,7 @@
   let showCallout = $state(false);
   let isResetting = $state(false);
   let showPulse = $state(false);
+  let settingsIcon: { resetPosition: () => void } | undefined = $state();
 
   // Nav Visibility
   let navsVisible = $state(true);
@@ -43,7 +44,7 @@
   // Init
   onMount(() => {
     // Check for callout
-    if (options.showWelcome && store.hasActiveComponents) {
+    if (options.callout?.show && store.hasActiveComponents) {
       checkIntro();
     }
     
@@ -84,6 +85,7 @@
   function handleReset() {
     isResetting = true;
     core.resetToDefault();
+    settingsIcon?.resetPosition();
     // Sync local state
     navsVisible = true; 
     
@@ -148,8 +150,11 @@
   <!-- Intro Callout -->
   {#if showCallout}
     <IntroCallout 
-      position={options.position} 
-      message={options.welcomeMessage}
+      position={options.icon.position} 
+      message={options.callout?.message}
+      enablePulse={options.callout?.enablePulse}
+      backgroundColor={options.callout?.backgroundColor}
+      textColor={options.callout?.textColor}
       onclose={dismissCallout} 
     />
   {/if}
@@ -164,20 +169,25 @@
   <FocusBanner />
 
   <!-- Widget Icon -->
-  <WidgetIcon 
-    position={options.position} 
-    title={options.title} 
+  <SettingsIcon 
+    bind:this={settingsIcon}
+    position={options.icon.position} 
+    title={options.panel.title} 
     pulse={showPulse} 
-    onclick={openModal} 
+    onclick={openModal}
+    iconColor={options.icon?.color}
+    backgroundColor={options.icon?.backgroundColor}
+    opacity={options.icon?.opacity}
+    scale={options.icon?.scale}
   />
 
   <!-- Modal -->
   {#if isModalOpen}
     <Modal 
-      title={options.title}
-      description={options.description}
-      showReset={options.showReset}
-      showTabGroups={options.showTabGroups}
+      title={options.panel.title}
+      description={options.panel.description}
+      showReset={options.panel.showReset}
+      showTabGroups={options.panel.showTabGroups}
       
       toggles={store.visibleToggles}
       tabGroups={store.visibleTabGroups}

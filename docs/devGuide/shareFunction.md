@@ -22,7 +22,7 @@ The `shareStore` is the single source of truth. It manages:
 *   `currentHoverTarget`: The element currently under the mouse cursor.
 
 ### 2. The Overlay (`ShareOverlay.svelte`)
-When Share Mode is active, `MainWidget` mounts the `ShareOverlay` component.
+When Share Mode is active, `Settings` mounts the `ShareOverlay` component.
 *   **Event Interception**: It uses global event listeners (`mouseover`, `click`) to intercept user interactions *before* they reach the underlying page.
 *   **Visual Feedback**: It renders the `HoverHelper` (floating tag label) and applies highlighting classes (`.cv-highlight-target`) to the underlying elements.
 *   **Toolbar**: Renders the `ShareToolbar` at the bottom of the screen.
