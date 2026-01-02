@@ -9,20 +9,20 @@ export interface SettingsOptions {
   /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
 
-  /** Widget position: 'top-right', 'top-left', 'bottom-right', 'bottom-left', 'middle-left', 'middle-right' */
-  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
+  /** Settings panel configuration */
+  panel?: {
+    /** Title displayed in the settings modal */
+    title?: string;
+    /** Description text displayed in the settings modal */
+    description?: string;
+    /** Whether to show tab groups section in widget (default: true) */
+    showTabGroups?: boolean;
+    /** Whether to show the reset button (default: true) */
+    showReset?: boolean;
+  };
 
   /** Widget theme: 'light' | 'dark' */
   theme?: 'light' | 'dark';
-
-  /** Whether to show reset button */
-  showReset?: boolean;
-
-  /** Widget title */
-  title?: string;
-
-  /** Widget description text */
-  description?: string;
 
   /** Callout configuration options */
   callout?: {
@@ -38,11 +38,10 @@ export interface SettingsOptions {
     textColor?: string;
   };
 
-  /** Whether to show tab groups section in widget (default: true) */
-  showTabGroups?: boolean;
-
   /** Custom icon styling options */
   icon?: {
+    /** Widget position (default: middle-left) */
+    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
     /** Custom icon color (e.g. #000, rgba(0,0,0,1)) */
     color?: string;
 
@@ -59,18 +58,20 @@ export interface SettingsOptions {
 
 export class CustomViewsSettings {
   private app: ReturnType<typeof mount> | null = null;
-  private options: Required<Omit<SettingsOptions, 'container' | 'position' | 'theme' | 'showReset' | 'title' | 'description' | 'callout' | 'showTabGroups' | 'icon'>> & Omit<SettingsOptions, 'container'> & { container: HTMLElement };
+  private options: Required<Omit<SettingsOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'>> & Omit<SettingsOptions, 'container'> & { container: HTMLElement };
 
   constructor(options: SettingsOptions) {
     // Set defaults
     this.options = {
-      core: options.core,
+      core: options.core, // 'core' is a required property and must be explicitly passed
       container: options.container || document.body,
-      position: options.position || 'middle-left',
       theme: options.theme || 'light',
-      showReset: options.showReset ?? true,
-      title: options.title || 'Customize View',
-      description: options.description || '',
+      panel: {
+        title: options.panel?.title || 'Customize View',
+        description: options.panel?.description || '',
+        showTabGroups: options.panel?.showTabGroups ?? true,
+        showReset: options.panel?.showReset ?? true
+      },
       callout: {
         show: options.callout?.show ?? false,
         message: options.callout?.message || 'Customize your reading experience here.',
@@ -78,8 +79,8 @@ export class CustomViewsSettings {
         backgroundColor: options.callout?.backgroundColor,
         textColor: options.callout?.textColor
       },
-      showTabGroups: options.showTabGroups ?? true,
       icon: {
+        position: options.icon?.position || 'middle-left',
         color: options.icon?.color,
         backgroundColor: options.icon?.backgroundColor,
         opacity: options.icon?.opacity,

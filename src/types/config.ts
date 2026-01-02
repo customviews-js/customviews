@@ -81,16 +81,19 @@ export interface ConfigFile {
   settings?: {
     /** Whether the settings widget is enabled */
     enabled?: boolean;
-    /** Widget position */
-    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
-    /** Widget theme */
-    theme?: 'light' | 'dark';
-    /** Whether to show reset button */
-    showReset?: boolean;
-    /** Widget title */
-    title?: string;
-    /** Widget description text */
-    description?: string;
+    /** Settings panel configuration */
+    panel?: {
+      /** Widget title */
+      title?: string;
+      /** Widget description text */
+      description?: string;
+      /** Whether to show tab groups section in widget (default: true) */
+      showTabGroups?: boolean;
+      /** Whether to show reset button */
+      showReset?: boolean;
+      /** Widget theme */
+      theme?: 'light' | 'dark';
+    };
     /** Callout configuration options */
     callout?: {
       /** Whether to show the callout (default: false) */
@@ -104,10 +107,10 @@ export interface ConfigFile {
       /** Custom text color */
       textColor?: string;
     };
-    /** Whether to show tab groups section in widget (default: true) */
-    showTabGroups?: boolean;
     /** Custom icon styling options */
     icon?: {
+      /** Widget position */
+      position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
       /** Custom icon color */
       color?: string;
       /** Custom background color */

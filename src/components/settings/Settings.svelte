@@ -148,7 +148,7 @@
   <!-- Intro Callout -->
   {#if showCallout}
     <IntroCallout 
-      position={options.position} 
+      position={options.icon.position} 
       message={options.callout?.message}
       enablePulse={options.callout?.enablePulse}
       backgroundColor={options.callout?.backgroundColor}
@@ -168,8 +168,8 @@
 
   <!-- Widget Icon -->
   <SettingsIcon 
-    position={options.position} 
-    title={options.title} 
+    position={options.icon.position} 
+    title={options.panel.title} 
     pulse={showPulse} 
     onclick={openModal}
     
@@ -182,10 +182,10 @@
   <!-- Modal -->
   {#if isModalOpen}
     <Modal 
-      title={options.title}
-      description={options.description}
-      showReset={options.showReset}
-      showTabGroups={options.showTabGroups}
+      title={options.panel.title}
+      description={options.panel.description}
+      showReset={options.panel.showReset}
+      showTabGroups={options.panel.showTabGroups}
       
       toggles={store.visibleToggles}
       tabGroups={store.visibleTabGroups}

@@ -47,9 +47,10 @@
   },
   "baseUrl": "/customviews",
   "settings": {
-    "position": "middle-left",
-    "title": "Custom Views Settings Dialog",
-    "description": "Toggle different content sections to customize your view.",
+    "panel": {
+      "title": "Custom Views Settings Dialog",
+      "description": "Toggle different content sections to customize your view."
+    },
     "callout": {
       "show": true,
       "enablePulse": true,
@@ -57,11 +58,11 @@
       "textColor": "#ffffff"
     },
     "icon": {
+      "position": "middle-left",
       "color": "#ffffff",
       "backgroundColor": "#198755",
       "opacity": 1.0,
       "scale": 1.1
-    },
-    "showTabGroups": true
+    }
   }
 }

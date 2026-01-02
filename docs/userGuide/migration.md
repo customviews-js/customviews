@@ -26,6 +26,12 @@ A checklist for updating git-mastery...
 - [ ] Change usage of `defaultState` to `default` for tab groups
 - [ ] Change usage of `defaultState` to `default` for toggles
 - [ ] Change usage of `widget` to `settings` for settings (config.widget becomes config.settings)
+- **Refactor `settings` configuration**:
+    - Rename `widget` to `settings` (if not already done).
+    - Move `position` to `settings.icon.position`.
+    - Move `title`, `description`, `showTabGroups`, and `showReset` to `settings.panel.*`.
+    - Move `showWelcome` to `settings.callout.show`.
+    - Nest styling options under `settings.icon` and `settings.callout`.
 - [ ] Usage of `icon` customizations (new customizations: config.settings.icon.color, backgroundColor, opacity, scale)
 
 **Find and Replace Patterns:**
