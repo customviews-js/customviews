@@ -16,6 +16,7 @@
   * [Toggles]({{baseUrl}}/userGuide/components/toggles.html)
   * [Tabs]({{baseUrl}}/userGuide/components/tabs.html)
   * [Share & Focus]({{baseUrl}}/userGuide/components/share.html)
+* [Latest Updates and Migration]({{baseUrl}}/userGuide/migration.html)
       </site-nav>
     </div>
   </nav>
