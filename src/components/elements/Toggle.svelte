@@ -3,7 +3,8 @@
     props: {
       toggleId: { reflect: true, type: 'String', attribute: 'toggle-id' },
       assetId: { reflect: true, type: 'String', attribute: 'asset-id' },
-      peekBorder: { reflect: true, type: 'Boolean', attribute: 'peek-border' }
+      peekBorder: { reflect: true, type: 'Boolean', attribute: 'peek-border' },
+      showLabel: { reflect: true, type: 'Boolean', attribute: 'show-label' }
     }
   }} />
 
@@ -13,11 +14,19 @@
   import { renderAssetInto } from '../../core/render';
 
   // Props using Svelte 5 runes
-  let { toggleId = '', assetId = '', peekBorder = false }: { toggleId?: string; assetId?: string; peekBorder?: boolean } = $props();
+  let { toggleId = '', assetId = '', peekBorder = false, showLabel = false }: { toggleId?: string; assetId?: string; peekBorder?: boolean; showLabel?: boolean } = $props();
   // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
   let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
   $effect(() => {
     toggleIds.forEach(id => store.registerToggle(id));
+  });
+
+  // Derive label text from config
+  let labelText = $derived.by(() => {
+      if (!store.config.toggles || toggleIds.length === 0) return '';
+      // Find the first matching toggle config
+      const toggleConfig = store.config.toggles.find(t => t.toggleId === toggleIds[0]);
+      return toggleConfig?.label || toggleIds[0];
   });
 
   let localExpanded = $state(false);
@@ -97,6 +106,10 @@
   class:hidden={isHidden} 
   class:has-border={peekBorder && peekState}
 >
+  {#if showLabel && labelText && !isHidden}
+     <div class="cv-toggle-label">{labelText}</div>
+  {/if}
+
   <div 
     class="cv-toggle-content" 
     bind:this={contentEl}
@@ -169,7 +182,7 @@
     
     border-radius: 8px 8px 0 0;
     
-    padding: 8px 12px 0 12px;
+    padding: 12px 12px 0 12px; /* Top padding matched to bottom padding */
     margin-top: 4px;
   }
   
@@ -192,6 +205,28 @@
     /* Mask for fade out effect */
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  }
+  
+  /* Label Style */
+  .cv-toggle-label {
+    position: absolute;
+    top: -12px;
+    left: 0;
+    background: #e0e0e0;
+    color: #333;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  /* Adjust label position if bordered */
+  .has-border .cv-toggle-label {
+      top: -10px;
+      left: 12px; /* Align with padding */
   }
 
   /* Expand Button */
