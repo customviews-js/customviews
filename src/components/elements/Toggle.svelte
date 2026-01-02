@@ -2,7 +2,9 @@
     tag: 'cv-toggle',
     props: {
       toggleId: { reflect: true, type: 'String', attribute: 'toggle-id' },
-      assetId: { reflect: true, type: 'String', attribute: 'asset-id' }
+      assetId: { reflect: true, type: 'String', attribute: 'asset-id' },
+      showPeekBorder: { reflect: true, type: 'Boolean', attribute: 'show-peek-border' },
+      showLabel: { reflect: true, type: 'Boolean', attribute: 'show-label' }
     }
   }} />
 
@@ -12,16 +14,25 @@
   import { renderAssetInto } from '../../core/render';
 
   // Props using Svelte 5 runes
-  let { toggleId = '', assetId = '' }: { toggleId?: string; assetId?: string } = $props();
+  let { toggleId = '', assetId = '', showPeekBorder = false, showLabel = false }: { toggleId?: string; assetId?: string; showPeekBorder?: boolean; showLabel?: boolean } = $props();
   // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
   let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
+  let toggleConfig = $derived(store.config.toggles?.find(t => t.toggleId === toggleIds[0]));
+  
   $effect(() => {
     toggleIds.forEach(id => store.registerToggle(id));
+  });
+
+  // Derive label text from config
+  let labelText = $derived.by(() => {
+      if (!toggleConfig) return '';
+      return toggleConfig.label || toggleIds[0];
   });
 
   let localExpanded = $state(false);
   let hasRendered = $state(false);
   let contentEl: HTMLDivElement;
+  let scrollHeight = $state(0);
 
   // Derive visibility from store state
   let showState = $derived.by(() => {
@@ -38,18 +49,39 @@
   const PEEK_HEIGHT = 70;
   let isSmallContent = $state(false);
 
-  // Check content height when peeking
+  // Setup ResizeObserver to track content height changes (e.g. images loading, window resize)
   $effect(() => {
-    if (contentEl && peekState) {
-       // We only care if it's small when we are effectively peeking
-       isSmallContent = contentEl.scrollHeight <= PEEK_HEIGHT;
-    }
+    if (!contentEl) return;
+
+    const observer = new ResizeObserver(() => {
+        scrollHeight = contentEl.scrollHeight;
+        // If content shrinks below peek height, update small content state
+        if (peekState) {
+            isSmallContent = scrollHeight <= PEEK_HEIGHT;
+        }
+    });
+    observer.observe(contentEl);
+    
+    // Initial measurement
+    scrollHeight = contentEl.scrollHeight;
+
+    return () => {
+       observer.disconnect();
+    };
   });
 
   let showFullContent = $derived(showState || (peekState && localExpanded));
   // Only show peek styling (mask) if it's peeking, not expanded locally, AND content is actually taller than peek height
   let showPeekContent = $derived(!showState && peekState && !localExpanded && !isSmallContent);
   let isHidden = $derived(!showState && !peekState);
+
+  // Calculate dynamic max-height for animation
+  let currentMaxHeight = $derived.by(() => {
+      if (isHidden) return '0px';
+      if (showPeekContent) return `${PEEK_HEIGHT}px`;
+      if (showFullContent) return scrollHeight > 0 ? `${scrollHeight}px` : '9999px'; 
+      return '0px';
+  });
 
   function toggleExpand(e: MouseEvent) {
     e.stopPropagation();
@@ -65,8 +97,23 @@
   });
 </script>
 
-<div class="cv-toggle-wrapper" class:expanded={showFullContent && !showPeekContent} class:peeking={showPeekContent} class:hidden={isHidden}>
-  <div class="cv-toggle-content" bind:this={contentEl}>
+<div 
+  class="cv-toggle-wrapper" 
+  class:expanded={showFullContent && !showPeekContent} 
+  class:peeking={showPeekContent} 
+  class:peek-mode={peekState}
+  class:hidden={isHidden} 
+  class:has-border={showPeekBorder && peekState}
+>
+  {#if showLabel && labelText && !isHidden}
+     <div class="cv-toggle-label">{labelText}</div>
+  {/if}
+
+  <div 
+    class="cv-toggle-content" 
+    bind:this={contentEl}
+    style:max-height={currentMaxHeight}
+  >
     <slot></slot>
   </div>
 
@@ -84,7 +131,6 @@
 <style>
   :host {
     display: block;
-    margin-bottom: 24px;
     position: relative;
     z-index: 1;
     overflow: visible;
@@ -99,34 +145,90 @@
     position: relative;
     width: 100%;
     transition: all 0.3s ease;
+    margin-bottom: 4px;
+  }
+
+  .cv-toggle-wrapper.hidden {
+    margin-bottom: 0;
+  }
+
+  .cv-toggle-wrapper.peek-mode {
+    margin-bottom: 24px;
   }
 
   .cv-toggle-content {
     overflow: hidden;
     transition: max-height 0.3s ease, opacity 0.3s ease;
+    /* CSS max-height defaults are handled by inline styles now */
   }
 
   /* Hidden State */
   .hidden .cv-toggle-content {
-    max-height: 0;
     opacity: 0;
     pointer-events: none;
+  }
+
+  /* Bordered State */
+  .has-border {
+    box-sizing: border-box; /* Ensure padding/border doesn't increase width */
+    
+    /* Dashed border */
+    border: 2px dashed rgba(0, 0, 0, 0.15);
+    border-bottom: none;
+    
+    /* Inner shadow to look like it's going into something + outer shadow */
+    box-shadow: 
+      0 2px 8px rgba(0, 0, 0, 0.05), /* Subtle outer */
+      inset 0 -15px 10px -10px rgba(0, 0, 0, 0.1); /* Inner bottom shadow */
+    
+    border-radius: 8px 8px 0 0;
+    
+    padding: 12px 12px 0 12px; /* bottom 0 px until expanded */
+    margin-top: 4px;
   }
   
   /* Visible / Expanded State */
   .expanded .cv-toggle-content {
-    max-height: none; /* or a large value if we want transition, but 'none' is cleaner for layout */
     opacity: 1;
     transform: translateY(0);
   }
 
+  /* When expanded, complete the border */
+  .has-border.expanded {
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.15);
+    border-radius: 8px; /* Round all corners */
+    padding-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Remove inner shadow when expanded */
+  }
+
   /* Peek State */
   .peeking .cv-toggle-content {
-    max-height: 70px;
     opacity: 1;
     /* Mask for fade out effect */
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  }
+  
+  /* Label Style */
+  .cv-toggle-label {
+    position: absolute;
+    top: -12px;
+    left: 0;
+    background: #e0e0e0;
+    color: #333;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    z-index: 10;
+    pointer-events: auto;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  /* Adjust label position if bordered */
+  .has-border .cv-toggle-label {
+      top: -10px;
+      left: 12px; /* Align with padding */
   }
 
   /* Expand Button */

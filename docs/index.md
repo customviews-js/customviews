@@ -33,7 +33,7 @@ Whether you are building a static site, a dashboard, or a documentation portal, 
 
 Choose your operating system to see platform-specific content:
 
-<cv-toggle toggle-id="mac" >
+<cv-toggle toggle-id="mac" show-peek-border show-label>
 
 <box>
 
@@ -45,12 +45,11 @@ You're viewing macOS-specific installation steps. Install using Homebrew:
 `brew install customviews`
 
 </box>
-
 </cv-toggle>
 
 
 
-<cv-toggle toggle-id="linux" >
+<cv-toggle toggle-id="linux" show-label>
 
 <box>
 
