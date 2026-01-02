@@ -76,6 +76,26 @@ This allows content to appear as long as one toggle category is active.
 </cv-toggle>
 ```
 
+**Precedence Behaviour**:
+
+When multiple IDs are used, the effective visibility is determined by the most "positive" state among all matching IDs. The order of precedence is:
+
+1.  **Show** (Highest)
+2.  **Peek**
+3.  **Hide** (Lowest)
+
+**Logic:**
+*   If **ANY** of the IDs are set to **Show**, the content is completely **Shown**.
+*   If **NONE** show, but **ANY** are **Peek**, the content is shown in **Peek** mode.
+*   If **ALL** are **Hide** (or undefined), the content is **Hidden**.
+
+This means that "Show" overrides "Peek", and "Peek" overrides "Hide". Explicit interest always overrides disinterest.
+
+<box type="info">
+
+**Note on Peek Mode:** If the content height is less than the standard peek height (70px), the component will automatically display the full content without the "expand" button or fade effect, even if the result state is "Peek". This ensures that short content isn't unnecessarily obscured.
+</box>
+
 
 ## Attributes & Options of `<cv-toggle>`
 

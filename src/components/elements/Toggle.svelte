@@ -35,8 +35,20 @@
       return !showState && toggleIds.some(id => peekToggles.includes(id));
   });
 
+  const PEEK_HEIGHT = 70;
+  let isSmallContent = $state(false);
+
+  // Check content height when peeking
+  $effect(() => {
+    if (contentEl && peekState) {
+       // We only care if it's small when we are effectively peeking
+       isSmallContent = contentEl.scrollHeight <= PEEK_HEIGHT;
+    }
+  });
+
   let showFullContent = $derived(showState || (peekState && localExpanded));
-  let showPeekContent = $derived(!showState && peekState && !localExpanded);
+  // Only show peek styling (mask) if it's peeking, not expanded locally, AND content is actually taller than peek height
+  let showPeekContent = $derived(!showState && peekState && !localExpanded && !isSmallContent);
   let isHidden = $derived(!showState && !peekState);
 
   function toggleExpand(e: MouseEvent) {
@@ -58,7 +70,7 @@
     <slot></slot>
   </div>
 
-  {#if peekState}
+  {#if peekState && !isSmallContent}
     <button 
       class="cv-expand-btn" 
       aria-label={localExpanded ? "Collapse content" : "Expand content"}
