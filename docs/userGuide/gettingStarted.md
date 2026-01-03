@@ -49,28 +49,15 @@ Create a `customviews.config.json` file in the same directory as your site root.
 {
   "config": {
     "toggles": [
-      {
-        "id": "os",
-        "options": [
-          { "value": "mac", "label": "macOS" },
-          { "value": "win", "label": "Windows" }
-        ]
-      }
-    ]
-  "config": {
-    "toggles": [
-      {
-        "id": "os",
-        "options": [
-          { "value": "mac", "label": "macOS" },
-          { "value": "win", "label": "Windows" }
-        ]
-      }
+      { "toggleId": "mac", "label": "macOS", "description": "Show content for macOS users" },
+      { "toggleId": "win", "label": "Windows", "description": "Show content for Windows users" }
     ]
   },
   "settings": {
     "enabled": true,
-    "title": "Customize View"
+    "panel": {
+      "title": "Customize View"
+    }
   }
 }
 ```
@@ -80,57 +67,20 @@ Create a `customviews.config.json` file in the same directory as your site root.
 You can now use CustomViews attributes in your HTML:
 
 ```html
-<div data-cv-toggle="os:mac">
+<cv-toggle toggle-id="mac">
   <p>This content is only for macOS users.</p>
-</div>
+</cv-toggle>
 
-<div data-cv-toggle="os:win">
+<cv-toggle toggle-id="win">
   <p>This content is only for Windows users.</p>
-</div>
+</cv-toggle>
 ```
 
 ---
 
 ## Method 2: Install via NPM
 
-<box type="info" seamless>
-
-This method is recommended if you are building a modern web application with a bundler like Webpack, Rollup, or Vite.
-</box>
-
-++**1. Install the Package**++
-
-Run the following command in your terminal:
-
-```bash
-npm install @customviews-js/customviews
-```
-
-++**2. Import and Initialize**++
-
-In your application entry point (e.g., `main.js` or `index.ts`):
-
-```javascript
-import { CustomViews, CustomViewsSettings } from '@customviews-js/customviews';
-
-// Initialize Core
-CustomViews.init({
-  config: {
-    toggles: [
-      { id: 'mode', options: [{ value: 'simple' }, { value: 'advanced' }] }
-    ]
-  }
-}).then(core => {
-  // Initialize Settings (Optional)
-  const settings = new CustomViewsSettings({
-    core: core,
-    container: document.body
-  });
-  settings.renderModalIcon();
-});
-```
-
----
+To be updated...
 
 ## Verify Installation
 
