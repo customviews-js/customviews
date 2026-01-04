@@ -328,10 +328,11 @@ This is useful when you need:
 - **Multi-line or specially formatted headers**
 
 **Key Points:**
-- `<cv-tab-header>` is the new element containing the header text/HTML. It takes precedence over the `header` attribute if both are present.
-- `<cv-tab-body>` is optional and wraps the tab's content. You can also put content directly in `<cv-tab>` without a `<cv-tab-body>` wrapper.
-- **HTML Support:** `<cv-tab-header>` accepts any HTML elements, including icons. When using MarkBind, icon shortcodes are pre-processed into `<i>` elements automatically. You can also include HTML directly (e.g., `<i class="fa-solid fa-virus"></i>`).
-- The `header` attribute supports plain text only—for rich formatting and HTML, use `<cv-tab-header>`.
+- `<cv-tab-header>` is the recommended way to define headers. It takes precedence over the `header` attribute.
+- **Icon Support:**
+  - **Inside `<cv-tab-header>`:** Supports both MarkBind shortcodes (e.g., `:fa-user:`) and raw HTML. MarkBind processes the content automatically.
+  - **Inside `header="..."` attribute:** Supports **raw HTML only** (e.g., `header='<i class="fa-solid fa-user"></i> Title'` to display an icon, and bold is `header='<strong>Important</strong>'`). MarkBind shortcodes **will not work** in attributes.
+- **HTML Support:** Both methods support general HTML.
 - If `<cv-tab-header>` exists but is empty, the tab ID is used as the fallback header label.
 
 
@@ -527,13 +528,15 @@ This feature is pending review.
 
 **Example with direct HTML:**
 ```html
-<cv-tab tab-id="enabled">
+<cv-tab tab-id="enabled" header="<i class='fa-solid fa-virus'></i> Enabled">
   <cv-tab-header><i class="fa-solid fa-virus"></i> Enabled</cv-tab-header>
   <cv-tab-body>This feature is enabled.</cv-tab-body>
 </cv-tab>
 ```
 
-**Note:** `<cv-tab-header>` accepts any HTML elements. Icon shortcodes like `:fa-solid-virus:` work because MarkBind pre-processes them into `<i>` elements before CustomViews renders. You can also directly include HTML tags like `<i class="fa-solid fa-virus"></i>` in the header.
+
+
+**Note:** `<cv-tab-header>` accepts any HTML elements. Icon shortcodes like `:fa-solid-virus:` work because MarkBind pre-processes them inside the element content. For `header` attributes, you must use direct HTML tags like `<i class="fa-solid fa-virus"></i>` as MarkBind does not process attributes.
 
 </panel>
 
@@ -556,7 +559,7 @@ This feature is pending review.
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `tab-id` | string | **(required)** | Unique identifier for the tab within its group. |
-| `header` | string | Tab ID | Display label for the tab in the navigation bar. Plain text only (no icons or HTML). Use `<cv-tab-header>` for rich formatting. |
+| `header` | string | Tab ID | Display label for the tab. Supports plain text and raw HTML (e.g., icons via `<i>` tags). Does not support MarkBind shortcodes. |
 
 ### `<cv-tab-header>` Attributes
 
