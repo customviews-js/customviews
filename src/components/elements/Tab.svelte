@@ -42,7 +42,10 @@
   .cv-tab-content {
     display: none;
     animation: fade-in 0.2s ease-in-out;
-    padding: 1rem 0.5rem 0.5rem 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .cv-tab-content.active {
