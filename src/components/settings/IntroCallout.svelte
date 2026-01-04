@@ -27,9 +27,9 @@
   */
 </script>
 
-<div class="callout-wrapper pos-{position}">
+<div class="cv-callout-wrapper pos-{position}">
   <div 
-    class="callout {enablePulse ? 'cv-pulse' : ''}" 
+    class="cv-callout {enablePulse ? 'cv-pulse' : ''}" 
     role="alert" 
     style:--cv-callout-bg={backgroundColor}
     style:--cv-callout-text={textColor}
@@ -62,7 +62,7 @@
   }
 
   /* Wrapper handles Positioning & Entry Animation */
-  .callout-wrapper {
+  .cv-callout-wrapper {
     position: fixed;
     z-index: 9999;
     
@@ -71,7 +71,7 @@
   }
 
   /* Inner handles Visuals & Pulse Animation */
-  .callout {
+  .cv-callout {
     background: var(--cv-callout-bg, white);
     padding: 1rem 1.25rem;
     border-radius: 0.5rem;
@@ -88,12 +88,12 @@
   }
 
   /* Apply pulse to inner callout if enabled */
-  .callout.cv-pulse {
+  .cv-callout.cv-pulse {
     animation: pulse 2s infinite 0.5s;
   }
 
   /* Arrow Base */
-  .callout::before {
+  .cv-callout::before {
     content: '';
     position: absolute;
     width: 1rem;
@@ -185,46 +185,46 @@
   /* Arrow Positioning (Child of .callout, dependent on Wrapper .pos-*) */
   
   /* Pointing Right */
-  .pos-top-right .callout::before, 
-  .pos-middle-right .callout::before, 
-  .pos-bottom-right .callout::before {
+  .pos-top-right .cv-callout::before, 
+  .pos-middle-right .cv-callout::before, 
+  .pos-bottom-right .cv-callout::before {
     right: -0.5rem; 
     border-left: none;
     border-bottom: none;
   }
 
   /* Pointing Left */
-  .pos-top-left .callout::before, 
-  .pos-middle-left .callout::before, 
-  .pos-bottom-left .callout::before {
+  .pos-top-left .cv-callout::before, 
+  .pos-middle-left .cv-callout::before, 
+  .pos-bottom-left .cv-callout::before {
     left: -0.5rem; 
     border-right: none;
     border-top: none;
   }
 
   /* Vertical placement of arrow */
-  .pos-middle-right .callout::before, .pos-middle-left .callout::before {
+  .pos-middle-right .cv-callout::before, .pos-middle-left .cv-callout::before {
     top: 50%;
     margin-top: -0.5rem; 
   }
 
-  .pos-top-right .callout::before, .pos-top-left .callout::before {
+  .pos-top-right .cv-callout::before, .pos-top-left .cv-callout::before {
     top: 1.25rem;
   }
 
-  .pos-bottom-right .callout::before, .pos-bottom-left .callout::before {
+  .pos-bottom-right .cv-callout::before, .pos-bottom-left .cv-callout::before {
     bottom: 1.25rem;
   }
 
 
   /* Dark Theme */
-  :global(.cv-settings-theme-dark) .callout {
+  :global(.cv-settings-theme-dark) .cv-callout {
     background: #1f2937;
     color: #e5e7eb;
     border-color: rgba(255,255,255,0.2);
   }
 
-  :global(.cv-settings-theme-dark) .callout::before {
+  :global(.cv-settings-theme-dark) .cv-callout::before {
     background: #1f2937;
     border-color: rgba(255,255,255,0.2);
   }
