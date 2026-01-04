@@ -30,8 +30,10 @@
   });
 
   let localExpanded = $state(false);
+  let isUnconstrained = $state(false); /* New state to track if we can release max-height */
   let hasRendered = $state(false);
   let contentEl: HTMLDivElement;
+  let innerEl: HTMLDivElement;
   let scrollHeight = $state(0);
 
   // Derive visibility from store state
@@ -54,23 +56,46 @@
     if (!contentEl) return;
 
     const observer = new ResizeObserver(() => {
-        scrollHeight = contentEl.scrollHeight;
-        // If content shrinks below peek height, update small content state
-        if (peekState) {
-            isSmallContent = scrollHeight <= PEEK_HEIGHT;
+        // We measure the inner element's height
+        // contentEl is the window, innerEl is the content
+        if (innerEl) {
+             scrollHeight = innerEl.offsetHeight;
+        }
+
+        // Always track small content state to avoid race conditions/stale state
+        if (scrollHeight > 0) {
+             if (scrollHeight <= PEEK_HEIGHT) {
+                 isSmallContent = true;
+             } else if (!isSmallContent) {
+                 // Only set to false if it wasn't already true (latch behavior)
+                 // This ensures if it STARTS small, growing won't add the button.
+                 isSmallContent = false;
+             }
         }
     });
-    observer.observe(contentEl);
-    
-    // Initial measurement
-    scrollHeight = contentEl.scrollHeight;
+
+    if (innerEl) {
+        observer.observe(innerEl);
+        scrollHeight = innerEl.offsetHeight;
+    }
 
     return () => {
        observer.disconnect();
     };
   });
 
-  let showFullContent = $derived(showState || (peekState && localExpanded));
+  let showFullContent = $derived(showState || (peekState && localExpanded) || (peekState && isSmallContent));
+
+  // Reset unconstrained state when toggling
+  $effect(() => {
+     if (showFullContent) {
+         // Expanding: start constrained (to animate), will unlock on transitionend
+         isUnconstrained = false; 
+     } else {
+         // Collapsing: must recapture height immediately (snap) or stay constrained
+         isUnconstrained = false;
+     }
+  });
   // Only show peek styling (mask) if it's peeking, not expanded locally, AND content is actually taller than peek height
   let showPeekContent = $derived(!showState && peekState && !localExpanded && !isSmallContent);
   let isHidden = $derived(!showState && !peekState);
@@ -78,10 +103,21 @@
   // Calculate dynamic max-height for animation
   let currentMaxHeight = $derived.by(() => {
       if (isHidden) return '0px';
+      if (isUnconstrained && showFullContent) return 'none'; /* Release constraint when stable */
       if (showPeekContent) return `${PEEK_HEIGHT}px`;
       if (showFullContent) return scrollHeight > 0 ? `${scrollHeight}px` : '9999px'; 
       return '0px';
   });
+
+  function handleTransitionEnd(e: TransitionEvent) {
+    // Only care about max-height transitions on the content element
+    if (e.propertyName !== 'max-height' || e.target !== contentEl) return;
+    
+    // If we finished expanding, release the height constraint
+    if (showFullContent) {
+        isUnconstrained = true;
+    }
+  }
 
   function toggleExpand(e: MouseEvent) {
     e.stopPropagation();
@@ -113,8 +149,11 @@
     class="cv-toggle-content" 
     bind:this={contentEl}
     style:max-height={currentMaxHeight}
+    ontransitionend={handleTransitionEnd}
   >
-    <slot></slot>
+    <div class="cv-toggle-inner" bind:this={innerEl}>
+       <slot></slot>
+    </div>
   </div>
 
   {#if peekState && !isSmallContent}
@@ -158,8 +197,12 @@
 
   .cv-toggle-content {
     overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
+    transition: max-height 0.3s ease, opacity 0.3s ease, overflow 0s 0s;
     /* CSS max-height defaults are handled by inline styles now */
+  }
+
+  .cv-toggle-inner {
+    display: flow-root; /* Ensures margins of children are contained */
   }
 
   /* Hidden State */
@@ -183,7 +226,7 @@
     
     border-radius: 8px 8px 0 0;
     
-    padding: 12px 12px 0 12px; /* bottom 0 px until expanded */
+    padding: 12px 0 0 0; /* bottom 0 px until expanded */
     margin-top: 4px;
   }
   
@@ -191,6 +234,8 @@
   .expanded .cv-toggle-content {
     opacity: 1;
     transform: translateY(0);
+    overflow: visible;
+    transition: max-height 0.3s ease, opacity 0.3s ease, overflow 0s 0.3s;
   }
 
   /* When expanded, complete the border */
@@ -228,13 +273,13 @@
   /* Adjust label position if bordered */
   .has-border .cv-toggle-label {
       top: -10px;
-      left: 12px; /* Align with padding */
+      left: 0;
   }
 
   /* Expand Button */
   .cv-expand-btn {
     position: absolute;
-    bottom: -8px;
+    bottom: -24px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
