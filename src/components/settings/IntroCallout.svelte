@@ -237,4 +237,10 @@
     color: #f3f4f6;
   }
 
+  @media print {
+    .cv-callout-wrapper {
+      display: none !important;
+    }
+  }
+
 </style>
