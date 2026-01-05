@@ -321,4 +321,9 @@
     }
   }
 
+  @media print {
+    .cv-settings-icon {
+      display: none !important;
+    }
+  }
 </style>
