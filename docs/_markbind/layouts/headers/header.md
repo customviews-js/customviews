@@ -9,7 +9,7 @@ For the latest stable release, visit [here](https://customviews-js.github.io).**
   <navbar type="dark">
     <a slot="brand" href="{{baseUrl}}/index.html" title="Home" class="navbar-brand">Custom Views</a>
     <li><a highlight-on="exact" href="{{baseUrl}}/index.html" class="nav-link">HOME</a></li>
-    <li><a highlight-on="sibling-or-child" href="{{baseUrl}}/userGuide/index.html" class="nav-link">USER GUIDE</a></li>
+    <li><a highlight-on="sibling-or-child" href="{{baseUrl}}/authorGuide/index.html" class="nav-link">AUTHOR GUIDE</a></li>
     <li><a highlight-on="sibling-or-child" href="{{baseUrl}}/devGuide/index.html" class="nav-link">DEVELOPER GUIDE</a></li>
     <li><a highlight-on="exact" href="{{baseUrl}}/about.html" class="nav-link">ABOUT</a></li>
     <li>

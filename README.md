@@ -12,7 +12,7 @@ With Custom Views, you can:
 
 Whether you are building a static site, a dashboard, or a documentation portal, Custom Views gives you the tools to make your content interactive and adaptable while keeping things lightweight and simple.
 
-[Documentation and User Guide](https://customviews-js.github.io/customviews)
+[Documentation and Author Guide](https://customviews-js.github.io/customviews)
 
 ## License
 
