@@ -257,20 +257,6 @@
         "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages"
       },
       "headingKeywords": {}
-    },
-    {
-      "src": "userGuide/migration.md",
-      "title": "User Guide - ",
-      "headings": {
-        "migration-guide": "Migration Guide",
-        "summary": "Summary:",
-        "more-detailed": "More Detailed:",
-        "html-attributes-update": "HTML Attributes Update",
-        "2-configuration-file-customviews-config-json": "2. Configuration File (customviews.config.json)",
-        "default-state": "Default State",
-        "widget-configuration-rename": "Widget Configuration Rename"
-      },
-      "headingKeywords": {}
     }
   ]
 }
