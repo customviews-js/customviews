@@ -2,6 +2,9 @@
   <link rel="stylesheet" href="{{baseUrl}}/stylesheets/main.css">
 </head-bottom>
 
+<div class="w-100 p-1 bg-warning text-center d-print-none"><md>**This site documents the features of CustomViews in development and possible beta breaking changes.
+For the latest stable release, visit [here](https://customviews-js.github.io).**</md></div>
+
 <header sticky>
   <navbar type="dark">
     <a slot="brand" href="{{baseUrl}}/index.html" title="Home" class="navbar-brand">Custom Views</a>

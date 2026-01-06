@@ -31,8 +31,8 @@
       ]
     }
   ],
-  "plugins" : [
-    "customviews"
+  "plugins": [
+    "customviews", "filterTags"
   ],
   "deploy": {
     "message": "Update main site.",

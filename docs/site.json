@@ -32,8 +32,13 @@
     "codeTheme": "light"
   },
   "plugins": [
-    "customviews"
+    "customviews", "filterTags"
   ],
+  "pluginsContext" : {
+    "filterTags" : {
+      "tags": ["beta-release"]
+    }
+  },
   "deploy": {
     "message": "Site Update."
   }
