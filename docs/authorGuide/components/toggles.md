@@ -1,6 +1,6 @@
 <frontmatter>
   title: CustomViews - Toggle Component
-  layout: userGuide.md
+  layout: authorGuide.md
   pageNav: 4
   pageNavTitle: "Topics"
 </frontmatter>
@@ -137,7 +137,7 @@ To make toggles discoverable by the settings, you must define them in your `cust
 
 ## Key Configuration Fields in `customviews.config.json` for Toggles
 
-Also refer to the [Configuration](configuration.md) section for a summary of all configuration options.
+Also refer to the [Configuration](../configuration.md) section for a summary of all configuration options.
 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|

@@ -1,6 +1,6 @@
 <frontmatter>
-  title: User Guide - Sharing
-  layout: userGuide.md
+  title: Author Guide - Sharing
+  layout: authorGuide.md
   pageNav: 4
   pageNavTitle: "Topics"
 </frontmatter>

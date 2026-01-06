@@ -2,8 +2,8 @@
 <span id="title" class="d-none">{{ title }}</span>
 
 <frontmatter>  
-  title: "User Guide - Configuration"
-  layout: userGuide.md
+  title: "Author Guide - Configuration"
+  layout: authorGuide.md
   pageNav: 2
   pageNavTitle: "Topics"
 </frontmatter>

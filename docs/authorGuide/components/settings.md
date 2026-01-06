@@ -1,6 +1,6 @@
 <frontmatter>
   title: CustomViews - Settings
-  layout: userGuide.md
+  layout: authorGuide.md
   pageNav: 4
   pageNavTitle: "Topics"
 </frontmatter>

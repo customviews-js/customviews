@@ -40,6 +40,8 @@
     "bump:patch": "npm version patch",
     "bump:minor": "npm version minor",
     "bump:major": "npm version major",
+    "deploydocs:stable": "cd docs && markbind deploy -s stable-site.json",
+    "deploydocs": "cd docs && markbind deploy -s site.json",
     "dev": "rollup -c -w",
     "test": "vitest run"
   },
