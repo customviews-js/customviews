@@ -9,7 +9,9 @@
 // Group 1: escape character (backslashes)
 // Group 2: variable name
 // Group 3 (optional): fallback value
-const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/g;
+export const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/g;
+// Non-global version for stateless testing
+const VAR_TESTER = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/;
 
 import { placeholderRegistryStore } from '../stores/placeholder-registry-store.svelte';
 
@@ -30,7 +32,7 @@ export class DomScanner {
         if (node.parentElement && node.parentElement.classList.contains('cv-var')) {
             return NodeFilter.FILTER_REJECT;
         }
-        return VAR_REGEX.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+        return VAR_TESTER.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
       }
     });
 
