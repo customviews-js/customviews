@@ -8,9 +8,14 @@
 // Markbind Deployment: Use unpkg CDN
 function getScripts() {
   return [
-    // '<script src="../../../dist/custom-views.min.js" data-base-url="/customviews"></script>',
-    '<script src="https://unpkg.com/@customviews-js/customviews@v1" data-base-url="/customviews"></script>'
-    // '<script src="https://unpkg.com/@customviews-js/customviews@beta" data-base-url="/customviews"></script>'
+    // Local Development 
+    // '<script src="../../../dist/custom-views.js" data-base-url="/customviews"></script>',
+    
+    // Latest Stable Release
+    // '<script src="https://unpkg.com/@customviews-js/customviews@v1" data-base-url="/customviews"></script>'
+    
+    // Latest Beta Release
+    '<script src="https://unpkg.com/@customviews-js/customviews@beta" data-base-url="/customviews"></script>'
   ];
 };
 
