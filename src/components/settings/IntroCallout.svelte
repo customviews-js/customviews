@@ -72,19 +72,19 @@
 
   /* Inner handles Visuals & Pulse Animation */
   .cv-callout {
-    background: var(--cv-callout-bg, white);
+    background: var(--cv-callout-bg, var(--cv-bg));
     padding: 1rem 1.25rem;
     border-radius: 0.5rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 4px 6px -1px var(--cv-shadow), 0 2px 4px -1px var(--cv-shadow); /* adapt shadow? */
     max-width: 250px;
     font-size: 0.9rem;
     line-height: 1.5;
-    color: var(--cv-callout-text, #1a1a1a);
+    color: var(--cv-callout-text, var(--cv-text));
     display: flex;
     align-items: flex-start;
     gap: 0.75rem;
     font-family: inherit;
-    border: 2px solid rgba(0,0,0,0.1); /* Subtle border */
+    border: 2px solid var(--cv-border);
   }
 
   /* Apply pulse to inner callout if enabled */
@@ -98,9 +98,9 @@
     position: absolute;
     width: 1rem;
     height: 1rem;
-    background: var(--cv-callout-bg, white);
+    background: var(--cv-callout-bg, var(--cv-bg));
     transform: rotate(45deg);
-    border: 2px solid rgba(0,0,0,0.1);
+    border: 2px solid var(--cv-border);
     z-index: -1;
   }
 
@@ -214,27 +214,6 @@
 
   .pos-bottom-right .cv-callout::before, .pos-bottom-left .cv-callout::before {
     bottom: 1.25rem;
-  }
-
-
-  /* Dark Theme */
-  :global(.cv-settings-theme-dark) .cv-callout {
-    background: #1f2937;
-    color: #e5e7eb;
-    border-color: rgba(255,255,255,0.2);
-  }
-
-  :global(.cv-settings-theme-dark) .cv-callout::before {
-    background: #1f2937;
-    border-color: rgba(255,255,255,0.2);
-  }
-  
-  :global(.cv-settings-theme-dark) .close-btn {
-    color: #9ca3af;
-  }
-
-  :global(.cv-settings-theme-dark) .close-btn:hover {
-    color: #f3f4f6;
   }
 
   @media print {

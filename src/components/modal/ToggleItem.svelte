@@ -56,7 +56,9 @@
 
 <style>
   .card {
-    background: white;
+    background: var(--cv-bg);
+    border: 1px solid var(--cv-border);
+    border-radius: 0.5rem;
   }
 
   .content {
@@ -69,13 +71,13 @@
   .title {
     font-weight: 500;
     font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.9);
+    color: var(--cv-text);
     margin: 0;
   }
 
   .description {
     font-size: 0.75rem;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--cv-text-secondary);
     margin: 0.125rem 0 0 0;
   }
 
@@ -90,6 +92,7 @@
     gap: 4px;
     font-size: 0.85rem;
     cursor: pointer;
+    color: var(--cv-text);
   }
 
   .toggle-input {
@@ -97,17 +100,5 @@
     opacity: 1;
     width: auto;
     height: auto;
-  }
-
-  :global(.cv-settings-theme-dark) .card {
-    background: #101722;
-  }
-
-  :global(.cv-settings-theme-dark) .title {
-    color: #e2e8f0;
-  }
-
-  :global(.cv-settings-theme-dark) .description {
-    color: rgba(255, 255, 255, 0.6);
   }
 </style>

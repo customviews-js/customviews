@@ -41,14 +41,14 @@
     flex-direction: column;
     gap: 0.75rem;
     padding: 0.75rem;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--cv-bg);
+    border: 1px solid var(--cv-border);
     border-radius: 0.5rem;
   }
 
   /* Remove special handling for last child since they are now separate cards */
   .root:last-child {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid var(--cv-border);
   }
 
   .header {
@@ -59,7 +59,7 @@
 
   .label {
     font-size: 0.875rem;
-    color: rgba(0, 0, 0, 0.8);
+    color: var(--cv-text);
     margin: 0;
     line-height: 1.4;
     font-weight: 500;
@@ -69,7 +69,7 @@
 
   .description {
     font-size: 0.75rem;
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--cv-text-secondary);
     margin: 0;
     line-height: 1.4;
   }
@@ -77,9 +77,9 @@
   .select {
     width: 100%;
     border-radius: 0.5rem;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    color: rgba(0, 0, 0, 0.9);
+    background: var(--cv-input-bg);
+    border: 1px solid var(--cv-input-border);
+    color: var(--cv-text);
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
     cursor: pointer;
@@ -88,32 +88,12 @@
   }
 
   .select:hover {
-    border-color: rgba(0, 0, 0, 0.25);
+    border-color: var(--cv-text-secondary);
   }
 
   .select:focus {
     outline: none;
-    border-color: #3e84f4;
+    border-color: var(--cv-primary);
     box-shadow: 0 0 0 2px rgba(62, 132, 244, 0.2);
-  }
-
-  /* Dark Theme */
-  :global(.cv-settings-theme-dark) .root {
-    background: #101722;
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
-  :global(.cv-settings-theme-dark) .label {
-    color: #e2e8f0;
-  }
-
-  :global(.cv-settings-theme-dark) .description {
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  :global(.cv-settings-theme-dark) .select {
-    background: #101722;
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #e2e8f0;
   }
 </style>
