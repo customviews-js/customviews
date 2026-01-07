@@ -20,10 +20,10 @@ Use the `<cv-define-placeholder>` component to register a variable. This compone
 
 ```html
 <cv-define-placeholder 
-  name="username" 
-  label="GitHub Username" 
-  default="octocat" 
-placeholder="Enter username" 
+    name="username" 
+    settings-label="Your Username" 
+    settings-hint="Enter username" 
+    default-value="default username"
 ></cv-define-placeholder>
 ```
 
