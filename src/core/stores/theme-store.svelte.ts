@@ -1,8 +1,12 @@
 
 export type ThemeMode = 'auto' | 'light' | 'dark';
 
+function isThemeMode(value: string | null): value is ThemeMode {
+  return value === 'auto' || value === 'light' || value === 'dark';
+}
+
 export class ThemeStore {
-  mode = $state<ThemeMode>('auto');
+  mode = $state<ThemeMode>('light'); // Default to light
   systemIsDark = $state(false);
 
   constructor() {
@@ -10,18 +14,32 @@ export class ThemeStore {
     if (typeof window !== 'undefined') {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       this.systemIsDark = mediaQuery.matches;
-
-      // Listener for system changes
-      mediaQuery.addEventListener('change', (e) => {
-        this.systemIsDark = e.matches;
-      });
     }
+  }
+
+  listen() {
+    // Auto feature disabled for now
+    /*
+    if (typeof window === 'undefined') return () => {};
+    
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    // Update initial state just in case
+    this.systemIsDark = mediaQuery.matches;
+
+    const handler = (e: MediaQueryListEvent) => {
+      this.systemIsDark = e.matches;
+    };
+
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+    */
+    return () => {};
   }
 
   init() {
     if (typeof localStorage !== 'undefined') {
-        const saved = localStorage.getItem('cv-theme-pref') as ThemeMode | null;
-        if (saved && ['auto', 'light', 'dark'].includes(saved)) {
+        const saved = localStorage.getItem('cv-theme-pref');
+        if (isThemeMode(saved)) {
             this.mode = saved;
         }
     }
