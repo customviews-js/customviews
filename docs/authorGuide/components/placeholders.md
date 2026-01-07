@@ -75,9 +75,9 @@ You can "escape" the placeholder syntax if you want to display the literal brack
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | string | **Yes** | The unique identifier for the variable. Must act as the key for interpolation (e.g., `api_key`). |
-| `label` | string | No | The human-readable label shown in the Settings Widget. Defaults to the `name` if omitted. |
-| `default` | string | No | The initial value to display if the user hasn't entered anything yet. |
-| `placeholder` | string | No | The ghost text shown inside the input box in the Settings Widget to guide the user. |
+| `settings-label` | string | No | The human-readable label shown in the Settings Widget. Defaults to the `name` if omitted. |
+| `default-value` | string | No | The initial value to display if the user hasn't entered anything yet. |
+| `settings-hint` | string | No | The ghost text shown inside the input box in the Settings Widget to guide the user. |
 
 ## Persistence
 
@@ -91,6 +91,7 @@ Values entered by the user are saved in the browser's `localStorage` (key: `cv-u
 Future directions for this component:
 
 * Being able to define it through central json
-* Support dynamic rendering?
+* Support dynamic rendering:
+    * Note that current implementation The DomScanner.scanAndHydrate is called during initialization without considering that dynamic content may be added later (e.g., via client-side rendering, lazy loading, or navigation). If placeholders are present in dynamically loaded content, they won't be processed. Consider providing a way to re-scan or automatically detect newly added content.
 * Better UI?
 * More intuitive author syntax?
