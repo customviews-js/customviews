@@ -7,8 +7,8 @@
   import SettingsIcon from './SettingsIcon.svelte';
   import Modal from '../modal/Modal.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
-  import { showToast } from '../../core/stores/toast-store';
-  import { shareStore } from '../../core/stores/share-store';
+  import { showToast } from '../../core/stores/toast-store.svelte';
+  import { shareStore } from '../../core/stores/share-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/constants';
   import Toast from '../elements/Toast.svelte';
   import ShareOverlay from '../share/ShareOverlay.svelte';
@@ -162,7 +162,7 @@
   <!-- Toast Container -->
   <Toast />
 
-  {#if $shareStore.isActive}
+  {#if shareStore.isActive}
     <ShareOverlay {excludedTags} {excludedIds} />
   {/if}
 

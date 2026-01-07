@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { shareStore, shareCount } from '../../core/stores/share-store';
+  import { shareStore } from '../../core/stores/share-store.svelte';
   import { fly } from 'svelte/transition';
 
   function handleClear() {
@@ -20,7 +20,7 @@
 </script>
 
 <div class="floating-bar" transition:fly={{ y: 50, duration: 200 }}>
-  <span class="count">{$shareCount} item{$shareCount === 1 ? '' : 's'} selected</span>
+  <span class="count">{shareStore.shareCount} item{shareStore.shareCount === 1 ? '' : 's'} selected</span>
   
   <button class="btn clear" onclick={handleClear}>Clear All</button>
   <button class="btn preview" onclick={handlePreview}>Preview</button>

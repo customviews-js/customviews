@@ -1,6 +1,6 @@
 import { mount, unmount } from 'svelte';
-import { focusStore } from '../stores/focus-store';
-import { showToast } from '../stores/toast-store';
+import { focusStore } from '../stores/focus-store.svelte';
+import { showToast } from '../stores/toast-store.svelte';
 import * as DomElementLocator from '../utils/dom-element-locator';
 import FocusDivider from '../../components/focus/FocusDivider.svelte';
 
@@ -33,10 +33,13 @@ export class FocusService {
         // ...
         
         // Subscribe to store for exit signal
-        this.unsubscribe = focusStore.subscribe(state => {
-           if (!state.isActive && document.body.classList.contains(BODY_FOCUS_CLASS)) {
-               this.exitFocusMode();
-           } 
+        // Subscribe to store for exit signal
+        this.unsubscribe = $effect.root(() => {
+            $effect(() => {
+                if (!focusStore.isActive && document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                    this.exitFocusMode();
+                }
+            });
         });
     }
 

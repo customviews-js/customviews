@@ -4,7 +4,7 @@ import type { AssetsManager } from "./managers/assets-manager";
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
 
-import { FocusService } from "./services/focus-service";
+import { FocusService } from "./services/focus-service.svelte";
 import { DataStore, initStore } from "./stores/main-store.svelte";
 
 export interface CustomViewsOptions {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { focusStore } from '../../core/stores/focus-store';
+  import { focusStore } from '../../core/stores/focus-store.svelte';
   import { slide } from 'svelte/transition';
 
   function handleExit() {
@@ -7,7 +7,7 @@
   }
 </script>
 
-{#if $focusStore.isActive}
+{#if focusStore.isActive}
   <div id="cv-exit-focus-banner" transition:slide={{ duration: 250 }}>
     <span>You are viewing a focused selection.</span>
     <button onclick={handleExit}>Show Full Page</button>

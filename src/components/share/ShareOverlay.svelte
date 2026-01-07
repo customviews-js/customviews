@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { shareStore, SHAREABLE_SELECTOR } from '../../core/stores/share-store';
+  import { shareStore, SHAREABLE_SELECTOR } from '../../core/stores/share-store.svelte';
   import ShareToolbar from './ShareToolbar.svelte';
   import HoverHelper from './HoverHelper.svelte';
 
@@ -42,7 +42,7 @@
     let selectedAncestor: HTMLElement | null = null;
     
     while(parent) {
-      if ($shareStore.selectedElements.has(parent)) {
+      if (shareStore.selectedElements.has(parent)) {
         selectedAncestor = parent;
         break;
       }
@@ -68,7 +68,7 @@
     e.stopPropagation();
 
     // If we have a hover target, toggle it
-    const currentTarget = $shareStore.currentHoverTarget;
+    const currentTarget = shareStore.currentHoverTarget;
     if (currentTarget) {
       shareStore.toggleSelection(currentTarget);
     }

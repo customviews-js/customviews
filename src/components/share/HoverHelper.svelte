@@ -1,39 +1,43 @@
 <script lang="ts">
-  import { shareStore, SHAREABLE_SELECTOR } from '../../core/stores/share-store';
+  import { shareStore, SHAREABLE_SELECTOR } from '../../core/stores/share-store.svelte';
   import { fade } from 'svelte/transition';
 
   // Derived state for easier access
-  $: target = $shareStore.currentHoverTarget;
-  $: isSelected = target && $shareStore.selectedElements.has(target);
+  let target = $derived(shareStore.currentHoverTarget);
+  let isSelected = $derived(target && shareStore.selectedElements.has(target));
   
-  // Computed Position
-  let style = 'display: none;';
-  let tagName = 'TAG';
-  let canGoUp = false;
+  // Computed Position using effect for DOM layout properties
+  let style = $state('display: none;');
+  let tagName = $state('TAG');
+  let canGoUp = $state(false);
 
-  $: if (target) {
-    const rect = target.getBoundingClientRect();
-    
-    let top = rect.top - 28; // slightly higher
-    if (top < 0) top = rect.top + 10;
+  $effect(() => {
+    const t = shareStore.currentHoverTarget;
+    if (t) {
+        // DOM measurement requires element to be available
+        const rect = t.getBoundingClientRect();
+        
+        let top = rect.top - 28; // slightly higher
+        if (top < 0) top = rect.top + 10;
 
-    let left = rect.right - 80;
-    if (left < 10) left = 10;
-    
-    // Ensure it doesn't go off right edge
-    if (left + 100 > window.innerWidth) {
-        left = window.innerWidth - 110;
+        let left = rect.right - 80;
+        if (left < 10) left = 10;
+        
+        // Ensure it doesn't go off right edge
+        if (left + 100 > window.innerWidth) {
+            left = window.innerWidth - 110;
+        }
+
+        style = `top: ${top}px; left: ${left}px;`;
+        tagName = t.tagName;
+        
+        // Parent check for "Up" button
+        const parent = t.parentElement;
+        canGoUp = !!(parent && parent.matches(SHAREABLE_SELECTOR));
+    } else {
+        style = 'display: none;';
     }
-
-    style = `top: ${top}px; left: ${left}px;`;
-    tagName = target.tagName;
-    
-    // Parent check for "Up" button
-    const parent = target.parentElement;
-    canGoUp = !!(parent && parent.matches(SHAREABLE_SELECTOR));
-  } else {
-    style = 'display: none;';
-  }
+  });
 
   function handleSelect(e: Event) {
     e.stopPropagation();
