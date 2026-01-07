@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade, scale } from 'svelte/transition';
-  import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon, getSunIcon, getMoonIcon, getSystemIcon } from '../../utils/icons';
+  import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon, getSunIcon, getMoonIcon } from '../../utils/icons';
   import { themeStore } from '../../core/stores/theme-store.svelte';
   import type { ToggleConfig, TabGroupConfig } from '../../types/types';
   import ToggleItem from './ToggleItem.svelte';
@@ -21,7 +21,6 @@
     isResetting?: boolean;
     placeholderDefinitions?: PlaceholderDefinition[];
     placeholderValues?: Record<string, string>;
-    themeMode?: 'light' | 'dark' | 'auto';
     onclose?: () => void;
     onreset?: () => void;
     ontoggleChange?: (detail: any) => void;
@@ -46,7 +45,6 @@
     isResetting = false,
     placeholderDefinitions = [],
     placeholderValues = {},
-    themeMode = 'auto',
     onclose = () => {},
     onreset = () => {},
     ontoggleChange = () => {},
@@ -239,7 +237,7 @@
             <div class="section-heading">Theme</div>
             <div class="theme-selector">
               <button 
-                class="theme-btn {themeMode === 'light' ? 'active' : ''}" 
+                class="theme-btn {themeStore.mode === 'light' ? 'active' : ''}" 
                 onclick={() => themeStore.setMode('light')}
                 title="Light Mode"
               >
@@ -247,21 +245,24 @@
                 <span>Light</span>
               </button>
               <button 
-                class="theme-btn {themeMode === 'dark' ? 'active' : ''}" 
+                class="theme-btn {themeStore.mode === 'dark' ? 'active' : ''}" 
                 onclick={() => themeStore.setMode('dark')}
                 title="Dark Mode"
               >
                 {@html getMoonIcon()}
                 <span>Dark</span>
               </button>
+              <!-- Auto button disabled for now -->
+              <!--
               <button 
-                class="theme-btn {themeMode === 'auto' ? 'active' : ''}" 
+                class="theme-btn {themeStore.mode === 'auto' ? 'active' : ''}" 
                 onclick={() => themeStore.setMode('auto')}
                 title="System Default"
               >
                 {@html getSystemIcon()}
                 <span>Auto</span>
               </button>
+              -->
             </div>
           </div>
         </div>
@@ -511,7 +512,7 @@
 .theme-btn.active {
   background: var(--cv-primary);
   color: white;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  box-shadow: var(--cv-shadow-sm);
 }
 
 /* Tab Groups Section specific */
@@ -813,7 +814,7 @@
 .variable-input:focus {
   outline: none;
   border-color: var(--cv-primary);
-  box-shadow: 0 0 0 2px rgba(62, 132, 244, 0.2);
+  box-shadow: 0 0 0 2px var(--cv-focus-ring);
 }
 </style>
 

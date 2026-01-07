@@ -94,6 +94,6 @@
   .select:focus {
     outline: none;
     border-color: var(--cv-primary);
-    box-shadow: 0 0 0 2px rgba(62, 132, 244, 0.2);
+    box-shadow: 0 0 0 2px var(--cv-focus-ring);
   }
 </style>

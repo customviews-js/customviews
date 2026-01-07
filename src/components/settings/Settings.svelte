@@ -61,6 +61,7 @@
 
     // Init Theme Store
     themeStore.init();
+    return themeStore.listen();
   });
 
   function checkIntro() {
@@ -216,7 +217,6 @@
   
         placeholderDefinitions={definitions}
         placeholderValues={values}
-        themeMode={themeStore.mode}
   
         onclose={closeModal}
         onreset={handleReset}
@@ -256,6 +256,10 @@
     --cv-modal-icon-bg: rgba(0, 0, 0, 0.08);
     --cv-icon-bg: rgba(255, 255, 255, 0.92);
     --cv-icon-color: rgba(0, 0, 0, 0.9);
+    
+    --cv-focus-ring: rgba(62, 132, 244, 0.2);
+    
+    --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
 
     font-family: inherit; /* Inherit font from host */
   }
@@ -284,5 +288,9 @@
     --cv-modal-icon-bg: rgba(255, 255, 255, 0.08);
     --cv-icon-bg: #1e293b;
     --cv-icon-color: #e2e8f0;
+    
+    --cv-focus-ring: rgba(62, 132, 244, 0.5);
+    
+    --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 </style>
