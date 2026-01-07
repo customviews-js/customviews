@@ -11,6 +11,7 @@
   import { shareStore } from '../../core/stores/share-store.svelte';
   import { placeholderRegistryStore } from '../../core/stores/placeholder-registry-store.svelte';
   import { placeholderValueStore } from '../../core/stores/placeholder-value-store.svelte';
+  import { themeStore } from '../../core/stores/theme-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/constants';
   import Toast from '../elements/Toast.svelte';
   import ShareOverlay from '../share/ShareOverlay.svelte';
@@ -57,6 +58,9 @@
     // Check Nav Visibility
     // Store is the single source of truth, handled by Core's persistence effect
     navsVisible = store.isTabGroupNavHeadingVisible;
+
+    // Init Theme Store
+    themeStore.init();
   });
 
   function checkIntro() {
@@ -158,68 +162,127 @@
 </script>
 
 {#if store.hasActiveComponents || options.showTabGroups}
-  <!-- Intro Callout -->
-  {#if showCallout}
-    <IntroCallout 
+  <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
+    <!-- Intro Callout -->
+    {#if showCallout}
+      <IntroCallout 
+        position={options.icon.position} 
+        message={options.callout?.message}
+        enablePulse={options.callout?.enablePulse}
+        backgroundColor={options.callout?.backgroundColor}
+        textColor={options.callout?.textColor}
+        onclose={dismissCallout} 
+      />
+    {/if}
+  
+    <!-- Toast Container -->
+    <Toast />
+  
+    {#if shareStore.isActive}
+      <ShareOverlay {excludedTags} {excludedIds} />
+    {/if}
+  
+    <FocusBanner />
+  
+    <!-- Widget Icon -->
+    <SettingsIcon 
+      bind:this={settingsIcon}
       position={options.icon.position} 
-      message={options.callout?.message}
-      enablePulse={options.callout?.enablePulse}
-      backgroundColor={options.callout?.backgroundColor}
-      textColor={options.callout?.textColor}
-      onclose={dismissCallout} 
+      title={options.panel.title} 
+      pulse={showPulse} 
+      onclick={openModal}
+      iconColor={options.icon?.color}
+      backgroundColor={options.icon?.backgroundColor}
+      opacity={options.icon?.opacity}
+      scale={options.icon?.scale}
     />
-  {/if}
-
-  <!-- Toast Container -->
-  <Toast />
-
-  {#if shareStore.isActive}
-    <ShareOverlay {excludedTags} {excludedIds} />
-  {/if}
-
-  <FocusBanner />
-
-  <!-- Widget Icon -->
-  <SettingsIcon 
-    bind:this={settingsIcon}
-    position={options.icon.position} 
-    title={options.panel.title} 
-    pulse={showPulse} 
-    onclick={openModal}
-    iconColor={options.icon?.color}
-    backgroundColor={options.icon?.backgroundColor}
-    opacity={options.icon?.opacity}
-    scale={options.icon?.scale}
-  />
-
-  <!-- Modal -->
-  {#if isModalOpen}
-    <Modal 
-      title={options.panel.title}
-      description={options.panel.description}
-      showReset={options.panel.showReset}
-      showTabGroups={options.panel.showTabGroups}
-      
-      toggles={store.visibleToggles}
-      tabGroups={store.visibleTabGroups}
-      
-      shownToggles={shownToggles}
-      peekToggles={peekToggles}
-      activeTabs={activeTabs}
-      navsVisible={navsVisible}
-      isResetting={isResetting}
-
-      placeholderDefinitions={definitions}
-      placeholderValues={values}
-
-      onclose={closeModal}
-      onreset={handleReset}
-      ontoggleChange={handleToggleChange}
-      ontabGroupChange={handleTabGroupChange}
-      ontoggleNav={handleNavToggle}
-      oncopyShareUrl={handleCopyShareUrl}
-      onstartShare={handleStartShare}
-      onvariableChange={handleVariableChange}
-    />
-  {/if}
+  
+    <!-- Modal -->
+    {#if isModalOpen}
+      <Modal 
+        title={options.panel.title}
+        description={options.panel.description}
+        showReset={options.panel.showReset}
+        showTabGroups={options.panel.showTabGroups}
+        
+        toggles={store.visibleToggles}
+        tabGroups={store.visibleTabGroups}
+        
+        shownToggles={shownToggles}
+        peekToggles={peekToggles}
+        activeTabs={activeTabs}
+        navsVisible={navsVisible}
+        isResetting={isResetting}
+  
+        placeholderDefinitions={definitions}
+        placeholderValues={values}
+        themeMode={themeStore.mode}
+  
+        onclose={closeModal}
+        onreset={handleReset}
+        ontoggleChange={handleToggleChange}
+        ontabGroupChange={handleTabGroupChange}
+        ontoggleNav={handleNavToggle}
+        oncopyShareUrl={handleCopyShareUrl}
+        onstartShare={handleStartShare}
+        onvariableChange={handleVariableChange}
+      />
+    {/if}
+  </div>
 {/if}
+
+<style>
+  :global(.cv-widget-root) {
+    /* Light Theme Defaults */
+    --cv-bg: white;
+    --cv-text: rgba(0, 0, 0, 0.9);
+    --cv-text-secondary: rgba(0, 0, 0, 0.6);
+    --cv-border: rgba(0, 0, 0, 0.1);
+    --cv-bg-hover: rgba(0, 0, 0, 0.05);
+    
+    --cv-primary: #3e84f4;
+    --cv-primary-hover: #2563eb;
+    
+    --cv-danger: #dc2626;
+    --cv-danger-bg: rgba(220, 38, 38, 0.1);
+    
+    --cv-shadow: rgba(0, 0, 0, 0.25);
+    
+    --cv-input-bg: white;
+    --cv-input-border: rgba(0, 0, 0, 0.15);
+    --cv-switch-bg: rgba(0, 0, 0, 0.1);
+    --cv-switch-knob: white;
+    
+    --cv-modal-icon-bg: rgba(0, 0, 0, 0.08);
+    --cv-icon-bg: rgba(255, 255, 255, 0.92);
+    --cv-icon-color: rgba(0, 0, 0, 0.9);
+
+    font-family: inherit; /* Inherit font from host */
+  }
+
+  :global(.cv-widget-root[data-theme="dark"]) {
+    /* Dark Theme Overrides */
+    --cv-bg: #101722;
+    --cv-text: #e2e8f0;
+    --cv-text-secondary: rgba(255, 255, 255, 0.6);
+    --cv-border: rgba(255, 255, 255, 0.1);
+    --cv-bg-hover: rgba(255, 255, 255, 0.05);
+
+    --cv-primary: #3e84f4;
+    --cv-primary-hover: #60a5fa;
+
+    --cv-danger: #f87171;
+    --cv-danger-bg: rgba(248, 113, 113, 0.1);
+
+    --cv-shadow: rgba(0, 0, 0, 0.5);
+
+    --cv-input-bg: #1e293b;
+    --cv-input-border: rgba(255, 255, 255, 0.1);
+    --cv-switch-bg: rgba(255, 255, 255, 0.1);
+    --cv-switch-knob: #e2e8f0;
+    
+    --cv-modal-icon-bg: rgba(255, 255, 255, 0.08);
+    --cv-icon-bg: #1e293b;
+    --cv-icon-color: #e2e8f0;
+  }
+</style>
