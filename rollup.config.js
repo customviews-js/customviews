@@ -86,6 +86,19 @@ const builds = [
     plugins
   },
   
+  // Browser UMD build (non-minified)
+  {
+    input: 'src/browser.ts',
+    output: {
+      file: 'dist/custom-views.js',
+      format: 'umd',
+      name: 'CustomViews',
+      banner,
+      sourcemap: true
+    },
+    plugins
+  },
+
   // Browser UMD build (minified)
   {
     input: 'src/browser.ts',

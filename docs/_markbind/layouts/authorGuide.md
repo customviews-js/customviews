@@ -16,6 +16,7 @@
   * [Toggles]({{baseUrl}}/authorGuide/components/toggles.html)
   * [Tabs]({{baseUrl}}/authorGuide/components/tabs.html)
   * [Share & Focus]({{baseUrl}}/authorGuide/components/share.html)
+  * [Placeholders]({{baseUrl}}/authorGuide/components/placeholders.html)
       </site-nav>
     </div>
   </nav>

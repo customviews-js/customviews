@@ -37,4 +37,16 @@ This page lists the available components and how to use them.
 
 [Using the Share Component :fa-solid-arrow-up-right-from-square:]({{baseUrl}}/authorGuide/components/share.html)
   </card>
+
+<card header="**Placeholders**">
+    Placeholders are used to display dynamic content on a page. <br><br>
+
+<img src="{{baseUrl}}/assets/components/placeholder.svg" alt="Placeholder icon" style="display: block; margin: 0 auto; width: 120px; height: 60px;"> <br>
+
+[Using Placeholders :fa-solid-arrow-up-right-from-square:]({{baseUrl}}/authorGuide/components/placeholders.html)
+  </card>
+
+  
 </cardstack>
+
+

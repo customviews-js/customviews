@@ -32,7 +32,7 @@
     "codeTheme": "light"
   },
   "plugins": [
-    "customviews", "filterTags"
+    "customviews", "filterTags", "codeBlockCopyButtons", "codeBlockWrapButtons"
   ],
   "pluginsContext" : {
     "filterTags" : {

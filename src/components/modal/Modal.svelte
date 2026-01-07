@@ -4,6 +4,7 @@
   import type { ToggleConfig, TabGroupConfig } from '../../types/types';
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
+  import type { PlaceholderDefinition } from '../../core/stores/placeholder-registry-store.svelte';
 
   export let title: string | undefined = 'Customize View';
   export let description: string | undefined = '';
@@ -21,6 +22,9 @@
   export let navsVisible: boolean = true;
   export let isResetting: boolean = false;
 
+  export let placeholderDefinitions: PlaceholderDefinition[] = [];
+  export let placeholderValues: Record<string, string> = {};
+
   // Callbacks
   export let onclose: () => void = () => {};
   export let onreset: () => void = () => {};
@@ -29,6 +33,7 @@
   export let ontoggleNav: (visible: boolean) => void = () => {};
   export let oncopyShareUrl: () => void = () => {};
   export let onstartShare: () => void = () => {};
+  export let onvariableChange: (detail: { name: string, value: string }) => void = () => {};
 
   let activeTab: 'customize' | 'share' = 'customize';
   let copySuccess = false;
@@ -56,6 +61,11 @@
 
   function handleToggleChange(detail: any) {
     ontoggleChange(detail);
+  }
+
+  function handleVariableInput(name: string, e: Event) {
+    const target = e.target as HTMLInputElement;
+    onvariableChange({ name, value: target.value });
   }
 
   function handleTabGroupChange(detail: any) {
@@ -127,6 +137,27 @@
                     value={computeToggleState(toggle.toggleId, shownToggles, peekToggles)} 
                     onchange={handleToggleChange}
                   />
+                {/each}
+              </div>
+            </div>
+          {/if}
+
+          {#if placeholderDefinitions.length > 0}
+            <div class="section">
+              <div class="section-heading">Variables</div>
+              <div class="variables-container">
+                {#each placeholderDefinitions as def (def.name)}
+                  <div class="variable-item">
+                    <label class="variable-label" for="cv-var-{def.name}">{def.settingsLabel || def.name}</label>
+                    <input 
+                      id="cv-var-{def.name}"
+                      class="variable-input"
+                      type="text" 
+                      placeholder={def.settingsHint || ''}
+                      value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
+                      oninput={(e) => handleVariableInput(def.name, e)}
+                    />
+                  </div>
                 {/each}
               </div>
             </div>
@@ -723,5 +754,54 @@
 
 :global(.cv-settings-theme-dark) .nav-icon {
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* Variable Inputs */
+.variables-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.variable-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.variable-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.variable-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+  background: white;
+  color: #333;
+}
+
+.variable-input:focus {
+  outline: none;
+  border-color: #3e84f4;
+  box-shadow: 0 0 0 2px rgba(62, 132, 244, 0.2);
+}
+
+:global(.cv-settings-theme-dark) .variable-label {
+  color: #e2e8f0;
+}
+
+:global(.cv-settings-theme-dark) .variable-input {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+:global(.cv-settings-theme-dark) .variable-input:focus {
+  border-color: #3e84f4;
 }
 </style>
