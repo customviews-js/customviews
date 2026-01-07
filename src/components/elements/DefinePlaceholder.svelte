@@ -32,11 +32,10 @@
     };
 
     untrack(() => {
-        console.log('[DefinePlaceholder] Registering:', name);
         try {
           placeholderRegistryStore.register(def);
         } catch (err) {
-          console.error('[DefinePlaceholder] Error registering:', err);
+          console.error('[CustomViews] Error registering placeholder:', err);
         }
     });
   });
