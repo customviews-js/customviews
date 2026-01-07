@@ -9,6 +9,8 @@
   import { URLStateManager } from '../../core/state/url-state-manager';
   import { showToast } from '../../core/stores/toast-store.svelte';
   import { shareStore } from '../../core/stores/share-store.svelte';
+  import { placeholderRegistryStore } from '../../core/stores/placeholder-registry-store.svelte';
+  import { placeholderValueStore } from '../../core/stores/placeholder-value-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/constants';
   import Toast from '../elements/Toast.svelte';
   import ShareOverlay from '../share/ShareOverlay.svelte';
@@ -40,6 +42,10 @@
   let shownToggles = $derived(store.state.shownToggles ?? []);
   let peekToggles = $derived(store.state.peekToggles ?? []);
   let activeTabs = $derived(store.state.tabs ?? {});
+
+  // Placeholder State
+  let definitions = $derived(placeholderRegistryStore.definitions);
+  let values = $derived(placeholderValueStore.values);
 
   // Init
   onMount(() => {
@@ -144,6 +150,11 @@
     closeModal();
     shareStore.toggleActive(true);
   }
+
+  function handleVariableChange(e: any) {
+    const { name, value } = e;
+    placeholderValueStore.set(name, value);
+  }
 </script>
 
 {#if store.hasActiveComponents || options.showTabGroups}
@@ -198,6 +209,9 @@
       navsVisible={navsVisible}
       isResetting={isResetting}
 
+      placeholderDefinitions={definitions}
+      placeholderValues={values}
+
       onclose={closeModal}
       onreset={handleReset}
       ontoggleChange={handleToggleChange}
@@ -205,6 +219,7 @@
       ontoggleNav={handleNavToggle}
       oncopyShareUrl={handleCopyShareUrl}
       onstartShare={handleStartShare}
+      onvariableChange={handleVariableChange}
     />
   {/if}
 {/if}

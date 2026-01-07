@@ -6,6 +6,8 @@ import { URLStateManager } from "./state/url-state-manager";
 
 import { FocusService } from "./services/focus-service.svelte";
 import { DataStore, initStore } from "./stores/main-store.svelte";
+import { placeholderValueStore } from "./stores/placeholder-value-store.svelte";
+import { DomScanner } from "./utils/dom-scanner";
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -93,6 +95,9 @@ export class CustomViewsCore {
       this.store.isTabGroupNavHeadingVisible = navPref;
     }
     
+    // Run initial scan (non-reactive)
+    DomScanner.scanAndHydrate(this.rootEl);
+    
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
         // Effect 1: Update URL
@@ -108,6 +113,12 @@ export class CustomViewsCore {
         $effect(() => {
             this.persistenceManager.persistState(this.store.state);
             this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
+        });
+
+        // Effect 3: React to Variable Changes
+        $effect(() => {
+            DomScanner.updateAll(placeholderValueStore.values);
+            placeholderValueStore.persist();
         });
     });
 
