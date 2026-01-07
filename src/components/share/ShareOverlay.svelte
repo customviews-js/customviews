@@ -3,11 +3,13 @@
   import ShareToolbar from './ShareToolbar.svelte';
   import HoverHelper from './HoverHelper.svelte';
 
-  export let excludedTags: string[] = ['HEADER', 'NAV', 'FOOTER'];
-  export let excludedIds: string[] = ['cv-floating-action-bar', 'cv-hover-helper'];
+  let {
+    excludedTags = ['HEADER', 'NAV', 'FOOTER'],
+    excludedIds = ['cv-floating-action-bar', 'cv-hover-helper']
+  }: { excludedTags?: string[]; excludedIds?: string[] } = $props();
 
-  const excludedTagSet = new Set(excludedTags.map(t => t.toUpperCase()));
-  const excludedIdSet = new Set(excludedIds);
+  let excludedTagSet = $derived(new Set(excludedTags.map((t: string) => t.toUpperCase())));
+  let excludedIdSet = $derived(new Set(excludedIds));
 
   /**
    * Handles window-level mouse hover events to identify and highlight shareable elements.

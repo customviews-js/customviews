@@ -1,16 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  export let position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right' | undefined = 'middle-left';
-  export let title: string | undefined = 'Customize View';
-  export let pulse: boolean | undefined = false;
-  export let onclick: (() => void) | undefined = undefined;
-  
-  // Custom Styles
-  export let iconColor: string | undefined = undefined;
-  export let backgroundColor: string | undefined = undefined;
-  export let opacity: number | undefined = undefined;
-  export let scale: number | undefined = undefined;
+  let {
+    position = 'middle-left',
+    title = 'Customize View',
+    pulse = false,
+    onclick = undefined,
+    iconColor = undefined,
+    backgroundColor = undefined,
+    opacity = undefined,
+    scale = undefined
+  }: {
+    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
+    title?: string;
+    pulse?: boolean;
+    onclick?: () => void;
+    iconColor?: string;
+    backgroundColor?: string;
+    opacity?: number;
+    scale?: number;
+  } = $props();
 
   export function resetPosition() {
     currentOffset = 0;
@@ -18,10 +27,10 @@
     localStorage.removeItem(STORAGE_KEY);
   }
 
-  let isDragging = false;
+  let isDragging = $state(false);
   let startY = 0;
   let startOffset = 0;
-  let currentOffset = 0;
+  let currentOffset = $state(0);
   const STORAGE_KEY = 'cv-settings-icon-offset';
 
   onMount(() => {
@@ -133,10 +142,10 @@
 </script>
 
 <svelte:window 
-    on:mousemove={onGlobalMove} 
-    on:mouseup={onGlobalEnd}
-    on:touchmove|nonpassive={onGlobalMove}
-    on:touchend={onGlobalEnd}
+    onmousemove={onGlobalMove} 
+    onmouseup={onGlobalEnd}
+    ontouchmove={onGlobalMove}
+    ontouchend={onGlobalEnd}
 />
 
 <div 
@@ -145,10 +154,10 @@
   role="button"
   tabindex="0"
   aria-label="Open Custom Views Settings"
-  on:mousedown={onMouseDown}
-  on:touchstart|nonpassive={onTouchStart}
-  on:click={onClick}
-  on:keydown={onKeyDown}
+  onmousedown={onMouseDown}
+  ontouchstart={onTouchStart}
+  onclick={onClick}
+  onkeydown={onKeyDown}
   style:--cv-icon-color={iconColor}
   style:--cv-icon-bg={backgroundColor}
   style:--cv-icon-opacity={opacity}

@@ -1,9 +1,17 @@
 <script lang="ts">
   import type { ToggleConfig } from '../../types/types';
 
-  export let toggle: ToggleConfig;
-  export let value: 'show' | 'hide' | 'peek' = 'hide';
-  export let onchange: (detail: { toggleId: string, value: 'show' | 'hide' | 'peek' }) => void = () => {};
+  interface Props {
+    toggle: ToggleConfig;
+    value?: 'show' | 'hide' | 'peek';
+    onchange?: (detail: { toggleId: string; value: 'show' | 'hide' | 'peek' }) => void;
+  }
+
+  let { 
+    toggle, 
+    value = $bindable('show'), 
+    onchange = () => {} 
+  }: Props = $props();
 
 
 </script>

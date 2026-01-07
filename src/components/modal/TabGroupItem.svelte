@@ -1,10 +1,15 @@
 <script lang="ts">
   import type { TabGroupConfig } from '../../types/types';
 
-  export let group: TabGroupConfig;
-  export let activeTabId: string | undefined = '';
-
-  export let onchange: (detail: { groupId: string, tabId: string }) => void = () => {};
+  let { 
+    group, 
+    activeTabId = $bindable(''), 
+    onchange = () => {} 
+  }: { 
+    group: TabGroupConfig; 
+    activeTabId?: string | undefined; 
+    onchange?: (detail: { groupId: string, tabId: string }) => void;
+  } = $props();
 
   function onChange(event: Event) {
     const target = event.target as HTMLSelectElement;
