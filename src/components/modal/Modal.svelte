@@ -672,19 +672,22 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: transparent;
-  border: none;
+  background: var(--cv-bg);
+  border: 1px solid var(--cv-border);
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--cv-danger);
   cursor: pointer;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  transition: background-color 0.15s ease;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .reset-btn:hover {
   background: var(--cv-danger-bg);
+  border-color: var(--cv-danger);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .done-btn {
