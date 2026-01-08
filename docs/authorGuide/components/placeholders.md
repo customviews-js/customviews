@@ -46,6 +46,7 @@ Hello, \[[username]]!
 Hello, [[username]]!
 ```
 
+
 The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.
 
 ### Inline Fallback
@@ -95,3 +96,11 @@ Future directions for this component:
     * Note that current implementation The DomScanner.scanAndHydrate is called during initialization without considering that dynamic content may be added later (e.g., via client-side rendering, lazy loading, or navigation). If placeholders are present in dynamically loaded content, they won't be processed. Consider providing a way to re-scan or automatically detect newly added content.
 * Better UI?
 * More intuitive author syntax?
+
+
+
+Developmental Direction: Explore functionality of using placeholders in links, src etc.
+
+[hello](https://hkjsdaksj;[[username]].com)
+
+[tester](https://google.com)
