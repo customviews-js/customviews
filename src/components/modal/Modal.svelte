@@ -232,7 +232,8 @@
             </div>
           {/if}
 
-          <!-- Theme Selection moved to bottom -->
+          <!-- Hide Light Dark Theme Selection for now -->
+          {#if false}
           <div class="section">
             <div class="section-heading">Theme</div>
             <div class="theme-selector">
@@ -265,6 +266,7 @@
               -->
             </div>
           </div>
+          {/if}
         </div>
       {:else}
         <div class="tab-content active" in:fade={{ duration: 150 }}>
