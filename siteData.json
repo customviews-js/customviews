@@ -42,7 +42,7 @@
         "simple-placeholders-variable-interpolation": "Simple Placeholders (Variable Interpolation)",
         "usage": "Usage",
         "1-define-the-placeholder": "1. Define the Placeholder",
-        "2-use-the-variable": "2. Use the Variable",
+        "2-use-the-placeholder": "2. Use the placeholder",
         "inline-fallback": "Inline Fallback",
         "escaping-syntax": "Escaping Syntax",
         "component-attributes": "Component Attributes",
@@ -185,6 +185,23 @@
       "headings": {
         "architectural-overview": "Architectural Overview",
         "why-svelte": "Why Svelte?"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/gitWorkflow.md",
+      "title": "Developer Guide - Project Git Workflow",
+      "headings": {
+        "gitflow-workflow": "Gitflow Workflow",
+        "example-of-a-gitflow-workflow": "Example of a Gitflow Workflow",
+        "branches-in-gitflow": "Branches in GitFlow",
+        "main-branch": "Main Branch",
+        "develop-branch": "Develop Branch",
+        "feature-branches": "Feature Branches",
+        "release-branches": "Release Branches",
+        "hotfix-branches": "Hotfix branches",
+        "feature-release-workflow": "Feature Release Workflow",
+        "summary": "Summary"
       },
       "headingKeywords": {}
     },

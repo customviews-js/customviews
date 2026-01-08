@@ -62,7 +62,7 @@ For the latest stable release, visit <a href="https://customviews-js.github.io">
 
     </div>
     </div>
-    </button></div></pre><cv-define-placeholder name="username" settings-label="Your Username" settings-hint="Enter username" default-value="default username"></cv-define-placeholder> <h3 id="2-use-the-variable">2. Use the Variable<a class="fa fa-anchor" href="#2-use-the-variable" onclick="event.stopPropagation()"></a></h3> <p>To use the variable in your content, wrap the variable name in double square brackets: <code class="hljs inline no-lang">[[ variable_name ]]</code>.</p> <p>For example, we write <code class="hljs inline no-lang">Hello, \[[username]]</code> here:</p> <pre><code class="hljs markdown"><span>Hello, \[[username]]! 
+    </button></div></pre><cv-define-placeholder name="username" settings-label="Your Username" settings-hint="Enter username" default-value="default username"></cv-define-placeholder> <h3 id="2-use-the-placeholder">2. Use the placeholder<a class="fa fa-anchor" href="#2-use-the-placeholder" onclick="event.stopPropagation()"></a></h3> <p>To use the variable in your content, wrap the variable name in double square brackets: <code class="hljs inline no-lang">[[ variable_name ]]</code>.</p> <p>For example, we write <code class="hljs inline no-lang">Hello, \[[username]]</code> here:</p> <pre><code class="hljs markdown"><span>Hello, \[[username]]! 
 </span><span>↓ 
 </span><span>Hello, [[username]]!
 </span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
@@ -152,7 +152,7 @@ For the latest stable release, visit <a href="https://customviews-js.github.io">
     </div>
     </button></div></pre><p>If the user has not set a value for <code class="hljs inline no-lang">email</code>, &quot;<a href="mailto:support@example.com">support@example.com</a>&quot; will be displayed.</p> <h2 id="escaping-syntax">Escaping Syntax<a class="fa fa-anchor" href="#escaping-syntax" onclick="event.stopPropagation()"></a></h2> <p>You can &quot;escape&quot; the placeholder syntax if you want to display the literal brackets instead of a variable.</p> <ul><li><strong>In Markdown Text</strong>: Use two backslashes <code class="hljs inline no-lang">\\[[ variable ]]</code>.</li> <li><strong>In Code Blocks</strong>: Use one backslash <code class="hljs inline no-lang">\[[ variable ]]</code>.</li></ul> <h2 id="component-attributes">Component Attributes<a class="fa fa-anchor" href="#component-attributes" onclick="event.stopPropagation()"></a></h2> <blockquote><p>[!NOTE]
 The variable input fields in the Settings Widget will <strong>only</strong> appear on pages where the <code class="hljs inline no-lang">&lt;cv-define-placeholder&gt;</code> component is present.</p></blockquote> <div class="table-responsive"><table class="markbind-table table table-bordered table-striped"><thead><tr><th>Name</th> <th>Type</th> <th>Required</th> <th>Description</th></tr></thead> <tbody><tr><td><code class="hljs inline no-lang">name</code></td> <td>string</td> <td><strong>Yes</strong></td> <td>The unique identifier for the variable. Must act as the key for interpolation (e.g., <code class="hljs inline no-lang">api_key</code>).</td></tr> <tr><td><code class="hljs inline no-lang">settings-label</code></td> <td>string</td> <td>No</td> <td>The human-readable label shown in the Settings Widget. Defaults to the <code class="hljs inline no-lang">name</code> if omitted.</td></tr> <tr><td><code class="hljs inline no-lang">default-value</code></td> <td>string</td> <td>No</td> <td>The initial value to display if the user hasn&#39;t entered anything yet.</td></tr> <tr><td><code class="hljs inline no-lang">settings-hint</code></td> <td>string</td> <td>No</td> <td>The ghost text shown inside the input box in the Settings Widget to guide the user.</td></tr></tbody></table></div><h2 id="persistence">Persistence<a class="fa fa-anchor" href="#persistence" onclick="event.stopPropagation()"></a></h2> <p>Values entered by the user are saved in the browser&#39;s <code class="hljs inline no-lang">localStorage</code> (key: <code class="hljs inline no-lang">cv-user-variables</code>). This means:</p> <ol><li>Values persist across page reloads.</li> <li>Values persist when navigating between different pages of the documentation.</li></ol> <h2 id="future-implementations">Future Implementations?<a class="fa fa-anchor" href="#future-implementations" onclick="event.stopPropagation()"></a></h2> <p>Future directions for this component:</p> <ul><li>Being able to define it through central json</li> <li>Support dynamic rendering:
-<ul><li>Note that current implementation The DomScanner.scanAndHydrate is called during initialization without considering that dynamic content may be added later (e.g., via client-side rendering, lazy loading, or navigation). If placeholders are present in dynamically loaded content, they won&#39;t be processed. Consider providing a way to re-scan or automatically detect newly added content.</li></ul></li> <li>Better UI?</li> <li>More intuitive author syntax?</li></ul></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><a class="navbar-brand page-nav-title" href="#">Topics</a> <nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#simple-placeholders-variable-interpolation">Simple Placeholders (Variable Interpolation)‎</a> <a class="nav-link py-1" href="#usage">Usage‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#1-define-the-placeholder">1. Define the Placeholder‎</a> <a class="nav-link py-1" href="#2-use-the-variable">2. Use the Variable‎</a> <a class="nav-link py-1" href="#inline-fallback">Inline Fallback‎</a></nav> <a class="nav-link py-1" href="#escaping-syntax">Escaping Syntax‎</a> <a class="nav-link py-1" href="#component-attributes">Component Attributes‎</a> <a class="nav-link py-1" href="#persistence">Persistence‎</a> <a class="nav-link py-1" href="#future-implementations">Future Implementations?‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.1.0</a> on Wed, 7 Jan 2026, 16:23:52 GMT+8]</small><br></div></footer></div><!--]--></div>
+<ul><li>Note that current implementation The DomScanner.scanAndHydrate is called during initialization without considering that dynamic content may be added later (e.g., via client-side rendering, lazy loading, or navigation). If placeholders are present in dynamically loaded content, they won&#39;t be processed. Consider providing a way to re-scan or automatically detect newly added content.</li></ul></li> <li>Better UI?</li> <li>More intuitive author syntax?</li></ul></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><a class="navbar-brand page-nav-title" href="#">Topics</a> <nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#simple-placeholders-variable-interpolation">Simple Placeholders (Variable Interpolation)‎</a> <a class="nav-link py-1" href="#usage">Usage‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#1-define-the-placeholder">1. Define the Placeholder‎</a> <a class="nav-link py-1" href="#2-use-the-placeholder">2. Use the placeholder‎</a> <a class="nav-link py-1" href="#inline-fallback">Inline Fallback‎</a></nav> <a class="nav-link py-1" href="#escaping-syntax">Escaping Syntax‎</a> <a class="nav-link py-1" href="#component-attributes">Component Attributes‎</a> <a class="nav-link py-1" href="#persistence">Persistence‎</a> <a class="nav-link py-1" href="#future-implementations">Future Implementations?‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.1.0</a> on Thu, 8 Jan 2026, 17:03:25 GMT+8]</small><br></div></footer></div><!--]--></div>
 </body><script src="/customviews/markbind/js/bootstrap-utility.min.js"></script>
 <script src="/customviews/markbind/js/polyfill.min.js"></script>
 <script src="/customviews/markbind/js/vue.global.prod.min.js"></script>
@@ -223,4 +223,84 @@ The variable input fields in the Settings Widget will <strong>only</strong> appe
       }
     }
     </script>
+    <script type="module">
+    window.mermaidPromise = null;
+    
+    const loadMermaid = () => {
+      if (window.mermaidPromise === null) {
+        window.mermaidPromise = import('https://unpkg.com/mermaid@10/dist/mermaid.esm.min.mjs')
+          .then(({ default: mermaid }) => {
+            mermaid.initialize({
+              startOnLoad: false,
+            });
+            console.log('Mermaid loaded successfully');
+            return mermaid;
+          })
+          .catch((error) => {
+            console.error('Mermaid failed to load:', error);
+            window.mermaidPromise = false;
+            return null;
+          });
+      }
+      return window.mermaidPromise;
+    };
+
+    const renderMermaidDiagrams = (elements) => {
+      if (!elements || elements.length === 0) {
+        return Promise.resolve();
+      }
+
+      return loadMermaid().then(mermaid => {
+        if (!mermaid) return;
+        return mermaid.run({ nodes: Array.from(elements) })
+          .catch(err => console.error('Error rendering mermaid diagrams:', err));
+      });
+    };
+
+    const setupMermaidObserver = () => {
+      const observer = new MutationObserver((mutations) => {
+        let newMermaidElements = [];
+        
+        mutations.forEach(mutation => {
+          if (mutation.addedNodes.length) {
+            mutation.addedNodes.forEach(node => {
+              if (node.nodeType === 1 && node.classList && 
+                  node.classList.contains('mermaid')) {
+                newMermaidElements.push(node);
+              }
+              
+              if (node.nodeType === 1 && node.querySelectorAll) {
+                const mermaidInNode = node.querySelectorAll('.mermaid');
+                if (mermaidInNode.length) {
+                  newMermaidElements = [...newMermaidElements, ...mermaidInNode];
+                }
+              }
+            });
+          }
+        });
+        
+        if (newMermaidElements.length > 0) {
+          renderMermaidDiagrams(newMermaidElements);
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      return observer;
+    };
+
+    // Initialize on DOM content loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      const existingDiagrams = document.querySelectorAll('.mermaid');
+      if (existingDiagrams.length > 0) {
+        renderMermaidDiagrams(existingDiagrams);
+      }
+      
+      setupMermaidObserver();
+    });
+
+  </script>
 </html>
