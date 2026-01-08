@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="generator" content="MarkBind 6.1.0">
-    <meta name="viewport" content="width=device-width, initial-scale=1"><title>Developer Guide - Tests</title> <link rel="stylesheet" href="/customviews/markbind/css/bootstrap.min.css"> <link rel="stylesheet" href="/customviews/markbind/fontawesome/css/all.min.css"> <link rel="stylesheet" href="/customviews/markbind/glyphicons/css/bootstrap-glyphicons.min.css"><link rel="stylesheet" href="/customviews/markbind/css/codeblock-light.min.css"><link rel="stylesheet" href="/customviews/markbind/css/markbind.min.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockCopyButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockWrapButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-anchors/markbind-plugin-anchors.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-tree/markbind-plugin-tree.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><title>Developer Guide - Tests</title> <link rel="stylesheet" href="/customviews/markbind/css/bootstrap.min.css"> <link rel="stylesheet" href="/customviews/markbind/fontawesome/css/all.min.css"> <link rel="stylesheet" href="/customviews/markbind/glyphicons/css/bootstrap-glyphicons.min.css"><link rel="stylesheet" href="/customviews/markbind/css/codeblock-light.min.css"><link rel="stylesheet" href="/customviews/markbind/css/markbind.min.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-anchors/markbind-plugin-anchors.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-tree/markbind-plugin-tree.css">
     
   <link rel="stylesheet" href="/customviews/stylesheets/main.css">
 <link rel="icon" href="/customviews/favicon.ico"></head>
@@ -12,12 +12,11 @@
   const baseUrl = '/customviews'
 </script>
 <body  data-bs-spy="scroll" data-bs-target="#mb-page-nav" data-bs-offset="100" >
-<div id="app"><!--[--><div class="w-100 p-1 bg-warning text-center d-print-none"><span><strong>This site documents the features of CustomViews in development and possible beta breaking changes.
-For the latest stable release, visit <a href="https://customviews-js.github.io">here</a>.</strong></span></div> <header sticky><div data-v-26aac3dc><nav class="navbar navbar-expand-md d-print-none navbar-dark bg-dark" data-v-26aac3dc><div class="container-fluid" data-v-26aac3dc><div class="navbar-left" data-v-26aac3dc><!--[--><a href="/customviews/index.html" title="Home" class="navbar-brand">CustomViews</a><!--]--></div><div class="navbar-default" data-v-26aac3dc><ul class="navbar-nav me-auto mt-2 mt-lg-0" data-v-26aac3dc><!--[--> <li><a highlight-on="exact" href="/customviews/index.html" class="nav-link">HOME</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/readerGuide/index.html" class="nav-link">READER GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/authorGuide/index.html" class="nav-link">AUTHOR GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/devGuide/index.html" class="nav-link">DEVELOPER GUIDE</a></li> <li><a highlight-on="exact" href="/customviews/about.html" class="nav-link">ABOUT</a></li> <li><a href="https://github.com/customviews-js/customviews" target="_blank" class="nav-link"><span><span aria-hidden="true" class="fab fa-github"></span></span></a></li> <!--]--></ul></div><ul class="navbar-nav navbar-right" data-v-26aac3dc><!--[--><li><form class="navbar-form"><div style="position:relative;" class="dropdown" data-v-00e26d0a><!--[--><input value="" data-bs-toggle="dropdown" type="text" class="form-control" placeholder="Search" autocomplete="off" data-v-00e26d0a><div class="form-control placeholder-div-hidden" data-v-00e26d0a>Search</div><!--]--><ul class="dropdown-menu search-dropdown-menu dropdown-menu-hidden dropdown-menu-end" data-v-00e26d0a><!--[--><!--]--></ul></div></form></li><!--]--></ul></div></nav><div style="display:none;" class="lower-navbar-container" data-v-26aac3dc><!--[--><!----><!----><!--]--></div></div></header> <div id="flex-body"><nav id="site-nav" data-v-6b1b63d2><!--[--><div class="site-nav-top"><div class="fw-bold mb-2" style="font-size:1.25rem;">Developer Guide</div></div> <div class="nav-component slim-scroll"><div class="site-nav-root"><!--[--><ul class="site-nav-list site-nav-list-root" data-v-6b1b63d2><!--[--><li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/devGuide.html">Contributing</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/framework.html">Framework</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/gitWorkflow.html">Git Workflow</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/releases.html">Making Releases</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/shareFunction.html">Share Function</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)">Tests
+<div id="app"><!--[--><header sticky><div data-v-26aac3dc><nav class="navbar navbar-expand-md d-print-none navbar-dark bg-dark" data-v-26aac3dc><div class="container-fluid" data-v-26aac3dc><div class="navbar-left" data-v-26aac3dc><!--[--><a href="/customviews/index.html" title="Home" class="navbar-brand">Custom Views</a><!--]--></div><div class="navbar-default" data-v-26aac3dc><ul class="navbar-nav me-auto mt-2 mt-lg-0" data-v-26aac3dc><!--[--> <li><a highlight-on="exact" href="/customviews/index.html" class="nav-link">HOME</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/userGuide/index.html" class="nav-link">USER GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/devGuide/index.html" class="nav-link">DEVELOPER GUIDE</a></li> <li><a highlight-on="exact" href="/customviews/about.html" class="nav-link">ABOUT</a></li> <li><a href="https://github.com/customviews-js/customviews" target="_blank" class="nav-link"><span><span aria-hidden="true" class="fab fa-github"></span></span></a></li> <!--]--></ul></div><ul class="navbar-nav navbar-right" data-v-26aac3dc><!--[--><li><form class="navbar-form"><div style="position:relative;" class="dropdown" data-v-00e26d0a><!--[--><input value="" data-bs-toggle="dropdown" type="text" class="form-control" placeholder="Search" autocomplete="off" data-v-00e26d0a><div class="form-control placeholder-div-hidden" data-v-00e26d0a>Search</div><!--]--><ul class="dropdown-menu search-dropdown-menu dropdown-menu-hidden dropdown-menu-end" data-v-00e26d0a><!--[--><!--]--></ul></div></form></li><!--]--></ul></div></nav><div style="display:none;" class="lower-navbar-container" data-v-26aac3dc><!--[--><!----><!----><!--]--></div></div></header> <div id="flex-body"><nav id="site-nav" data-v-6b1b63d2><!--[--><div class="site-nav-top"><div class="fw-bold mb-2" style="font-size:1.25rem;">Developer Guide</div></div> <div class="nav-component slim-scroll"><div class="site-nav-root"><!--[--><ul class="site-nav-list site-nav-list-root" data-v-6b1b63d2><!--[--><li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/devGuide.html">Contributing</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/framework.html">Framework</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/releases.html">Making Releases</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/shareFunction.html">Share Function</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)">Tests
 
 <div class="site-nav-dropdown-btn-container"><i class="site-nav-dropdown-btn-icon" onclick="handleSiteNavClick(this.parentNode.parentNode, false); event.stopPropagation();"><span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span></i></div></div><ul class="site-nav-dropdown-container site-nav-list"><li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/tests/localComponents.html">Local Components</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/tests/tabs.html">Test Tabs</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/tests/focus-test.html">Focus and Sharing</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/tests/cvtest.html">CV Test</a></div></li></ul></li><!--]--><!--v-if--></ul><!--]--></div></div><!--]--><!--v-if--></nav> <div id="content-wrapper"><div data-v-ef898034><nav aria-label="breadcrumb" class="breadcrumb-divider" data-v-ef898034><ol class="breadcrumb" data-v-ef898034><li class="notlink breadcrumb-marker" data-v-ef898034> ››   </li><!--[--><!--]--></ol></nav></div> <p><span id="title" class="d-none">Tests</span></p> <h1 id="tests">Tests<a class="fa fa-anchor" href="#tests" onclick="event.stopPropagation()"></a></h1> <cv-tabgroup group-id="test"><cv-tab tab-id="tab-id"><cv-tab-header>Header content (supports HTML)</cv-tab-header> <cv-tab-body>Tab body content (optional)</cv-tab-body>
   Tab body content (also included)
-</cv-tab></cv-tabgroup> <cv-tabgroup group-id="fruit"><cv-tab tab-id="apple"><cv-tab-header><p><span aria-hidden="true" class="fa-solid fa-heart"></span> Apple Types</p></cv-tab-header> <cv-tab-body><p>Apple types include <strong>Granny Smith</strong> and the <strong>Cosmic Crisp</strong>.</p></cv-tab-body></cv-tab> <cv-tab tab-id="orange"><cv-tab-header><p><span aria-hidden="true" class="fa-solid fa-circle"></span> Orange Types</p></cv-tab-header> <cv-tab-body><p>Orange types include the <strong>Blood orange</strong> and <strong>Valencia orange</strong>.</p></cv-tab-body></cv-tab> <cv-tab tab-id="pear"><cv-tab-header><p><span aria-hidden="true" class="fa-solid fa-leaf"></span> Pear Types</p></cv-tab-header> <cv-tab-body></cv-tab-body></cv-tab></cv-tabgroup></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#tests">Tests‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.1.0</a> on Thu, 8 Jan 2026, 17:03:25 GMT+8]</small><br></div></footer></div><!--]--></div>
+</cv-tab></cv-tabgroup> <cv-tabgroup group-id="fruit"><cv-tab tab-id="apple"><cv-tab-header><p><span aria-hidden="true" class="fa-solid fa-heart"></span> Apple Types</p></cv-tab-header> <cv-tab-body><p>Apple types include <strong>Granny Smith</strong> and the <strong>Cosmic Crisp</strong>.</p></cv-tab-body></cv-tab> <cv-tab tab-id="orange"><cv-tab-header><p><span aria-hidden="true" class="fa-solid fa-circle"></span> Orange Types</p></cv-tab-header> <cv-tab-body><p>Orange types include the <strong>Blood orange</strong> and <strong>Valencia orange</strong>.</p></cv-tab-body></cv-tab> <cv-tab tab-id="pear"><cv-tab-header><p><span aria-hidden="true" class="fa-solid fa-leaf"></span> Pear Types</p></cv-tab-header> <cv-tab-body></cv-tab-body></cv-tab></cv-tabgroup></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#tests">Tests‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.1.0</a> on Thu, 8 Jan 2026, 17:32:33 GMT+8]</small><br></div></footer></div><!--]--></div>
 </body><script src="/customviews/markbind/js/bootstrap-utility.min.js"></script>
 <script src="/customviews/markbind/js/polyfill.min.js"></script>
 <script src="/customviews/markbind/js/vue.global.prod.min.js"></script>
@@ -26,146 +25,5 @@ For the latest stable release, visit <a href="https://customviews-js.github.io">
 <script>
   MarkBind.setupWithSearch()
 </script>
-    <script src="https://unpkg.com/@customviews-js/customviews@beta" data-base-url="/customviews"></script>
-    <script>
-    function copyCodeBlock(element) {
-        const pre = element.parentElement.parentElement;
-        const codeElement = pre.querySelector('code');
-        const copyButtonBody = element.querySelector('.function-btn-body');
-        const tooltipText = element.querySelector(".tooltiptext");
-
-        // create dummy text element to select() the text field
-        const textElement = document.createElement('textarea');
-        textElement.value = codeElement.textContent;
-        document.body.appendChild(textElement);
-        textElement.select();
-
-        document.execCommand('copy');
-        document.body.removeChild(textElement);
-        copyButtonBody.innerHTML = `
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="2 2 22 22"
-  >
-    <path d="M 19.28125 5.28125 L 9 15.5625 L 4.71875 11.28125 L 3.28125 12.71875 L 8.28125 17.71875 
-    L 9 18.40625 L 9.71875 17.71875 L 20.71875 6.71875 Z"></path>
-  </svg>
-`;
-        console.log("Running tooltip");
-        tooltipText.innerText  = `Copied!`;
-        setTimeout(() => {
-            copyButtonBody.innerHTML = `
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-  width="18" height="18" viewBox="0 0 18 18" version="1.1">
-    <g id="surface1">
-      <path d="M 11.273438 0 L 2.546875 0 C 1.746094 0 1.089844 0.613281 1.089844
-      1.363281 L 1.089844 10.910156 L 2.546875 10.910156 L 2.546875 1.363281 L 11.273438
-      1.363281 Z M 13.453125 2.726562 L 5.453125 2.726562 C 4.65625 2.726562 4 3.339844 4
-      4.089844 L 4 13.636719 C 4 14.386719 4.65625 15 5.453125 15 L 13.453125 15 C 14.253906
-      15 14.910156 14.386719 14.910156 13.636719 L 14.910156 4.089844 C 14.910156 3.339844
-      14.253906 2.726562 13.453125 2.726562 Z M 13.453125 13.636719 L 5.453125 13.636719 L
-      5.453125 4.089844 L 13.453125 4.089844 Z M 13.453125 13.636719 "/>
-    </g>
-</svg>
-`;
-            tooltipText.innerText  = `Copy`;
-        }, 3000);
-    }
-    </script>
-    <script>
-    function toggleCodeBlockWrap(element) {
-      const pre = element.parentElement.parentElement;
-      const tooltipText = element.querySelector(".tooltiptext");
-      const classList = pre.querySelector('code').classList; 
-      if (classList.contains('wrap')) {
-          classList.remove('wrap');
-          tooltipText.innerText  = `Wrap Text`;
-      } else {
-          classList.add('wrap')
-          tooltipText.innerText  = `Unwrap Text`;
-      }
-    }
-    </script>
-    <script type="module">
-    window.mermaidPromise = null;
-    
-    const loadMermaid = () => {
-      if (window.mermaidPromise === null) {
-        window.mermaidPromise = import('https://unpkg.com/mermaid@10/dist/mermaid.esm.min.mjs')
-          .then(({ default: mermaid }) => {
-            mermaid.initialize({
-              startOnLoad: false,
-            });
-            console.log('Mermaid loaded successfully');
-            return mermaid;
-          })
-          .catch((error) => {
-            console.error('Mermaid failed to load:', error);
-            window.mermaidPromise = false;
-            return null;
-          });
-      }
-      return window.mermaidPromise;
-    };
-
-    const renderMermaidDiagrams = (elements) => {
-      if (!elements || elements.length === 0) {
-        return Promise.resolve();
-      }
-
-      return loadMermaid().then(mermaid => {
-        if (!mermaid) return;
-        return mermaid.run({ nodes: Array.from(elements) })
-          .catch(err => console.error('Error rendering mermaid diagrams:', err));
-      });
-    };
-
-    const setupMermaidObserver = () => {
-      const observer = new MutationObserver((mutations) => {
-        let newMermaidElements = [];
-        
-        mutations.forEach(mutation => {
-          if (mutation.addedNodes.length) {
-            mutation.addedNodes.forEach(node => {
-              if (node.nodeType === 1 && node.classList && 
-                  node.classList.contains('mermaid')) {
-                newMermaidElements.push(node);
-              }
-              
-              if (node.nodeType === 1 && node.querySelectorAll) {
-                const mermaidInNode = node.querySelectorAll('.mermaid');
-                if (mermaidInNode.length) {
-                  newMermaidElements = [...newMermaidElements, ...mermaidInNode];
-                }
-              }
-            });
-          }
-        });
-        
-        if (newMermaidElements.length > 0) {
-          renderMermaidDiagrams(newMermaidElements);
-        }
-      });
-      
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-      
-      return observer;
-    };
-
-    // Initialize on DOM content loaded
-    document.addEventListener('DOMContentLoaded', () => {
-      const existingDiagrams = document.querySelectorAll('.mermaid');
-      if (existingDiagrams.length > 0) {
-        renderMermaidDiagrams(existingDiagrams);
-      }
-      
-      setupMermaidObserver();
-    });
-
-  </script>
+    <script src="/customviews/plugins/customviews/custom-views.min.js" data-base-url="/customviews"></script>
 </html>
