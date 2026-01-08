@@ -32,7 +32,7 @@
     }
   ],
   "plugins": [
-    "customviews", "filterTags"
+    "customviews", "filterTags", "codeBlockCopyButtons", "codeBlockWrapButtons", "mermaid"
   ],
   "deploy": {
     "message": "Update main site.",

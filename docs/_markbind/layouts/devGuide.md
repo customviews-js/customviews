@@ -9,6 +9,7 @@
       <site-nav>
 * [Contributing]({{baseUrl}}/devGuide/devGuide.html)
 * [Framework]({{baseUrl}}/devGuide/framework.html)
+* [Git Workflow]({{baseUrl}}/devGuide/gitWorkflow.html)
 * [Making Releases]({{baseUrl}}/devGuide/releases.html)
 * [Share Function]({{baseUrl}}/devGuide/shareFunction.html)
 * Tests
