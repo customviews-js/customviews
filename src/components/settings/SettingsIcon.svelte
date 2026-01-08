@@ -12,17 +12,21 @@
   export let opacity: number | undefined = undefined;
   export let scale: number | undefined = undefined;
 
-  export function resetPosition() {
-    currentOffset = 0;
-    startOffset = 0;
-    localStorage.removeItem(STORAGE_KEY);
-  }
+  // Constants
+  const STORAGE_KEY = 'cv-settings-icon-offset';
+  const VIEWPORT_MARGIN = 10;
+  const DRAG_THRESHOLD = 5;
 
   let isDragging = false;
-  let startY = 0;
-  let startOffset = 0;
+  let dragStartY = 0;
+  let dragStartOffset = 0;
   let currentOffset = 0;
-  const STORAGE_KEY = 'cv-settings-icon-offset';
+  let suppressClick = false;
+
+  let minOffset = -Infinity;
+  let maxOffset = Infinity;
+
+  let settingsIconElement: HTMLElement;
 
   onMount(() => {
     // Load persisted offset
@@ -32,66 +36,117 @@
     }
 
     // Global event listeners to handle drag leaving the element
-    window.addEventListener('mousemove', onGlobalMove);
-    window.addEventListener('mouseup', onGlobalEnd);
-    window.addEventListener('touchmove', onGlobalMove, { passive: false });
-    window.addEventListener('touchend', onGlobalEnd);
+    window.addEventListener('mousemove', handleDragMove);
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchmove', handleDragMove, { passive: false });
+    window.addEventListener('touchend', endDrag);
+    window.addEventListener('resize', constrainPositionToViewport);
+
+    // Initial check
+    constCheckTimer = setTimeout(constrainPositionToViewport, 0); // Ensure layout is ready
 
     return () => {
-      window.removeEventListener('mousemove', onGlobalMove);
-      window.removeEventListener('mouseup', onGlobalEnd);
-      window.removeEventListener('touchmove', onGlobalMove);
-      window.removeEventListener('touchend', onGlobalEnd);
+      window.removeEventListener('mousemove', handleDragMove);
+      window.removeEventListener('mouseup', endDrag);
+      window.removeEventListener('touchmove', handleDragMove);
+      window.removeEventListener('touchend', endDrag);
+      window.removeEventListener('resize', constrainPositionToViewport);
+      clearTimeout(constCheckTimer);
     };
   });
+  
+  let constCheckTimer: any;
+  
+  export function resetPosition() {
+    currentOffset = 0;
+    dragStartOffset = 0;
+    localStorage.removeItem(STORAGE_KEY);
+  }
 
-  // Refined Click Logic:
-  // We'll capture the specific startY of the interaction.
-  // If at mouseup (which happens before click), the delta is > 5, we set a flag 'suppressClick'.
-  // On click, if suppressClick is true, we reset it and return.
-  let suppressClick = false;
+  function constrainPositionToViewport() {
+      if (!settingsIconElement) return;
+
+      const rect = settingsIconElement.getBoundingClientRect();
+      // Calculate "zero" position (where element would be if offset was 0)
+      const zeroTop = rect.top - currentOffset;
+      const elementHeight = rect.height;
+      
+      const min = VIEWPORT_MARGIN - zeroTop;
+      const max = window.innerHeight - VIEWPORT_MARGIN - zeroTop - elementHeight;
+
+      // Clamp
+      const clamped = Math.max(min, Math.min(max, currentOffset));
+      
+      if (clamped !== currentOffset) {
+          currentOffset = clamped;
+          savePosition();
+      }
+  }
 
   function onMouseDown(e: MouseEvent) {
       if (e.button !== 0) return;
-      handleRefinedStart(e.clientY);
+      startDrag(e.clientY);
   }
 
   function onTouchStart(e: TouchEvent) {
       if (e.touches.length !== 1) return;
-      handleRefinedStart(e.touches[0]!.clientY);
+      startDrag(e.touches[0]!.clientY);
   }
 
-  function handleRefinedStart(clientY: number) {
+  function startDrag(clientY: number) {
     isDragging = true;
-    startY = clientY;
-    startOffset = currentOffset;
+    dragStartY = clientY;
+    dragStartOffset = currentOffset;
     suppressClick = false;
+
+    calculateDragConstraints();
+  }
+
+  function calculateDragConstraints() {
+    if (!settingsIconElement) return;
+
+    const rect = settingsIconElement.getBoundingClientRect();
+    const zeroTop = rect.top - currentOffset;
+    const elementHeight = rect.height;
+    
+    // We want the element to stay within [VIEWPORT_MARGIN, window.innerHeight - VIEWPORT_MARGIN]
+    minOffset = VIEWPORT_MARGIN - zeroTop;
+    maxOffset = window.innerHeight - VIEWPORT_MARGIN - zeroTop - elementHeight;
   }
    
-  function onGlobalMove(e: MouseEvent | TouchEvent) {
+  function handleDragMove(e: MouseEvent | TouchEvent) {
       if (!isDragging) return;
       
-      let clientY;
-      // Safer type check and access
-      if (window.TouchEvent && e instanceof TouchEvent && e.touches.length > 0) {
-          clientY = e.touches[0]!.clientY;
-      } else if (e instanceof MouseEvent) {
-          clientY = e.clientY;
-      } else { 
-          return; 
-      }
+      const clientY = getClientY(e);
+      if (clientY === null) return;
       
-      const deltaY = clientY - startY;
-      currentOffset = startOffset + deltaY;
+      const deltaY = clientY - dragStartY;
+      const rawOffset = dragStartOffset + deltaY;
       
-      if (Math.abs(deltaY) > 5) {
+      // Clamp the offset to keep element on screen
+      currentOffset = Math.max(minOffset, Math.min(maxOffset, rawOffset));
+      
+      if (Math.abs(deltaY) > DRAG_THRESHOLD) {
           suppressClick = true;
       }
   }
+
+  function getClientY(e: MouseEvent | TouchEvent): number | null {
+      if (window.TouchEvent && e instanceof TouchEvent && e.touches.length > 0) {
+          return e.touches[0]!.clientY;
+      } else if (e instanceof MouseEvent) {
+          return e.clientY;
+      }
+      return null;
+  }
   
-  function onGlobalEnd() {
+  function endDrag() {
       if (!isDragging) return;
       isDragging = false;
+      savePosition();
+  }
+
+  function savePosition() {
       localStorage.setItem(STORAGE_KEY, currentOffset.toString());
   }
   
@@ -133,13 +188,14 @@
 </script>
 
 <svelte:window 
-    on:mousemove={onGlobalMove} 
-    on:mouseup={onGlobalEnd}
-    on:touchmove|nonpassive={onGlobalMove}
-    on:touchend={onGlobalEnd}
+    on:mousemove={handleDragMove} 
+    on:mouseup={endDrag}
+    on:touchmove|nonpassive={handleDragMove}
+    on:touchend={endDrag}
 />
 
 <div 
+  bind:this={settingsIconElement}
   class="cv-settings-icon cv-settings-{position} {pulse ? 'cv-pulse' : ''}" 
   {title} 
   role="button"
