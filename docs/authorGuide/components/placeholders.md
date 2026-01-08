@@ -34,7 +34,7 @@ Use the `<cv-define-placeholder>` component to register a variable. This compone
     default-value="default username"
 ></cv-define-placeholder>
 
-### 2. Use the Variable
+### 2. Use the placeholder
 
 To use the variable in your content, wrap the variable name in double square brackets: `[[ variable_name ]]`.
 
