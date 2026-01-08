@@ -41,7 +41,7 @@
 
   function handleSelect(e: Event) {
     e.stopPropagation();
-    if (target) shareStore.toggleSelection(target);
+    if (target) shareStore.toggleElementSelection(target);
   }
 
   function handleUp(e: Event) {

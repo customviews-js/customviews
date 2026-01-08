@@ -72,7 +72,7 @@
     // If we have a hover target, toggle it
     const currentTarget = shareStore.currentHoverTarget;
     if (currentTarget) {
-      shareStore.toggleSelection(currentTarget);
+      shareStore.toggleElementSelection(currentTarget);
     }
   }
 
@@ -129,5 +129,17 @@
       outline: 3px solid #005a9e !important;
       outline-offset: 2px;
       background-color: rgba(0, 120, 212, 0.05);
+    }
+
+    :global(.cv-highlight-target-hide) {
+      outline: 2px dashed #d13438 !important;
+      outline-offset: 2px;
+      cursor: crosshair;
+    }
+
+    :global(.cv-share-selected-hide) {
+      outline: 3px solid #a4262c !important;
+      outline-offset: 2px;
+      background-color: rgba(209, 52, 56, 0.05);
     }
   </style>

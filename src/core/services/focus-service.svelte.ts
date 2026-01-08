@@ -5,6 +5,7 @@ import * as DomElementLocator from '../utils/dom-element-locator';
 import FocusDivider from '../../components/focus/FocusDivider.svelte';
 
 const FOCUS_PARAM = 'cv-focus';
+const HIDE_PARAM = 'cv-hide';
 const BODY_FOCUS_CLASS = 'cv-focus-mode';
 const HIDDEN_CLASS = 'cv-focus-hidden';
 const FOCUSED_CLASS = 'cv-focused-element';
@@ -53,10 +54,13 @@ export class FocusService {
      */
     public handleUrlChange(): void {
         const urlParams = new URLSearchParams(window.location.search);
-        const encodedDescriptors = urlParams.get(FOCUS_PARAM);
+        const focusDescriptors = urlParams.get(FOCUS_PARAM);
+        const hideDescriptors = urlParams.get(HIDE_PARAM);
 
-        if (encodedDescriptors) {
-            this.applyFocusMode(encodedDescriptors);
+        if (focusDescriptors) {
+            this.applyFocusMode(focusDescriptors);
+        } else if (hideDescriptors) {
+            this.applyHideMode(hideDescriptors);
         } else {
             if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
                 this.exitFocusMode();
@@ -105,6 +109,55 @@ export class FocusService {
         this.injectGlobalStyles();
 
         this.renderFocusedView(targets);
+    }
+
+    public applyHideMode(encodedDescriptors: string): void {
+        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+            this.exitFocusMode();
+        }
+
+        const descriptors = DomElementLocator.deserialize(encodedDescriptors);
+        if (!descriptors || descriptors.length === 0) return;
+
+        const targets: HTMLElement[] = [];
+        descriptors.forEach(desc => {
+            const el = DomElementLocator.resolve(this.rootEl, desc);
+            if (el) {
+                targets.push(el);
+            }
+        });
+
+        if (targets.length === 0) {
+            showToast("Some shared sections could not be found.");
+            return;
+        }
+
+        // Activate Store
+        focusStore.setIsActive(true);
+        document.body.classList.add(BODY_FOCUS_CLASS);
+        
+        // Inject structural styles for hiding
+        this.injectGlobalStyles();
+
+        this.renderHiddenView(targets);
+    }
+
+    private renderHiddenView(targets: HTMLElement[]): void {
+        // 1. Mark targets as hidden
+        targets.forEach(t => {
+            t.classList.add(HIDDEN_CLASS);
+            this.hiddenElements.add(t);
+        });
+
+        // 2. Insert Dividers
+        const processedContainers = new Set<HTMLElement>();
+        targets.forEach(el => {
+            const parent = el.parentElement;
+            if (parent && !processedContainers.has(parent)) {
+                this.insertDividersForContainer(parent);
+                processedContainers.add(parent);
+            }
+        });
     }
     
     private injectGlobalStyles() {
