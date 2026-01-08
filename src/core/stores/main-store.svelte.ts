@@ -1,3 +1,4 @@
+import { SvelteSet } from 'svelte/reactivity';
 import type { Config, State } from "../../types/types";
 import type { AssetsManager } from "../managers/assets-manager";
 
@@ -30,13 +31,13 @@ export class DataStore {
      * Registry of toggle IDs that are currently present in the DOM.
      * Used to filter the `visibleToggles` list.
      */
-    activeToggles = $state<Set<string>>(new Set());
+    activeToggles = $state<SvelteSet<string>>(new SvelteSet());
 
     /**
      * Registry of tab group IDs that are currently present in the DOM.
      * Used to filter the `visibleTabGroups` list.
      */
-    activeTabGroups = $state<Set<string>>(new Set());
+    activeTabGroups = $state<SvelteSet<string>>(new SvelteSet());
 
     /**
      * Controls the visibility of the tab navigation headers globally.
