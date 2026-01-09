@@ -7,9 +7,12 @@ import { SvelteURL } from 'svelte/reactivity';
 
 const FOCUS_PARAM = 'cv-focus';
 const HIDE_PARAM = 'cv-hide';
+const HIGHLIGHT_PARAM = 'cv-highlight';
 const BODY_FOCUS_CLASS = 'cv-focus-mode';
 const HIDDEN_CLASS = 'cv-focus-hidden';
 const FOCUSED_CLASS = 'cv-focused-element';
+const HIGHLIGHT_ACTIVE_CLASS = 'cv-highlight-active';
+const BODY_HIGHLIGHT_CLASS = 'cv-highlight-mode';
 
 import { DEFAULT_EXCLUDED_IDS, DEFAULT_EXCLUDED_TAGS } from '../constants';
 import { type ShareExclusions } from '../../types/config'; 
@@ -51,14 +54,17 @@ export class FocusService {
             $effect(() => {
                 const focusDescriptors = this.url.searchParams.get(FOCUS_PARAM);
                 const hideDescriptors = this.url.searchParams.get(HIDE_PARAM);
+                const highlightDescriptors = this.url.searchParams.get(HIGHLIGHT_PARAM);
 
                 untrack(() => {
                     if (focusDescriptors) {
                         this.applyFocusMode(focusDescriptors);
                     } else if (hideDescriptors) {
                         this.applyHideMode(hideDescriptors);
+                    } else if (highlightDescriptors) { 
+                         this.applyHighlightMode(highlightDescriptors);
                     } else {
-                        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
                             this.exitFocusMode();
                         }
                     }
@@ -67,7 +73,7 @@ export class FocusService {
 
             // Store safety check (Store changes affect UI)
             $effect(() => {
-                if (!focusStore.isActive && document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                if (!focusStore.isActive && (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS))) {
                     this.exitFocusMode();
                 }
             });
@@ -90,7 +96,7 @@ export class FocusService {
      */
     public applyFocusMode(encodedDescriptors: string): void {
         // Check if we are already in the right state to avoid re-rendering loops if feasible
-        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
              // If we are already active, we might want to check if descriptors changed?
              // For now, simple clear and re-apply.
             this.exitFocusMode(false); // don't clear URL here
@@ -129,7 +135,7 @@ export class FocusService {
     }
 
     public applyHideMode(encodedDescriptors: string): void {
-        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
             this.exitFocusMode(false);
         }
 
@@ -164,6 +170,51 @@ export class FocusService {
         this.renderHiddenView(targets);
     }
 
+    public applyHighlightMode(encodedDescriptors: string): void {
+        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
+            this.exitFocusMode(false);
+        }
+
+        const descriptors = DomElementLocator.deserialize(encodedDescriptors);
+        if (!descriptors || descriptors.length === 0) return;
+
+        const targets: HTMLElement[] = [];
+        descriptors.forEach(desc => {
+            const matchingEls = DomElementLocator.resolve(this.rootEl, desc);
+            if (matchingEls && matchingEls.length > 0) {
+                targets.push(...matchingEls);
+            }
+        });
+
+        if (targets.length === 0) {
+            showToast("Some highlighted sections could not be found.");
+            this.exitFocusMode(); 
+            return;
+        }
+
+        if (targets.length < descriptors.length) {
+            showToast("Some highlighted sections could not be found.");
+        }
+
+        // Activate Store
+        focusStore.setIsActive(true);
+        document.body.classList.add(BODY_HIGHLIGHT_CLASS);
+        
+        // Inject styles
+        this.injectGlobalStyles();
+
+        // Mark targets
+        targets.forEach(t => t.classList.add(HIGHLIGHT_ACTIVE_CLASS));
+
+        // Scroll first target into view
+        const firstTarget = targets[0];
+        if (firstTarget) {
+            setTimeout(() => {
+                firstTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }
+
     private renderHiddenView(targets: HTMLElement[]): void {
         // 1. Mark targets as hidden
         targets.forEach(t => {
@@ -191,6 +242,27 @@ export class FocusService {
                 body.${BODY_FOCUS_CLASS} { 
                     margin-top: 50px !important; 
                     transition: margin-top 0.2s;
+                }
+                .${HIGHLIGHT_ACTIVE_CLASS} {
+                    outline: 4px solid #d13438 !important;
+                    outline-offset: 4px;
+                    box-shadow: 0 0 0 4px rgba(209, 52, 56, 0.2);
+                    position: relative;
+                    z-index: 10;
+                }
+                .${HIGHLIGHT_ACTIVE_CLASS}::before {
+                    content: '→';
+                    position: absolute;
+                    left: -40px;
+                    top: 0;
+                    font-size: 30px;
+                    color: #d13438;
+                    font-weight: bold;
+                    animation: floatArrow 1.5s infinite;
+                }
+                @keyframes floatArrow {
+                    0%, 100% { transform: translateX(0); }
+                    50% { transform: translateX(-10px); }
                 }
             `;
             document.head.appendChild(style);
@@ -325,7 +397,7 @@ export class FocusService {
     }
 
     public exitFocusMode(updateUrl = true): void {
-        document.body.classList.remove(BODY_FOCUS_CLASS);
+        document.body.classList.remove(BODY_FOCUS_CLASS, BODY_HIGHLIGHT_CLASS);
         
         this.hiddenElements.forEach(el => el.classList.remove(HIDDEN_CLASS));
         this.hiddenElements.clear();
@@ -341,6 +413,9 @@ export class FocusService {
         const targets = document.querySelectorAll(`.${FOCUSED_CLASS}`);
         targets.forEach(t => t.classList.remove(FOCUSED_CLASS));
         
+        const highlights = document.querySelectorAll(`.${HIGHLIGHT_ACTIVE_CLASS}`);
+        highlights.forEach(h => h.classList.remove(HIGHLIGHT_ACTIVE_CLASS));
+        
         if (focusStore.isActive) {
              focusStore.setIsActive(false);
         }
@@ -351,6 +426,9 @@ export class FocusService {
             }
             if (this.url.searchParams.has(HIDE_PARAM)) {
                 this.url.searchParams.delete(HIDE_PARAM);
+            }
+            if (this.url.searchParams.has(HIGHLIGHT_PARAM)) {
+                this.url.searchParams.delete(HIGHLIGHT_PARAM);
             }
         }
     }

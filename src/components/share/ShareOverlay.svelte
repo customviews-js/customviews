@@ -243,11 +243,11 @@
 
     {#if selectionBox}
       <div 
-        class="selection-box {shareStore.selectionMode === 'hide' ? 'hide-mode' : ''}"
+        class="selection-box {shareStore.selectionMode === 'hide' ? 'hide-mode' : (shareStore.selectionMode === 'highlight' ? 'highlight-mode' : '')}"
         style="left: {selectionBox.left}px; top: {selectionBox.top}px; width: {selectionBox.width}px; height: {selectionBox.height}px;"
       >
         <span class="selection-label">
-            {shareStore.selectionMode === 'hide' ? 'Select to hide' : 'Select to share'}
+            {shareStore.selectionMode === 'hide' ? 'Select to hide' : (shareStore.selectionMode === 'highlight' ? 'Select to highlight' : 'Select to share')}
         </span>
       </div>
     {/if}
@@ -284,6 +284,18 @@
       background-color: rgba(209, 52, 56, 0.05);
     }
 
+    :global(.cv-highlight-target-mode) {
+      outline: 2px dashed #d97706 !important;
+      outline-offset: 2px;
+      cursor: crosshair;
+    }
+
+    :global(.cv-share-selected-highlight) {
+      outline: 3px solid #b45309 !important;
+      outline-offset: 2px;
+      background-color: rgba(245, 158, 11, 0.05);
+    }
+
     .selection-box {
       position: fixed;
       border: 1px solid rgba(0, 120, 212, 0.4);
@@ -296,6 +308,11 @@
     .selection-box.hide-mode {
       border: 1px solid rgba(209, 52, 56, 0.4);
       background-color: rgba(209, 52, 56, 0.1);
+    }
+
+    .selection-box.highlight-mode {
+      border: 1px solid rgba(255, 140, 0, 0.6); /* Orange/Gold for highlight */
+      background-color: rgba(255, 140, 0, 0.1);
     }
 
     .selection-label {
@@ -314,5 +331,9 @@
 
     .hide-mode .selection-label {
         background: #d13438;
+    }
+
+    .highlight-mode .selection-label {
+        background: #d97706; /* Darker orange for text bg */
     }
   </style>
