@@ -43,17 +43,18 @@ CustomViews supports a human-readable format using element IDs:
 
 | Parameter | format | Description |
 | :--- | :--- | :--- |
-| `cv-focus` | `id1+id2+id3` | **Shows** only the specified elements. All others are hidden. |
-| `cv-hide` | `id1+id2` | **Hides** the specified elements. All others are shown. |
+| `cv-focus` | `id1,id2,id3` | **Shows** only the specified elements. All others are hidden. |
+| `cv-hide` | `id1,id2` | **Hides** the specified elements. All others are shown. |
 
 **Example:**
 To focus on the `#setup` and `#config` sections:
-`https://yoursite.com/guide.html?cv-focus=setup+config`
+`https://yoursite.com/guide.html?cv-focus=setup,config`
 
 **Note:**
-*   IDs are case-sensitive.
-*   Use `+` (plus sign) to separate multiple IDs.
-*   If an ID contains special characters, it should be URL-encoded, but standard alphanumeric IDs work directly.
+* IDs are case-sensitive.
+* Use `,` (comma), or use `+` (plus sign) to separate multiple IDs.
+* Note that `,` will be URL-encoded to `%2C` when used in a URL, after visiting the page. 
+* If an ID contains special characters, it should be URL-encoded, but standard alphanumeric IDs work directly.
 
 ---
 

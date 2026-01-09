@@ -27,6 +27,12 @@ While generated links typically use an encoded format (e.g., `?cv-focus=ey...`),
 
 If you know the **ID** of the element you want to share, you can construct a URL manually:
 
-`https://example.com/page.html?cv-focus=introduction+installation`
+* `https://example.com/page.html?cv-focus=introduction,installation`
 
-This would focus **only** the elements with IDs `#introduction` and `#installation`. You can use `+` (plus sign) to separate multiple IDs.
+
+This would focus **only** the elements with IDs `#introduction` and `#installation`. 
+
+**Note on separators:** IDs are separated by **commas**.
+So `cv-focus=introduction,installation` is interpreted as the list `["introduction", "installation"]`.
+
+For example, try `https://customviews-js.github.io{{baseUrl}}?cv-focus=customviews` at this [link](https://customviews-js.github.io{{baseUrl}}?cv-focus=customviews).

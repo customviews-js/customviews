@@ -89,7 +89,7 @@ export function serialize(descriptors: AnchorDescriptor[]): string {
     // Check if all have IDs, use human-readable format
     const allHaveIds = minified.every(m => !!m.id);
     if (allHaveIds) {
-        return minified.map(m => m.id).join(' ');
+        return minified.map(m => m.id).join(',');
     }
 
     const json = JSON.stringify(minified);
@@ -113,6 +113,13 @@ export function deserialize(encoded: string): AnchorDescriptor[] {
 
     // Heuristic: If it contains spaces, it's definitely a list of IDs (Base64 doesn't have spaces)
     if (encoded.includes(' ')) {
+        return parseIds(encoded);
+    }
+
+    // Heuristic: Check for characters invalid in standard Base64 (btoa uses +/)
+    // Common IDs use - or _ or . which are not in Base64
+    const isBase64Candidate = /^[A-Za-z0-9+/]*={0,2}$/.test(encoded);
+    if (!isBase64Candidate) {
         return parseIds(encoded);
     }
 
@@ -143,15 +150,16 @@ export function deserialize(encoded: string): AnchorDescriptor[] {
             };
         });
     } catch (e) {
-        // Fallback: If decoding fails (or valid JSON but invalid structure), 
-        // assume it is a single ID or a space-separated list of IDs.
-        // This handles cases where an ID inadvertently looks like Base64 is not schema.
+        // This handles cases where an ID string happens to look like Base64 but does not match the expected schema
         return parseIds(encoded);
     }
 }
 
+/**
+ * Parses a space-separated, plus-separated, or comma-separated list of IDs into a list of AnchorDescriptors.
+ */
 function parseIds(encoded: string): AnchorDescriptor[] {
-    const parts = encoded.split(' ');
+    const parts = encoded.split(/[ +,]+/).filter(p => p.length > 0);
     return parts.map(id => ({
             tag: 'ANY',
             index: 0,
