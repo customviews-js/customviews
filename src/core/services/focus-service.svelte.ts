@@ -36,7 +36,18 @@ export class FocusService {
         
         // Subscribe to store for exit signal
         this.unsubscribe = $effect.root(() => {
-            // React to URL changes (URL changes affect UI)
+            // 1. Sync URL changes from SvelteURL back to browser history (UI changes affect URL)
+            // This effect handles the "Write" direction: App State -> URL
+            $effect(() => {
+                const currentFromBrowser = window.location.href;
+                // Cycle prevention: Only push if the SvelteURL has changed/diverged from browser
+                if (currentFromBrowser !== this.url.href) {
+                     window.history.pushState({}, '', this.url.href);
+                }
+            });
+
+            // 2. React to URL changes (URL changes affect UI)
+            // This effect handles the "Read" direction: URL -> App State
             $effect(() => {
                 const focusDescriptors = this.url.searchParams.get(FOCUS_PARAM);
                 const hideDescriptors = this.url.searchParams.get(HIDE_PARAM);
@@ -52,14 +63,6 @@ export class FocusService {
                         }
                     }
                 });
-            });
-
-            // Sync URL changes back to browser history (UI changes affect URL)
-            $effect(() => {
-                const currentFromBrowser = window.location.href;
-                if (currentFromBrowser !== this.url.href) {
-                     window.history.pushState({}, '', this.url.href);
-                }
             });
 
             // Store safety check (Store changes affect UI)
