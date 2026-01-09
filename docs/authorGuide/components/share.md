@@ -24,7 +24,7 @@ Hover over any part of the page to see it highlighted.
 On the floating toolbar, you can switch between three modes:
 - **Show**: Generates a Focus View that shows *only* the selected elements.
 - **Hide**: Generates a Focus View that hides the selected elements.
-- **Highlight**: Generates a Highlight View that keeps the full page but visually outlines the selected elements.
+- **Highlight**: Generates a Highlight View that keeps the full page but **visually outlines** the selected elements in red with an arrow indicator. This is ideal for pointing out specific sections without losing the surrounding context.
 
 ### 4. Smart Selection Guidelines
 

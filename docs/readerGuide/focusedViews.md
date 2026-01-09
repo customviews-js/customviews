@@ -21,13 +21,13 @@ When you open a shared link, you enter **Focus Mode**:
 Alternatively, you may receive a link for **Highlight Mode**:
 
 *   **Full Context**: The entire page remains visible; nothing is hidden.
-*   **Visual Highlights**: The selected content is clearly marked with a red outline and a floating arrow indicator.
-*   **Auto-Scroll**: The page automatically scrolls to the first highlighted element when opened.
+*   **Visual Highlights**: The selected content is clearly marked with a **red outline** and **floating arrow indicators** to draw attention.
+*   **Auto-Scroll**: The page automatically scrolls to the first highlighted element when opened, ensuring the viewer is immediately oriented.
 
 ### Navigation
 
 *   **Expand Sections** (Focus Mode): Click on any "hidden sections" marker to reveal the content in that specific area.
-*   **Show Full Page** (Focus Mode): Click "Show Full Page" on the top banner (or the floating action button) to exit Focus Mode and see the entire document.
+*   **Show Full Page**: Click "Show Full Page" on the top banner (or the floating action button) to **exit Focus or Highlight Mode** and return to the normal view.
 
 ## Advanced: Readable URLs
 
