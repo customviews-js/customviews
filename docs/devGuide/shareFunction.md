@@ -11,7 +11,7 @@
 
 The **Share Function** (or "Share Mode") allows users to create deeply customized links to specific pages. Instead of sharing a generic URL, users can select specific parts of a page to either **focus on** or **hide**, allowing for granular context sharing.
 
-## core Concepts
+## Core Concepts
 
 ### 1. The Overlay Interface
 When Share Mode is activated, the application renders a specialized **Overlay Layer** on top of the document. This layer intercepts all user interactions, preventing standard page behavior (like clicking links or selecting text) and replacing it with a selection mechanism.

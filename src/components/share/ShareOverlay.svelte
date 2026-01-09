@@ -115,7 +115,7 @@
     const dx = e.clientX - dragStart.x;
     const dy = e.clientY - dragStart.y;
 
-    if (Math.hypot(dx, dy) > 5) {
+    if (Math.hypot(dx, dy) > 12) {
       isDragging = true;
       shareStore.setHoverTarget(null); // Clear highlight on drag start
     }
