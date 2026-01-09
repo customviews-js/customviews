@@ -73,39 +73,49 @@ export class ShareStore {
             this.selectedElements.delete(el);
             this._removeSelectionClass(el);
         } else {
-            // Selection Logic
+            this.selectElement(el);
+        }
+    }
+
+    selectElement(el: HTMLElement) {
+        if (this.selectedElements.has(el)) return;
             
-            // 1. Check if ancestor is selected (Scenario B)
-            let parent = el.parentElement;
-            let ancestorSelected = false;
-            while (parent) {
-                if (this.selectedElements.has(parent)) {
-                    ancestorSelected = true;
-                    break;
-                }
-                parent = parent.parentElement;
+        // 1. Check if ancestor is selected (Scenario B)
+        let parent = el.parentElement;
+        let ancestorSelected = false;
+        while (parent) {
+            if (this.selectedElements.has(parent)) {
+                ancestorSelected = true;
+                break;
             }
-            
-            if (ancestorSelected) {
-                return; // Ignore
+            parent = parent.parentElement;
+        }
+        
+        if (ancestorSelected) {
+            return; // Ignore
+        }
+
+        // 2. Remove children if selected (Scenario A)
+        const toRemove: HTMLElement[] = [];
+        this.selectedElements.forEach(selected => {
+            if (el.contains(selected) && el !== selected) {
+                toRemove.push(selected);
             }
+        });
 
-            // 2. Remove children if selected (Scenario A)
-            const toRemove: HTMLElement[] = [];
-            this.selectedElements.forEach(selected => {
-                if (el.contains(selected) && el !== selected) {
-                    toRemove.push(selected);
-                }
-            });
+        toRemove.forEach(child => {
+            this.selectedElements.delete(child);
+            this._removeSelectionClass(child);
+        });
 
-            toRemove.forEach(child => {
-                this.selectedElements.delete(child);
-                this._removeSelectionClass(child);
-            });
+        // Add
+        this.selectedElements.add(el);
+        this._addSelectionClass(el);
+    }
 
-            // Add
-            this.selectedElements.add(el);
-            this._addSelectionClass(el);
+    addMultipleElements(elements: HTMLElement[]) {
+        for (const el of elements) {
+            this.selectElement(el);
         }
     }
 

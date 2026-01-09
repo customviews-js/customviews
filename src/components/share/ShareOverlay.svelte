@@ -11,18 +11,34 @@
   let excludedTagSet = $derived(new Set(excludedTags.map((t: string) => t.toUpperCase())));
   let excludedIdSet = $derived(new Set(excludedIds));
 
+  let isDragging = $state(false);
+  let dragStart = $state<{x: number, y: number} | null>(null);
+  let dragCurrent = $state<{x: number, y: number} | null>(null);
+  let wasDragging = false;
+
+  let selectionBox = $derived.by(() => {
+    if (!dragStart || !dragCurrent || !isDragging) return null;
+    const left = Math.min(dragStart.x, dragCurrent.x);
+    const top = Math.min(dragStart.y, dragCurrent.y);
+    const width = Math.abs(dragCurrent.x - dragStart.x);
+    const height = Math.abs(dragCurrent.y - dragStart.y);
+    return { left, top, width, height };
+  });
+
   /**
    * Handles window-level mouse hover events to identify and highlight shareable elements.
-   * It filters out internal UI components and excluded elements, then identifies 
-   * the nearest shareable element. If the element is a child of an already selected 
+   * It filters out internal UI components and excluded elements, then identifies
+   * the nearest shareable element. If the element is a child of an already selected
    * block, the hover highlight bubbles up to that ancestor.
-   * 
+   *
    * @param e - The mouse event.
    */
   function handleHover(e: MouseEvent) {
+    if (isDragging) return; // Don't highlight while dragging
+
     // If hovering over our own UI, ignore
     const target = e.target as HTMLElement;
-    
+
     // Check if target is part of our UI (Toolbar or Helper)
     if (target.closest('.hover-helper') || target.closest('.floating-bar')) return;
 
@@ -42,7 +58,7 @@
     // so the user sees the helper for the block they already selected.
     let parent = finalTarget.parentElement;
     let selectedAncestor: HTMLElement | null = null;
-    
+
     while(parent) {
       if (shareStore.selectedElements.has(parent)) {
         selectedAncestor = parent;
@@ -57,12 +73,106 @@
     }
 
     // New target
+    if (isGenericWrapper(finalTarget)) {
+      shareStore.setHoverTarget(null);
+      return;
+    }
     shareStore.setHoverTarget(finalTarget);
   }
 
-  function handleClick(e: MouseEvent) {
+  /**
+   * Handles mouse down events to start a selection drag.
+   */
+  function handleMouseDown(e: MouseEvent) {
     const target = e.target as HTMLElement;
+    // Don't start drag on UI
+    if (target.closest('.hover-helper') || target.closest('.floating-bar')) return;
+
+    // Disable drag on touch devices
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    dragStart = { x: e.clientX, y: e.clientY };
+    dragCurrent = { x: e.clientX, y: e.clientY };
+    isDragging = false;
+  }
+
+  function handleMouseMove(e: MouseEvent) {
+    if (!dragStart) return;
+
+    dragCurrent = { x: e.clientX, y: e.clientY };
+
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+
+    if (Math.hypot(dx, dy) > 5) {
+      isDragging = true;
+      shareStore.setHoverTarget(null); // Clear highlight on drag start
+    }
+  }
+
+  function isGenericWrapper(el: HTMLElement): boolean {
+    if (el.tagName !== 'DIV') return false;
+    if (el.hasAttribute('data-share')) return false;
     
+    const style = window.getComputedStyle(el);
+    const hasBackground = style.backgroundColor !== 'rgba(0, 0, 0, 0)' && style.backgroundColor !== 'transparent';
+    const hasBorder = style.borderStyle !== 'none' && parseFloat(style.borderWidth) > 0;
+    const hasShadow = style.boxShadow !== 'none';
+    
+    return !hasBackground && !hasBorder && !hasShadow;
+  }
+
+  function handleMouseUp(_: MouseEvent) {
+    if (isDragging && dragStart && dragCurrent) {
+        // Perform selection logic
+        const left = Math.min(dragStart.x, dragCurrent.x);
+        const top = Math.min(dragStart.y, dragCurrent.y);
+        const width = Math.abs(dragCurrent.x - dragStart.x);
+        const height = Math.abs(dragCurrent.y - dragStart.y);
+        const right = left + width;
+        const bottom = top + height;
+
+        const candidates = document.querySelectorAll(SHAREABLE_SELECTOR);
+        const selected: HTMLElement[] = [];
+
+        candidates.forEach(node => {
+            const el = node as HTMLElement;
+            if (isExcluded(el)) return;
+
+            const rect = el.getBoundingClientRect();
+            // Check containment (element must be fully inside selection box)
+            // AND check if it's not just a generic wrapper
+            if (
+                rect.left >= left && rect.right <= right && 
+                rect.top >= top && rect.bottom <= bottom &&
+                !isGenericWrapper(el)
+            ) {
+                selected.push(el);
+            }
+        });
+
+        if (selected.length > 0) {
+            shareStore.addMultipleElements(selected);
+        }
+
+        wasDragging = true;
+        setTimeout(() => wasDragging = false, 50);
+    }
+
+    isDragging = false;
+    dragStart = null;
+    dragCurrent = null;
+  }
+
+  function handleClick(e: MouseEvent) {
+    if (wasDragging) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+
+    const target = e.target as HTMLElement;
+
     if (target.closest('.hover-helper') || target.closest('.floating-bar')) return;
 
     // Intercept click on document
@@ -84,6 +194,11 @@
   }
 
   function isExcluded(el: HTMLElement): boolean {
+    // Exclude our own UI
+    if (el.closest('.share-overlay-ui') || el.closest('.hover-helper') || el.closest('.floating-bar')) {
+        return true;
+    }
+
     // Check self
     if (excludedTagSet.has(el.tagName.toUpperCase()) || (el.id && excludedIdSet.has(el.id))) {
       return true;
@@ -101,15 +216,25 @@
 </script>
 
   <!-- https://svelte.dev/docs/svelte/svelte-window -->
-  <svelte:window 
-    on:mouseover={handleHover} 
-    on:click|capture={handleClick} 
-    on:keydown={handleKeydown} 
+  <svelte:window
+    on:mouseover={handleHover}
+    on:mousedown={handleMouseDown}
+    on:mousemove={handleMouseMove}
+    on:mouseup={handleMouseUp}
+    on:click|capture={handleClick}
+    on:keydown={handleKeydown}
   />
 
   <div class="share-overlay-ui">
     <ShareToolbar />
     <HoverHelper />
+
+    {#if selectionBox}
+      <div
+        class="selection-box {shareStore.selectionMode === 'hide' ? 'hide-mode' : ''}"
+        style="left: {selectionBox.left}px; top: {selectionBox.top}px; width: {selectionBox.width}px; height: {selectionBox.height}px;"
+      ></div>
+    {/if}
   </div>
 
   <style>
@@ -141,5 +266,19 @@
       outline: 3px solid #a4262c !important;
       outline-offset: 2px;
       background-color: rgba(209, 52, 56, 0.05);
+    }
+
+    .selection-box {
+      position: fixed;
+      border: 1px solid rgba(0, 120, 212, 0.4);
+      background-color: rgba(0, 120, 212, 0.1);
+      pointer-events: none;
+      z-index: 10000;
+      box-sizing: border-box; 
+    }
+    
+    .selection-box.hide-mode {
+      border: 1px solid rgba(209, 52, 56, 0.4);
+      background-color: rgba(209, 52, 56, 0.1);
     }
   </style>
