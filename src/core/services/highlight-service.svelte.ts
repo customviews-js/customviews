@@ -11,10 +11,22 @@ const ARROW_OVERLAY_ID = 'cv-highlight-overlay';
 
 import { type RectData } from './highlight-types';
 
+export class HighlightState {
+    rects = $state<RectData[]>([]);
+}
+
 export class HighlightService {
     private overlayApp: any;
+    private state = new HighlightState();
+    private resizeObserver: ResizeObserver;
+    private activeTargets: HTMLElement[] = [];
+    private onWindowResize = () => this.updatePositions();
 
-    constructor(private rootEl: HTMLElement) {}
+    constructor(private rootEl: HTMLElement) {
+        this.resizeObserver = new ResizeObserver(() => {
+            this.updatePositions();
+        });
+    }
 
     public apply(encodedDescriptors: string): void {
         const descriptors = DomElementLocator.deserialize(encodedDescriptors);
@@ -43,8 +55,16 @@ export class HighlightService {
         document.body.classList.add(BODY_HIGHLIGHT_CLASS);
         
         
+        
         // Create Overlay across the entire page (App will be mounted into it)
-        this.renderHighlightOverlay(targets);        
+        this.activeTargets = targets;
+        
+        // Start observing
+        this.activeTargets.forEach(t => this.resizeObserver.observe(t));
+        this.resizeObserver.observe(document.body); // Catch layout shifts
+        window.addEventListener('resize', this.onWindowResize);
+
+        this.renderHighlightOverlay();        
         
         // Scroll first target into view
         const firstTarget = targets[0];
@@ -58,6 +78,11 @@ export class HighlightService {
     public exit(): void {
         document.body.classList.remove(BODY_HIGHLIGHT_CLASS);
 
+        this.resizeObserver.disconnect();
+        window.removeEventListener('resize', this.onWindowResize);
+        this.activeTargets = [];
+        this.state.rects = [];
+
         const overlay = document.getElementById(ARROW_OVERLAY_ID);
         if (this.overlayApp) {
             unmount(this.overlayApp);
@@ -66,7 +91,7 @@ export class HighlightService {
         if (overlay) overlay.remove();
     }
 
-    private renderHighlightOverlay(targets: HTMLElement[]) {
+    private renderHighlightOverlay() {
         let overlay = document.getElementById(ARROW_OVERLAY_ID);
         if (!overlay) {
             overlay = document.createElement('div');
@@ -74,11 +99,32 @@ export class HighlightService {
             document.body.appendChild(overlay);
         }
         overlay.innerHTML = '';
+        
+        // Initial calc
+        this.updatePositions();
+
+        // 2. Render Overlay Component
+        if (this.overlayApp) {
+             unmount(this.overlayApp);
+        }
+        this.overlayApp = mount(HighlightOverlay, {
+            target: overlay,
+            props: {
+                box: this.state
+            }
+        });
+    }
+
+    private updatePositions() {
+        if (this.activeTargets.length === 0) {
+             this.state.rects = [];
+             return;
+        }
 
         // 1. Group by Parent (Siblings)
         const groups = new Map<HTMLElement, HTMLElement[]>();
         
-        targets.forEach(t => {
+        this.activeTargets.forEach(t => {
             const parent = t.parentElement || document.body;
             if (!groups.has(parent)) {
                 groups.set(parent, []);
@@ -124,16 +170,7 @@ export class HighlightService {
             }
         }
 
-        // 2. Render Overlay Component
-        if (this.overlayApp) {
-             unmount(this.overlayApp);
-        }
-        this.overlayApp = mount(HighlightOverlay, {
-            target: overlay,
-            props: {
-                rects: mergedRects
-            }
-        });
+        this.state.rects = mergedRects;
     }
 
     private addMergedRect(resultList: any[], elements: HTMLElement[]) {
@@ -160,13 +197,15 @@ export class HighlightService {
             if (bottom > maxBottom) maxBottom = bottom;
         });
 
+        const PADDING = 10;
+        
         resultList.push({
-            top: minTop,
-            left: minLeft,
-            width: maxRight - minLeft,
-            height: maxBottom - minTop,
-            right: maxRight,
-            bottom: maxBottom,
+            top: minTop - PADDING,
+            left: minLeft - PADDING,
+            width: (maxRight - minLeft) + (PADDING * 2),
+            height: (maxBottom - minTop) + (PADDING * 2),
+            right: maxRight + PADDING,
+            bottom: maxBottom + PADDING,
             element: elements[0]
         });
     }

@@ -2,10 +2,11 @@
   import { type RectData } from '../../core/services/highlight-types';
 
   interface Props {
-    rects: RectData[];
+    box: { rects: RectData[] };
   }
 
-  let { rects }: Props = $props();
+  let { box }: Props = $props();
+  let rects = $derived(box.rects);
 
   function getArrowClass(rect: RectData): string {
     const viewportWidth = window.innerWidth;
@@ -67,7 +68,7 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 2147483647; /* Max z-index */
+    z-index: 8000;
     overflow: visible;
   }
 
