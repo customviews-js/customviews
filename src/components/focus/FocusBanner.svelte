@@ -15,6 +15,15 @@
 {/if}
 
 <style>
+  /* Global Styles for Focus/Highlight Modes */
+  :global(.cv-focus-hidden) { display: none !important; }
+  
+  :global(body.cv-focus-mode), 
+  :global(body.cv-highlight-mode) { 
+    margin-top: 50px !important; 
+    transition: margin-top 0.2s;
+  }
+
   #cv-exit-focus-banner {
     position: fixed;
     top: 0;

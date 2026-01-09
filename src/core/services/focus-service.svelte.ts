@@ -129,9 +129,7 @@ export class FocusService {
         // Activate Store
         focusStore.setIsActive(true);
         document.body.classList.add(BODY_FOCUS_CLASS);
-        
-        // Inject structural styles for hiding
-        this.injectGlobalStyles();
+
 
         this.renderFocusedView(targets);
     }
@@ -165,9 +163,6 @@ export class FocusService {
         // Activate Store
         focusStore.setIsActive(true);
         document.body.classList.add(BODY_FOCUS_CLASS);
-        
-        // Inject structural styles for hiding
-        this.injectGlobalStyles();
 
         this.renderHiddenView(targets);
     }
@@ -197,21 +192,7 @@ export class FocusService {
             }
         });
     }
-    
-    private injectGlobalStyles() {
-        if (!document.getElementById('cv-focus-service-styles')) {
-            const style = document.createElement('style');
-            style.id = 'cv-focus-service-styles';
-            style.textContent = `
-                .${HIDDEN_CLASS} { display: none !important; }
-                body.${BODY_FOCUS_CLASS} { 
-                    margin-top: 50px !important; 
-                    transition: margin-top 0.2s;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
+
 
     private renderFocusedView(targets: HTMLElement[]): void {
         // 1. Mark targets
