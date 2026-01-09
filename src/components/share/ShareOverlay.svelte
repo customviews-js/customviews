@@ -16,6 +16,9 @@
   let dragCurrent = $state<{x: number, y: number} | null>(null);
   let wasDragging = false;
   
+  // Cache candidates when active to avoid repeated DOM queries
+  let cachedCandidates: HTMLElement[] = [];
+
   let selectionBox = $derived.by(() => {
     if (!dragStart || !dragCurrent || !isDragging) return null;
     const left = Math.min(dragStart.x, dragCurrent.x);
@@ -89,9 +92,11 @@
    * Handles mouse down events to start a selection drag.
    */
   function handleMouseDown(e: MouseEvent) {
+    if (!shareStore.isActive) return;
+
+    // Ignore clicks on UI
     const target = e.target as HTMLElement;
-    // Don't start drag on UI
-    if (target.closest('.hover-helper') || target.closest('.floating-bar')) return;
+    if (target.closest('.floating-bar') || target.closest('.hover-helper')) return;
 
     // Disable drag on touch devices
     if (window.matchMedia('(pointer: coarse)').matches) return;
@@ -99,6 +104,7 @@
     dragStart = { x: e.clientX, y: e.clientY };
     dragCurrent = { x: e.clientX, y: e.clientY };
     isDragging = false;
+    wasDragging = false; // Ensure clean state
   }
 
   function handleMouseMove(e: MouseEvent) {
@@ -134,10 +140,14 @@
         const right = left + width;
         const bottom = top + height;
 
-        const candidates = document.querySelectorAll(SHAREABLE_SELECTOR);
+        // Populate cache only if needed (lazy loading)
+        if (cachedCandidates.length === 0) {
+            cachedCandidates = Array.from(document.querySelectorAll(SHAREABLE_SELECTOR)) as HTMLElement[];
+        }
+        
         const selected: HTMLElement[] = [];
 
-        candidates.forEach(node => {
+        cachedCandidates.forEach(node => {
             const el = node as HTMLElement;
             if (isOrHasExcludedParentElement(el)) return;
 
@@ -158,7 +168,6 @@
         }
 
         wasDragging = true;
-        setTimeout(() => wasDragging = false, 50);
     }
 
     isDragging = false;
@@ -170,6 +179,7 @@
     if (wasDragging) {
         e.preventDefault();
         e.stopPropagation();
+        wasDragging = false; // Synchronous reset
         return;
     }
 
