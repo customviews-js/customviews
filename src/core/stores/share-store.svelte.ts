@@ -60,9 +60,14 @@ export class ShareStore {
     setSelectionMode(mode: SelectionMode) {
         if (this.selectionMode === mode) return;
         
-        this.clearAllSelections();
-        
         this.selectionMode = mode;
+        
+        // Update styling for all currently selected elements
+        this.selectedElements.forEach(el => {
+            this._removeSelectionClass(el);
+            this._addSelectionClass(el);
+        });
+
         if (this.isActive) {
             this.updateBodyClass();
         }
