@@ -159,4 +159,52 @@
   .btn.exit:hover {
     background-color: rgba(255, 107, 107, 0.1);
   }
+
+  @media (max-width: 600px) {
+    .floating-bar {
+      display: flex;
+      flex-wrap: wrap;
+      min-width: unset;
+      width: 90%;
+      max-width: 400px;
+      height: auto;
+      padding: 12px;
+      gap: 10px;
+      bottom: 30px;
+    }
+
+    .mode-toggle {
+      margin-right: auto;
+      order: 1;
+    }
+
+    .btn.exit {
+      margin-left: auto;
+      order: 2;
+    }
+  
+    .divider { display: none; }
+  
+    .count {
+      width: 100%;
+      text-align: center;
+      order: 3;
+      padding: 8px 0;
+      border-top: 1px solid #3a3a3a;
+      border-bottom: 1px solid #3a3a3a;
+      margin: 4px 0;
+    }
+  
+    .btn.clear, .btn.preview, .btn.generate {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      padding: 8px 4px;
+      order: 4;
+    }
+  
+    .btn.generate {
+      flex: 1.5;
+    }
+  }
 </style>
