@@ -50,7 +50,7 @@ export class ShareStore {
             // Reset state
             this.isActive = false;
             this.currentHoverTarget = null;
-            document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide');
+            document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide', 'cv-share-active-highlight');
         } else {
             this.isActive = true;
             this.updateBodyClass();
@@ -74,7 +74,7 @@ export class ShareStore {
     }
 
     updateBodyClass() {
-        document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide');
+        document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide', 'cv-share-active-highlight');
         document.body.classList.add(`cv-share-active-${this.selectionMode}`);
     }
 

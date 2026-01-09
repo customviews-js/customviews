@@ -54,8 +54,6 @@ export class HighlightService {
         focusStore.setIsActive(true);
         document.body.classList.add(BODY_HIGHLIGHT_CLASS);
         
-        
-        
         // Create Overlay across the entire page (App will be mounted into it)
         this.activeTargets = targets;
         
