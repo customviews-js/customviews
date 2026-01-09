@@ -29,15 +29,15 @@ export class DataStore {
 
     /**
      * Registry of toggle IDs that are currently present in the DOM.
-     * Used to filter the `visibleToggles` list.
+     * Used to filter the `menuToggles` list.
      */
-    activeToggles = $state<SvelteSet<string>>(new SvelteSet());
+    detectedToggles = $state<SvelteSet<string>>(new SvelteSet());
 
     /**
      * Registry of tab group IDs that are currently present in the DOM.
-     * Used to filter the `visibleTabGroups` list.
+     * Used to filter the `menuTabGroups` list.
      */
-    activeTabGroups = $state<SvelteSet<string>>(new SvelteSet());
+    detectedTabGroups = $state<SvelteSet<string>>(new SvelteSet());
 
     /**
      * Controls the visibility of the tab navigation headers globally.
@@ -49,23 +49,32 @@ export class DataStore {
      */
     assetsManager = $state<AssetsManager | undefined>(undefined);
 
-    // Derived: Filtered lists based on what's active on the page
-    visibleToggles = $derived.by(() => {
+    // Menu toggles are those that are either global or 
+    // local but present and registered in the DOM
+    menuToggles = $derived.by(() => {
         if (!this.config.toggles) return [];
         return this.config.toggles.filter(t => 
-            !t.isLocal || this.activeToggles.has(t.toggleId)
+            !t.isLocal || this.detectedToggles.has(t.toggleId)
         );
     });
 
-    visibleTabGroups = $derived.by(() => {
+    menuTabGroups = $derived.by(() => {
         if (!this.config.tabGroups) return [];
         return this.config.tabGroups.filter(g => 
-            !g.isLocal || this.activeTabGroups.has(g.groupId)
+            !g.isLocal || this.detectedTabGroups.has(g.groupId)
         );
     });
 
-    hasActiveComponents = $derived(
-        this.visibleToggles.length > 0 || this.visibleTabGroups.length > 0
+    hasMenuOptions = $derived(
+        this.menuToggles.length > 0 || this.menuTabGroups.length > 0
+    );
+
+    /**
+     * Returns true if there are any active components (toggles or tab groups) actually present in the DOM.
+     * This is distinct from `hasMenuOptions` which checks if there are ANY non-local components configured.
+     */
+    hasPageElements = $derived(
+        this.detectedToggles.size > 0 || this.detectedTabGroups.size > 0
     );
 
     constructor(initialConfig: Config = {}) {
@@ -125,7 +134,7 @@ export class DataStore {
      * @param id The ID of the toggle found in the DOM.
      */
     registerToggle(id: string) {
-        this.activeToggles.add(id);
+        this.detectedToggles.add(id);
     }
     
     /**
@@ -133,7 +142,7 @@ export class DataStore {
      * @param id The ID of the tab group found in the DOM.
      */
     registerTabGroup(id: string) {
-        this.activeTabGroups.add(id);
+        this.detectedTabGroups.add(id);
     }
 
     /**
@@ -141,8 +150,8 @@ export class DataStore {
      * Should be called when scanning a fresh part of the DOM or resetting.
      */
     clearRegistry() {
-        this.activeToggles.clear();
-        this.activeTabGroups.clear();
+        this.detectedToggles.clear();
+        this.detectedTabGroups.clear();
     }
 
     /**

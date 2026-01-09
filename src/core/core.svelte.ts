@@ -69,17 +69,6 @@ export class CustomViewsCore {
         return;
      }
 
-     // 3. Defaults handled by Store constructor
-  }
-
-
-
-  public getConfig(): Config {
-    return this.store.config;
-  }
-  
-  public getTabGroups() {
-      return this.store.config.tabGroups;
   }
 
   /**
@@ -134,10 +123,6 @@ export class CustomViewsCore {
   }
 
   // --- Public APIs for Widget/Other ---
-
-  public hasActiveComponents(): boolean {
-      return this.store.hasActiveComponents;
-  }
 
   public resetToDefault() {
       this.persistenceManager.clearAll();

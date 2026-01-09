@@ -50,11 +50,6 @@
 
   // Init
   onMount(() => {
-    // Check for callout
-    if (options.callout?.show && store.hasActiveComponents) {
-      checkIntro();
-    }
-    
     // Check Nav Visibility
     // Store is the single source of truth, handled by Core's persistence effect
     navsVisible = store.isTabGroupNavHeadingVisible;
@@ -62,6 +57,17 @@
     // Init Theme Store
     themeStore.init();
     return themeStore.listen();
+  });
+
+  let introChecked = false;
+  $effect(() => {
+    if (!introChecked && options.callout?.show) {
+       // Only show if there are actual components on the page
+       if (store.hasPageElements) {
+           introChecked = true;
+           checkIntro();
+       }
+    }
   });
 
   function checkIntro() {
@@ -162,7 +168,7 @@
   }
 </script>
 
-{#if store.hasActiveComponents || options.showTabGroups}
+{#if store.hasMenuOptions || options.showTabGroups}
   <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
     <!-- Intro Callout -->
     {#if showCallout}
@@ -206,8 +212,8 @@
         showReset={options.panel.showReset}
         showTabGroups={options.panel.showTabGroups}
         
-        toggles={store.visibleToggles}
-        tabGroups={store.visibleTabGroups}
+        toggles={store.menuToggles}
+        tabGroups={store.menuTabGroups}
         
         shownToggles={shownToggles}
         peekToggles={peekToggles}
