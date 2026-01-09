@@ -27,7 +27,7 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
-    z-index: 100000;
+    z-index: 9000; /* Below Toast (usually 9999+) */
     font-family: system-ui, sans-serif;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
