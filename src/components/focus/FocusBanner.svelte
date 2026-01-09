@@ -21,7 +21,6 @@
   :global(body.cv-focus-mode), 
   :global(body.cv-highlight-mode) { 
     margin-top: 50px !important; 
-    transition: margin-top 0.2s;
   }
 
   #cv-exit-focus-banner {
