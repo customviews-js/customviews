@@ -1,13 +1,19 @@
+import { mount, unmount } from 'svelte';
 import { showToast } from '../stores/toast-store.svelte';
 import { focusStore } from '../stores/focus-store.svelte';
 import * as DomElementLocator from '../utils/dom-element-locator';
+import HighlightOverlay from '../../components/highlight/HighlightOverlay.svelte';
 
 export const HIGHLIGHT_PARAM = 'cv-highlight';
-export const HIGHLIGHT_ACTIVE_CLASS = 'cv-highlight-active';
+
 export const BODY_HIGHLIGHT_CLASS = 'cv-highlight-mode';
 const ARROW_OVERLAY_ID = 'cv-highlight-overlay';
 
+import { type RectData } from './highlight-types';
+
 export class HighlightService {
+    private overlayApp: any;
+
     constructor(private rootEl: HTMLElement) {}
 
     public apply(encodedDescriptors: string): void {
@@ -36,15 +42,8 @@ export class HighlightService {
         focusStore.setIsActive(true);
         document.body.classList.add(BODY_HIGHLIGHT_CLASS);
         
-        // Inject styles
-        this.injectGlobalStyles();
-
-        // Create Overlay for Highlights (Arrows + Boxes)
-        // We do NOT add HIGHLIGHT_ACTIVE_CLASS to targets because we draw boxes in the overlay
         
-        // Mark targets for internal tracking if needed, but remove visual style class
-        targets.forEach(t => t.classList.add(HIGHLIGHT_ACTIVE_CLASS)); 
-
+        // Create Overlay across the entire page (App will be mounted into it)
         this.renderHighlightOverlay(targets);        
         
         // Scroll first target into view
@@ -58,13 +57,12 @@ export class HighlightService {
 
     public exit(): void {
         document.body.classList.remove(BODY_HIGHLIGHT_CLASS);
-        
-        const highlights = document.querySelectorAll(`.${HIGHLIGHT_ACTIVE_CLASS}`);
-        highlights.forEach(h => {
-             h.classList.remove(HIGHLIGHT_ACTIVE_CLASS);
-        });
 
         const overlay = document.getElementById(ARROW_OVERLAY_ID);
+        if (this.overlayApp) {
+            unmount(this.overlayApp);
+            this.overlayApp = undefined;
+        }
         if (overlay) overlay.remove();
     }
 
@@ -89,18 +87,7 @@ export class HighlightService {
         });
 
         // 2. Calculate Union Rect for each group
-        type RectData = {
-            top: number;
-            left: number;
-            width: number;
-            height: number;
-            right: number;
-            bottom: number;
-            element: HTMLElement;
-        };
         const mergedRects: RectData[] = [];
-
-
 
         // Iterate groups to ensure strict adjacency
         for (const [parent, siblingsInGroup] of groups) {
@@ -137,112 +124,16 @@ export class HighlightService {
             }
         }
 
-        // 2. Render Boxes and Arrows
-        mergedRects.forEach(rect => {
-            // Box
-            const box = document.createElement('div');
-            box.className = 'cv-highlight-box';
-            box.style.top = `${rect.top}px`;
-            box.style.left = `${rect.left}px`;
-            box.style.width = `${rect.width}px`;
-            box.style.height = `${rect.height}px`;
-            overlay!.appendChild(box);
-
-            // Arrow
-            const arrow = document.createElement('div');
-            arrow.className = 'cv-highlight-arrow';
-            
-            // Logic for direction (Relative to the MERGED rect)
-            const viewportWidth = window.innerWidth;
-            
-            // Simple viewport relative check for left side (approximation)
-            const rectLeftViewport = rect.left - (window.pageXOffset || document.documentElement.scrollLeft);
-
-            // Default Left
-            if (rectLeftViewport >= 50) {
-                 arrow.classList.add('left');
-                 arrow.style.top = `${rect.top}px`; // Top aligned with box start
-                 arrow.style.left = `${rect.left - 40}px`;
-                 arrow.innerHTML = '→';
-            } else if (viewportWidth - (rectLeftViewport + rect.width) >= 50) {
-                 // Right
-                 arrow.classList.add('right');
-                 arrow.style.top = `${rect.top}px`;
-                 arrow.style.left = `${rect.left + rect.width + 10}px`;
-                 arrow.innerHTML = '←';
-            } else if (rect.top - (window.pageYOffset || document.documentElement.scrollTop) >= 50) {
-                 // Top
-                 arrow.classList.add('top');
-                 arrow.style.top = `${rect.top - 40}px`;
-                 arrow.style.left = `${rect.left + (rect.width / 2) - 15}px`;
-                 arrow.innerHTML = '↓';
-            } else {
-                 // Bottom
-                 arrow.classList.add('bottom');
-                 arrow.style.top = `${rect.top + rect.height + 10}px`;
-                 arrow.style.left = `${rect.left + (rect.width / 2) - 15}px`;
-                 arrow.innerHTML = '↑';
-            }
-            
-            overlay!.appendChild(arrow);
-        });
-    }
-
-    private injectGlobalStyles() {
-        if (!document.getElementById('cv-highlight-service-styles')) {
-            const style = document.createElement('style');
-            style.id = 'cv-highlight-service-styles';
-            style.textContent = `
-                .cv-highlight-box {
-                    position: absolute;
-                    border: 4px solid #d13438;
-                    box-shadow: 0 0 0 4px rgba(209, 52, 56, 0.2);
-                    pointer-events: none;
-                }
-                #${ARROW_OVERLAY_ID} {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    pointer-events: none;
-                    z-index: 2147483647; /* Max z-index */
-                    overflow: visible;
-                }
-                .cv-highlight-arrow {
-                    position: absolute;
-                    font-size: 30px;
-                    color: #d13438;
-                    font-weight: bold;
-                    width: 30px;
-                    height: 30px;
-                    line-height: 30px;
-                    text-align: center;
-                }
-                .cv-highlight-arrow.left { animation: floatArrowLeft 1.5s infinite; }
-                .cv-highlight-arrow.right { animation: floatArrowRight 1.5s infinite; }
-                .cv-highlight-arrow.top { animation: floatArrowTop 1.5s infinite; }
-                .cv-highlight-arrow.bottom { animation: floatArrowBottom 1.5s infinite; }
-
-                @keyframes floatArrowLeft {
-                    0%, 100% { transform: translateX(0); }
-                    50% { transform: translateX(-10px); }
-                }
-                @keyframes floatArrowRight {
-                    0%, 100% { transform: translateX(0); }
-                    50% { transform: translateX(10px); }
-                }
-                @keyframes floatArrowTop {
-                    0%, 100% { transform: translate(-50%, 0); }
-                    50% { transform: translate(-50%, -10px); }
-                }
-                @keyframes floatArrowBottom {
-                    0%, 100% { transform: translate(-50%, 0); }
-                    50% { transform: translate(-50%, 10px); }
-                }
-            `;
-            document.head.appendChild(style);
+        // 2. Render Overlay Component
+        if (this.overlayApp) {
+             unmount(this.overlayApp);
         }
+        this.overlayApp = mount(HighlightOverlay, {
+            target: overlay,
+            props: {
+                rects: mergedRects
+            }
+        });
     }
 
     private addMergedRect(resultList: any[], elements: HTMLElement[]) {
