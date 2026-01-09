@@ -1,4 +1,4 @@
-import { mount, unmount } from 'svelte';
+import { mount, unmount, untrack } from 'svelte';
 import { focusStore } from '../stores/focus-store.svelte';
 import { showToast } from '../stores/toast-store.svelte';
 import * as DomElementLocator from '../utils/dom-element-locator';
@@ -41,15 +41,17 @@ export class FocusService {
                 const focusDescriptors = this.url.searchParams.get(FOCUS_PARAM);
                 const hideDescriptors = this.url.searchParams.get(HIDE_PARAM);
 
-                if (focusDescriptors) {
-                    this.applyFocusMode(focusDescriptors);
-                } else if (hideDescriptors) {
-                    this.applyHideMode(hideDescriptors);
-                } else {
-                    if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
-                        this.exitFocusMode();
+                untrack(() => {
+                    if (focusDescriptors) {
+                        this.applyFocusMode(focusDescriptors);
+                    } else if (hideDescriptors) {
+                        this.applyHideMode(hideDescriptors);
+                    } else {
+                        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                            this.exitFocusMode();
+                        }
                     }
-                }
+                });
             });
 
             // Sync URL changes back to browser history (UI changes affect URL)
@@ -97,14 +99,15 @@ export class FocusService {
         // Resolve anchors to DOM elements
         const targets: HTMLElement[] = [];
         descriptors.forEach(desc => {
-            const el = DomElementLocator.resolve(this.rootEl, desc);
-            if (el) {
-                targets.push(el);
+            const matchingEls = DomElementLocator.resolve(this.rootEl, desc);
+            if (matchingEls && matchingEls.length > 0) {
+                targets.push(...matchingEls);
             }
         });
 
         if (targets.length === 0) {
             showToast("Some shared sections could not be found.");
+            this.exitFocusMode(); // Clears URL and resets state, preventing effect loop
             return;
         }
 
@@ -132,15 +135,20 @@ export class FocusService {
 
         const targets: HTMLElement[] = [];
         descriptors.forEach(desc => {
-            const el = DomElementLocator.resolve(this.rootEl, desc);
-            if (el) {
-                targets.push(el);
+            const matchingEls = DomElementLocator.resolve(this.rootEl, desc);
+            if (matchingEls && matchingEls.length > 0) {
+                targets.push(...matchingEls);
             }
         });
 
         if (targets.length === 0) {
             showToast("Some shared sections could not be found.");
+            this.exitFocusMode(); // Clears URL and resets state
             return;
+        }
+
+        if (targets.length < descriptors.length) {
+            showToast("Some shared sections could not be found.");
         }
 
         // Activate Store
@@ -236,8 +244,11 @@ export class FocusService {
         if (el.id && this.excludedIds.has(el.id)) return;
         if (el.getAttribute('aria-hidden') === 'true') return;
         
-        // Exclude Toast/Banner/Overlay
-        if (el.closest('.toast-container') || el.id === 'cv-exit-focus-banner') return;
+        // Exclude Toast/Banner/Overlay/SettingsIcon/WidgetRoot
+        if (el.closest('.toast-container') 
+            || el.id === 'cv-exit-focus-banner' 
+            || el.classList.contains('cv-settings-icon')
+            || el.classList.contains('cv-widget-root')) return;
 
         if (el.querySelector('header, footer, nav') !== null) return;
 

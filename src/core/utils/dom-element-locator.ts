@@ -8,6 +8,7 @@ export interface AnchorDescriptor {
     parentId?: string;    // ID of the nearest parent that HAS a hard ID (e.g., #section-configuration)
     textSnippet: string;  // First 32 chars of text content (normalized)
     textHash: number;     // A simple hash of the full text content
+    elementId?: string;   // The element's own ID if present
 }
 
 /**
@@ -59,7 +60,8 @@ export function createDescriptor(el: HTMLElement): AnchorDescriptor {
         tag,
         index: index !== -1 ? index : 0,
         textSnippet: normalizedText.substring(0, 32),
-        textHash: hashCode(normalizedText)
+        textHash: hashCode(normalizedText),
+        elementId: el.id
     };
 
     if (parentId) {
@@ -73,37 +75,90 @@ export function createDescriptor(el: HTMLElement): AnchorDescriptor {
  * Serializes a list of AnchorDescriptors into a URL-safe string.
  */
 export function serialize(descriptors: AnchorDescriptor[]): string {
+    // Check if we can use human-readable format that only uses IDs
+    // AnchorDescriptor carries the element's OWN id optionally.
     const minified = descriptors.map(d => ({
         t: d.tag,
         i: d.index,
         p: d.parentId,
         s: d.textSnippet,
-        h: d.textHash
+        h: d.textHash,
+        id: d.elementId
     }));
+
+    // Check if all have IDs, use human-readable format
+    const allHaveIds = minified.every(m => !!m.id);
+    if (allHaveIds) {
+        return minified.map(m => m.id).join(' ');
+    }
+
     const json = JSON.stringify(minified);
-    // Standard approach for UTF-8 to Base64
-    return btoa(unescape(encodeURIComponent(json)));
+    
+    // Modern UTF-8 safe Base64 encoding
+    try {
+        const bytes = new TextEncoder().encode(json);
+        const binString = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join("");
+        return btoa(binString);
+    } catch (e) {
+        console.error("Failed to encode anchor:", e);
+        return "";
+    }
 }
 
 /**
  * Deserializes a URL-safe string back into a list of AnchorDescriptors.
  */
 export function deserialize(encoded: string): AnchorDescriptor[] {
-    try {
-        // Standard approach for Base64 to UTF-8
-        const json = decodeURIComponent(escape(atob(encoded)));
-        const minified = JSON.parse(json);
-        return minified.map((m: any) => ({
-            tag: m.t,
-            index: m.i,
-            parentId: m.p,
-            textSnippet: m.s,
-            textHash: m.h
-        }));
-    } catch (e) {
-        console.error("Failed to deserialize anchor:", e);
-        return [];
+    if (!encoded) return [];
+
+    // Heuristic: If it contains spaces, it's definitely a list of IDs (Base64 doesn't have spaces)
+    if (encoded.includes(' ')) {
+        return parseIds(encoded);
     }
+
+    try {
+        // Modern UTF-8 safe Base64 decoding
+        const binString = atob(encoded);
+        const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0) || 0);
+        const json = new TextDecoder().decode(bytes);
+        
+        const minified = JSON.parse(json);
+        
+        // Robustness: Ensure result is an array
+        if (!Array.isArray(minified)) {
+            throw new Error("Decoded JSON is not an array");
+        }
+
+        return minified.map((m: any) => {
+            // Robustness: Ensure item is an object
+            if (typeof m !== 'object' || m === null) throw new Error("Item is not an object");
+            
+            return {
+                tag: m.t,
+                index: m.i,
+                parentId: m.p,
+                textSnippet: m.s,
+                textHash: m.h,
+                elementId: m.id
+            };
+        });
+    } catch (e) {
+        // Fallback: If decoding fails (or valid JSON but invalid structure), 
+        // assume it is a single ID or a space-separated list of IDs.
+        // This handles cases where an ID inadvertently looks like Base64 is not schema.
+        return parseIds(encoded);
+    }
+}
+
+function parseIds(encoded: string): AnchorDescriptor[] {
+    const parts = encoded.split(' ');
+    return parts.map(id => ({
+            tag: 'ANY',
+            index: 0,
+            textSnippet: '',
+            textHash: 0,
+            elementId: id
+    }));
 }
 
 const SCORE_EXACT_HASH = 50;
@@ -113,9 +168,21 @@ const SCORE_PERFECT = 60;
 const SCORE_THRESHOLD = 30;
 
 /**
- * Finds the best DOM element match for a descriptor.
+ * Finds the best DOM element match(es) for a descriptor.
+ * Returns an array of elements. For specific descriptors, usually contains 0 or 1 element.
+ * For ID-only descriptors (tag='ANY'), may return multiple if duplicates exist.
  */
-export function resolve(root: HTMLElement, descriptor: AnchorDescriptor): HTMLElement | null {
+export function resolve(root: HTMLElement, descriptor: AnchorDescriptor): HTMLElement[] {
+    // 0. Direct ID Shortcut
+    if (descriptor.elementId) {
+        // Always support duplicate IDs for consistency, even if technically invalid HTML.
+        const all = document.querySelectorAll(`[id="${CSS.escape(descriptor.elementId)}"]`);
+        if (all.length > 0) return Array.from(all) as HTMLElement[];
+        
+        // If not found by ID (and it's a manual ID-only request), stop search.
+        if (descriptor.tag === 'ANY') return []; 
+    }
+
     // 1. Determine Scope
     let scope: HTMLElement = root;
     
@@ -145,7 +212,7 @@ export function resolve(root: HTMLElement, descriptor: AnchorDescriptor): HTMLEl
         // Perfect Match Check: If index + hash match, it's virtually guaranteed.
         // This avoids checking every other candidate.
         if (hashCode(text) === descriptor.textHash) {
-            return candidate;
+            return [candidate];
         }
     }
 
@@ -173,7 +240,7 @@ export function resolve(root: HTMLElement, descriptor: AnchorDescriptor): HTMLEl
         
         // Early Exit: If we find a very high score (Hash + Index), we can stop.
         if (score >= SCORE_PERFECT) {
-            return candidate;
+            return [candidate];
         }
 
         if (score > highestScore) {
@@ -183,5 +250,5 @@ export function resolve(root: HTMLElement, descriptor: AnchorDescriptor): HTMLEl
     }
 
     // Threshold check
-    return highestScore > SCORE_THRESHOLD ? bestMatch : null;
+    return highestScore > SCORE_THRESHOLD && bestMatch ? [bestMatch] : [];
 }

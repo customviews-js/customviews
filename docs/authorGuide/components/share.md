@@ -35,6 +35,26 @@ Once you have selected one or more items, use the floating bar at the bottom:
 ### Exiting
 To leave Share Mode, click the **"Exit"** button on the floating bar, press the **`Esc`** key, or click the floating share button again.
 
+## Manual URL Construction
+
+While the Share Mode UI generates robust, encoded links automatically, you may sometimes want to manually create a readable link for documentation or communication.
+
+CustomViews supports a human-readable format using element IDs:
+
+| Parameter | format | Description |
+| :--- | :--- | :--- |
+| `cv-focus` | `id1+id2+id3` | **Shows** only the specified elements. All others are hidden. |
+| `cv-hide` | `id1+id2` | **Hides** the specified elements. All others are shown. |
+
+**Example:**
+To focus on the `#setup` and `#config` sections:
+`https://yoursite.com/guide.html?cv-focus=setup+config`
+
+**Note:**
+*   IDs are case-sensitive.
+*   Use `+` (plus sign) to separate multiple IDs.
+*   If an ID contains special characters, it should be URL-encoded, but standard alphanumeric IDs work directly.
+
 ---
 
 ## Focus View (Recipient Experience)
