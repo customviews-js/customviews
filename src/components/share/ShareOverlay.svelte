@@ -125,10 +125,19 @@
   function handleMouseUp(_: MouseEvent) {
     if (isDragging && dragStart && dragCurrent) {
         // Perform selection logic
-        const left = Math.min(dragStart.x, dragCurrent.x);
-        const top = Math.min(dragStart.y, dragCurrent.y);
         const width = Math.abs(dragCurrent.x - dragStart.x);
         const height = Math.abs(dragCurrent.y - dragStart.y);
+
+        // Optimization: Skip if drag area is too small (avoids accidental micro-selections)
+        if (width < 10 || height < 10) {
+            isDragging = false;
+            dragStart = null;
+            dragCurrent = null;
+            return;
+        }
+
+        const left = Math.min(dragStart.x, dragCurrent.x);
+        const top = Math.min(dragStart.y, dragCurrent.y);
         const right = left + width;
         const bottom = top + height;
 
