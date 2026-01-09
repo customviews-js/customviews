@@ -230,10 +230,14 @@
     <HoverHelper />
 
     {#if selectionBox}
-      <div
+      <div 
         class="selection-box {shareStore.selectionMode === 'hide' ? 'hide-mode' : ''}"
         style="left: {selectionBox.left}px; top: {selectionBox.top}px; width: {selectionBox.width}px; height: {selectionBox.height}px;"
-      ></div>
+      >
+        <span class="selection-label">
+            {shareStore.selectionMode === 'hide' ? 'Select to hide' : 'Select to share'}
+        </span>
+      </div>
     {/if}
   </div>
 
@@ -280,5 +284,23 @@
     .selection-box.hide-mode {
       border: 1px solid rgba(209, 52, 56, 0.4);
       background-color: rgba(209, 52, 56, 0.1);
+    }
+
+    .selection-label {
+        position: absolute;
+        top: -24px;
+        left: 0;
+        background: #0078D4;
+        color: white;
+        padding: 2px 6px;
+        font-size: 11px;
+        border-radius: 3px;
+        white-space: nowrap;
+        font-family: sans-serif;
+        opacity: 0.9;
+    }
+
+    .hide-mode .selection-label {
+        background: #d13438;
     }
   </style>
