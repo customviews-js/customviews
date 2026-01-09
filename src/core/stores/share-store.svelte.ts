@@ -6,6 +6,8 @@ export const SELECTED_CLASS = 'cv-share-selected';
 export const HIGHLIGHT_TARGET_CLASS = 'cv-highlight-target';
 export const HIDE_SELECTED_CLASS = 'cv-share-selected-hide';
 export const HIDE_HIGHLIGHT_TARGET_CLASS = 'cv-highlight-target-hide';
+export const HIGHLIGHT_SELECTED_CLASS = 'cv-share-selected-highlight';
+export const HIGHLIGHT_TARGET_MODE_CLASS = 'cv-highlight-target-mode';
 export const CV_CUSTOM_ELEMENTS = 'cv-tabgroup, cv-toggle';
 export const SHAREABLE_SELECTOR = 'div, p, blockquote, pre, li, h1, h2, h3, h4, h5, h6, table, ' + CV_CUSTOM_ELEMENTS;
 // IDs that should be treated as generic wrappers even if they are unique
@@ -26,7 +28,7 @@ export function isGenericWrapper(el: HTMLElement): boolean {
     return !hasBackground && !hasBorder && !hasShadow;
 }
 
-export type SelectionMode = 'focus' | 'hide';
+export type SelectionMode = 'focus' | 'hide' | 'highlight';
 
 export class ShareStore {
     isActive = $state(false);
@@ -48,7 +50,7 @@ export class ShareStore {
             // Reset state
             this.isActive = false;
             this.currentHoverTarget = null;
-            document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide');
+            document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide', 'cv-share-active-highlight');
         } else {
             this.isActive = true;
             this.updateBodyClass();
@@ -58,16 +60,21 @@ export class ShareStore {
     setSelectionMode(mode: SelectionMode) {
         if (this.selectionMode === mode) return;
         
-        this.clearAllSelections();
-        
         this.selectionMode = mode;
+        
+        // Update styling for all currently selected elements
+        this.selectedElements.forEach(el => {
+            this._removeSelectionClass(el);
+            this._addSelectionClass(el);
+        });
+
         if (this.isActive) {
             this.updateBodyClass();
         }
     }
 
     updateBodyClass() {
-        document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide');
+        document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide', 'cv-share-active-highlight');
         document.body.classList.add(`cv-share-active-${this.selectionMode}`);
     }
 
@@ -142,19 +149,31 @@ export class ShareStore {
     }
 
     private _addHighlightClass(el: HTMLElement) {
-        el.classList.add(this.selectionMode === 'hide' ? HIDE_HIGHLIGHT_TARGET_CLASS : HIGHLIGHT_TARGET_CLASS);
+        if (this.selectionMode === 'hide') {
+            el.classList.add(HIDE_HIGHLIGHT_TARGET_CLASS);
+        } else if (this.selectionMode === 'highlight') {
+            el.classList.add(HIGHLIGHT_TARGET_MODE_CLASS);
+        } else {
+            el.classList.add(HIGHLIGHT_TARGET_CLASS);
+        }
     }
 
     private _removeHighlightClass(el: HTMLElement) {
-        el.classList.remove(HIGHLIGHT_TARGET_CLASS, HIDE_HIGHLIGHT_TARGET_CLASS);
+        el.classList.remove(HIGHLIGHT_TARGET_CLASS, HIDE_HIGHLIGHT_TARGET_CLASS, HIGHLIGHT_TARGET_MODE_CLASS);
     }
 
     private _addSelectionClass(el: HTMLElement) {
-        el.classList.add(this.selectionMode === 'hide' ? HIDE_SELECTED_CLASS : SELECTED_CLASS);
+        if (this.selectionMode === 'hide') {
+            el.classList.add(HIDE_SELECTED_CLASS);
+        } else if (this.selectionMode === 'highlight') {
+            el.classList.add(HIGHLIGHT_SELECTED_CLASS);
+        } else {
+            el.classList.add(SELECTED_CLASS);
+        }
     }
 
     private _removeSelectionClass(el: HTMLElement) {
-        el.classList.remove(SELECTED_CLASS, HIDE_SELECTED_CLASS);
+        el.classList.remove(SELECTED_CLASS, HIDE_SELECTED_CLASS, HIGHLIGHT_SELECTED_CLASS);
     }
 
     generateLink() {
@@ -174,12 +193,15 @@ export class ShareStore {
 
         const url = new URL(window.location.href);
         
-        // Clear both potential params first
+        // Clear all potential params first
         url.searchParams.delete('cv-focus');
         url.searchParams.delete('cv-hide');
+        url.searchParams.delete('cv-highlight');
 
         if (this.selectionMode === 'hide') {
             url.searchParams.set('cv-hide', serialized);
+        } else if (this.selectionMode === 'highlight') {
+            url.searchParams.set('cv-highlight', serialized);
         } else {
             url.searchParams.set('cv-focus', serialized);
         }
@@ -205,9 +227,12 @@ export class ShareStore {
         const url = new URL(window.location.href);
         url.searchParams.delete('cv-focus');
         url.searchParams.delete('cv-hide');
+        url.searchParams.delete('cv-highlight');
         
         if (this.selectionMode === 'hide') {
             url.searchParams.set('cv-hide', serialized);
+        } else if (this.selectionMode === 'highlight') {
+            url.searchParams.set('cv-highlight', serialized);
         } else {
             url.searchParams.set('cv-focus', serialized);
         }

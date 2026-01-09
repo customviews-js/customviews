@@ -38,11 +38,19 @@
     >
       Hide
     </button>
+    <button 
+      class="mode-btn {shareStore.selectionMode === 'highlight' ? 'active' : ''}" 
+      onclick={() => shareStore.setSelectionMode('highlight')}
+      title="Highlight selected elements"
+      aria-pressed={shareStore.selectionMode === 'highlight'}
+    >
+      Highlight
+    </button>
   </div>
 
   <span class="divider"></span>
 
-  <span class="count">{shareStore.shareCount} item{shareStore.shareCount === 1 ? '' : 's'} to {shareStore.selectionMode === 'focus' ? 'show' : 'hide'}</span>
+  <span class="count">{shareStore.shareCount} item{shareStore.shareCount === 1 ? '' : 's'} to {shareStore.selectionMode === 'focus' ? 'show' : (shareStore.selectionMode === 'highlight' ? 'highlight' : 'hide')}</span>
   
   <button class="btn clear" onclick={handleClear}>Clear</button>
   <button class="btn preview" onclick={handlePreview}>Preview</button>

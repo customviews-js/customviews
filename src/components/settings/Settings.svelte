@@ -9,6 +9,7 @@
   import { URLStateManager } from '../../core/state/url-state-manager';
   import { showToast } from '../../core/stores/toast-store.svelte';
   import { shareStore } from '../../core/stores/share-store.svelte';
+  import { focusStore } from '../../core/stores/focus-store.svelte';
   import { placeholderRegistryStore } from '../../core/stores/placeholder-registry-store.svelte';
   import { placeholderValueStore } from '../../core/stores/placeholder-value-store.svelte';
   import { themeStore } from '../../core/stores/theme-store.svelte';
@@ -168,7 +169,7 @@
   }
 </script>
 
-{#if store.hasMenuOptions || options.showTabGroups}
+{#if store.hasMenuOptions || options.showTabGroups || shareStore.isActive || focusStore.isActive}
   <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
     <!-- Intro Callout -->
     {#if showCallout}

@@ -11,6 +11,8 @@ const BODY_FOCUS_CLASS = 'cv-focus-mode';
 const HIDDEN_CLASS = 'cv-focus-hidden';
 const FOCUSED_CLASS = 'cv-focused-element';
 
+import { HighlightService, BODY_HIGHLIGHT_CLASS, HIGHLIGHT_PARAM } from './highlight-service.svelte';
+
 import { DEFAULT_EXCLUDED_IDS, DEFAULT_EXCLUDED_TAGS } from '../constants';
 import { type ShareExclusions } from '../../types/config'; 
 
@@ -26,6 +28,7 @@ export class FocusService {
     // Call unsubscribe in destroy to stop svelte effects
     private unsubscribe: () => void;
     private url = new SvelteURL(window.location.href);
+    private highlightService: HighlightService;
 
     constructor(private rootEl: HTMLElement, options: FocusServiceOptions) {
         const userTags = options.shareExclusions?.tags || [];
@@ -34,6 +37,8 @@ export class FocusService {
         this.excludedTags = new Set([...DEFAULT_EXCLUDED_TAGS, ...userTags].map(t => t.toUpperCase()));
         this.excludedIds = new Set([...DEFAULT_EXCLUDED_IDS, ...userIds]);
         
+        this.highlightService = new HighlightService(this.rootEl);
+
         // Subscribe to store for exit signal
         this.unsubscribe = $effect.root(() => {
             // 1. Sync URL changes from SvelteURL back to browser history (UI changes affect URL)
@@ -51,14 +56,17 @@ export class FocusService {
             $effect(() => {
                 const focusDescriptors = this.url.searchParams.get(FOCUS_PARAM);
                 const hideDescriptors = this.url.searchParams.get(HIDE_PARAM);
+                const highlightDescriptors = this.url.searchParams.get(HIGHLIGHT_PARAM);
 
                 untrack(() => {
                     if (focusDescriptors) {
                         this.applyFocusMode(focusDescriptors);
                     } else if (hideDescriptors) {
                         this.applyHideMode(hideDescriptors);
+                    } else if (highlightDescriptors) { 
+                         this.applyHighlightMode(highlightDescriptors);
                     } else {
-                        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
                             this.exitFocusMode();
                         }
                     }
@@ -67,7 +75,7 @@ export class FocusService {
 
             // Store safety check (Store changes affect UI)
             $effect(() => {
-                if (!focusStore.isActive && document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                if (!focusStore.isActive && (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS))) {
                     this.exitFocusMode();
                 }
             });
@@ -90,7 +98,7 @@ export class FocusService {
      */
     public applyFocusMode(encodedDescriptors: string): void {
         // Check if we are already in the right state to avoid re-rendering loops if feasible
-        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
              // If we are already active, we might want to check if descriptors changed?
              // For now, simple clear and re-apply.
             this.exitFocusMode(false); // don't clear URL here
@@ -121,15 +129,13 @@ export class FocusService {
         // Activate Store
         focusStore.setIsActive(true);
         document.body.classList.add(BODY_FOCUS_CLASS);
-        
-        // Inject structural styles for hiding
-        this.injectGlobalStyles();
+
 
         this.renderFocusedView(targets);
     }
 
     public applyHideMode(encodedDescriptors: string): void {
-        if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
             this.exitFocusMode(false);
         }
 
@@ -157,12 +163,17 @@ export class FocusService {
         // Activate Store
         focusStore.setIsActive(true);
         document.body.classList.add(BODY_FOCUS_CLASS);
-        
-        // Inject structural styles for hiding
-        this.injectGlobalStyles();
 
         this.renderHiddenView(targets);
     }
+
+    public applyHighlightMode(encodedDescriptors: string): void {
+        if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
+            this.exitFocusMode(false);
+        }
+        this.highlightService.apply(encodedDescriptors);
+    }
+
 
     private renderHiddenView(targets: HTMLElement[]): void {
         // 1. Mark targets as hidden
@@ -181,21 +192,7 @@ export class FocusService {
             }
         });
     }
-    
-    private injectGlobalStyles() {
-        if (!document.getElementById('cv-focus-service-styles')) {
-            const style = document.createElement('style');
-            style.id = 'cv-focus-service-styles';
-            style.textContent = `
-                .${HIDDEN_CLASS} { display: none !important; }
-                body.${BODY_FOCUS_CLASS} { 
-                    margin-top: 50px !important; 
-                    transition: margin-top 0.2s;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
+
 
     private renderFocusedView(targets: HTMLElement[]): void {
         // 1. Mark targets
@@ -325,7 +322,7 @@ export class FocusService {
     }
 
     public exitFocusMode(updateUrl = true): void {
-        document.body.classList.remove(BODY_FOCUS_CLASS);
+        document.body.classList.remove(BODY_FOCUS_CLASS, BODY_HIGHLIGHT_CLASS);
         
         this.hiddenElements.forEach(el => el.classList.remove(HIDDEN_CLASS));
         this.hiddenElements.clear();
@@ -341,6 +338,8 @@ export class FocusService {
         const targets = document.querySelectorAll(`.${FOCUSED_CLASS}`);
         targets.forEach(t => t.classList.remove(FOCUSED_CLASS));
         
+        this.highlightService.exit();
+
         if (focusStore.isActive) {
              focusStore.setIsActive(false);
         }
@@ -351,6 +350,9 @@ export class FocusService {
             }
             if (this.url.searchParams.has(HIDE_PARAM)) {
                 this.url.searchParams.delete(HIDE_PARAM);
+            }
+            if (this.url.searchParams.has(HIGHLIGHT_PARAM)) {
+                this.url.searchParams.delete(HIGHLIGHT_PARAM);
             }
         }
     }
