@@ -164,7 +164,13 @@ export class ShareStore {
         }
 
         const descriptors = Array.from(this.selectedElements).map(el => DomElementLocator.createDescriptor(el));
-        const serialized = DomElementLocator.serialize(descriptors);
+        let serialized: string;
+        try {
+            serialized = DomElementLocator.serialize(descriptors);
+        } catch (e) {
+            showToast('Failed to generate link. Please try selecting fewer items.');
+            return;
+        }
 
         const url = new URL(window.location.href);
         
@@ -178,12 +184,13 @@ export class ShareStore {
             url.searchParams.set('cv-focus', serialized);
         }
 
-        navigator.clipboard.writeText(url.toString())
-            .then(() => showToast('Link copied to clipboard!'))
-            .catch((e) => {
-                console.error('Clipboard failed', e);
-                showToast('Failed to copy link.');
-            });
+        // Copy to clipboard
+        navigator.clipboard.writeText(url.href).then(() => {
+            showToast('Link copied to clipboard!');
+            this.toggleActive(false);
+        }).catch(() => {
+            showToast('Failed to copy to clipboard');
+        });
     }
 
     previewLink() {

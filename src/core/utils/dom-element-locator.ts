@@ -101,7 +101,7 @@ export function serialize(descriptors: AnchorDescriptor[]): string {
         return btoa(binString);
     } catch (e) {
         console.error("Failed to encode anchor:", e);
-        return "";
+        throw new Error("Failed to generate link signature.");
     }
 }
 
