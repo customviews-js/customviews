@@ -7,7 +7,24 @@ export const HIGHLIGHT_TARGET_CLASS = 'cv-highlight-target';
 export const HIDE_SELECTED_CLASS = 'cv-share-selected-hide';
 export const HIDE_HIGHLIGHT_TARGET_CLASS = 'cv-highlight-target-hide';
 export const CV_CUSTOM_ELEMENTS = 'cv-tabgroup, cv-toggle';
-export const SHAREABLE_SELECTOR = 'div, p, blockquote, pre, li, h1, h2, h3, h4, h5, h6, [data-share], ' + CV_CUSTOM_ELEMENTS;
+export const SHAREABLE_SELECTOR = 'div, p, blockquote, pre, li, h1, h2, h3, h4, h5, h6, table, ' + CV_CUSTOM_ELEMENTS;
+// IDs that should be treated as generic wrappers even if they are unique
+export const GENERIC_WRAPPER_IDS = ['flex-body', 'content-wrapper', 'app'];
+
+export function isGenericWrapper(el: HTMLElement): boolean {
+    // Check for explicit generic IDs (layout wrappers)
+    if (el.id && GENERIC_WRAPPER_IDS.includes(el.id)) return true;
+
+    if (el.tagName !== 'DIV') return false;
+    if (el.id) return false;
+    
+    const style = window.getComputedStyle(el);
+    const hasBackground = style.backgroundColor !== 'rgba(0, 0, 0, 0)' && style.backgroundColor !== 'transparent';
+    const hasBorder = style.borderStyle !== 'none' && parseFloat(style.borderWidth) > 0;
+    const hasShadow = style.boxShadow !== 'none';
+    
+    return !hasBackground && !hasBorder && !hasShadow;
+}
 
 export type SelectionMode = 'focus' | 'hide';
 

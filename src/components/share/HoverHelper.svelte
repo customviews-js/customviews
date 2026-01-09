@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { shareStore, SHAREABLE_SELECTOR } from '../../core/stores/share-store.svelte';
+  import { shareStore, SHAREABLE_SELECTOR, isGenericWrapper } from '../../core/stores/share-store.svelte';
   import { fade } from 'svelte/transition';
+  import { untrack } from 'svelte';
 
   // Derived state for easier access
   let target = $derived(shareStore.currentHoverTarget);
@@ -9,33 +10,55 @@
   // Computed Position using effect for DOM layout properties
   let style = $state('display: none;');
   let tagName = $state('TAG');
+  let elementId = $state<string | null>(null);
   let canGoUp = $state(false);
+  let lastSavedHelperPosition = $state<string | null>(null);
+
+  function findNextShareableParent(el: HTMLElement): HTMLElement | null {
+      let parent = el.parentElement;
+      while (parent) {
+          if (parent.matches(SHAREABLE_SELECTOR) && !isGenericWrapper(parent)) {
+              return parent;
+          }
+          parent = parent.parentElement;
+      }
+      return null;
+  }
 
   $effect(() => {
     const t = shareStore.currentHoverTarget;
     if (t) {
-        // DOM measurement requires element to be available
-        const rect = t.getBoundingClientRect();
-        
-        let top = rect.top - 28; // slightly higher
-        if (top < 0) top = rect.top + 10;
+        // Use untrack to prevent the reset of lastSavedHelperPosition from re-triggering this effect
+        const savedPosition = untrack(() => lastSavedHelperPosition);
 
-        let left = rect.right - 80;
-        if (left < 10) left = 10;
-        
-        // Ensure it doesn't go off right edge
-        if (left + 100 > window.innerWidth) {
-            left = window.innerWidth - 110;
+        if (savedPosition) {
+            // Apply the saved position (from clicking "Up") to keep the UI stable
+            style = savedPosition;
+            lastSavedHelperPosition = null; // Consume so subsequent hovers update normally
+        } else {
+            // Standard positioning logic: calculate based on the target element
+            const rect = t.getBoundingClientRect();
+            
+            let top = rect.top - 23; // Closer to element (was -28)
+            if (top < 0) top = rect.top + 5;
+
+            let left = rect.right - 80;
+            if (left < 10) left = 10;
+            
+            // Ensure it doesn't go off right edge
+            if (left + 100 > window.innerWidth) {
+                left = window.innerWidth - 110;
+            }
+
+            style = `top: ${top}px; left: ${left}px;`;
         }
 
-        style = `top: ${top}px; left: ${left}px;`;
         tagName = t.tagName;
-        
-        // Parent check for "Up" button
-        const parent = t.parentElement;
-        canGoUp = !!(parent && parent.matches(SHAREABLE_SELECTOR));
+        elementId = t.id || null;
+        canGoUp = !!findNextShareableParent(t);
     } else {
         style = 'display: none;';
+        lastSavedHelperPosition = null;
     }
   });
 
@@ -44,17 +67,35 @@
     if (target) shareStore.toggleElementSelection(target);
   }
 
-  function handleUp(e: Event) {
+
+  let helperWidth = $state(0);
+
+  function handleSelectParent(e: Event) {
     e.stopPropagation();
-    if (target && target.parentElement && target.parentElement.matches(SHAREABLE_SELECTOR)) {
-      shareStore.setHoverTarget(target.parentElement);
+    if (!target) return;
+
+    const parent = findNextShareableParent(target);
+    if (parent) {
+        // Pin current style + min-width to prevent shrinking under cursor
+        lastSavedHelperPosition = `${style} min-width: ${helperWidth}px;`;
+        shareStore.setHoverTarget(parent);
     }
   }
 </script>
 
 {#if target}
-  <div class="hover-helper" {style} transition:fade={{ duration: 100 }}>
-    <span class="tag">{tagName}</span>
+  <div 
+    class="hover-helper" 
+    {style} 
+    bind:clientWidth={helperWidth}
+    transition:fade={{ duration: 100 }}
+  >
+    <div class="info">
+        <span class="tag">{tagName}</span>
+        {#if elementId}
+            <span class="id-badge" title="ID detection active">#{elementId}</span>
+        {/if}
+    </div>
     
     <button 
       class="action-btn {isSelected ? 'deselect' : 'select'}" 
@@ -68,7 +109,7 @@
       <button 
         class="action-btn up" 
         title="Select Parent" 
-        onclick={handleUp}
+        onclick={handleSelectParent}
       >
         ↰
       </button>
@@ -92,9 +133,27 @@
     pointer-events: auto;
   }
 
+  .info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1;
+      gap: 2px;
+  }
+
   .tag {
     font-size: 12px;
     font-weight: bold;
+    color: #aeaeae;
+  }
+
+  .id-badge {
+      font-size: 10px;
+      color: #64d2ff;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
   }
 
   .action-btn {

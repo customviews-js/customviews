@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { shareStore, SHAREABLE_SELECTOR } from '../../core/stores/share-store.svelte';
+  import { shareStore, SHAREABLE_SELECTOR, isGenericWrapper } from '../../core/stores/share-store.svelte';
   import ShareToolbar from './ShareToolbar.svelte';
   import HoverHelper from './HoverHelper.svelte';
 
@@ -15,7 +15,7 @@
   let dragStart = $state<{x: number, y: number} | null>(null);
   let dragCurrent = $state<{x: number, y: number} | null>(null);
   let wasDragging = false;
-
+  
   let selectionBox = $derived.by(() => {
     if (!dragStart || !dragCurrent || !isDragging) return null;
     const left = Math.min(dragStart.x, dragCurrent.x);
@@ -27,38 +27,34 @@
 
   /**
    * Handles window-level mouse hover events to identify and highlight shareable elements.
-   * It filters out internal UI components and excluded elements, then identifies
-   * the nearest shareable element. If the element is a child of an already selected
-   * block, the hover highlight bubbles up to that ancestor.
-   *
-   * @param e - The mouse event.
    */
   function handleHover(e: MouseEvent) {
-    if (isDragging) return; // Don't highlight while dragging
+    if (!shareStore.isActive || isDragging) return;
 
-    // If hovering over our own UI, ignore
     const target = e.target as HTMLElement;
 
-    // Check if target is part of our UI (Toolbar or Helper)
-    if (target.closest('.hover-helper') || target.closest('.floating-bar')) return;
+    // 1. If we are on the helper or toolbar, do nothing (keep current selection)
+    if (target.closest('.hover-helper') || target.closest('.floating-bar')) {
+        return;
+    }
 
-    // Exclude by Tag/ID
-    if (isExcluded(target)) return;
+    // 2. Exclude by Tag/ID
+    if (isOrHasExcludedParentElement(target)) return;
 
-    // Find nearest shareable
+    // 3. Find nearest shareable
     const shareablePart = target.closest(SHAREABLE_SELECTOR);
+    
+    // If not on a shareable part, clear selection immediately
     if (!shareablePart) {
       shareStore.setHoverTarget(null);
       return;
     }
+
     const finalTarget = shareablePart as HTMLElement;
 
-    // Check ancestors selection (level up logic)
-    // If an ancestor is selected, we highlight THAT ancestor instead of the child
-    // so the user sees the helper for the block they already selected.
+    // Check ancestors selection (level up logic) 
     let parent = finalTarget.parentElement;
     let selectedAncestor: HTMLElement | null = null;
-
     while(parent) {
       if (shareStore.selectedElements.has(parent)) {
         selectedAncestor = parent;
@@ -77,7 +73,16 @@
       shareStore.setHoverTarget(null);
       return;
     }
-    shareStore.setHoverTarget(finalTarget);
+
+    // Check selection is not child of current hover target
+    if (shareStore.currentHoverTarget !== finalTarget) {
+        if (shareStore.currentHoverTarget && 
+            shareStore.currentHoverTarget.contains(finalTarget)) {
+             return;
+        }
+
+        shareStore.setHoverTarget(finalTarget);
+    }
   }
 
   /**
@@ -110,18 +115,6 @@
     }
   }
 
-  function isGenericWrapper(el: HTMLElement): boolean {
-    if (el.tagName !== 'DIV') return false;
-    if (el.hasAttribute('data-share')) return false;
-    
-    const style = window.getComputedStyle(el);
-    const hasBackground = style.backgroundColor !== 'rgba(0, 0, 0, 0)' && style.backgroundColor !== 'transparent';
-    const hasBorder = style.borderStyle !== 'none' && parseFloat(style.borderWidth) > 0;
-    const hasShadow = style.boxShadow !== 'none';
-    
-    return !hasBackground && !hasBorder && !hasShadow;
-  }
-
   function handleMouseUp(_: MouseEvent) {
     if (isDragging && dragStart && dragCurrent) {
         // Perform selection logic
@@ -146,7 +139,7 @@
 
         candidates.forEach(node => {
             const el = node as HTMLElement;
-            if (isExcluded(el)) return;
+            if (isOrHasExcludedParentElement(el)) return;
 
             const rect = el.getBoundingClientRect();
             // Check containment (element must be fully inside selection box)
@@ -202,7 +195,7 @@
     }
   }
 
-  function isExcluded(el: HTMLElement): boolean {
+  function isOrHasExcludedParentElement(el: HTMLElement): boolean {
     // Exclude our own UI
     if (el.closest('.share-overlay-ui') || el.closest('.hover-helper') || el.closest('.floating-bar')) {
         return true;
