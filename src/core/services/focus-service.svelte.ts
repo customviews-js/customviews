@@ -3,6 +3,7 @@ import { focusStore } from '../stores/focus-store.svelte';
 import { showToast } from '../stores/toast-store.svelte';
 import * as DomElementLocator from '../utils/dom-element-locator';
 import FocusDivider from '../../components/focus/FocusDivider.svelte';
+import { SvelteURL } from 'svelte/reactivity';
 
 const FOCUS_PARAM = 'cv-focus';
 const HIDE_PARAM = 'cv-hide';
@@ -22,7 +23,9 @@ export class FocusService {
     private dividers = new Set<any>(); // Store Svelte App instances
     private excludedTags: Set<string>;
     private excludedIds: Set<string>;
+    // Call unsubscribe in destroy to stop svelte effects
     private unsubscribe: () => void;
+    private url = new SvelteURL(window.location.href);
 
     constructor(private rootEl: HTMLElement, options: FocusServiceOptions) {
         const userTags = options.shareExclusions?.tags || [];
@@ -31,41 +34,49 @@ export class FocusService {
         this.excludedTags = new Set([...DEFAULT_EXCLUDED_TAGS, ...userTags].map(t => t.toUpperCase()));
         this.excludedIds = new Set([...DEFAULT_EXCLUDED_IDS, ...userIds]);
         
-        // ...
-        
-        // Subscribe to store for exit signal
         // Subscribe to store for exit signal
         this.unsubscribe = $effect.root(() => {
+            // React to URL changes (URL changes affect UI)
+            $effect(() => {
+                const focusDescriptors = this.url.searchParams.get(FOCUS_PARAM);
+                const hideDescriptors = this.url.searchParams.get(HIDE_PARAM);
+
+                if (focusDescriptors) {
+                    this.applyFocusMode(focusDescriptors);
+                } else if (hideDescriptors) {
+                    this.applyHideMode(hideDescriptors);
+                } else {
+                    if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
+                        this.exitFocusMode();
+                    }
+                }
+            });
+
+            // Sync URL changes back to browser history (UI changes affect URL)
+            $effect(() => {
+                const currentFromBrowser = window.location.href;
+                if (currentFromBrowser !== this.url.href) {
+                     window.history.pushState({}, '', this.url.href);
+                }
+            });
+
+            // Store safety check (Store changes affect UI)
             $effect(() => {
                 if (!focusStore.isActive && document.body.classList.contains(BODY_FOCUS_CLASS)) {
                     this.exitFocusMode();
                 }
             });
         });
-    }
 
-    public init(): void {
-        this.handleUrlChange();
+        // Listen for popstate to sync back to SvelteURL
+        window.addEventListener('popstate', this.handlePopState);
     }
 
     /**
-     * Checks URL for focus param and applies focus mode if found.
-     * If no focus param is found, exits focus mode if active.
+     * Sync native browser navigation with SvelteURL
      */
-    public handleUrlChange(): void {
-        const urlParams = new URLSearchParams(window.location.search);
-        const focusDescriptors = urlParams.get(FOCUS_PARAM);
-        const hideDescriptors = urlParams.get(HIDE_PARAM);
-
-        if (focusDescriptors) {
-            this.applyFocusMode(focusDescriptors);
-        } else if (hideDescriptors) {
-            this.applyHideMode(hideDescriptors);
-        } else {
-            if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
-                this.exitFocusMode();
-            }
-        }
+    private handlePopState = () => {
+        this.url.href = window.location.href;
     }
 
     /**
@@ -73,11 +84,11 @@ export class FocusService {
      * @param encodedDescriptors - The encoded descriptors to apply.
      */
     public applyFocusMode(encodedDescriptors: string): void {
-        // Idempotency check? 
-        // If already active, maybe we are switching focus? 
-        // For now, let's just clear previous state if any to be safe
+        // Check if we are already in the right state to avoid re-rendering loops if feasible
         if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
-            this.exitFocusMode();
+             // If we are already active, we might want to check if descriptors changed?
+             // For now, simple clear and re-apply.
+            this.exitFocusMode(false); // don't clear URL here
         }
 
         const descriptors = DomElementLocator.deserialize(encodedDescriptors);
@@ -113,7 +124,7 @@ export class FocusService {
 
     public applyHideMode(encodedDescriptors: string): void {
         if (document.body.classList.contains(BODY_FOCUS_CLASS)) {
-            this.exitFocusMode();
+            this.exitFocusMode(false);
         }
 
         const descriptors = DomElementLocator.deserialize(encodedDescriptors);
@@ -161,8 +172,6 @@ export class FocusService {
     }
     
     private injectGlobalStyles() {
-        // We rely on MainWidget or global styles to provide .cv-focus-hidden { display: none !important }
-        // But to be safe and self-contained:
         if (!document.getElementById('cv-focus-service-styles')) {
             const style = document.createElement('style');
             style.id = 'cv-focus-service-styles';
@@ -230,11 +239,6 @@ export class FocusService {
         // Exclude Toast/Banner/Overlay
         if (el.closest('.toast-container') || el.id === 'cv-exit-focus-banner') return;
 
-        // "Wrapper Problem": Don't hide a container if it contains structural components
-        // e.g. <div id="footer-wrap"><footer>...</footer></div>
-        // Limitation: This simple check prevents hiding ANY element containing these tags,
-        // even if they are deep descendants or irrelevant. 
-        // A more robust solution may check visibility/size.
         if (el.querySelector('header, footer, nav') !== null) return;
 
         el.classList.add(HIDDEN_CLASS);
@@ -265,12 +269,8 @@ export class FocusService {
     }
 
     private createDivider(container: HTMLElement, insertBeforeEl: HTMLElement, count: number): void {
-        // Create a wrapper div for the component because `mount` needs a target
-        // But we want to insert IN PLACE. 
-        // `mount` prop `target` appends by default.
-        // We can create a div, insert it, then mount into it.
         const wrapper = document.createElement('div');
-        wrapper.className = 'cv-divider-wrapper'; // Helper class for cleanup if needed
+        wrapper.className = 'cv-divider-wrapper';
         container.insertBefore(wrapper, insertBeforeEl);
 
         const app = mount(FocusDivider, {
@@ -290,8 +290,6 @@ export class FocusService {
         let curr: Element | null = firstHidden;
         let expanded = 0;
 
-        // Safety: ensure we only expand up to `count` elements AND they are actually the ones we hid
-        // The DOM might have changed, so we check for the class.
         while (curr && expanded < count) {
             if (curr instanceof HTMLElement && curr.classList.contains(HIDDEN_CLASS)) {
                 curr.classList.remove(HIDDEN_CLASS);
@@ -308,11 +306,11 @@ export class FocusService {
 
         // If no more hidden elements, exit completely
         if (this.hiddenElements.size === 0) {
-            focusStore.exit(); // This triggers exitFocusMode logic via subscription
+            focusStore.exit(); 
         }
     }
 
-    public exitFocusMode(): void {
+    public exitFocusMode(updateUrl = true): void {
         document.body.classList.remove(BODY_FOCUS_CLASS);
         
         this.hiddenElements.forEach(el => el.classList.remove(HIDDEN_CLASS));
@@ -329,27 +327,23 @@ export class FocusService {
         const targets = document.querySelectorAll(`.${FOCUSED_CLASS}`);
         targets.forEach(t => t.classList.remove(FOCUSED_CLASS));
         
-        focusStore.setIsActive(false);
-
-        // Update URL
-        const url = new URL(window.location.href);
-        let changed = false;
-        if (url.searchParams.has(FOCUS_PARAM)) {
-            url.searchParams.delete(FOCUS_PARAM);
-            changed = true;
-        }
-        if (url.searchParams.has(HIDE_PARAM)) {
-            url.searchParams.delete(HIDE_PARAM);
-            changed = true;
+        if (focusStore.isActive) {
+             focusStore.setIsActive(false);
         }
 
-        if (changed) {
-            window.history.pushState({}, '', url.toString());
+        if (updateUrl) {
+            if (this.url.searchParams.has(FOCUS_PARAM)) {
+                this.url.searchParams.delete(FOCUS_PARAM);
+            }
+            if (this.url.searchParams.has(HIDE_PARAM)) {
+                this.url.searchParams.delete(HIDE_PARAM);
+            }
         }
     }
 
     public destroy() {
         this.exitFocusMode();
         this.unsubscribe();
+        window.removeEventListener('popstate', this.handlePopState);
     }
 }

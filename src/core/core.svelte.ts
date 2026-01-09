@@ -128,10 +128,9 @@ export class CustomViewsCore {
        if (urlState) {
           this.store.applyState(urlState);
        }
-       this.focusService.handleUrlChange();
     });
 
-    this.focusService.init();
+
   }
 
   // --- Public APIs for Widget/Other ---
