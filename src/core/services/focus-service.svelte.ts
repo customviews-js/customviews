@@ -7,13 +7,11 @@ import { SvelteURL } from 'svelte/reactivity';
 
 const FOCUS_PARAM = 'cv-focus';
 const HIDE_PARAM = 'cv-hide';
-const HIGHLIGHT_PARAM = 'cv-highlight';
 const BODY_FOCUS_CLASS = 'cv-focus-mode';
 const HIDDEN_CLASS = 'cv-focus-hidden';
 const FOCUSED_CLASS = 'cv-focused-element';
-const HIGHLIGHT_ACTIVE_CLASS = 'cv-highlight-active';
-const BODY_HIGHLIGHT_CLASS = 'cv-highlight-mode';
-const ARROW_OVERLAY_ID = 'cv-arrow-overlay';
+
+import { HighlightService, BODY_HIGHLIGHT_CLASS, HIGHLIGHT_PARAM } from './highlight-service.svelte';
 
 import { DEFAULT_EXCLUDED_IDS, DEFAULT_EXCLUDED_TAGS } from '../constants';
 import { type ShareExclusions } from '../../types/config'; 
@@ -30,6 +28,7 @@ export class FocusService {
     // Call unsubscribe in destroy to stop svelte effects
     private unsubscribe: () => void;
     private url = new SvelteURL(window.location.href);
+    private highlightService: HighlightService;
 
     constructor(private rootEl: HTMLElement, options: FocusServiceOptions) {
         const userTags = options.shareExclusions?.tags || [];
@@ -38,6 +37,8 @@ export class FocusService {
         this.excludedTags = new Set([...DEFAULT_EXCLUDED_TAGS, ...userTags].map(t => t.toUpperCase()));
         this.excludedIds = new Set([...DEFAULT_EXCLUDED_IDS, ...userIds]);
         
+        this.highlightService = new HighlightService(this.rootEl);
+
         // Subscribe to store for exit signal
         this.unsubscribe = $effect.root(() => {
             // 1. Sync URL changes from SvelteURL back to browser history (UI changes affect URL)
@@ -175,100 +176,9 @@ export class FocusService {
         if (document.body.classList.contains(BODY_FOCUS_CLASS) || document.body.classList.contains(BODY_HIGHLIGHT_CLASS)) {
             this.exitFocusMode(false);
         }
-
-        const descriptors = DomElementLocator.deserialize(encodedDescriptors);
-        if (!descriptors || descriptors.length === 0) return;
-
-        const targets: HTMLElement[] = [];
-        descriptors.forEach(desc => {
-            const matchingEls = DomElementLocator.resolve(this.rootEl, desc);
-            if (matchingEls && matchingEls.length > 0) {
-                targets.push(...matchingEls);
-            }
-        });
-
-        if (targets.length === 0) {
-            showToast("Some highlighted sections could not be found.");
-            this.exitFocusMode(); 
-            return;
-        }
-
-        if (targets.length < descriptors.length) {
-            showToast("Some highlighted sections could not be found.");
-        }
-
-        // Activate Store
-        focusStore.setIsActive(true);
-        document.body.classList.add(BODY_HIGHLIGHT_CLASS);
-        
-        // Inject styles
-        this.injectGlobalStyles();
-
-        // Create Overlay for Arrows
-        this.renderArrowsOverlay(targets);
-
-        // Mark targets (just outline)
-        targets.forEach(t => t.classList.add(HIGHLIGHT_ACTIVE_CLASS));        // Scroll first target into view
-        const firstTarget = targets[0];
-        if (firstTarget) {
-            setTimeout(() => {
-                firstTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-        }
+        this.highlightService.apply(encodedDescriptors);
     }
 
-    private renderArrowsOverlay(targets: HTMLElement[]) {
-        let overlay = document.getElementById(ARROW_OVERLAY_ID);
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = ARROW_OVERLAY_ID;
-            document.body.appendChild(overlay);
-        }
-        overlay.innerHTML = '';
-
-        targets.forEach(t => {
-            const rect = t.getBoundingClientRect();
-            // Calculate absolute position relative to document
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-            const top = rect.top + scrollTop;
-            const left = rect.left + scrollLeft;
-
-            const arrow = document.createElement('div');
-            arrow.className = 'cv-highlight-arrow';
-            
-            // Logic for direction
-            const viewportWidth = window.innerWidth;
-            
-            // Default Left
-            if (rect.left >= 50) {
-                 arrow.classList.add('left');
-                 arrow.style.top = `${top}px`;
-                 arrow.style.left = `${left - 40}px`;
-                 arrow.innerHTML = '→';
-            } else if (viewportWidth - rect.right >= 50) {
-                 // Right
-                 arrow.classList.add('right');
-                 arrow.style.top = `${top}px`;
-                 arrow.style.left = `${left + rect.width + 10}px`;
-                 arrow.innerHTML = '←';
-            } else if (rect.top >= 50) {
-                 // Top
-                 arrow.classList.add('top');
-                 arrow.style.top = `${top - 40}px`;
-                 arrow.style.left = `${left + (rect.width / 2) - 15}px`;
-                 arrow.innerHTML = '↓';
-            } else {
-                 // Bottom
-                 arrow.classList.add('bottom');
-                 arrow.style.top = `${top + rect.height + 10}px`;
-                 arrow.style.left = `${left + (rect.width / 2) - 15}px`;
-                 arrow.innerHTML = '↑';
-            }
-            
-            overlay!.appendChild(arrow);
-        });
-    }
 
     private renderHiddenView(targets: HTMLElement[]): void {
         // 1. Mark targets as hidden
@@ -297,52 +207,6 @@ export class FocusService {
                 body.${BODY_FOCUS_CLASS} { 
                     margin-top: 50px !important; 
                     transition: margin-top 0.2s;
-                }
-                .${HIGHLIGHT_ACTIVE_CLASS} {
-                    outline: 4px solid #d13438 !important;
-                    outline-offset: 4px;
-                    box-shadow: 0 0 0 4px rgba(209, 52, 56, 0.2);
-                }
-                #${ARROW_OVERLAY_ID} {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    pointer-events: none;
-                    z-index: 2147483647; /* Max z-index */
-                    overflow: visible;
-                }
-                .cv-highlight-arrow {
-                    position: absolute;
-                    font-size: 30px;
-                    color: #d13438;
-                    font-weight: bold;
-                    width: 30px;
-                    height: 30px;
-                    line-height: 30px;
-                    text-align: center;
-                }
-                .cv-highlight-arrow.left { animation: floatArrowLeft 1.5s infinite; }
-                .cv-highlight-arrow.right { animation: floatArrowRight 1.5s infinite; }
-                .cv-highlight-arrow.top { animation: floatArrowTop 1.5s infinite; }
-                .cv-highlight-arrow.bottom { animation: floatArrowBottom 1.5s infinite; }
-
-                @keyframes floatArrowLeft {
-                    0%, 100% { transform: translateX(0); }
-                    50% { transform: translateX(-10px); }
-                }
-                @keyframes floatArrowRight {
-                    0%, 100% { transform: translateX(0); }
-                    50% { transform: translateX(10px); }
-                }
-                @keyframes floatArrowTop {
-                    0%, 100% { transform: translate(-50%, 0); }
-                    50% { transform: translate(-50%, -10px); }
-                }
-                @keyframes floatArrowBottom {
-                    0%, 100% { transform: translate(-50%, 0); }
-                    50% { transform: translate(-50%, 10px); }
                 }
             `;
             document.head.appendChild(style);
@@ -493,14 +357,8 @@ export class FocusService {
         const targets = document.querySelectorAll(`.${FOCUSED_CLASS}`);
         targets.forEach(t => t.classList.remove(FOCUSED_CLASS));
         
-        const highlights = document.querySelectorAll(`.${HIGHLIGHT_ACTIVE_CLASS}`);
-        highlights.forEach(h => {
-             h.classList.remove(HIGHLIGHT_ACTIVE_CLASS);
-        });
+        this.highlightService.exit();
 
-        const overlay = document.getElementById(ARROW_OVERLAY_ID);
-        if (overlay) overlay.remove();
-        
         if (focusStore.isActive) {
              focusStore.setIsActive(false);
         }
