@@ -333,8 +333,17 @@ export class FocusService {
 
         // Update URL
         const url = new URL(window.location.href);
+        let changed = false;
         if (url.searchParams.has(FOCUS_PARAM)) {
             url.searchParams.delete(FOCUS_PARAM);
+            changed = true;
+        }
+        if (url.searchParams.has(HIDE_PARAM)) {
+            url.searchParams.delete(HIDE_PARAM);
+            changed = true;
+        }
+
+        if (changed) {
             window.history.pushState({}, '', url.toString());
         }
     }
