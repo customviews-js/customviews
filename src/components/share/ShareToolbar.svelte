@@ -26,6 +26,7 @@
       class="mode-btn {shareStore.selectionMode === 'focus' ? 'active' : ''}" 
       onclick={() => shareStore.setSelectionMode('focus')}
       title="Show only selected elements"
+      aria-pressed={shareStore.selectionMode === 'focus'}
     >
       Show
     </button>
@@ -33,6 +34,7 @@
       class="mode-btn {shareStore.selectionMode === 'hide' ? 'active' : ''}" 
       onclick={() => shareStore.setSelectionMode('hide')}
       title="Hide selected elements"
+      aria-pressed={shareStore.selectionMode === 'hide'}
     >
       Hide
     </button>

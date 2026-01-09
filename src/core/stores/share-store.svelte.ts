@@ -133,7 +133,7 @@ export class ShareStore {
     }
 
     private _addSelectionClass(el: HTMLElement) {
-         el.classList.add(this.selectionMode === 'hide' ? HIDE_SELECTED_CLASS : SELECTED_CLASS);
+        el.classList.add(this.selectionMode === 'hide' ? HIDE_SELECTED_CLASS : SELECTED_CLASS);
     }
 
     private _removeSelectionClass(el: HTMLElement) {
@@ -179,14 +179,13 @@ export class ShareStore {
         const serialized = DomElementLocator.serialize(descriptors);
 
         const url = new URL(window.location.href);
-         // Clear both potential params first
         url.searchParams.delete('cv-focus');
         url.searchParams.delete('cv-hide');
         
         if (this.selectionMode === 'hide') {
-             url.searchParams.set('cv-hide', serialized);
+            url.searchParams.set('cv-hide', serialized);
         } else {
-             url.searchParams.set('cv-focus', serialized);
+            url.searchParams.set('cv-focus', serialized);
         }
         
         window.open(url.toString(), '_blank');
