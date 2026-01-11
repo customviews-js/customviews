@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="generator" content="MarkBind 6.1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><title>CustomViews - Placeholders</title> <link rel="stylesheet" href="/customviews/markbind/css/bootstrap.min.css"> <link rel="stylesheet" href="/customviews/markbind/fontawesome/css/all.min.css"> <link rel="stylesheet" href="/customviews/markbind/glyphicons/css/bootstrap-glyphicons.min.css"><link rel="stylesheet" href="/customviews/markbind/css/codeblock-light.min.css"><link rel="stylesheet" href="/customviews/markbind/css/markbind.min.css"> <link rel="stylesheet" href="/customviews/pagefind/pagefind-ui.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockCopyButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockWrapButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-anchors/markbind-plugin-anchors.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-tree/markbind-plugin-tree.css">
+    
+  <link rel="stylesheet" href="/customviews/stylesheets/main.css">
+<link rel="icon" href="/customviews/favicon.ico"></head>
+<script>
+  const baseUrl = '/customviews'
+</script>
+<body  data-bs-spy="scroll" data-bs-target="#mb-page-nav" data-bs-offset="100" >
+<div id="app"><!--[--><div class="w-100 p-1 bg-warning text-center d-print-none"><span><strong>This site documents the features of CustomViews in development and possible beta breaking changes.
+For the latest stable release, visit <a href="https://customviews-js.github.io">here</a>.</strong></span></div> <header sticky><div data-v-26aac3dc><nav class="navbar navbar-expand-md d-print-none navbar-dark bg-dark" data-v-26aac3dc><div class="container-fluid" data-v-26aac3dc><div class="navbar-left" data-v-26aac3dc><!--[--><a href="/customviews/index.html" title="Home" class="navbar-brand">CustomViews</a><!--]--></div><div class="navbar-default" data-v-26aac3dc><ul class="navbar-nav me-auto mt-2 mt-lg-0" data-v-26aac3dc><!--[--> <li><a highlight-on="exact" href="/customviews/index.html" class="nav-link">HOME</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/readerGuide/index.html" class="nav-link">READER GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/authorGuide/index.html" class="nav-link">AUTHOR GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/devGuide/index.html" class="nav-link">DEVELOPER GUIDE</a></li> <li><a highlight-on="exact" href="/customviews/about.html" class="nav-link">ABOUT</a></li> <li><a href="https://github.com/customviews-js/customviews" target="_blank" class="nav-link"><span><span aria-hidden="true" class="fab fa-github"></span></span></a></li> <!--]--></ul></div><ul class="navbar-nav navbar-right" data-v-26aac3dc><!--[--><li><form class="navbar-form"><div style="position:relative;" class="dropdown" data-v-00e26d0a><!--[--><input value="" data-bs-toggle="dropdown" type="text" class="form-control" placeholder="Search" autocomplete="off" data-v-00e26d0a><div class="form-control placeholder-div-hidden" data-v-00e26d0a>Search</div><!--]--><ul class="dropdown-menu search-dropdown-menu dropdown-menu-hidden dropdown-menu-end" data-v-00e26d0a><!--[--><!--]--></ul></div></form></li><!--]--></ul></div></nav><div style="display:none;" class="lower-navbar-container" data-v-26aac3dc><!--[--><!----><!----><!--]--></div></div></header> <div id="flex-body"><nav id="site-nav" data-v-6b1b63d2><!--[--><div class="site-nav-top"><div class="fw-bold mb-2" style="font-size:1.25rem;">Author Guide</div></div> <div class="nav-component slim-scroll"><div class="site-nav-root"><!--[--><ul class="site-nav-list site-nav-list-root" data-v-6b1b63d2><!--[--><li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/gettingStarted.html">Getting Started</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)">Site Integrations
+
+<div class="site-nav-dropdown-btn-container"><i class="site-nav-dropdown-btn-icon" onclick="handleSiteNavClick(this.parentNode.parentNode, false); event.stopPropagation();"><span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span></i></div></div><ul class="site-nav-dropdown-container site-nav-list"><li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/integrations/setupWithMarkbind.html">MarkBind</a></div></li></ul></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/configuration.html">Configuration</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/components/all.html">Components</a> <div class="site-nav-dropdown-btn-container"><i class="site-nav-dropdown-btn-icon" onclick="handleSiteNavClick(this.parentNode.parentNode, false); event.stopPropagation();"><span class="glyphicon glyphicon-menu-down" aria-hidden="true"></span></i></div></div><ul class="site-nav-dropdown-container site-nav-list"><li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/components/settings.html">Settings Dialog</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/components/toggles.html">Toggles</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/components/tabs.html">Tabs</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/components/share.html">Share &amp; Focus</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-1" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/components/placeholders.html">Placeholders</a></div></li></ul></li><!--]--><!--v-if--></ul><!--]--></div></div><!--]--><!--v-if--></nav> <div id="content-wrapper"><div data-v-ef898034><nav aria-label="breadcrumb" class="breadcrumb-divider" data-v-ef898034><ol class="breadcrumb" data-v-ef898034><li class="notlink breadcrumb-marker" data-v-ef898034> ››   </li><!--[--><!--]--></ol></nav></div> <h2 id="simple-placeholders-variable-interpolation">Simple Placeholders (Variable Interpolation)<a class="fa fa-anchor" href="#simple-placeholders-variable-interpolation" onclick="event.stopPropagation()"></a></h2> <p><code class="hljs inline no-lang">&lt;cv-define-placeholder&gt;</code>, <code class="hljs inline no-lang">[[ variable_name ]]</code></p> <p>Placeholders allow you to create dynamic &quot;Mad Libs&quot; style documentation. Authors can define variables that readers can customize via the Settings Widget. The values entered by the reader are persisted and automatically update text, code blocks, and other content across the site.</p> <h2 id="usage">Usage<a class="fa fa-anchor" href="#usage" onclick="event.stopPropagation()"></a></h2> <h3 id="1-define-the-placeholder">1. Define the Placeholder<a class="fa fa-anchor" href="#1-define-the-placeholder" onclick="event.stopPropagation()"></a></h3> <p>Use the <code class="hljs inline no-lang">&lt;cv-define-placeholder&gt;</code> component to register a variable. This component is <strong>headless</strong> (invisible in the content flow) but triggers an input field to appear in the Settings Widget under the &quot;Variables&quot; section.</p> <pre><code class="hljs html"><span><span class="hljs-tag">&lt;<span class="hljs-name">cv-define-placeholder</span> </span>
+</span><span><span class="hljs-tag">    <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;username&quot;</span> </span>
+</span><span><span class="hljs-tag">    <span class="hljs-attr">settings-label</span>=<span class="hljs-string">&quot;Your Username&quot;</span> </span>
+</span><span><span class="hljs-tag">    <span class="hljs-attr">settings-hint</span>=<span class="hljs-string">&quot;Enter username&quot;</span> </span>
+</span><span><span class="hljs-tag">    <span class="hljs-attr">default-value</span>=<span class="hljs-string">&quot;default username&quot;</span></span>
+</span><span><span class="hljs-tag">&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">cv-define-placeholder</span>&gt;</span>
+</span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Copy</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path d="M 11.273438 0 L 2.546875 0 C 1.746094 0 1.089844 0.613281 1.089844
+      1.363281 L 1.089844 10.910156 L 2.546875 10.910156 L 2.546875 1.363281 L 11.273438
+      1.363281 Z M 13.453125 2.726562 L 5.453125 2.726562 C 4.65625 2.726562 4 3.339844 4
+      4.089844 L 4 13.636719 C 4 14.386719 4.65625 15 5.453125 15 L 13.453125 15 C 14.253906
+      15 14.910156 14.386719 14.910156 13.636719 L 14.910156 4.089844 C 14.910156 3.339844
+      14.253906 2.726562 13.453125 2.726562 Z M 13.453125 13.636719 L 5.453125 13.636719 L
+      5.453125 4.089844 L 13.453125 4.089844 Z M 13.453125 13.636719 "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button><button onclick="toggleCodeBlockWrap(this)" class="function-btn d-print-none wrap-button">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Wrap Text</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path id="path17964" d="M 1.109375 0 L 1.109375 2.5351562 L 2.0410156 2.5351562 L
+      2.0410156 0.93164062 L 4.8203125 0.93164062 L 4.8203125 9.3222656 L 3.4746094
+      9.3222656 L 3.4746094 10.144531 L 8.8027344 10.144531 L 8.8027344 9.3222656 L
+      7.4492188 9.3222656 L 7.4492188 0.93164062 L 10.25 0.93164062 L 10.25 2.5351562 L
+      11.166016 2.5351562 L 11.166016 0 L 1.109375 0 z M 10.84375 5.1054688 L 10.84375
+      6.6074219 C 12.268027 6.6074219 13.40625 7.7456444 13.40625 9.1699219 C 13.40625
+      10.185673 12.827237 11.055036 11.978516 11.470703 L 11.978516 9.5175781 L 7.1386719
+      12.3125 L 11.978516 15.105469 L 11.978516 13.072266 C 13.66701 12.577757 14.910156
+      11.012746 14.910156 9.1699219 C 14.910156 6.9333638 13.080308 5.1054688 10.84375
+      5.1054688 z "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button></div></pre><cv-define-placeholder name="username" settings-label="Your Username" settings-hint="Enter username" default-value="default username"></cv-define-placeholder> <h3 id="2-use-the-placeholder">2. Use the placeholder<a class="fa fa-anchor" href="#2-use-the-placeholder" onclick="event.stopPropagation()"></a></h3> <p>To use the variable in your content, wrap the variable name in double square brackets: <code class="hljs inline no-lang">[[ variable_name ]]</code>.</p> <p>For example, we write <code class="hljs inline no-lang">Hello, \[[username]]</code> here:</p> <pre><code class="hljs markdown"><span>Hello, \[[username]]! 
+</span><span>↓ 
+</span><span>Hello, [[username]]!
+</span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Copy</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path d="M 11.273438 0 L 2.546875 0 C 1.746094 0 1.089844 0.613281 1.089844
+      1.363281 L 1.089844 10.910156 L 2.546875 10.910156 L 2.546875 1.363281 L 11.273438
+      1.363281 Z M 13.453125 2.726562 L 5.453125 2.726562 C 4.65625 2.726562 4 3.339844 4
+      4.089844 L 4 13.636719 C 4 14.386719 4.65625 15 5.453125 15 L 13.453125 15 C 14.253906
+      15 14.910156 14.386719 14.910156 13.636719 L 14.910156 4.089844 C 14.910156 3.339844
+      14.253906 2.726562 13.453125 2.726562 Z M 13.453125 13.636719 L 5.453125 13.636719 L
+      5.453125 4.089844 L 13.453125 4.089844 Z M 13.453125 13.636719 "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button><button onclick="toggleCodeBlockWrap(this)" class="function-btn d-print-none wrap-button">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Wrap Text</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path id="path17964" d="M 1.109375 0 L 1.109375 2.5351562 L 2.0410156 2.5351562 L
+      2.0410156 0.93164062 L 4.8203125 0.93164062 L 4.8203125 9.3222656 L 3.4746094
+      9.3222656 L 3.4746094 10.144531 L 8.8027344 10.144531 L 8.8027344 9.3222656 L
+      7.4492188 9.3222656 L 7.4492188 0.93164062 L 10.25 0.93164062 L 10.25 2.5351562 L
+      11.166016 2.5351562 L 11.166016 0 L 1.109375 0 z M 10.84375 5.1054688 L 10.84375
+      6.6074219 C 12.268027 6.6074219 13.40625 7.7456444 13.40625 9.1699219 C 13.40625
+      10.185673 12.827237 11.055036 11.978516 11.470703 L 11.978516 9.5175781 L 7.1386719
+      12.3125 L 11.978516 15.105469 L 11.978516 13.072266 C 13.66701 12.577757 14.910156
+      11.012746 14.910156 9.1699219 C 14.910156 6.9333638 13.080308 5.1054688 10.84375
+      5.1054688 z "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button></div></pre><p>The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.</p> <h3 id="inline-fallback">Inline Fallback<a class="fa fa-anchor" href="#inline-fallback" onclick="event.stopPropagation()"></a></h3> <p>You can provide a fallback value directly in the usage syntax. This is useful if you haven&#39;t defined a formal placeholder or want a specific default for one instance.</p> <pre><code class="hljs markdown"><span>Contact us at \[[ email : support@example.com ]]
+</span><span>↓ 
+</span><span>Contact us at [[ email : support@example.com ]]
+</span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Copy</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path d="M 11.273438 0 L 2.546875 0 C 1.746094 0 1.089844 0.613281 1.089844
+      1.363281 L 1.089844 10.910156 L 2.546875 10.910156 L 2.546875 1.363281 L 11.273438
+      1.363281 Z M 13.453125 2.726562 L 5.453125 2.726562 C 4.65625 2.726562 4 3.339844 4
+      4.089844 L 4 13.636719 C 4 14.386719 4.65625 15 5.453125 15 L 13.453125 15 C 14.253906
+      15 14.910156 14.386719 14.910156 13.636719 L 14.910156 4.089844 C 14.910156 3.339844
+      14.253906 2.726562 13.453125 2.726562 Z M 13.453125 13.636719 L 5.453125 13.636719 L
+      5.453125 4.089844 L 13.453125 4.089844 Z M 13.453125 13.636719 "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button><button onclick="toggleCodeBlockWrap(this)" class="function-btn d-print-none wrap-button">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Wrap Text</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path id="path17964" d="M 1.109375 0 L 1.109375 2.5351562 L 2.0410156 2.5351562 L
+      2.0410156 0.93164062 L 4.8203125 0.93164062 L 4.8203125 9.3222656 L 3.4746094
+      9.3222656 L 3.4746094 10.144531 L 8.8027344 10.144531 L 8.8027344 9.3222656 L
+      7.4492188 9.3222656 L 7.4492188 0.93164062 L 10.25 0.93164062 L 10.25 2.5351562 L
+      11.166016 2.5351562 L 11.166016 0 L 1.109375 0 z M 10.84375 5.1054688 L 10.84375
+      6.6074219 C 12.268027 6.6074219 13.40625 7.7456444 13.40625 9.1699219 C 13.40625
+      10.185673 12.827237 11.055036 11.978516 11.470703 L 11.978516 9.5175781 L 7.1386719
+      12.3125 L 11.978516 15.105469 L 11.978516 13.072266 C 13.66701 12.577757 14.910156
+      11.012746 14.910156 9.1699219 C 14.910156 6.9333638 13.080308 5.1054688 10.84375
+      5.1054688 z "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button></div></pre><p>If the user has not set a value for <code class="hljs inline no-lang">email</code>, &quot;<a href="mailto:support@example.com">support@example.com</a>&quot; will be displayed.</p> <h2 id="escaping-syntax">Escaping Syntax<a class="fa fa-anchor" href="#escaping-syntax" onclick="event.stopPropagation()"></a></h2> <p>You can &quot;escape&quot; the placeholder syntax if you want to display the literal brackets instead of a variable.</p> <ul><li><strong>In Markdown Text</strong>: Use two backslashes <code class="hljs inline no-lang">\\[[ variable ]]</code>.</li> <li><strong>In Code Blocks</strong>: Use one backslash <code class="hljs inline no-lang">\[[ variable ]]</code>.</li></ul> <h2 id="component-attributes">Component Attributes<a class="fa fa-anchor" href="#component-attributes" onclick="event.stopPropagation()"></a></h2> <blockquote><p>[!NOTE]
+The variable input fields in the Settings Widget will <strong>only</strong> appear on pages where the <code class="hljs inline no-lang">&lt;cv-define-placeholder&gt;</code> component is present.</p></blockquote> <div class="table-responsive"><table class="markbind-table table table-bordered table-striped"><thead><tr><th>Name</th> <th>Type</th> <th>Required</th> <th>Description</th></tr></thead> <tbody><tr><td><code class="hljs inline no-lang">name</code></td> <td>string</td> <td><strong>Yes</strong></td> <td>The unique identifier for the variable. Must act as the key for interpolation (e.g., <code class="hljs inline no-lang">api_key</code>).</td></tr> <tr><td><code class="hljs inline no-lang">settings-label</code></td> <td>string</td> <td>No</td> <td>The human-readable label shown in the Settings Widget. Defaults to the <code class="hljs inline no-lang">name</code> if omitted.</td></tr> <tr><td><code class="hljs inline no-lang">default-value</code></td> <td>string</td> <td>No</td> <td>The initial value to display if the user hasn&#39;t entered anything yet.</td></tr> <tr><td><code class="hljs inline no-lang">settings-hint</code></td> <td>string</td> <td>No</td> <td>The ghost text shown inside the input box in the Settings Widget to guide the user.</td></tr></tbody></table></div><h2 id="persistence">Persistence<a class="fa fa-anchor" href="#persistence" onclick="event.stopPropagation()"></a></h2> <p>Values entered by the user are saved in the browser&#39;s <code class="hljs inline no-lang">localStorage</code> (key: <code class="hljs inline no-lang">cv-user-variables</code>). This means:</p> <ol><li>Values persist across page reloads.</li> <li>Values persist when navigating between different pages of the documentation.</li></ol> <h2 id="future-implementations">Future Implementations?<a class="fa fa-anchor" href="#future-implementations" onclick="event.stopPropagation()"></a></h2> <p>Future directions for this component:</p> <ul><li>Being able to define it through central json</li> <li>Support dynamic rendering:
+<ul><li>Note that current implementation The DomScanner.scanAndHydrate is called during initialization without considering that dynamic content may be added later (e.g., via client-side rendering, lazy loading, or navigation). If placeholders are present in dynamically loaded content, they won&#39;t be processed. Consider providing a way to re-scan or automatically detect newly added content.</li></ul></li> <li>Better UI?</li> <li>More intuitive author syntax?</li></ul></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><a class="navbar-brand page-nav-title" href="#">Topics</a> <nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#simple-placeholders-variable-interpolation">Simple Placeholders (Variable Interpolation)‎</a> <a class="nav-link py-1" href="#usage">Usage‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#1-define-the-placeholder">1. Define the Placeholder‎</a> <a class="nav-link py-1" href="#2-use-the-placeholder">2. Use the placeholder‎</a> <a class="nav-link py-1" href="#inline-fallback">Inline Fallback‎</a></nav> <a class="nav-link py-1" href="#escaping-syntax">Escaping Syntax‎</a> <a class="nav-link py-1" href="#component-attributes">Component Attributes‎</a> <a class="nav-link py-1" href="#persistence">Persistence‎</a> <a class="nav-link py-1" href="#future-implementations">Future Implementations?‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.1.0</a> on Mon, 12 Jan 2026, 2:41:40 GMT+8]</small><br></div></footer></div><!--]--></div>
+</body><script src="/customviews/markbind/js/bootstrap-utility.min.js"></script>
+<script src="/customviews/markbind/js/polyfill.min.js"></script>
+<script src="/customviews/markbind/js/vue.global.prod.min.js"></script>
+<script src="/customviews/markbind/js/markbind.min.js"></script>
+<script src="placeholders.page-vue-render.js"></script>
+<script>
+  MarkBind.setupWithSearch()
+</script>
+    <script src="/customviews/plugins/customviews/custom-views.js" data-base-url="/customviews"></script>
+    <script>
+    function copyCodeBlock(element) {
+        const pre = element.parentElement.parentElement;
+        const codeElement = pre.querySelector('code');
+        const copyButtonBody = element.querySelector('.function-btn-body');
+        const tooltipText = element.querySelector(".tooltiptext");
+
+        // create dummy text element to select() the text field
+        const textElement = document.createElement('textarea');
+        textElement.value = codeElement.textContent;
+        document.body.appendChild(textElement);
+        textElement.select();
+
+        document.execCommand('copy');
+        document.body.removeChild(textElement);
+        copyButtonBody.innerHTML = `
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="2 2 22 22"
+  >
+    <path d="M 19.28125 5.28125 L 9 15.5625 L 4.71875 11.28125 L 3.28125 12.71875 L 8.28125 17.71875 
+    L 9 18.40625 L 9.71875 17.71875 L 20.71875 6.71875 Z"></path>
+  </svg>
+`;
+        console.log("Running tooltip");
+        tooltipText.innerText  = `Copied!`;
+        setTimeout(() => {
+            copyButtonBody.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path d="M 11.273438 0 L 2.546875 0 C 1.746094 0 1.089844 0.613281 1.089844
+      1.363281 L 1.089844 10.910156 L 2.546875 10.910156 L 2.546875 1.363281 L 11.273438
+      1.363281 Z M 13.453125 2.726562 L 5.453125 2.726562 C 4.65625 2.726562 4 3.339844 4
+      4.089844 L 4 13.636719 C 4 14.386719 4.65625 15 5.453125 15 L 13.453125 15 C 14.253906
+      15 14.910156 14.386719 14.910156 13.636719 L 14.910156 4.089844 C 14.910156 3.339844
+      14.253906 2.726562 13.453125 2.726562 Z M 13.453125 13.636719 L 5.453125 13.636719 L
+      5.453125 4.089844 L 13.453125 4.089844 Z M 13.453125 13.636719 "/>
+    </g>
+</svg>
+`;
+            tooltipText.innerText  = `Copy`;
+        }, 3000);
+    }
+    </script>
+    <script>
+    function toggleCodeBlockWrap(element) {
+      const pre = element.parentElement.parentElement;
+      const tooltipText = element.querySelector(".tooltiptext");
+      const classList = pre.querySelector('code').classList; 
+      if (classList.contains('wrap')) {
+          classList.remove('wrap');
+          tooltipText.innerText  = `Wrap Text`;
+      } else {
+          classList.add('wrap')
+          tooltipText.innerText  = `Unwrap Text`;
+      }
+    }
+    </script>
+    <script type="module">
+    window.mermaidPromise = null;
+    
+    const loadMermaid = () => {
+      if (window.mermaidPromise === null) {
+        window.mermaidPromise = import('https://unpkg.com/mermaid@10/dist/mermaid.esm.min.mjs')
+          .then(({ default: mermaid }) => {
+            mermaid.initialize({
+              startOnLoad: false,
+            });
+            console.log('Mermaid loaded successfully');
+            return mermaid;
+          })
+          .catch((error) => {
+            console.error('Mermaid failed to load:', error);
+            window.mermaidPromise = false;
+            return null;
+          });
+      }
+      return window.mermaidPromise;
+    };
+
+    const renderMermaidDiagrams = (elements) => {
+      if (!elements || elements.length === 0) {
+        return Promise.resolve();
+      }
+
+      return loadMermaid().then(mermaid => {
+        if (!mermaid) return;
+        return mermaid.run({ nodes: Array.from(elements) })
+          .catch(err => console.error('Error rendering mermaid diagrams:', err));
+      });
+    };
+
+    const setupMermaidObserver = () => {
+      const observer = new MutationObserver((mutations) => {
+        let newMermaidElements = [];
+        
+        mutations.forEach(mutation => {
+          if (mutation.addedNodes.length) {
+            mutation.addedNodes.forEach(node => {
+              if (node.nodeType === 1 && node.classList && 
+                  node.classList.contains('mermaid')) {
+                newMermaidElements.push(node);
+              }
+              
+              if (node.nodeType === 1 && node.querySelectorAll) {
+                const mermaidInNode = node.querySelectorAll('.mermaid');
+                if (mermaidInNode.length) {
+                  newMermaidElements = [...newMermaidElements, ...mermaidInNode];
+                }
+              }
+            });
+          }
+        });
+        
+        if (newMermaidElements.length > 0) {
+          renderMermaidDiagrams(newMermaidElements);
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+      
+      return observer;
+    };
+
+    // Initialize on DOM content loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      const existingDiagrams = document.querySelectorAll('.mermaid');
+      if (existingDiagrams.length > 0) {
+        renderMermaidDiagrams(existingDiagrams);
+      }
+      
+      setupMermaidObserver();
+    });
+
+  </script>
+    <script src="/customviews/pagefind/pagefind-ui.js"></script>
+    
+    <script>
+      window.addEventListener('DOMContentLoaded', (event) => {
+        const searchContainers = document.querySelectorAll('#pagefind-search-input');
+        if (searchContainers.length) {
+          searchContainers.forEach((container) => {
+            new window.PagefindUI({
+              element: container,
+              showSubResults: true,
+              showImages: false,
+            });
+          });
+        }
+      });
+    </script>
+  
+</html>
