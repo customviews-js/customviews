@@ -209,7 +209,6 @@ export class ShareStore {
         // Copy to clipboard
         navigator.clipboard.writeText(url.href).then(() => {
             showToast('Link copied to clipboard!');
-            this.toggleActive(false);
         }).catch(() => {
             showToast('Failed to copy to clipboard');
         });
