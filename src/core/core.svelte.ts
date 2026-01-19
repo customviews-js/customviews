@@ -4,8 +4,10 @@ import type { AssetsManager } from "./managers/assets-manager";
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
 
-import { FocusService } from "./services/focus-service";
+import { FocusService } from "./services/focus-service.svelte";
 import { DataStore, initStore } from "./stores/main-store.svelte";
+import { placeholderValueStore } from "./stores/placeholder-value-store.svelte";
+import { DomScanner } from "./utils/dom-scanner";
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -67,17 +69,6 @@ export class CustomViewsCore {
         return;
      }
 
-     // 3. Defaults handled by Store constructor
-  }
-
-
-
-  public getConfig(): Config {
-    return this.store.config;
-  }
-  
-  public getTabGroups() {
-      return this.store.config.tabGroups;
   }
 
   /**
@@ -92,6 +83,9 @@ export class CustomViewsCore {
     if (navPref !== null) {
       this.store.isTabGroupNavHeadingVisible = navPref;
     }
+    
+    // Run initial scan (non-reactive)
+    DomScanner.scanAndHydrate(this.rootEl);
     
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
@@ -109,6 +103,12 @@ export class CustomViewsCore {
             this.persistenceManager.persistState(this.store.state);
             this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
         });
+
+        // Effect 3: React to Variable Changes
+        $effect(() => {
+            DomScanner.updateAll(placeholderValueStore.values);
+            placeholderValueStore.persist();
+        });
     });
 
     // Handle History Popstate
@@ -117,17 +117,12 @@ export class CustomViewsCore {
        if (urlState) {
           this.store.applyState(urlState);
        }
-       this.focusService.handleUrlChange();
     });
 
-    this.focusService.init();
+
   }
 
   // --- Public APIs for Widget/Other ---
-
-  public hasActiveComponents(): boolean {
-      return this.store.hasActiveComponents;
-  }
 
   public resetToDefault() {
       this.persistenceManager.clearAll();

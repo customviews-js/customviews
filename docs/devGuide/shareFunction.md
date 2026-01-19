@@ -9,50 +9,28 @@
 
 # Share Function
 
-The **Share Function** (or "Share Mode") allows users to select specific parts of a page (paragraphs, code blocks, headers) and generate a distinct "Deep Link" that, when opened, restores the focus to those specific elements.
+The **Share Function** (or "Share Mode") allows users to create deeply customized links to specific pages. Instead of sharing a generic URL, users can select specific parts of a page to either **focus on** or **hide**, allowing for granular context sharing.
 
-## Architecture
+## Core Concepts
 
-The feature is built using a **Store-Overlay-Service** pattern, fully decoupled from the core widget logic.
+### 1. The Overlay Interface
+When Share Mode is activated, the application renders a specialized **Overlay Layer** on top of the document. This layer intercepts all user interactions, preventing standard page behavior (like clicking links or selecting text) and replacing it with a selection mechanism.
 
-### 1. State Management (`share-store.ts`)
-The `shareStore` is the single source of truth. It manages:
-*   `isActive`: Whether Share Mode is currently enabled.
-*   `selectedElements`: A `Set<HTMLElement>` of currently selected DOM nodes.
-*   `currentHoverTarget`: The element currently under the mouse cursor.
+*   **Visual Feedback**: As users hover over content, the system identifies the underlying structural elements (paragraphs, code blocks, headers) and highlights them.
+*   **Dual Modes**: Users can toggle between **"Show Mode"** (selecting what to keep) and **"Hide Mode"** (selecting what to redact).
 
-### 2. The Overlay (`ShareOverlay.svelte`)
-When Share Mode is active, `Settings` mounts the `ShareOverlay` component.
-*   **Event Interception**: It uses global event listeners (`mouseover`, `click`) to intercept user interactions *before* they reach the underlying page.
-*   **Visual Feedback**: It renders the `HoverHelper` (floating tag label) and applies highlighting classes (`.cv-highlight-target`) to the underlying elements.
-*   **Toolbar**: Renders the `ShareToolbar` at the bottom of the screen.
+### 2. Robust Deep Linking
+To ensure shared links remain valid even if the page content changes slightly (e.g., typos fixed, paragraphs reordered), the system avoids fragile selectors like XPath or Index-based paths.
 
-### 3. Element Location (`DomElementLocator.ts`)
-To make links robust (surviving page reloads or minor content updates), we do **not** use simple XPath or CSS selectors. We use a **Fingerprinting** strategy implemented in `src/core/utils/dom-element-locator.ts`.
+Instead, it employs a **Fingerprinting Strategy**:
+*   **Structural Anchoring**: It records the element's position relative to stable landmarks (like ID-bearing parents).
+*   **Content Awareness**: It generates a hash of the text content.
 
-#### How it works
-The `DomElementLocator` generates a unique descriptor for any element:
-1.  **Scope**: Finds the nearest parent with an ID to narrow the search.
-2.  **Structure**: Records the tag name and relative index (e.g., "3rd `<p>` in `#main-content`").
-3.  **Content**: Calculates a 32-bit Hash of the text content and stores a short text snippet.
+When a link is opened, the system locates the elements using a "fuzzy match" algorithm. If an element has moved or changed slightly, the system can still confidently identify and target the correct content.
 
-When resolving an anchor:
-*   **Fast Path**: Checks the element at the expected index. If the text hash matches, it confirms immediately (**O(1)**).
-*   **Robust Fallback**: If the fast path fails (e.g., index shifted), it searches siblings for a match based on content hash or text snippet (**Fuzzy Matching**).
+### 3. URL Serialization
+The selected state is serialized into a compact, URL-safe string and appended to the page URL. This means the share state is entirely client-side and requires no database or backend storage.
+*   **Focus Param**: `?cv-focus=...` is used when elements are selected to be shown (filtering out everything else).
+*   **Hide Param**: `?cv-hide=...` is used when elements are selected to be hidden (redacting specific parts).
 
-## Usage Flow
-
-1.  **Activation**: User clicks "Share" in the Main Widget.
-    *   `shareStore.toggleActive(true)` is called.
-    *   `ShareOverlay` mounts.
-2.  **Selection**: User clicks elements.
-    *   `shareStore.toggleSelection(el)` adds/removes elements.
-    *   **Smart Selection**: If a parent is selected, its children are implicitly included (and removed from explicit selection to keep the list clean).
-3.  **Link Generation**: User clicks "Generate Link".
-    *   `DomElementLocator.createDescriptor(el)` creates fingerprints for all selected items.
-    *   `DomElementLocator.serialize()` compresses them into a base64 string.
-    *   The string is appended to the URL as `?cv-focus=...`.
-4.  **Restoration**: When a user loads the link:
-    *   `FocusService` (sharing the same Locator logic) parses the URL.
-    *   `DomElementLocator.resolve()` finds the elements.
-    *   Focus Mode is activated for those elements.
+When a user visits a link containing these parameters, the application automatically enters **Focus Mode**, applying the necessary visibility filters immediately upon load.

@@ -32,6 +32,11 @@ npm run release:beta
 * `npm version prerelease --preid=beta` creates a release commit and tag, but does not automatically publish to NPM.
 * `npm run release:beta` will publish the release to NPM with the `@beta` tag.
 
+After making the beta release, update the MarkBind documentation website if needed.
+Do this by running `npm run deploydocs`. This updates the site at `https://customviews-js.github.io/customviews`, which is the beta documentation site.
+
+* Make sure to update the `data-base-url` in the customviews plugin script to make sure that it is the right value i.e. (`data-base-url="/customviews"`).
+
 ### Using the beta release
 
 To use the beta release from CDNs, the script tag should be updated to use the beta version.
@@ -64,6 +69,10 @@ npm run release:prod
 
 > **Note:** The `release:*` commands automatically run `npm run build` before publishing.
 
+After making a production release, update the MarkBind documentation website if needed.
+Do this by running `npm run deploydocs:stable`. This updates the site at `https://customviews-js.github.io`, which is the stable documentation site.
+
+* Make sure to update the `data-base-url` in the customviews plugin script to make sure that it is the right value (i.e. `data-base-url=""`).
 
 ### Using the production release
 

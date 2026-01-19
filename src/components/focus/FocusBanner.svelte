@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { focusStore } from '../../core/stores/focus-store';
+  import { focusStore } from '../../core/stores/focus-store.svelte';
   import { slide } from 'svelte/transition';
 
   function handleExit() {
@@ -7,7 +7,7 @@
   }
 </script>
 
-{#if $focusStore.isActive}
+{#if focusStore.isActive}
   <div id="cv-exit-focus-banner" transition:slide={{ duration: 250 }}>
     <span>You are viewing a focused selection.</span>
     <button onclick={handleExit}>Show Full Page</button>
@@ -15,6 +15,14 @@
 {/if}
 
 <style>
+  /* Global Styles for Focus/Highlight Modes */
+  :global(.cv-focus-hidden) { display: none !important; }
+  
+  :global(body.cv-focus-mode), 
+  :global(body.cv-highlight-mode) { 
+    margin-top: 50px !important; 
+  }
+
   #cv-exit-focus-banner {
     position: fixed;
     top: 0;
@@ -27,7 +35,7 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
-    z-index: 100000;
+    z-index: 9000; /* Below Toast (usually 9999+) */
     font-family: system-ui, sans-serif;
     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }

@@ -45,7 +45,7 @@
       }
     ]
   },
-  "baseUrl": "/customviews",
+  "baseUrl": "/",
   "settings": {
     "panel": {
       "title": "Custom Views Settings Dialog",

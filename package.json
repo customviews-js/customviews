@@ -1,6 +1,6 @@
 {
   "name": "@customviews-js/customviews",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A JavaScript dynamic custom views Library.",
   "type": "module",
   "types": "dist/index.d.ts",
@@ -40,7 +40,10 @@
     "bump:patch": "npm version patch",
     "bump:minor": "npm version minor",
     "bump:major": "npm version major",
+    "deploydocs:stable": "cd docs && markbind deploy -s stable-site.json",
+    "deploydocs": "cd docs && markbind deploy -s site.json",
     "dev": "rollup -c -w",
+    "watch": "rollup -c -w",
     "test": "vitest run"
   },
   "keywords": [

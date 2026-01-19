@@ -1,13 +1,13 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { fade, fly } from 'svelte/transition';
-  import { toast, TOAST_CLASS } from '../../core/stores/toast-store';
+  import { toast, TOAST_CLASS } from '../../core/stores/toast-store.svelte';
 
-  // We can subscribe to the store directly in the template
+  // We can access the store directly in the template
 </script>
 
 <div class="toast-container">
-  {#each $toast as t (t.id)}
+  {#each toast.items as t (t.id)}
     <div 
       class="{TOAST_CLASS} toast-item"
       role="alert" 

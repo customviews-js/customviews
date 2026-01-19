@@ -7,8 +7,12 @@
   import SettingsIcon from './SettingsIcon.svelte';
   import Modal from '../modal/Modal.svelte';
   import { URLStateManager } from '../../core/state/url-state-manager';
-  import { showToast } from '../../core/stores/toast-store';
-  import { shareStore } from '../../core/stores/share-store';
+  import { showToast } from '../../core/stores/toast-store.svelte';
+  import { shareStore } from '../../core/stores/share-store.svelte';
+  import { focusStore } from '../../core/stores/focus-store.svelte';
+  import { placeholderRegistryStore } from '../../core/stores/placeholder-registry-store.svelte';
+  import { placeholderValueStore } from '../../core/stores/placeholder-value-store.svelte';
+  import { themeStore } from '../../core/stores/theme-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/constants';
   import Toast from '../elements/Toast.svelte';
   import ShareOverlay from '../share/ShareOverlay.svelte';
@@ -41,16 +45,30 @@
   let peekToggles = $derived(store.state.peekToggles ?? []);
   let activeTabs = $derived(store.state.tabs ?? {});
 
+  // Placeholder State
+  let definitions = $derived(placeholderRegistryStore.definitions);
+  let values = $derived(placeholderValueStore.values);
+
   // Init
   onMount(() => {
-    // Check for callout
-    if (options.callout?.show && store.hasActiveComponents) {
-      checkIntro();
-    }
-    
     // Check Nav Visibility
     // Store is the single source of truth, handled by Core's persistence effect
     navsVisible = store.isTabGroupNavHeadingVisible;
+
+    // Init Theme Store
+    themeStore.init();
+    return themeStore.listen();
+  });
+
+  let introChecked = false;
+  $effect(() => {
+    if (!introChecked && options.callout?.show) {
+       // Only show if there are actual components on the page
+       if (store.hasPageElements) {
+           introChecked = true;
+           checkIntro();
+       }
+    }
   });
 
   function checkIntro() {
@@ -144,67 +162,142 @@
     closeModal();
     shareStore.toggleActive(true);
   }
+
+  function handleVariableChange(e: any) {
+    const { name, value } = e;
+    placeholderValueStore.set(name, value);
+  }
 </script>
 
-{#if store.hasActiveComponents || options.showTabGroups}
-  <!-- Intro Callout -->
-  {#if showCallout}
-    <IntroCallout 
+{#if store.hasMenuOptions || options.showTabGroups || shareStore.isActive || focusStore.isActive}
+  <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
+    <!-- Intro Callout -->
+    {#if showCallout}
+      <IntroCallout 
+        position={options.icon.position} 
+        message={options.callout?.message}
+        enablePulse={options.callout?.enablePulse}
+        backgroundColor={options.callout?.backgroundColor}
+        textColor={options.callout?.textColor}
+        onclose={dismissCallout} 
+      />
+    {/if}
+  
+    <!-- Toast Container -->
+    <Toast />
+  
+    {#if shareStore.isActive}
+      <ShareOverlay {excludedTags} {excludedIds} />
+    {/if}
+  
+    <FocusBanner />
+  
+    <!-- Widget Icon -->
+    <SettingsIcon 
+      bind:this={settingsIcon}
       position={options.icon.position} 
-      message={options.callout?.message}
-      enablePulse={options.callout?.enablePulse}
-      backgroundColor={options.callout?.backgroundColor}
-      textColor={options.callout?.textColor}
-      onclose={dismissCallout} 
+      title={options.panel.title} 
+      pulse={showPulse} 
+      onclick={openModal}
+      iconColor={options.icon?.color}
+      backgroundColor={options.icon?.backgroundColor}
+      opacity={options.icon?.opacity}
+      scale={options.icon?.scale}
     />
-  {/if}
-
-  <!-- Toast Container -->
-  <Toast />
-
-  {#if $shareStore.isActive}
-    <ShareOverlay {excludedTags} {excludedIds} />
-  {/if}
-
-  <FocusBanner />
-
-  <!-- Widget Icon -->
-  <SettingsIcon 
-    bind:this={settingsIcon}
-    position={options.icon.position} 
-    title={options.panel.title} 
-    pulse={showPulse} 
-    onclick={openModal}
-    iconColor={options.icon?.color}
-    backgroundColor={options.icon?.backgroundColor}
-    opacity={options.icon?.opacity}
-    scale={options.icon?.scale}
-  />
-
-  <!-- Modal -->
-  {#if isModalOpen}
-    <Modal 
-      title={options.panel.title}
-      description={options.panel.description}
-      showReset={options.panel.showReset}
-      showTabGroups={options.panel.showTabGroups}
-      
-      toggles={store.visibleToggles}
-      tabGroups={store.visibleTabGroups}
-      
-      shownToggles={shownToggles}
-      peekToggles={peekToggles}
-      activeTabs={activeTabs}
-      navsVisible={navsVisible}
-      isResetting={isResetting}
-
-      onclose={closeModal}
-      onreset={handleReset}
-      ontoggleChange={handleToggleChange}
-      ontabGroupChange={handleTabGroupChange}
-      ontoggleNav={handleNavToggle}
-      oncopyShareUrl={handleCopyShareUrl}
-      onstartShare={handleStartShare}
-    />
-  {/if}
+  
+    <!-- Modal -->
+    {#if isModalOpen}
+      <Modal 
+        title={options.panel.title}
+        description={options.panel.description}
+        showReset={options.panel.showReset}
+        showTabGroups={options.panel.showTabGroups}
+        
+        toggles={store.menuToggles}
+        tabGroups={store.menuTabGroups}
+        
+        shownToggles={shownToggles}
+        peekToggles={peekToggles}
+        activeTabs={activeTabs}
+        navsVisible={navsVisible}
+        isResetting={isResetting}
+  
+        placeholderDefinitions={definitions}
+        placeholderValues={values}
+  
+        onclose={closeModal}
+        onreset={handleReset}
+        ontoggleChange={handleToggleChange}
+        ontabGroupChange={handleTabGroupChange}
+        ontoggleNav={handleNavToggle}
+        oncopyShareUrl={handleCopyShareUrl}
+        onstartShare={handleStartShare}
+        onvariableChange={handleVariableChange}
+      />
+    {/if}
+  </div>
 {/if}
+
+<style>
+  :global(.cv-widget-root) {
+    /* Light Theme Defaults */
+    --cv-bg: white;
+    --cv-text: rgba(0, 0, 0, 0.9);
+    --cv-text-secondary: rgba(0, 0, 0, 0.6);
+    --cv-border: rgba(0, 0, 0, 0.1);
+    --cv-bg-hover: rgba(0, 0, 0, 0.05);
+    
+    --cv-primary: #3e84f4;
+    --cv-primary-hover: #2563eb;
+    
+    --cv-danger: #dc2626;
+    --cv-danger-bg: rgba(220, 38, 38, 0.1);
+    
+    --cv-shadow: rgba(0, 0, 0, 0.25);
+    
+    --cv-input-bg: white;
+    --cv-input-border: rgba(0, 0, 0, 0.15);
+    --cv-switch-bg: rgba(0, 0, 0, 0.1);
+    --cv-switch-knob: white;
+    
+    --cv-modal-icon-bg: rgba(0, 0, 0, 0.08);
+    --cv-icon-bg: rgba(255, 255, 255, 0.92);
+    --cv-icon-color: rgba(0, 0, 0, 0.9);
+    
+    --cv-focus-ring: rgba(62, 132, 244, 0.2);
+    
+    --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+    font-family: inherit; /* Inherit font from host */
+  }
+
+  :global(.cv-widget-root[data-theme="dark"]) {
+    /* Dark Theme Overrides */
+    --cv-bg: #101722;
+    --cv-text: #e2e8f0;
+    --cv-text-secondary: rgba(255, 255, 255, 0.6);
+    --cv-border: rgba(255, 255, 255, 0.1);
+    --cv-bg-hover: rgba(255, 255, 255, 0.05);
+
+    --cv-primary: #3e84f4;
+    --cv-primary-hover: #60a5fa;
+
+    --cv-danger: #f87171;
+    --cv-danger-bg: rgba(248, 113, 113, 0.1);
+
+    --cv-shadow: rgba(0, 0, 0, 0.5);
+
+    --cv-input-bg: #1e293b;
+    --cv-input-border: rgba(255, 255, 255, 0.1);
+    --cv-switch-bg: rgba(255, 255, 255, 0.1);
+    --cv-switch-knob: #e2e8f0;
+    
+    --cv-modal-icon-bg: rgba(255, 255, 255, 0.08);
+    --cv-icon-bg: #1e293b;
+    --cv-icon-color: #e2e8f0;
+    
+    --cv-focus-ring: rgba(62, 132, 244, 0.5);
+    
+    --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+</style>

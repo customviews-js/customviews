@@ -1,6 +1,6 @@
 <frontmatter>
-  title: User Guide - Tabs
-  layout: userGuide.md
+  title: Author Guide - Tabs
+  layout: authorGuide.md
   pageNav: 4
   pageNavTitle: "Topics"
 </frontmatter>

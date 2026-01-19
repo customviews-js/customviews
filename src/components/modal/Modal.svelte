@@ -1,42 +1,67 @@
 <script lang="ts">
   import { fade, scale } from 'svelte/transition';
-  import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon } from '../../utils/icons';
+  import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon, getSunIcon, getMoonIcon } from '../../utils/icons';
+  import { themeStore } from '../../core/stores/theme-store.svelte';
   import type { ToggleConfig, TabGroupConfig } from '../../types/types';
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
+  import type { PlaceholderDefinition } from '../../core/stores/placeholder-registry-store.svelte';
 
-  export let title: string | undefined = 'Customize View';
-  export let description: string | undefined = '';
-  export let showReset: boolean | undefined = true;
-  export let showTabGroups: boolean | undefined = true;
-  
-  // Data
-  export let toggles: ToggleConfig[] = [];
-  export let tabGroups: TabGroupConfig[] = [];
-  
-  // State from parent
-  export let shownToggles: string[] = [];
-  export let peekToggles: string[] = [];
-  export let activeTabs: Record<string, string> = {};
-  export let navsVisible: boolean = true;
-  export let isResetting: boolean = false;
-
-  // Callbacks
-  export let onclose: () => void = () => {};
-  export let onreset: () => void = () => {};
-  export let ontoggleChange: (detail: any) => void = () => {};
-  export let ontabGroupChange: (detail: any) => void = () => {};
-  export let ontoggleNav: (visible: boolean) => void = () => {};
-  export let oncopyShareUrl: () => void = () => {};
-  export let onstartShare: () => void = () => {};
-
-  let activeTab: 'customize' | 'share' = 'customize';
-  let copySuccess = false;
-  let navIconHtml = '';
-
-  $: {
-    updateNavIcon(navsVisible, false);
+  interface Props {
+    title?: string;
+    description?: string;
+    showReset?: boolean;
+    showTabGroups?: boolean;
+    toggles?: ToggleConfig[];
+    tabGroups?: TabGroupConfig[];
+    shownToggles?: string[];
+    peekToggles?: string[];
+    activeTabs?: Record<string, string>;
+    navsVisible?: boolean;
+    isResetting?: boolean;
+    placeholderDefinitions?: PlaceholderDefinition[];
+    placeholderValues?: Record<string, string>;
+    onclose?: () => void;
+    onreset?: () => void;
+    ontoggleChange?: (detail: any) => void;
+    ontabGroupChange?: (detail: any) => void;
+    ontoggleNav?: (visible: boolean) => void;
+    oncopyShareUrl?: () => void;
+    onstartShare?: () => void;
+    onvariableChange?: (detail: { name: string, value: string }) => void;
   }
+
+  let { 
+    title = 'Customize View',
+    description = '',
+    showReset = true,
+    showTabGroups = true,
+    toggles = [],
+    tabGroups = [],
+    shownToggles = [],
+    peekToggles = [],
+    activeTabs = {},
+    navsVisible = true,
+    isResetting = false,
+    placeholderDefinitions = [],
+    placeholderValues = {},
+    onclose = () => {},
+    onreset = () => {},
+    ontoggleChange = () => {},
+    ontabGroupChange = () => {},
+    ontoggleNav = () => {},
+    oncopyShareUrl = () => {},
+    onstartShare = () => {},
+    onvariableChange = () => {}
+  }: Props = $props();
+
+  let activeTab = $state<'customize' | 'share'>('customize');
+  let copySuccess = $state(false);
+  let navIconHtml = $state('');
+
+  $effect(() => {
+    updateNavIcon(navsVisible, false);
+  });
 
   function updateNavIcon(isVisible: boolean, isHovering: boolean) {
      if (isHovering) {
@@ -58,6 +83,11 @@
     ontoggleChange(detail);
   }
 
+  function handleVariableInput(name: string, e: Event) {
+    const target = e.target as HTMLInputElement;
+    onvariableChange({ name, value: target.value });
+  }
+
   function handleTabGroupChange(detail: any) {
     ontabGroupChange(detail);
   }
@@ -77,8 +107,8 @@
   }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div 
   class="modal-overlay" 
   onclick={(e) => { if(e.target === e.currentTarget) onclose(); }} 
@@ -132,6 +162,27 @@
             </div>
           {/if}
 
+          {#if placeholderDefinitions.length > 0}
+            <div class="section">
+              <div class="section-heading">Variables</div>
+              <div class="variables-container">
+                {#each placeholderDefinitions as def (def.name)}
+                  <div class="variable-item">
+                    <label class="variable-label" for="cv-var-{def.name}">{def.settingsLabel || def.name}</label>
+                    <input 
+                      id="cv-var-{def.name}"
+                      class="variable-input"
+                      type="text" 
+                      placeholder={def.settingsHint || ''}
+                      value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
+                      oninput={(e) => handleVariableInput(def.name, e)}
+                    />
+                  </div>
+                {/each}
+              </div>
+            </div>
+          {/if}
+
           {#if showTabGroups && tabGroups.length > 0}
             <div class="section">
               <div class="section-heading">Tab Groups</div>
@@ -179,6 +230,42 @@
                 </div>
               </div>
             </div>
+          {/if}
+
+          <!-- Hide Light Dark Theme Selection for now -->
+          {#if false}
+          <div class="section">
+            <div class="section-heading">Theme</div>
+            <div class="theme-selector">
+              <button 
+                class="theme-btn {themeStore.mode === 'light' ? 'active' : ''}" 
+                onclick={() => themeStore.setMode('light')}
+                title="Light Mode"
+              >
+                {@html getSunIcon()}
+                <span>Light</span>
+              </button>
+              <button 
+                class="theme-btn {themeStore.mode === 'dark' ? 'active' : ''}" 
+                onclick={() => themeStore.setMode('dark')}
+                title="Dark Mode"
+              >
+                {@html getMoonIcon()}
+                <span>Dark</span>
+              </button>
+              <!-- Auto button disabled for now -->
+              <!--
+              <button 
+                class="theme-btn {themeStore.mode === 'auto' ? 'active' : ''}" 
+                onclick={() => themeStore.setMode('auto')}
+                title="System Default"
+              >
+                {@html getSystemIcon()}
+                <span>Auto</span>
+              </button>
+              -->
+            </div>
+          </div>
           {/if}
         </div>
       {:else}
@@ -257,9 +344,9 @@
 }
 
 .modal-box {
-  background: white;
+  background: var(--cv-bg);
   border-radius: 0.75rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px var(--cv-shadow);
   max-width: 32rem;
   width: 90vw;
   max-height: 80vh;
@@ -272,7 +359,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid var(--cv-border);
 }
 
 .header-content {
@@ -289,12 +376,17 @@
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
+  color: var(--cv-text);
+}
+
+.modal-icon :global(svg) {
+  fill: currentColor;
 }
 
 .title {
   font-size: 1.125rem;
   font-weight: bold;
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--cv-text);
   margin: 0;
 }
 
@@ -307,14 +399,14 @@
   border-radius: 9999px;
   background: transparent;
   border: none;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--cv-text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .close-btn:hover {
   background: rgba(62, 132, 244, 0.1);
-  color: #3e84f4;
+  color: var(--cv-primary);
 }
 
 .main {
@@ -328,7 +420,7 @@
 
 .description {
   font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--cv-text);
   margin: 0 0 1rem 0;
   line-height: 1.4;
 }
@@ -337,7 +429,7 @@
 .tabs {
   display: flex;
   margin-bottom: 1rem;
-  border-bottom: 2px solid #eee;
+  border-bottom: 2px solid var(--cv-border);
 }
 
 .tab {
@@ -346,15 +438,15 @@
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #666;
+  color: var(--cv-text-secondary);
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -2px;
 }
 
 .tab.active {
-  color: #3e84f4;
-  border-bottom-color: #3e84f4;
+  color: var(--cv-primary);
+  border-bottom-color: var(--cv-primary);
 }
 
 .tab-content {
@@ -376,7 +468,7 @@
 .section-heading {
   font-size: 1rem;
   font-weight: bold;
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--cv-text);
   margin: 0;
 }
 
@@ -387,6 +479,44 @@
   overflow: hidden;
 }
 
+/* Theme Selector */
+.theme-selector {
+  display: flex;
+  background: var(--cv-input-bg);
+  border: 1px solid var(--cv-input-border);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.theme-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--cv-text-secondary);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.theme-btn:hover {
+  background: var(--cv-bg-hover);
+  color: var(--cv-text);
+}
+
+.theme-btn.active {
+  background: var(--cv-primary);
+  color: white;
+  box-shadow: var(--cv-shadow-sm);
+}
+
 /* Tab Groups Section specific */
 .tabgroups-container {
   border-radius: 0.5rem;
@@ -394,8 +524,8 @@
 
 /* Nav Toggle Card */
 .tabgroup-card {
-  background: white;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--cv-bg);
+  border-bottom: 1px solid var(--cv-border);
 }
 
 .tabgroup-card.header-card {
@@ -403,7 +533,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.75rem;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--cv-border);
   border-radius: 0.5rem;
   margin-bottom: 0.75rem;
 }
@@ -419,7 +549,7 @@
 .logo-box {
   width: 3rem;
   height: 3rem;
-  background: rgba(0, 0, 0, 0.08);
+  background: var(--cv-modal-icon-bg);
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
@@ -430,7 +560,7 @@
 .nav-icon {
   width: 2rem;
   height: 2rem;
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--cv-text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -448,13 +578,13 @@
 .tabgroup-title {
   font-weight: 500;
   font-size: 0.875rem;
-  color: rgba(0, 0, 0, 0.9);
+  color: var(--cv-text);
   margin: 0 0 0 0;
 }
 
 .tabgroup-description {
   font-size: 0.75rem;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--cv-text-secondary);
   margin: 0;
   line-height: 1.3;
 }
@@ -466,7 +596,7 @@
   align-items: center;
   width: 44px;
   height: 24px;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--cv-switch-bg);
   border-radius: 9999px;
   padding: 2px;
   box-sizing: border-box;
@@ -483,7 +613,7 @@
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  background: rgba(0, 0, 0, 0.1);
+  background: var(--cv-switch-bg);
   transition: background-color 0.2s ease;
   pointer-events: none;
 }
@@ -492,7 +622,7 @@
   position: relative;
   width: 20px;
   height: 20px;
-  background: white;
+  background: var(--cv-switch-knob);
   border-radius: 50%;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -504,7 +634,7 @@
 }
 
 .toggle-switch input:checked ~ .switch-bg {
-  background: #3e84f4;
+  background: var(--cv-primary);
 }
 
 /* Tab Groups List */
@@ -517,11 +647,11 @@
 /* Footer */
 .footer {
   padding: 1rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid var(--cv-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f8f9fa;
+  background: var(--cv-bg);
   border-bottom-left-radius: 0.75rem;
   border-bottom-right-radius: 0.75rem;
 }
@@ -530,7 +660,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--cv-text-secondary);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
@@ -538,30 +668,33 @@
 }
 
 .footer-link:hover {
-  color: rgba(0, 0, 0, 0.8);
+  color: var(--cv-text);
 }
 
 .reset-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: transparent;
-  border: none;
+  background: var(--cv-bg);
+  border: 1px solid var(--cv-border);
   font-size: 0.875rem;
   font-weight: 500;
-  color: #dc2626;
+  color: var(--cv-danger);
   cursor: pointer;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.375rem;
-  transition: background-color 0.15s ease;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .reset-btn:hover {
-  background: rgba(220, 38, 38, 0.1);
+  background: var(--cv-danger-bg);
+  border-color: var(--cv-danger);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .done-btn {
-  background: #3e84f4;
+  background: var(--cv-primary);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -573,7 +706,7 @@
 }
 
 .done-btn:hover {
-  background: #2563eb;
+  background: var(--cv-primary-hover);
 }
 
 .reset-btn-icon {
@@ -604,7 +737,7 @@
 
 .share-instruction {
   font-size: 0.95rem;
-  color: #666;
+  color: var(--cv-text-secondary);
   margin-bottom: 0.5rem;
 }
 
@@ -621,26 +754,26 @@
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid #ddd;
-  background: white;
-  color: #333;
+  border: 1px solid var(--cv-border);
+  background: var(--cv-bg);
+  color: var(--cv-text);
 }
 
 .share-action-btn:hover {
-  border-color: #3e84f4;
-  color: #3e84f4;
-  background: #f8fbfd;
+  border-color: var(--cv-primary);
+  color: var(--cv-primary);
+  background: var(--cv-bg-hover);
 }
 
 .share-action-btn.primary {
-  background: #3e84f4;
-  border-color: #3e84f4;
+  background: var(--cv-primary);
+  border-color: var(--cv-primary);
   color: white;
 }
 
 .share-action-btn.primary:hover {
-  background: #2563eb;
-  border-color: #2563eb;
+  background: var(--cv-primary-hover);
+  border-color: var(--cv-primary-hover);
 }
 
 .btn-icon {
@@ -651,77 +784,40 @@
   height: 1.25rem;
 }
 
-/* Dark Theme Overrides */
-:global(.cv-settings-theme-dark) .modal-box {
-  background: #101722;
-  color: #e2e8f0;
+/* Variable Inputs */
+.variables-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-:global(.cv-settings-theme-dark) .header {
-  border-color: rgba(255, 255, 255, 0.1);
+.variable-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
-:global(.cv-settings-theme-dark) .title {
-  color: #e2e8f0;
+.variable-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cv-text);
 }
 
-:global(.cv-settings-theme-dark) .close-btn {
-  color: rgba(255, 255, 255, 0.6);
+.variable-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--cv-input-border);
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+  background: var(--cv-input-bg);
+  color: var(--cv-text);
 }
 
-:global(.cv-settings-theme-dark) .close-btn:hover {
-  background: rgba(62, 132, 244, 0.2);
-  color: #3e84f4;
-}
-
-:global(.cv-settings-theme-dark) .description {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-:global(.cv-settings-theme-dark) .section-heading {
-  color: #e2e8f0;
-}
-
-:global(.cv-settings-theme-dark) .toggles-container,
-:global(.cv-settings-theme-dark) .tabgroups-container {
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-:global(.cv-settings-theme-dark) .tabgroup-card {
-  background: #101722;
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-:global(.cv-settings-theme-dark) .tabgroup-title {
-  color: #e2e8f0;
-}
-
-:global(.cv-settings-theme-dark) .tabgroup-description {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-:global(.cv-settings-theme-dark) .footer {
-  border-color: rgba(255, 255, 255, 0.1);
-  background: #101722;
-}
-
-:global(.cv-settings-theme-dark) .footer-link {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-:global(.cv-settings-theme-dark) .reset-btn {
-  color: #f87171;
-}
-
-:global(.cv-settings-theme-dark) .reset-btn:hover {
-  background: rgba(248, 113, 113, 0.1);
-}
-
-:global(.cv-settings-theme-dark) .tab-groups-list {
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-:global(.cv-settings-theme-dark) .nav-icon {
-  color: rgba(255, 255, 255, 0.8);
+.variable-input:focus {
+  outline: none;
+  border-color: var(--cv-primary);
+  box-shadow: 0 0 0 2px var(--cv-focus-ring);
 }
 </style>
+
+

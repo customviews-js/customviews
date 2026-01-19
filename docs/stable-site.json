@@ -1,8 +1,11 @@
 {
-  "baseUrl": "/customviews",
+  "baseUrl": "",
   "timeZone": "Asia/Singapore",
   "titlePrefix": "",
   "titleSuffix": "",
+  "style": {
+    "codeTheme": "light"
+  },
   "ignore": [
     "_markbind/layouts/*",
     "_markbind/logs/*",
@@ -28,18 +31,12 @@
       ]
     }
   ],
-  "style": {
-    "codeTheme": "light"
-  },
   "plugins": [
     "customviews", "filterTags", "codeBlockCopyButtons", "codeBlockWrapButtons", "mermaid"
   ],
-  "pluginsContext" : {
-    "filterTags" : {
-      "tags": ["beta-release"]
-    }
-  },
   "deploy": {
-    "message": "Site Update."
+    "message": "Update main site.",
+    "repo": "https://github.com/customviews-js/customviews-js.github.io.git",
+    "branch": "master"
   }
 }

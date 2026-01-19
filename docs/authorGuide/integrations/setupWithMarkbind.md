@@ -1,6 +1,6 @@
 <frontmatter>
   title: Installation (MarkBind Setup)
-  layout: userGuide.md
+  layout: authorGuide.md
   pageNav: 4
   pageNavTitle: "Topics"
 </frontmatter>
