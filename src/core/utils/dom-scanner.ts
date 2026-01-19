@@ -96,8 +96,7 @@ export class DomScanner {
    * Updates all <span class="cv-var"> elements with new values.
    */
   static updateAll(values: Record<string, string>) {
-     // console.log('[DomScanner] updateAll called', { values, definitions: placeholderRegistryStore.definitions });
-     const spans = document.querySelectorAll('.cv-var');
+      const spans = document.querySelectorAll('.cv-var');
      spans.forEach(span => {
          if (span instanceof HTMLElement) {
              const name = span.dataset.name;
