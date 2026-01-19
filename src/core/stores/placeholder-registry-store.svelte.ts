@@ -9,7 +9,6 @@ export class PlaceholderRegistryStore {
   definitions = $state<PlaceholderDefinition[]>([]);
 
   register(def: PlaceholderDefinition) {
-    console.log('[PlaceholderRegistryStore] Register called with:', def);
     const existingIndex = this.definitions.findIndex(d => d.name === def.name);
     if (existingIndex !== -1) {
       this.definitions[existingIndex] = def;

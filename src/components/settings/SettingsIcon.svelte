@@ -196,8 +196,6 @@
 
 </script>
 
-
-
 <div 
   bind:this={settingsIconElement}
   class="cv-settings-icon cv-settings-{position} {pulse ? 'cv-pulse' : ''}" 
