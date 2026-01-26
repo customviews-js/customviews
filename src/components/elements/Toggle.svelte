@@ -38,6 +38,9 @@
 
   // Derive visibility from store state
   let showState = $derived.by(() => {
+      // Default to SHOWN if config hasn't loaded yet (prevent pop-in)
+      if (!store.config.toggles) return true;
+      
       const shownToggles = store.state.shownToggles ?? [];
       return toggleIds.some(id => shownToggles.includes(id));
   });

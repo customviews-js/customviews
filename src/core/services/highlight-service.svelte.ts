@@ -2,6 +2,7 @@ import { mount, unmount } from 'svelte';
 import { showToast } from '../stores/toast-store.svelte';
 import { focusStore } from '../stores/focus-store.svelte';
 import * as DomElementLocator from '../utils/dom-element-locator';
+import { scrollToElement } from '../../utils/scroll-utils';
 import HighlightOverlay from '../../components/highlight/HighlightOverlay.svelte';
 
 export const HIGHLIGHT_PARAM = 'cv-highlight';
@@ -64,12 +65,15 @@ export class HighlightService {
 
         this.renderHighlightOverlay();        
         
-        // Scroll first target into view
+        // Scroll first target into view with header offset awareness
         const firstTarget = targets[0];
         if (firstTarget) {
-            setTimeout(() => {
-                firstTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
+            // Use double-RAF to ensure layout stability (e.g. Svelte updates, animations)
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                   scrollToElement(firstTarget);
+                });
+            });
         }
     }
 
