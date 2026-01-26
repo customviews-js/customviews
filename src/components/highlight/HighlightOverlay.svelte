@@ -75,7 +75,10 @@
   .cv-highlight-box {
     position: absolute;
     border: 4px solid #d13438;
-    box-shadow: 0 0 0 4px rgba(209, 52, 56, 0.2);
+    /* Layer 1: Sharp/Close, Layer 2: Soft/Deep */
+    box-shadow: 
+      0 5px 10px rgba(0, 0, 0, 0.1), 
+      0 15px 35px rgba(0, 0, 0, 0.15);
     pointer-events: none;
   }
 
@@ -88,6 +91,7 @@
     height: 30px;
     line-height: 30px;
     text-align: center;
+    filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
   }
 
   .cv-highlight-arrow.left { animation: floatArrowLeft 1.5s infinite; }
