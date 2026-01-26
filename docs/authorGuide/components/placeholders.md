@@ -7,35 +7,30 @@
 
 ## Simple Placeholders (Variable Interpolation)
 
-`<cv-define-placeholder>`, `[[ variable_name ]]`
+`\[[ variable_name ]]`
 
 Placeholders allow you to create dynamic "Mad Libs" style documentation. Authors can define variables that readers can customize via the Settings Widget. The values entered by the reader are persisted and automatically update text, code blocks, and other content across the site.
 
 
 ## Usage
 
-### 1. Define the Placeholder
+### Define the Placeholder
 
-Use the `<cv-define-placeholder>` component to register a variable. This component is **headless** (invisible in the content flow) but triggers an input field to appear in the Settings Widget under the "Variables" section.
+Placeholders are defined in your `customviews.config.json` under the `placeholders` key.
 
-```html
-<cv-define-placeholder 
-    name="username" 
-    settings-label="Your Username" 
-    settings-hint="Enter username" 
-    default-value="default username"
-></cv-define-placeholder>
+```json
+{
+  "config": {
+    "placeholders": [
+       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username" },
+       { "name": "api_key", "settingsLabel": "API Key", "isLocal": true }
+    ]
+  }
+}
 ```
 
-<cv-define-placeholder 
-    name="username" 
-    settings-label="Your Username" 
-    settings-hint="Enter username" 
-    default-value="default username"
-></cv-define-placeholder>
 
-### 2. Use the placeholder
-
+### Use the placeholder
 To use the variable in your content, wrap the variable name in double square brackets: `[[ variable_name ]]`.
 
 For example, we write `Hello, \[[username]]` here:
@@ -47,6 +42,7 @@ Hello, [[username]]!
 ```
 
 The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.
+
 
 ### Inline Fallback
 
@@ -70,32 +66,27 @@ In addition to text, you can interpolate variables into HTML attributes, such as
 
 ### Examples
 
-
 **Dynamic Query Parameter:**
 
 ```html
-<!-- Define the variable -->
-<cv-define-placeholder name="query" default-value="docs" settings-label="Search Query" />
-
 <!-- Use it in a link -->
-<a href="https://www.google.com/search?q=[[query]]" class="cv-bind">
-  Search Google for '[[query]]'
+<a href="https://www.google.com/search?q=[[searchQuery]]" class="cv-bind">
+  Search Google for '\[[searchQuery]]'
 </a>
 ```
 
-<cv-define-placeholder name="query" default-value="docs" settings-label="Search Query" />
-
-<!-- Use it in a link -->
-<a href="https://www.google.com/search?q=[[query]]" class="cv-bind">
-  Search Google for '[[query]]'
+This renders into: 
+<a href="https://www.google.com/search?q=[[searchQuery]]" class="cv-bind">
+  Search Google for '[[searchQuery]]'
 </a>
 
-<br>
+
+
+If the user sets `searchQuery` to `hello world`, the link becomes `https://www.google.com/search?q=hello%20world`.
+
+
 <br>
 
-If the user sets `search` to `hello world`, the link becomes `https://www.google.com/search?q=hello%20world`.
-
-> [!NOTE]
 > **Automatic Encoding**: Variables used in `href` and `src` attributes are automatically URL-encoded using `encodeURIComponent` to ensure valid URLs.
 
 **Dynamic Image Source:**
@@ -104,6 +95,16 @@ If the user sets `search` to `hello world`, the link becomes `https://www.google
 <img src="https://example.com/assets/[[theme]].png" class="cv-bind" alt="Theme Preview" />
 ```
 
+### Configuration
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | `string` | **Required**. Unique identifier (e.g., `api_key`). |
+| `settingsLabel` | `string` | Display label in Settings. |
+| `settingsHint` | `string` | Helper text in input field. |
+| `defaultValue` | `string` | Initial value if unset. |
+| `isLocal` | `boolean` | If `true`, the input field only appears in Settings when the placeholder is actually used on the current page. |
+
 ## Escaping Syntax
 
 You can "escape" the placeholder syntax if you want to display the literal brackets instead of a variable.
@@ -111,17 +112,45 @@ You can "escape" the placeholder syntax if you want to display the literal brack
 - **In Markdown Text**: Use two backslashes `\\[[ variable ]]`.
 - **In Code Blocks**: Use one backslash `\[[ variable ]]`.
 
-## Component Attributes
+You can bind a **Tab Group** directly to a placeholder variable in your `customviews.config.json`. This allows the variable to update automatically when the user switches tabs.
 
-> [!NOTE]
-> The variable input fields in the Settings Widget will **only** appear on pages where the `<cv-define-placeholder>` component is present.
+```json
+"tabGroups": [
+  {
+    "groupId": "fruit",
+    "label": "Fruit Selection",
+    "description": "Select your favorite fruit.",
+    "isLocal": false,
+    "default": "pear",
+    "placeholderId": "fruit",
+    "tabs": [
+      {"tabId": "apple","label": "Apple", "placeholderValue": "apple"},
+      {"tabId": "orange","label": "Orange", "placeholderValue": "orange"},
+      {"tabId": "pear","label": "Pear", "placeholderValue": "pear"}
+    ]
+  }
+]
+```
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | string | **Yes** | The unique identifier for the variable. Must act as the key for interpolation (e.g., `api_key`). |
-| `settings-label` | string | No | The human-readable label shown in the Settings Widget. Defaults to the `name` if omitted. |
-| `default-value` | string | No | The initial value to display if the user hasn't entered anything yet. |
-| `settings-hint` | string | No | The ghost text shown inside the input box in the Settings Widget to guide the user. |
+<box>
+    
+#### Live Demo
+
+Double click a tab below to update the variable.
+
+<cv-tabgroup group-id="fruit">
+    <cv-tab tab-id="apple"> I love apples. </cv-tab>
+    <cv-tab tab-id="orange"> I love oranges. </cv-tab>
+    <cv-tab tab-id="pear"> I love pears. </cv-tab>
+</cv-tabgroup>
+
+[[ fruit ]]
+
+My favourite fruit is `[[fruit]]`, and it updates automatically!
+
+
+</box>
+
 
 ## Persistence
 
@@ -130,12 +159,4 @@ Values entered by the user are saved in the browser's `localStorage` (key: `cv-u
 2. Values persist when navigating between different pages of the documentation.
 
 
-## Future Implementations?
 
-Future directions for this component:
-
-* Being able to define it through central json
-* Support dynamic rendering:
-    * Note that current implementation The DomScanner.scanAndHydrate is called during initialization without considering that dynamic content may be added later (e.g., via client-side rendering, lazy loading, or navigation). If placeholders are present in dynamically loaded content, they won't be processed. Consider providing a way to re-scan or automatically detect newly added content.
-* Better UI?
-* More intuitive author syntax?

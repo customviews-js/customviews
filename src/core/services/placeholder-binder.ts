@@ -14,6 +14,7 @@ export const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/g;
 const VAR_TESTER = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/;
 
 import { placeholderRegistryStore } from '../stores/placeholder-registry-store.svelte';
+import { store } from '../stores/main-store.svelte';
 
 export class PlaceholderBinder {
   /**
@@ -108,6 +109,9 @@ export class PlaceholderBinder {
              if (fallback) span.dataset.fallback = fallback;
              span.textContent = fullMatch; // Will be hydrated later
              fragment.appendChild(span);
+
+             // Register detection
+             if (name) store.registerPlaceholder(name);
         }
 
         lastIndex = VAR_REGEX.lastIndex;
@@ -140,6 +144,16 @@ export class PlaceholderBinder {
 
       if (hasBindings) {
           el.dataset.cvAttrTemplates = JSON.stringify(templates);
+
+          const matcher = new RegExp(VAR_REGEX.source, 'g');           
+          Object.values(templates).forEach(tmpl => {
+             let match;
+             while ((match = matcher.exec(tmpl)) !== null) {
+                 if (!match[1] && match[2]) {
+                    store.registerPlaceholder(match[2]);
+                 }
+             }
+          });
       }
   }
 
@@ -187,7 +201,7 @@ export class PlaceholderBinder {
         const userVal = values[name];
         
         // Look up registry definition
-        const def = placeholderRegistryStore.definitions.find(d => d.name === name);
+        const def = placeholderRegistryStore.get(name);
         const registryDefault = def?.defaultValue;
 
         if (userVal !== undefined && userVal !== '') {

@@ -1,6 +1,8 @@
 import { SvelteSet } from 'svelte/reactivity';
-import type { Config, State } from "../../types/types";
+import type { Config, State, TabGroupConfig } from "../../types/types";
 import type { AssetsManager } from "../managers/assets-manager";
+import { placeholderValueStore } from "./placeholder-value-store.svelte";
+import { placeholderRegistryStore } from "./placeholder-registry-store.svelte";
 
 
 /**
@@ -38,6 +40,12 @@ export class DataStore {
      * Used to filter the `menuTabGroups` list.
      */
     detectedTabGroups = $state<SvelteSet<string>>(new SvelteSet());
+
+    /**
+     * Registry of placeholder names that are currently present in the DOM.
+     * Used to filter `isLocal` placeholders in settings.
+     */
+    detectedPlaceholders = $state<SvelteSet<string>>(new SvelteSet());
 
     /**
      * Controls the visibility of the tab navigation headers globally.
@@ -93,6 +101,7 @@ export class DataStore {
     setPinnedTab(groupId: string, tabId: string) {
         if (!this.state.tabs) this.state.tabs = {};
         this.state.tabs[groupId] = tabId;
+        this.updatePlaceholderFromTabInput(groupId, tabId);
     }
 
     /**
@@ -143,6 +152,20 @@ export class DataStore {
      */
     registerTabGroup(id: string) {
         this.detectedTabGroups.add(id);
+
+        // Register corresponding placeholder if defined
+        const groupConfig = this.config.tabGroups?.find(g => g.groupId === id);
+        if (!groupConfig) return;
+
+        this.registerPlaceholderFromGroup(groupConfig);
+    }
+
+    /**
+     * Registers a placeholder variable as active on the current page.
+     * @param name The name of the placeholder found in the DOM.
+     */
+    registerPlaceholder(name: string) {
+        this.detectedPlaceholders.add(name);
     }
 
     /**
@@ -152,6 +175,11 @@ export class DataStore {
     clearRegistry() {
         this.detectedToggles.clear();
         this.detectedTabGroups.clear();
+        this.detectedPlaceholders.clear();
+    }
+
+    clearDetectedPlaceholders() {
+        this.detectedPlaceholders.clear();
     }
 
     /**
@@ -162,6 +190,40 @@ export class DataStore {
     }
 
     // --- Helpers ---
+
+    private registerPlaceholderFromGroup(groupConfig: TabGroupConfig) {
+        if (!groupConfig.placeholderId) return;
+
+        // Check if already registered (e.g. from customviews.config.json or another source)
+        if (placeholderRegistryStore.has(groupConfig.placeholderId)) return;
+
+        placeholderRegistryStore.register({
+            name: groupConfig.placeholderId,
+            settingsLabel: groupConfig.label ?? groupConfig.groupId,
+            hiddenFromSettings: true,
+        });
+
+        // Initial Sync: If we have an active tab for this group, sync placeholder value immediately
+        const activeTabId = this.state.tabs?.[groupConfig.groupId];
+        if (activeTabId) {
+            this.updatePlaceholderFromTabInput(groupConfig.groupId, activeTabId);
+        }
+    }
+
+    private updatePlaceholderFromTabInput(groupId: string, tabId: string) {
+        const groupConfig = this.config.tabGroups?.find(g => g.groupId === groupId);
+
+        if (!groupConfig || !groupConfig.placeholderId) return;
+        
+        if (!placeholderRegistryStore.has(groupConfig.placeholderId)) return;
+
+        const tabConfig = groupConfig.tabs.find(t => t.tabId === tabId);
+
+        if (!tabConfig || !tabConfig.placeholderValue) return;
+
+        placeholderValueStore.set(groupConfig.placeholderId, tabConfig.placeholderValue);
+    }
+
     public computeDefaultState(): State {
         const shownToggles: string[] = [];
         const peekToggles: string[] = [];
@@ -226,5 +288,12 @@ export function initStore(config: Config): DataStore {
     store.state.peekToggles = newState.peekToggles ?? [];
     store.state.tabs = newState.tabs ?? {};
     
+    // Process Global Placeholders from Config
+    if (config.placeholders) {
+        config.placeholders.forEach(def => {
+            placeholderRegistryStore.register(def);
+        });
+    }
+
     return store;
 }

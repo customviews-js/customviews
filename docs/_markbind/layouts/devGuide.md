@@ -11,6 +11,7 @@
 * [Framework]({{baseUrl}}/devGuide/framework.html)
 * [Git Workflow]({{baseUrl}}/devGuide/gitWorkflow.html)
 * [Making Releases]({{baseUrl}}/devGuide/releases.html)
+* [How Components Work]({{baseUrl}}/devGuide/componentWorkings.html)
 * Tests
   * [Local Components]({{baseUrl}}/devGuide/tests/localComponents.html)
   * [Test Tabs]({{baseUrl}}/devGuide/tests/tabs.html)

@@ -632,11 +632,31 @@ The TabConfig object is for defining tabs in JSON configuration.
 | `label` | string | - | Display label for the tab (used in settings and as fallback for header). |
 
 
-
 <box type="info">
 
 **Note:** Configuration is completely optional. Tab groups will work fine without being added to the config file—they'll just default to showing the first tab and won't appear in the settings.
 </box>
+
+### Binding to Placeholders
+
+You can bind a tab group to a placeholder variable. Selecting a tab will automatically set the variable's value.
+
+| Name | Type | Description |
+|------|------|-------------|
+| `placeholderId` | string | Added to `TabGroupConfig`. The name of the placeholder variable to update. |
+| `placeholderValue` | string | Added to `TabConfig`. The value to set when this tab is active. |
+
+**Example:**
+```json
+{
+  "groupId": "code-switch",
+  "placeholderId": "lang",
+  "tabs": [
+    { "tabId": "java", "label": "Java", "placeholderValue": "java" },
+    { "tabId": "python", "label": "Python", "placeholderValue": "python" }
+  ]
+}
+```
 
 
 # Global vs. Local Tab Groups
