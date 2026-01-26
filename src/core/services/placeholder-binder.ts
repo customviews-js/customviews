@@ -19,8 +19,6 @@ import { store } from '../stores/main-store.svelte';
 export class PlaceholderBinder {
   /**
    * Scans the root element for text nodes containing variable placeholders.
-   * Replaces them with <span class="cv-var" data-name="...">...</span>.
-   * 
    * Also scans for elements with .cv-bind or [data-cv-bind] to setup attribute bindings.
    */
   static scanAndHydrate(root: HTMLElement) {
@@ -29,11 +27,11 @@ export class PlaceholderBinder {
   }
 
   /**
-   * Updates all <span class="cv-var"> elements with new values.
-   * Also updates attributes on elements with [data-cv-attr-templates].
+   * Updates attribute bindings for all elements participating in placeholder binding.
+   * Specifically updates attributes on elements with [data-cv-attr-templates].
+   * Text content is updated separately via <cv-placeholder> component reactivity.
    */
   static updateAll(values: Record<string, string>) {
-    // Note: Text nodes update themselves via <cv-placeholder> reactivity
     this.updateAttributeBindings(values);
   }
 
@@ -100,18 +98,18 @@ export class PlaceholderBinder {
         }
 
         if (escape) {
-             // If escaped, append the text without the backslash
-             // fullMatch matches '\[[...]]', slice(1) gives '[[...]]'
-             fragment.appendChild(document.createTextNode(fullMatch.slice(1)));
+            // If escaped, append the text without the backslash
+            // fullMatch matches '\[[...]]', slice(1) gives '[[...]]'
+            fragment.appendChild(document.createTextNode(fullMatch.slice(1)));
         } else {
-             // Create Placeholder Custom Element
-             const el = document.createElement('cv-placeholder');
-             el.setAttribute('name', name);
-             if (fallback) el.setAttribute('fallback', fallback);
-             fragment.appendChild(el);
+            // Create Placeholder Custom Element
+            const el = document.createElement('cv-placeholder');
+            el.setAttribute('name', name);
+            if (fallback) el.setAttribute('fallback', fallback);
+            fragment.appendChild(el);
 
-             // Register detection
-             if (name) store.registerPlaceholder(name);
+            // Register detection
+            store.registerPlaceholder(name);
         }
 
         lastIndex = VAR_REGEX.lastIndex;
@@ -147,6 +145,7 @@ export class PlaceholderBinder {
 
           const matcher = new RegExp(VAR_REGEX.source, 'g');           
           Object.values(templates).forEach(tmpl => {
+             matcher.lastIndex = 0; // Reset regex state for each template
              let match;
              while ((match = matcher.exec(tmpl)) !== null) {
                  if (!match[1] && match[2]) {

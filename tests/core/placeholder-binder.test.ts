@@ -45,8 +45,7 @@ describe('PlaceholderBinder', () => {
         it('should hydrate text nodes with placeholders', () => {
             container.innerHTML = '<p>Hello [[name]]!</p>';
             PlaceholderBinder.scanAndHydrate(container);
-            
-            const p = container.querySelector('p')!;
+
             const el = container.querySelector('cv-placeholder') as HTMLElement;
             expect(el).not.toBeNull();
             expect(el.getAttribute('name')).toBe('name');
@@ -90,7 +89,6 @@ describe('PlaceholderBinder', () => {
 
     describe('updateAll', () => {
         // Note: updateAll no longer updates text nodes directly.
-        // That responsbility is moved to the cv-placeholder component's internal reactivity.
         // Therefore there is no test here for text update.
 
         it('should update attributes with URI encoding for href', () => {

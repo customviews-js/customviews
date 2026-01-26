@@ -42,7 +42,7 @@ Refer to individual components for more details on each configuration option.
 
 
 * Tab Group Configuration Settings, see [here](./components/tabs.md#configuration)
-* Toggle Configuration Settings, see [here](./componenxts/toggles.md#configuration)
+* Toggle Configuration Settings, see [here](./components/toggles.md#configuration)
 * Placeholder Configuration Settings, see [here](./components/placeholders.md#configuration)
 
 
