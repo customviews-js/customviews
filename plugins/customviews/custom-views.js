@@ -1,5 +1,5 @@
 /*!
- * @customviews-js/customviews v1.5.1-beta.1
+ * @customviews-js/customviews v1.6.0
  * (c) 2026 Chan Ger Teck
  * Released under the MIT License.
  */
@@ -9162,12 +9162,76 @@
 		}
 	}
 
+	/**
+	 * Calculates the height of a fixed or sticky header, if present.
+	 * This is used to offset scroll positions so content isn't hidden behind the header.
+	 */
+	function getHeaderOffset() {
+	    const headerEl = document.querySelector('header');
+	    if (!headerEl)
+	        return 0;
+	    const headerStyle = window.getComputedStyle(headerEl);
+	    const isHeaderFixedOrSticky = ['fixed', 'sticky'].includes(headerStyle.position);
+	    return isHeaderFixedOrSticky ? headerEl.getBoundingClientRect().height : 0;
+	}
+	/**
+	 * Finds the highest element matching the selector that is currently in the viewport.
+	 * @param selector The CSS selector to match elements against.
+	 * @returns The HTMLElement of the highest visible element, or null if none are found.
+	 */
+	function findHighestVisibleElement(selector) {
+	    const headerOffset = getHeaderOffset();
+	    const contentTop = headerOffset; // Viewport-relative position where content begins.
+	    // 1. Find all matching elements, filtering out any inside the main header (if fixed/sticky).
+	    const allElements = Array.from(document.querySelectorAll(selector));
+	    const headerEl = document.querySelector('header');
+	    const candidateElements = allElements.filter(el => {
+	        // If header is sticky/fixed, ignore elements inside it to avoid false positives
+	        if (headerOffset > 0 && headerEl && el.closest('header') === headerEl) {
+	            return false;
+	        }
+	        return true;
+	    });
+	    // 2. Find the highest element visible in the content area.
+	    let highestVisibleEl = null;
+	    let highestVisibleTop = Infinity;
+	    for (const el of candidateElements) {
+	        const rect = el.getBoundingClientRect();
+	        // Visible if not completely above content area and not completely below viewport
+	        const isVisibleInContentArea = rect.bottom > contentTop && rect.top < window.innerHeight;
+	        if (isVisibleInContentArea) {
+	            // We want the one closest to the top
+	            if (rect.top < highestVisibleTop) {
+	                highestVisibleEl = el;
+	                highestVisibleTop = rect.top;
+	            }
+	        }
+	    }
+	    return highestVisibleEl;
+	}
+	/**
+	 * Scrolls the page to align the element to the top of the viewport,
+	 * accounting for fixed/sticky headers and adding some padding.
+	 * @param element The element to scroll to.
+	 */
+	function scrollToElement(element) {
+	    const headerOffset = getHeaderOffset();
+	    const PADDING_BELOW_HEADER = 20;
+	    const targetElementRect = element.getBoundingClientRect();
+	    const scrollTargetY = targetElementRect.top + window.scrollY;
+	    const finalScrollY = scrollTargetY - headerOffset - PADDING_BELOW_HEADER;
+	    window.scrollTo({
+	        top: finalScrollY,
+	        behavior: 'smooth',
+	    });
+	}
+
 	var root_1$a = from_html(`<div class="cv-highlight-box svelte-1fie5i7"></div> <div> </div>`, 1);
 	var root$b = from_html(`<div class="cv-highlight-overlay svelte-1fie5i7"></div>`);
 
 	const $$css$g = {
 		hash: 'svelte-1fie5i7',
-		code: '.cv-highlight-overlay.svelte-1fie5i7 {position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:8000;overflow:visible;}.cv-highlight-box.svelte-1fie5i7 {position:absolute;border:4px solid #d13438;box-shadow:0 0 0 4px rgba(209, 52, 56, 0.2);pointer-events:none;}.cv-highlight-arrow.svelte-1fie5i7 {position:absolute;font-size:30px;color:#d13438;font-weight:bold;width:30px;height:30px;line-height:30px;text-align:center;}.cv-highlight-arrow.left.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowLeft 1.5s infinite;}.cv-highlight-arrow.right.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowRight 1.5s infinite;}.cv-highlight-arrow.top.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowTop 1.5s infinite;}.cv-highlight-arrow.bottom.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowBottom 1.5s infinite;}\n\n  @keyframes svelte-1fie5i7-floatArrowLeft {\n      0%, 100% { transform: translateX(0); }\n      50% { transform: translateX(-10px); }\n  }\n  @keyframes svelte-1fie5i7-floatArrowRight {\n      0%, 100% { transform: translateX(0); }\n      50% { transform: translateX(10px); }\n  }\n  @keyframes svelte-1fie5i7-floatArrowTop {\n      0%, 100% { transform: translate(-50%, 0); }\n      50% { transform: translate(-50%, -10px); }\n  }\n  @keyframes svelte-1fie5i7-floatArrowBottom {\n      0%, 100% { transform: translate(-50%, 0); }\n      50% { transform: translate(-50%, 10px); }\n  }'
+		code: '.cv-highlight-overlay.svelte-1fie5i7 {position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:8000;overflow:visible;}.cv-highlight-box.svelte-1fie5i7 {position:absolute;border:4px solid #d13438;\n    /* Layer 1: Sharp/Close, Layer 2: Soft/Deep */box-shadow:0 5px 10px rgba(0, 0, 0, 0.1), \n      0 15px 35px rgba(0, 0, 0, 0.15);pointer-events:none;}.cv-highlight-arrow.svelte-1fie5i7 {position:absolute;font-size:30px;color:#d13438;font-weight:bold;width:30px;height:30px;line-height:30px;text-align:center;filter:drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));}.cv-highlight-arrow.left.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowLeft 1.5s infinite;}.cv-highlight-arrow.right.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowRight 1.5s infinite;}.cv-highlight-arrow.top.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowTop 1.5s infinite;}.cv-highlight-arrow.bottom.svelte-1fie5i7 { animation: svelte-1fie5i7-floatArrowBottom 1.5s infinite;}\n\n  @keyframes svelte-1fie5i7-floatArrowLeft {\n      0%, 100% { transform: translateX(0); }\n      50% { transform: translateX(-10px); }\n  }\n  @keyframes svelte-1fie5i7-floatArrowRight {\n      0%, 100% { transform: translateX(0); }\n      50% { transform: translateX(10px); }\n  }\n  @keyframes svelte-1fie5i7-floatArrowTop {\n      0%, 100% { transform: translate(-50%, 0); }\n      50% { transform: translate(-50%, -10px); }\n  }\n  @keyframes svelte-1fie5i7-floatArrowBottom {\n      0%, 100% { transform: translate(-50%, 0); }\n      50% { transform: translate(-50%, 10px); }\n  }'
 	};
 
 	function HighlightOverlay($$anchor, $$props) {
@@ -9329,16 +9393,16 @@
 			window.addEventListener('resize', this.onWindowResize);
 			this.renderHighlightOverlay();
 
-			// Scroll first target into view
+			// Scroll first target into view with header offset awareness
 			const firstTarget = targets[0];
 
 			if (firstTarget) {
-				setTimeout(
-					() => {
-						firstTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
-					},
-					100
-				);
+				// Use double-RAF to ensure layout stability (e.g. Svelte updates, animations)
+				requestAnimationFrame(() => {
+					requestAnimationFrame(() => {
+						scrollToElement(firstTarget);
+					});
+				});
 			}
 		}
 
@@ -9860,13 +9924,94 @@
 		}
 	}
 
+	/* placeholder-value-store.svelte.ts generated by Svelte v5.46.1 */
+
+	const STORAGE_KEY = 'cv-user-variables';
+
+	class PlaceholderValueStore {
+		#values = state(proxy({}));
+
+		get values() {
+			return get(this.#values);
+		}
+
+		set values(value) {
+			set(this.#values, value, true);
+		}
+
+		constructor() {
+			this.load();
+		}
+
+		load() {
+			try {
+				const stored = localStorage.getItem(STORAGE_KEY);
+
+				if (stored) {
+					this.values = JSON.parse(stored);
+				}
+			} catch(e) {
+				console.warn('[CustomViews] Failed to load user variables:', e);
+			}
+		}
+
+		persist() {
+			try {
+				localStorage.setItem(STORAGE_KEY, JSON.stringify(this.values));
+			} catch(e) {
+				console.warn('[CustomViews] Failed to save user variables:', e);
+			}
+		}
+
+		getValue(name) {
+			return this.values[name];
+		}
+
+		set(name, value) {
+			this.values[name] = value;
+		}
+	}
+
+	const placeholderValueStore = new PlaceholderValueStore();
+
+	/* placeholder-registry-store.svelte.ts generated by Svelte v5.46.1 */
+
+	class PlaceholderRegistryStore {
+		#definitions = state(proxy([]));
+
+		get definitions() {
+			return get(this.#definitions);
+		}
+
+		set definitions(value) {
+			set(this.#definitions, value, true);
+		}
+
+		register(def) {
+			const existingIndex = this.definitions.findIndex((d) => d.name === def.name);
+
+			if (existingIndex !== -1) {
+				// Access proxy value to compare
+				const existing = this.definitions[existingIndex];
+
+				if (existing && (existing.settingsLabel !== def.settingsLabel || existing.settingsHint !== def.settingsHint || existing.defaultValue !== def.defaultValue)) {
+					this.definitions[existingIndex] = def;
+				}
+			} else {
+				this.definitions.push(def);
+			}
+		}
+	}
+
+	const placeholderRegistryStore = new PlaceholderRegistryStore();
+
 	/* main-store.svelte.ts generated by Svelte v5.46.1 */
 
 	class DataStore {
 		#config = /**
-		 * Static configuration loaded at startup.
-		 * Contains definitions for toggles, tab groups, and defaults.
-		 */
+		     * Static configuration loaded at startup.
+		     * Contains definitions for toggles, tab groups, and defaults.
+		     */
 		state(proxy({}));
 
 		get config() {
@@ -9991,6 +10136,17 @@
 			if (!this.state.tabs) this.state.tabs = {};
 
 			this.state.tabs[groupId] = tabId;
+
+			// Sync to placeholder if configured
+			const groupConfig = this.config.tabGroups?.find((g) => g.groupId === groupId);
+
+			if (groupConfig?.placeholderId) {
+				const tabConfig = groupConfig.tabs.find((t) => t.tabId === tabId);
+
+				if (tabConfig?.placeholderValue) {
+					placeholderValueStore.set(groupConfig.placeholderId, tabConfig.placeholderValue);
+				}
+			}
 		}
 
 		/**
@@ -10041,6 +10197,29 @@
 		 */
 		registerTabGroup(id) {
 			this.detectedTabGroups.add(id);
+
+			// Register corresponding placeholder if defined
+			const groupConfig = this.config.tabGroups?.find((g) => g.groupId === id);
+
+			if (groupConfig?.placeholderId) {
+				placeholderRegistryStore.register({
+					name: groupConfig.placeholderId,
+					settingsLabel: groupConfig.label ?? id
+				});
+
+				// Initial Sync: If we have an active tab for this group, sync its value immediately
+				const activeTabId = this.state.tabs?.[id];
+
+				if (activeTabId) {
+					const tabConfig = groupConfig.tabs.find((t) => t.tabId === activeTabId);
+
+					// Only set if we have a value and the placeholder store doesn't (to respect user overrides if any, though store.set overwrites anyway)
+					// Actually, tab selection should be authoritative for binding.
+					if (tabConfig?.placeholderValue) {
+						placeholderValueStore.set(groupConfig.placeholderId, tabConfig.placeholderValue);
+					}
+				}
+			}
 		}
 
 		/**
@@ -10122,84 +10301,6 @@
 		return store;
 	}
 
-	/* placeholder-value-store.svelte.ts generated by Svelte v5.46.1 */
-
-	const STORAGE_KEY = 'cv-user-variables';
-
-	class PlaceholderValueStore {
-		#values = state(proxy({}));
-
-		get values() {
-			return get(this.#values);
-		}
-
-		set values(value) {
-			set(this.#values, value, true);
-		}
-
-		constructor() {
-			this.load();
-		}
-
-		load() {
-			try {
-				const stored = localStorage.getItem(STORAGE_KEY);
-
-				if (stored) {
-					this.values = JSON.parse(stored);
-				}
-			} catch(e) {
-				console.warn('[CustomViews] Failed to load user variables:', e);
-			}
-		}
-
-		persist() {
-			try {
-				localStorage.setItem(STORAGE_KEY, JSON.stringify(this.values));
-			} catch(e) {
-				console.warn('[CustomViews] Failed to save user variables:', e);
-			}
-		}
-
-		getValue(name) {
-			return this.values[name];
-		}
-
-		set(name, value) {
-			this.values[name] = value;
-		}
-	}
-
-	const placeholderValueStore = new PlaceholderValueStore();
-
-	/* placeholder-registry-store.svelte.ts generated by Svelte v5.46.1 */
-
-	class PlaceholderRegistryStore {
-		#definitions = state(proxy([]));
-
-		get definitions() {
-			return get(this.#definitions);
-		}
-
-		set definitions(value) {
-			set(this.#definitions, value, true);
-		}
-
-		register(def) {
-			console.log('[PlaceholderRegistryStore] Register called with:', def);
-
-			const existingIndex = this.definitions.findIndex((d) => d.name === def.name);
-
-			if (existingIndex !== -1) {
-				this.definitions[existingIndex] = def;
-			} else {
-				this.definitions.push(def);
-			}
-		}
-	}
-
-	const placeholderRegistryStore = new PlaceholderRegistryStore();
-
 	/**
 	 * DOM Scanner for Variable Interpolation
 	 *
@@ -10213,12 +10314,29 @@
 	const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/g;
 	// Non-global version for stateless testing
 	const VAR_TESTER = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/;
-	class DomScanner {
+	class PlaceholderBinder {
 	    /**
 	     * Scans the root element for text nodes containing variable placeholders.
 	     * Replaces them with <span class="cv-var" data-name="...">...</span>.
+	     *
+	     * Also scans for elements with .cv-bind or [data-cv-bind] to setup attribute bindings.
 	     */
 	    static scanAndHydrate(root) {
+	        this.scanTextNodes(root);
+	        this.scanAttributeBindings(root);
+	    }
+	    /**
+	     * Updates all <span class="cv-var"> elements with new values.
+	     * Also updates attributes on elements with [data-cv-attr-templates].
+	     */
+	    static updateAll(values) {
+	        this.updateTextNodes(values);
+	        this.updateAttributeBindings(values);
+	    }
+	    // =========================================================================
+	    // Scanning Logic
+	    // =========================================================================
+	    static scanTextNodes(root) {
 	        const textNodes = [];
 	        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
 	            acceptNode: (node) => {
@@ -10238,7 +10356,16 @@
 	        }
 	        // Process nodes
 	        textNodes.forEach(node => {
-	            DomScanner.processTextNode(node);
+	            PlaceholderBinder.processTextNode(node);
+	        });
+	    }
+	    static scanAttributeBindings(root) {
+	        // Attribute Scanning (Opt-in)
+	        const candidates = root.querySelectorAll('.cv-bind, [data-cv-bind]');
+	        candidates.forEach(el => {
+	            if (el instanceof HTMLElement) {
+	                PlaceholderBinder.processElementAttributes(el);
+	            }
 	        });
 	    }
 	    static processTextNode(textNode) {
@@ -10282,40 +10409,88 @@
 	            textNode.replaceWith(fragment);
 	        }
 	    }
-	    /**
-	     * Updates all <span class="cv-var"> elements with new values.
-	     */
-	    static updateAll(values) {
-	        // console.log('[DomScanner] updateAll called', { values, definitions: placeholderRegistryStore.definitions });
+	    static processElementAttributes(el) {
+	        if (el.dataset.cvAttrTemplates)
+	            return; // Already processed
+	        const templates = {};
+	        let hasBindings = false;
+	        // Iterate all attributes
+	        for (const attr of Array.from(el.attributes)) {
+	            if (attr.name.startsWith('data-cv'))
+	                continue; // Skip own attributes
+	            if (VAR_TESTER.test(attr.value)) {
+	                templates[attr.name] = attr.value;
+	                hasBindings = true;
+	            }
+	        }
+	        if (hasBindings) {
+	            el.dataset.cvAttrTemplates = JSON.stringify(templates);
+	        }
+	    }
+	    // =========================================================================
+	    // Update Logic
+	    // =========================================================================
+	    static updateTextNodes(values) {
 	        const spans = document.querySelectorAll('.cv-var');
 	        spans.forEach(span => {
 	            if (span instanceof HTMLElement) {
 	                const name = span.dataset.name;
 	                const fallback = span.dataset.fallback || '';
 	                if (name) {
-	                    // Priority:
-	                    // 1. User Value (Store)
-	                    // 2. Registry Default (from <cv-define-placeholder>)
-	                    // 3. Inline Fallback (from [[ var : fallback ]])
-	                    const userVal = values[name];
-	                    // Look up registry definition
-	                    // Accessing definitions here makes the calling effect reactive to registry changes
-	                    const def = placeholderRegistryStore.definitions.find(d => d.name === name);
-	                    const registryDefault = def?.defaultValue;
-	                    if (userVal !== undefined && userVal !== '') {
-	                        span.textContent = userVal;
-	                    }
-	                    else if (registryDefault !== undefined && registryDefault !== '') {
-	                        span.textContent = registryDefault;
-	                    }
-	                    else if (fallback) {
-	                        span.textContent = fallback;
-	                    }
-	                    else {
-	                        span.textContent = `[[${name}]]`;
-	                    }
+	                    const finalValue = PlaceholderBinder.resolveValue(name, fallback, values);
+	                    span.textContent = finalValue ?? `[[${name}]]`;
 	                }
 	            }
+	        });
+	    }
+	    static updateAttributeBindings(values) {
+	        const attrElements = document.querySelectorAll('[data-cv-attr-templates]');
+	        attrElements.forEach(el => {
+	            if (el instanceof HTMLElement) {
+	                try {
+	                    const templates = JSON.parse(el.dataset.cvAttrTemplates || '{}');
+	                    Object.entries(templates).forEach(([attrName, template]) => {
+	                        const newValue = PlaceholderBinder.interpolateString(template, values, attrName);
+	                        el.setAttribute(attrName, newValue);
+	                    });
+	                }
+	                catch (e) {
+	                    console.warn('Failed to parse cv-attr-templates', e);
+	                }
+	            }
+	        });
+	    }
+	    // =========================================================================
+	    // Resolution Helpers
+	    // =========================================================================
+	    static resolveValue(name, fallback, values) {
+	        const userVal = values[name];
+	        // Look up registry definition
+	        const def = placeholderRegistryStore.definitions.find(d => d.name === name);
+	        const registryDefault = def?.defaultValue;
+	        if (userVal !== undefined && userVal !== '') {
+	            return userVal;
+	        }
+	        else if (registryDefault !== undefined && registryDefault !== '') {
+	            return registryDefault;
+	        }
+	        else if (fallback) {
+	            return fallback;
+	        }
+	        return undefined;
+	    }
+	    static interpolateString(template, values, attrName) {
+	        return template.replace(VAR_REGEX, (_full, escape, name, fallback) => {
+	            if (escape)
+	                return `[[${name}]]`;
+	            let val = PlaceholderBinder.resolveValue(name, fallback, values);
+	            if (val === undefined)
+	                return `[[${name}]]`;
+	            // Auto-encode for URL attributes
+	            if (attrName && (attrName === 'href' || attrName === 'src')) {
+	                val = encodeURIComponent(val);
+	            }
+	            return val;
 	        });
 	    }
 	}
@@ -10387,7 +10562,7 @@
 			}
 
 			// Run initial scan (non-reactive)
-			DomScanner.scanAndHydrate(this.rootEl);
+			PlaceholderBinder.scanAndHydrate(this.rootEl);
 
 			// Setup Global Reactivity using $effect.root
 			this.destroyEffectRoot = effect_root(() => {
@@ -10408,7 +10583,7 @@
 
 				// Effect 3: React to Variable Changes
 				user_effect(() => {
-					DomScanner.updateAll(placeholderValueStore.values);
+					PlaceholderBinder.updateAll(placeholderValueStore.values);
 					placeholderValueStore.persist();
 				});
 			});
@@ -10759,6 +10934,9 @@
 
 		// Derive visibility from store state
 		let showState = user_derived(() => {
+			// Default to SHOWN if config hasn't loaded yet (prevent pop-in)
+			if (!store.config.toggles) return true;
+
 			const shownToggles = store.state.shownToggles ?? [];
 
 			return get(toggleIds).some((id) => shownToggles.includes(id));
@@ -12936,7 +13114,6 @@
 			// Copy to clipboard
 			navigator.clipboard.writeText(url.href).then(() => {
 				showToast('Link copied to clipboard!');
-				this.toggleActive(false);
 			}).catch(() => {
 				showToast('Failed to copy to clipboard');
 			});
@@ -13722,70 +13899,6 @@
 	}
 
 	delegate(['click']);
-
-	/**
-	 * Calculates the height of a fixed or sticky header, if present.
-	 * This is used to offset scroll positions so content isn't hidden behind the header.
-	 */
-	function getHeaderOffset() {
-	    const headerEl = document.querySelector('header');
-	    if (!headerEl)
-	        return 0;
-	    const headerStyle = window.getComputedStyle(headerEl);
-	    const isHeaderFixedOrSticky = ['fixed', 'sticky'].includes(headerStyle.position);
-	    return isHeaderFixedOrSticky ? headerEl.getBoundingClientRect().height : 0;
-	}
-	/**
-	 * Finds the highest element matching the selector that is currently in the viewport.
-	 * @param selector The CSS selector to match elements against.
-	 * @returns The HTMLElement of the highest visible element, or null if none are found.
-	 */
-	function findHighestVisibleElement(selector) {
-	    const headerOffset = getHeaderOffset();
-	    const contentTop = headerOffset; // Viewport-relative position where content begins.
-	    // 1. Find all matching elements, filtering out any inside the main header (if fixed/sticky).
-	    const allElements = Array.from(document.querySelectorAll(selector));
-	    const headerEl = document.querySelector('header');
-	    const candidateElements = allElements.filter(el => {
-	        // If header is sticky/fixed, ignore elements inside it to avoid false positives
-	        if (headerOffset > 0 && headerEl && el.closest('header') === headerEl) {
-	            return false;
-	        }
-	        return true;
-	    });
-	    // 2. Find the highest element visible in the content area.
-	    let highestVisibleEl = null;
-	    let highestVisibleTop = Infinity;
-	    for (const el of candidateElements) {
-	        const rect = el.getBoundingClientRect();
-	        // Visible if not completely above content area and not completely below viewport
-	        const isVisibleInContentArea = rect.bottom > contentTop && rect.top < window.innerHeight;
-	        if (isVisibleInContentArea) {
-	            // We want the one closest to the top
-	            if (rect.top < highestVisibleTop) {
-	                highestVisibleEl = el;
-	                highestVisibleTop = rect.top;
-	            }
-	        }
-	    }
-	    return highestVisibleEl;
-	}
-	/**
-	 * Scrolls the page to align the element to the top of the viewport,
-	 * accounting for fixed/sticky headers and adding some padding.
-	 * @param element The element to scroll to.
-	 */
-	function scrollToElement(element) {
-	    const headerOffset = getHeaderOffset();
-	    const PADDING_BELOW_HEADER = 20;
-	    const targetElementRect = element.getBoundingClientRect();
-	    const scrollTargetY = targetElementRect.top + window.scrollY;
-	    const finalScrollY = scrollTargetY - headerOffset - PADDING_BELOW_HEADER;
-	    window.scrollTo({
-	        top: finalScrollY,
-	        behavior: 'smooth',
-	    });
-	}
 
 	var root_1 = from_html(`<div class="cv-widget-root"><!> <!> <!> <!> <!> <!></div>`);
 

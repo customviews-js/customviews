@@ -44,10 +44,12 @@
         "1-define-the-placeholder": "1. Define the Placeholder",
         "2-use-the-placeholder": "2. Use the placeholder",
         "inline-fallback": "Inline Fallback",
+        "attribute-interpolation": "Attribute Interpolation",
+        "examples": "Examples",
         "escaping-syntax": "Escaping Syntax",
         "component-attributes": "Component Attributes",
         "persistence": "Persistence",
-        "future-implementations": "Future Implementations?"
+        "config-driven-binding": "Config-Driven Binding"
       },
       "headingKeywords": {}
     },
@@ -102,6 +104,7 @@
         "cv-tab-body-attributes": "&lt;cv-tab-body&gt; Attributes",
         "configuration": "Configuration",
         "json-configuration-option-types": "JSON Configuration Option Types",
+        "binding-to-placeholders": "Binding to Placeholders",
         "global-vs-local-tab-groups": "Global vs. Local Tab Groups",
         "defining-local-components": "Defining Local Components"
       },

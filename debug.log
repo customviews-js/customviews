@@ -1,0 +1,48 @@
+Pagefind logging initialized
+[Status]: [Walking source directory]
+[Info]: Found 29 files matching **/*.{html}
+[Status]: [Parsing files]
+[Info]: Did not find a data-pagefind-body element on the site.
+↳ Indexing all <body> elements on the site.
+[Warning]: 1 page found without an <html> element. 
+Pages without an outer <html> element will not be processed by default. 
+If adding this element is not possible, use the root selector config to target a different root element.
+[Warning]:   * "/devGuide/tests/cvtest._include_.html" has no <html> element
+[Status]: [Reading languages]
+[Info]: Discovered 1 language: unknown
+[Info]:   * unknown: 28 pages
+[Status]: [Building search indexes]
+[Info]: Language unknown: 
+  Indexed 28 pages
+  Indexed 1903 words
+  Indexed 0 filters
+  Indexed 0 sorts
+
+[Info]: Total: 
+  Indexed 1 language
+  Indexed 28 pages
+  Indexed 1903 words
+  Indexed 0 filters
+  Indexed 0 sorts
+[Info]: Did not find a data-pagefind-body element on the site.
+↳ Indexing all <body> elements on the site.
+[Warning]: 1 page found without an <html> element. 
+Pages without an outer <html> element will not be processed by default. 
+If adding this element is not possible, use the root selector config to target a different root element.
+[Warning]:   * "/devGuide/tests/cvtest._include_.html" has no <html> element
+[Status]: [Reading languages]
+[Info]: Discovered 1 language: unknown
+[Info]:   * unknown: 28 pages
+[Status]: [Building search indexes]
+[Info]: Language unknown: 
+  Indexed 28 pages
+  Indexed 1903 words
+  Indexed 0 filters
+  Indexed 0 sorts
+
+[Info]: Total: 
+  Indexed 1 language
+  Indexed 28 pages
+  Indexed 1903 words
+  Indexed 0 filters
+  Indexed 0 sorts
