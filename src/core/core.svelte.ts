@@ -7,7 +7,7 @@ import { URLStateManager } from "./state/url-state-manager";
 import { FocusService } from "./services/focus-service.svelte";
 import { DataStore, initStore } from "./stores/main-store.svelte";
 import { placeholderValueStore } from "./stores/placeholder-value-store.svelte";
-import { DomScanner } from "./utils/dom-scanner";
+import { PlaceholderBinder } from "./services/placeholder-binder";
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -85,7 +85,7 @@ export class CustomViewsCore {
     }
     
     // Run initial scan (non-reactive)
-    DomScanner.scanAndHydrate(this.rootEl);
+    PlaceholderBinder.scanAndHydrate(this.rootEl);
     
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
@@ -106,7 +106,7 @@ export class CustomViewsCore {
 
         // Effect 3: React to Variable Changes
         $effect(() => {
-            DomScanner.updateAll(placeholderValueStore.values);
+            PlaceholderBinder.updateAll(placeholderValueStore.values);
             placeholderValueStore.persist();
         });
     });

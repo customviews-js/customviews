@@ -60,6 +60,50 @@ Contact us at [[ email : support@example.com ]]
 
 If the user has not set a value for `email`, "support@example.com" will be displayed.
 
+## Attribute Interpolation
+
+In addition to text, you can interpolate variables into HTML attributes, such as `href` or `src`. This is useful for creating dynamic links or loading images based on user preferences.
+
+**Requirements:**
+1. You must use standard HTML syntax (e.g., `<a href="...">`) rather than Markdown links.
+2. You must add the `class="cv-bind"` (or `data-cv-bind`) attribute to the element. This signals the system to scan the element's attributes.
+
+### Examples
+
+
+**Dynamic Query Parameter:**
+
+```html
+<!-- Define the variable -->
+<cv-define-placeholder name="query" default-value="docs" settings-label="Search Query" />
+
+<!-- Use it in a link -->
+<a href="https://www.google.com/search?q=[[query]]" class="cv-bind">
+  Search Google for '[[query]]'
+</a>
+```
+
+<cv-define-placeholder name="query" default-value="docs" settings-label="Search Query" />
+
+<!-- Use it in a link -->
+<a href="https://www.google.com/search?q=[[query]]" class="cv-bind">
+  Search Google for '[[query]]'
+</a>
+
+<br>
+<br>
+
+If the user sets `search` to `hello world`, the link becomes `https://www.google.com/search?q=hello%20world`.
+
+> [!NOTE]
+> **Automatic Encoding**: Variables used in `href` and `src` attributes are automatically URL-encoded using `encodeURIComponent` to ensure valid URLs.
+
+**Dynamic Image Source:**
+
+```html
+<img src="https://example.com/assets/[[theme]].png" class="cv-bind" alt="Theme Preview" />
+```
+
 ## Escaping Syntax
 
 You can "escape" the placeholder syntax if you want to display the literal brackets instead of a variable.
