@@ -148,6 +148,14 @@ export class CustomViewsCore {
    * Processes a newly added DOM node to check for and hydrate placeholders.
    */
   private handleForPlaceholders(node: Node) {
+      // Skip our own custom elements to avoid unnecessary scanning
+      if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement;
+          if (el.tagName === 'CV-PLACEHOLDER' || el.tagName === 'CV-PLACEHOLDER-INPUT') {
+              return;
+          }
+      }
+
       // Case 1: A new HTML element was added (e.g. via innerHTML or appendChild).
       // Recursively scan inside for any new placeholders.
       if (node.nodeType === Node.ELEMENT_NODE) {

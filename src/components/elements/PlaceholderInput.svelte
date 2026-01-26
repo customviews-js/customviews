@@ -24,6 +24,9 @@
     return def?.settingsHint || '';
   });
 
+  // Sanitize name for use in HTML IDs (remove/replace invalid characters)
+  let sanitizedId = $derived(name.replace(/[^a-zA-Z0-9_-]/g, '_'));
+
   function handleInput(e: Event) {
     const target = e.target as HTMLInputElement;
     placeholderValueStore.set(name, target.value);
@@ -32,10 +35,10 @@
 
 <div class="cv-input-wrapper">
   {#if effectiveLabel}
-    <label class="variable-label" for="cv-input-{name}">{effectiveLabel}</label>
+    <label class="variable-label" for="cv-input-{sanitizedId}">{effectiveLabel}</label>
   {/if}
   <input 
-      id="cv-input-{name}"
+      id="cv-input-{sanitizedId}"
       class="variable-input"
       type="text" 
       placeholder={effectiveHint}

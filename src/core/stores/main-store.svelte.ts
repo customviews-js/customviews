@@ -219,9 +219,10 @@ export class DataStore {
 
         const tabConfig = groupConfig.tabs.find(t => t.tabId === tabId);
 
-        if (!tabConfig || !tabConfig.placeholderValue) return;
+        if (!tabConfig) return;
 
-        placeholderValueStore.set(groupConfig.placeholderId, tabConfig.placeholderValue);
+        const placeholderValue = tabConfig.placeholderValue ?? "";
+        placeholderValueStore.set(groupConfig.placeholderId, placeholderValue);
     }
 
     public computeDefaultState(): State {

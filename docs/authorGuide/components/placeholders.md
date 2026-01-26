@@ -58,7 +58,7 @@ If the user has not set a value for `email`, "support@example.com" will be displ
 
 ### Manual Component Usage
 
-For more control, you can use  internal custom element directly:
+For more control, you can use the internal custom element directly:
 
 ```html
 <cv-placeholder name="email" fallback="support@example.com"></cv-placeholder>
@@ -107,7 +107,7 @@ If the user sets `searchQuery` to `hello world`, the link becomes `https://www.g
 
 ## Inline Editing
 
-You can allow users to edit placeholders directly on the page (without opening the settings menu) using the `<cv-input>` component.
+You can allow users to edit placeholders directly on the page (without opening the settings menu) using the `<cv-placeholder-input>` component.
 
 ```html
 <cv-placeholder-input name="username" label="Enter your username"></cv-placeholder-input>
@@ -140,6 +140,8 @@ You can "escape" the placeholder syntax if you want to display the literal brack
 
 - **In Markdown Text**: Use two backslashes `\\[[ variable ]]`.
 - **In Code Blocks**: Use one backslash `\[[ variable ]]`.
+
+## Tab Group Binding & Integration
 
 You can bind a **Tab Group** directly to a placeholder variable in your `customviews.config.json`. This allows the variable to update automatically when the user switches tabs.
 

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { PlaceholderBinder } from '../../src/core/services/placeholder-binder';
 
 // Mock main store
 vi.mock('../../src/core/stores/main-store.svelte', () => {
@@ -21,10 +22,6 @@ vi.mock('../../src/core/stores/placeholder-registry-store.svelte', () => {
         }
     };
 });
-
-import { PlaceholderBinder } from '../../src/core/services/placeholder-binder';
-// Import the mocked store if we need to manipulate it
-import { placeholderRegistryStore } from '../../src/core/stores/placeholder-registry-store.svelte';
 
 // Fix for Svelte modules if needed, but we are importing logic not components.
 

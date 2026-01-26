@@ -7,11 +7,11 @@
 
 // Regex to find [[ variable : fallback ]]
 // Group 1: escape character (backslashes)
-// Group 2: variable name
+// Group 2: variable name (alphanumeric, underscores, hyphens)
 // Group 3 (optional): fallback value
-export const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/g;
+export const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_-]+)(?:\s*:\s*(.*?))?\s*\]\]/g;
 // Non-global version for stateless testing
-const VAR_TESTER = /(\\)?\[\[\s*([a-zA-Z0-9_]+)(?:\s*:\s*(.*?))?\s*\]\]/;
+const VAR_TESTER = /(\\)?\[\[\s*([a-zA-Z0-9_-]+)(?:\s*:\s*(.*?))?\s*\]\]/;
 
 import { placeholderRegistryStore } from '../stores/placeholder-registry-store.svelte';
 import { store } from '../stores/main-store.svelte';
@@ -47,8 +47,8 @@ export class PlaceholderBinder {
         if (node.parentElement && ['SCRIPT', 'STYLE'].includes(node.parentElement.tagName)) {
             return NodeFilter.FILTER_REJECT;
         }
-        // Skip existing variables to prevent observer loops
-        if (node.parentElement && node.parentElement.classList.contains('cv-var')) {
+        // Skip existing placeholders to prevent observer loops
+        if (node.parentElement && node.parentElement.tagName === 'CV-PLACEHOLDER') {
             return NodeFilter.FILTER_REJECT;
         }
         return VAR_TESTER.test(node.nodeValue || '') ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
@@ -132,7 +132,10 @@ export class PlaceholderBinder {
 
       // Iterate all attributes
       for (const attr of Array.from(el.attributes)) {
-          if (attr.name.startsWith('data-cv')) continue; // Skip own attributes
+          // Skip only specific system attributes
+          if (attr.name === 'data-cv-bind' || attr.name === 'data-cv-attr-templates') {
+              continue;
+          }
           
           if (VAR_TESTER.test(attr.value)) {
               templates[attr.name] = attr.value;
