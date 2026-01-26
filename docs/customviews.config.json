@@ -46,7 +46,7 @@
       }
     ],
     "placeholders": [
-       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username" },
+       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username", "defaultValue": "Guest" },
        { "name": "searchQuery", "settingsLabel": "Search Query", "settingsHint": "Enter search query", "isLocal": true }
     ]
   },

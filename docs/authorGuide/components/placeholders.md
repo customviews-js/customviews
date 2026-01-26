@@ -105,7 +105,26 @@ If the user sets `searchQuery` to `hello world`, the link becomes `https://www.g
 <img src="https://example.com/assets/[[theme]].png" class="cv-bind" alt="Theme Preview" />
 ```
 
-### Configuration
+## Inline Editing
+
+You can allow users to edit placeholders directly on the page (without opening the settings menu) using the `<cv-input>` component.
+
+```html
+<cv-placeholder-input name="username" label="Enter your username"></cv-placeholder-input>
+```
+
+This component is fully two-way bound. Typing in it will instantly update all `[[username]]` occurrences on the page, and changing the value in the settings menu will update this input.
+
+**Example:**
+
+<cv-placeholder-input name="username" label="Who are you?" hint="Type here..."></cv-placeholder-input>
+
+Hello, [[ username : Guest ]]!
+
+Google search for <a href="https://www.google.com/search?q=[[username]]" class="cv-bind"> [[username]] </a>
+
+
+## Configuration
 
 | Field | Type | Description |
 |-------|------|-------------|
