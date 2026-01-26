@@ -56,6 +56,16 @@ Contact us at [[ email : support@example.com ]]
 
 If the user has not set a value for `email`, "support@example.com" will be displayed.
 
+### Manual Component Usage
+
+For more control, you can use  internal custom element directly:
+
+```html
+<cv-placeholder name="email" fallback="support@example.com"></cv-placeholder>
+```
+
+This is functionally equivalent to `[[ email : support@example.com ]]` but can be useful when you need to ensure the element exists in the DOM structurally or when working within other HTML constructs that might interfere with text scanning.
+
 ## Attribute Interpolation
 
 In addition to text, you can interpolate variables into HTML attributes, such as `href` or `src`. This is useful for creating dynamic links or loading images based on user preferences.

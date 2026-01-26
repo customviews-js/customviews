@@ -47,16 +47,18 @@ describe('PlaceholderBinder', () => {
             PlaceholderBinder.scanAndHydrate(container);
             
             const p = container.querySelector('p')!;
-            expect(p.innerHTML).toContain('<span class="cv-var" data-name="name">[[name]]</span>');
+            const el = container.querySelector('cv-placeholder') as HTMLElement;
+            expect(el).not.toBeNull();
+            expect(el.getAttribute('name')).toBe('name');
         });
 
         it('should handle fallback values', () => {
             container.innerHTML = '<p>Value: [[key : default]]</p>';
             PlaceholderBinder.scanAndHydrate(container);
             
-            const span = container.querySelector('.cv-var') as HTMLElement;
-            expect(span.dataset.name).toBe('key');
-            expect(span.dataset.fallback).toBe('default');
+            const el = container.querySelector('cv-placeholder') as HTMLElement;
+            expect(el.getAttribute('name')).toBe('key');
+            expect(el.getAttribute('fallback')).toBe('default');
         });
 
         it('should identify attribute bindings via .cv-bind class', () => {
@@ -87,15 +89,9 @@ describe('PlaceholderBinder', () => {
     });
 
     describe('updateAll', () => {
-        it('should update text placeholders', () => {
-            container.innerHTML = '<p>Hello [[user]]</p>';
-            PlaceholderBinder.scanAndHydrate(container);
-            
-            PlaceholderBinder.updateAll({ user: 'Alice' });
-            
-            const span = container.querySelector('.cv-var')!;
-            expect(span.textContent).toBe('Alice');
-        });
+        // Note: updateAll no longer updates text nodes directly.
+        // That responsbility is moved to the cv-placeholder component's internal reactivity.
+        // Therefore there is no test here for text update.
 
         it('should update attributes with URI encoding for href', () => {
             container.innerHTML = '<a href="https://search.com?q=[[term]]" class="cv-bind">Search</a>';
@@ -120,14 +116,6 @@ describe('PlaceholderBinder', () => {
              expect(div.getAttribute('data-value')).toBe('foo bar');
         });
 
-        it('should fallback correctly if value missing', () => {
-            container.innerHTML = '<span>[[missing : defaultVal]]</span>';
-            PlaceholderBinder.scanAndHydrate(container);
-            
-            PlaceholderBinder.updateAll({});
-            
-            const span = container.querySelector('.cv-var')!;
-            expect(span.textContent).toBe('defaultVal');
-        });
+
     });
 });

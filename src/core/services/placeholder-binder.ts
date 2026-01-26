@@ -33,7 +33,7 @@ export class PlaceholderBinder {
    * Also updates attributes on elements with [data-cv-attr-templates].
    */
   static updateAll(values: Record<string, string>) {
-    this.updateTextNodes(values);
+    // Note: Text nodes update themselves via <cv-placeholder> reactivity
     this.updateAttributeBindings(values);
   }
 
@@ -92,6 +92,8 @@ export class PlaceholderBinder {
         const [fullMatch, escape, name, fallback] = match;
         const index = match.index;
 
+        if (!name) continue;
+
         // Append text before match
         if (index > lastIndex) {
             fragment.appendChild(document.createTextNode(text.slice(lastIndex, index)));
@@ -102,13 +104,11 @@ export class PlaceholderBinder {
              // fullMatch matches '\[[...]]', slice(1) gives '[[...]]'
              fragment.appendChild(document.createTextNode(fullMatch.slice(1)));
         } else {
-             // Create Span
-             const span = document.createElement('span');
-             span.className = 'cv-var';
-             span.dataset.name = name;
-             if (fallback) span.dataset.fallback = fallback;
-             span.textContent = fullMatch; // Will be hydrated later
-             fragment.appendChild(span);
+             // Create Placeholder Custom Element
+             const el = document.createElement('cv-placeholder');
+             el.setAttribute('name', name);
+             if (fallback) el.setAttribute('fallback', fallback);
+             fragment.appendChild(el);
 
              // Register detection
              if (name) store.registerPlaceholder(name);
@@ -161,20 +161,7 @@ export class PlaceholderBinder {
   // Update Logic
   // =========================================================================
 
-  private static updateTextNodes(values: Record<string, string>) {
-    const spans = document.querySelectorAll('.cv-var');
-    spans.forEach(span => {
-       if (span instanceof HTMLElement) {
-           const name = span.dataset.name;
-           const fallback = span.dataset.fallback || '';
-           
-           if (name) {
-               const finalValue = PlaceholderBinder.resolveValue(name, fallback, values);
-               span.textContent = finalValue ?? `[[${name}]]`;
-           }
-       }
-    });
-  }
+  // No need for updateTextNodes as components handle themselves
 
   private static updateAttributeBindings(values: Record<string, string>) {
     const attrElements = document.querySelectorAll('[data-cv-attr-templates]');
