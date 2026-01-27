@@ -157,7 +157,7 @@ export class DataStore {
         const groupConfig = this.config.tabGroups?.find(g => g.groupId === id);
         if (!groupConfig) return;
 
-        this.registerPlaceholderFromGroup(groupConfig);
+        this.registerPlaceholderFromTabGroup(groupConfig);
     }
 
     /**
@@ -191,19 +191,43 @@ export class DataStore {
 
     // --- Helpers ---
 
-    private registerPlaceholderFromGroup(groupConfig: TabGroupConfig) {
+    private registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig) {
         if (!groupConfig.placeholderId) return;
 
-        // Check if already registered (e.g. from customviews.config.json or another source)
-        if (placeholderRegistryStore.has(groupConfig.placeholderId)) return;
+        const id = groupConfig.placeholderId;
+        const existing = placeholderRegistryStore.get(id);
 
+        if (existing) {
+            // Conflict Detection Logic
+            if (existing.source === 'config') {
+                console.warn(
+                    `[CustomViews] Tab group "${groupConfig.groupId}" is binding to placeholder "${id}", ` +
+                    `which is already explicitly defined in placeholders config. ` +
+                    `To avoid unexpected behavior, placeholders should have a single source of truth.`
+                );
+            } else if (existing.source === 'tabgroup' && existing.ownerTabGroupId !== groupConfig.groupId) {
+                console.warn(
+                    `[CustomViews] Multiple tab groups are binding to the same placeholderId: "${id}". ` +
+                    `Current group: "${groupConfig.groupId}", Existing group: "${existing.ownerTabGroupId}". ` +
+                    `This will cause race conditions as both groups compete for the same value.`
+                );
+            }
+            
+            // Strict Precedence: If the placeholder already exists, we do nothing.
+            // This ensures config definitions cannot be overwritten by tab groups.
+            return;
+        }
+
+        // Register new tab-bound placeholder
         placeholderRegistryStore.register({
-            name: groupConfig.placeholderId,
+            name: id,
             settingsLabel: groupConfig.label ?? groupConfig.groupId,
             hiddenFromSettings: true,
+            source: 'tabgroup',
+            ownerTabGroupId: groupConfig.groupId
         });
 
-        // Initial Sync: If we have an active tab for this group, sync placeholder value immediately
+        // Initial Sync: Ensures the store value matches the initial tab choice
         const activeTabId = this.state.tabs?.[groupConfig.groupId];
         if (activeTabId) {
             this.updatePlaceholderFromTabInput(groupConfig.groupId, activeTabId);
@@ -292,7 +316,10 @@ export function initStore(config: Config): DataStore {
     // Process Global Placeholders from Config
     if (config.placeholders) {
         config.placeholders.forEach(def => {
-            placeholderRegistryStore.register(def);
+            placeholderRegistryStore.register({
+                ...def,
+                source: 'config'
+            });
         });
     }
 

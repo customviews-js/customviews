@@ -6,6 +6,10 @@ export interface PlaceholderDefinition {
   hiddenFromSettings?: boolean | undefined;
   /** If true, this placeholder is only shown in settings if detected on the page */
   isLocal?: boolean | undefined;
+  /** Internal tracking of where this definition came from to detect conflicts */
+  source?: 'config' | 'tabgroup' | undefined;
+  /** The ID of the component (e.g. TabGroup groupId) that registered this placeholder */
+  ownerTabGroupId?: string | undefined;
 }
 
 export class PlaceholderRegistryStore {
