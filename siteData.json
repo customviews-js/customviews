@@ -41,15 +41,17 @@
       "headings": {
         "simple-placeholders-variable-interpolation": "Simple Placeholders (Variable Interpolation)",
         "usage": "Usage",
-        "1-define-the-placeholder": "1. Define the Placeholder",
-        "2-use-the-placeholder": "2. Use the placeholder",
+        "define-the-placeholder": "Define the Placeholder",
+        "use-the-placeholder": "Use the placeholder",
         "inline-fallback": "Inline Fallback",
+        "manual-component-usage": "Manual Component Usage",
         "attribute-interpolation": "Attribute Interpolation",
         "examples": "Examples",
+        "inline-editing": "Inline Editing",
+        "configuration": "Configuration",
         "escaping-syntax": "Escaping Syntax",
-        "component-attributes": "Component Attributes",
-        "persistence": "Persistence",
-        "config-driven-binding": "Config-Driven Binding"
+        "tab-group-binding-and-amp-integration": "Tab Group Binding &amp; Integration",
+        "persistence": "Persistence"
       },
       "headingKeywords": {}
     },
@@ -136,9 +138,6 @@
         "basic-structure": "Basic Structure",
         "summary-of-configuration-options": "Summary of Configuration Options",
         "core-configuration-config": "Core Configuration (config)",
-        "tab-group-configuration": "Tab Group Configuration",
-        "toggles-configuration": "Toggles Configuration",
-        "default-state-behavior": "Default State Behavior",
         "global-options": "Global Options",
         "settings-configuration-settings": "Settings Configuration (settings)",
         "script-tag-attributes": "Script Tag Attributes",
@@ -173,6 +172,15 @@
         "3-create-customviews-config-json": "3. Create customviews.config.json",
         "4-verify-installation": "4. Verify Installation",
         "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/componentWorkings.md",
+      "title": "Developer Guide - Components",
+      "headings": {
+        "how-do-the-components-work-rough-explanation": "How do the components work (rough explanation)",
+        "placeholders": "Placeholders"
       },
       "headingKeywords": {}
     },
