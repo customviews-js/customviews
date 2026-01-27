@@ -1,6 +1,8 @@
 import { SvelteSet } from 'svelte/reactivity';
-import type { Config, State } from "../../types/types";
+import type { Config, State, TabGroupConfig } from "../../types/types";
 import type { AssetsManager } from "../managers/assets-manager";
+import { placeholderValueStore } from "./placeholder-value-store.svelte";
+import { placeholderRegistryStore } from "./placeholder-registry-store.svelte";
 
 
 /**
@@ -38,6 +40,12 @@ export class DataStore {
      * Used to filter the `menuTabGroups` list.
      */
     detectedTabGroups = $state<SvelteSet<string>>(new SvelteSet());
+
+    /**
+     * Registry of placeholder names that are currently present in the DOM.
+     * Used to filter `isLocal` placeholders in settings.
+     */
+    detectedPlaceholders = $state<SvelteSet<string>>(new SvelteSet());
 
     /**
      * Controls the visibility of the tab navigation headers globally.
@@ -93,6 +101,7 @@ export class DataStore {
     setPinnedTab(groupId: string, tabId: string) {
         if (!this.state.tabs) this.state.tabs = {};
         this.state.tabs[groupId] = tabId;
+        this.updatePlaceholderFromTabInput(groupId, tabId);
     }
 
     /**
@@ -143,6 +152,20 @@ export class DataStore {
      */
     registerTabGroup(id: string) {
         this.detectedTabGroups.add(id);
+
+        // Register corresponding placeholder if defined
+        const groupConfig = this.config.tabGroups?.find(g => g.groupId === id);
+        if (!groupConfig) return;
+
+        this.registerPlaceholderFromTabGroup(groupConfig);
+    }
+
+    /**
+     * Registers a placeholder variable as active on the current page.
+     * @param name The name of the placeholder found in the DOM.
+     */
+    registerPlaceholder(name: string) {
+        this.detectedPlaceholders.add(name);
     }
 
     /**
@@ -152,6 +175,11 @@ export class DataStore {
     clearRegistry() {
         this.detectedToggles.clear();
         this.detectedTabGroups.clear();
+        this.detectedPlaceholders.clear();
+    }
+
+    clearDetectedPlaceholders() {
+        this.detectedPlaceholders.clear();
     }
 
     /**
@@ -162,6 +190,65 @@ export class DataStore {
     }
 
     // --- Helpers ---
+
+    private registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig) {
+        if (!groupConfig.placeholderId) return;
+
+        const id = groupConfig.placeholderId;
+        const existing = placeholderRegistryStore.get(id);
+
+        if (existing) {
+            // Conflict Detection Logic
+            if (existing.source === 'config') {
+                console.warn(
+                    `[CustomViews] Tab group "${groupConfig.groupId}" is binding to placeholder "${id}", ` +
+                    `which is already explicitly defined in placeholders config. ` +
+                    `To avoid unexpected behavior, placeholders should have a single source of truth.`
+                );
+            } else if (existing.source === 'tabgroup' && existing.ownerTabGroupId !== groupConfig.groupId) {
+                console.warn(
+                    `[CustomViews] Multiple tab groups are binding to the same placeholderId: "${id}". ` +
+                    `Current group: "${groupConfig.groupId}", Existing group: "${existing.ownerTabGroupId}". ` +
+                    `This will cause race conditions as both groups compete for the same value.`
+                );
+            }
+            
+            // Strict Precedence: If the placeholder already exists, we do nothing.
+            // This ensures config definitions cannot be overwritten by tab groups.
+            return;
+        }
+
+        // Register new tab-bound placeholder
+        placeholderRegistryStore.register({
+            name: id,
+            settingsLabel: groupConfig.label ?? groupConfig.groupId,
+            hiddenFromSettings: true,
+            source: 'tabgroup',
+            ownerTabGroupId: groupConfig.groupId
+        });
+
+        // Initial Sync: Ensures the store value matches the initial tab choice
+        const activeTabId = this.state.tabs?.[groupConfig.groupId];
+        if (activeTabId) {
+            this.updatePlaceholderFromTabInput(groupConfig.groupId, activeTabId);
+        }
+    }
+
+    private updatePlaceholderFromTabInput(groupId: string, tabId: string) {
+        const groupConfig = this.config.tabGroups?.find(g => g.groupId === groupId);
+
+        if (!groupConfig || !groupConfig.placeholderId) return;
+        
+        if (!placeholderRegistryStore.has(groupConfig.placeholderId)) return;
+
+        const tabConfig = groupConfig.tabs.find(t => t.tabId === tabId);
+
+        if (!tabConfig) return;
+
+        const placeholderValue = tabConfig.placeholderValue ?? "";
+        placeholderValueStore.set(groupConfig.placeholderId, placeholderValue);
+    }
+
     public computeDefaultState(): State {
         const shownToggles: string[] = [];
         const peekToggles: string[] = [];
@@ -226,5 +313,15 @@ export function initStore(config: Config): DataStore {
     store.state.peekToggles = newState.peekToggles ?? [];
     store.state.tabs = newState.tabs ?? {};
     
+    // Process Global Placeholders from Config
+    if (config.placeholders) {
+        config.placeholders.forEach(def => {
+            placeholderRegistryStore.register({
+                ...def,
+                source: 'config'
+            });
+        });
+    }
+
     return store;
 }

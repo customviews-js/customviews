@@ -1,4 +1,5 @@
 
+import type { PlaceholderDefinition } from '../core/stores/placeholder-registry-store.svelte';
 
 /**
  * Configuration for a single tab within a tab group
@@ -8,6 +9,8 @@ export interface TabConfig {
   tabId: string;
   /** Display label for the tab */
   label?: string;
+  /** Value to set the placeholder to when this tab is active */
+  placeholderValue?: string;
 }
 
 /**
@@ -18,6 +21,8 @@ export interface TabGroupConfig {
   groupId: string;
   /** Display name for widget/nav */
   label?: string;
+  /** ID of the placeholder variable to bind this group's selection to */
+  placeholderId?: string;
   /** Available tabs in this group */
   tabs: TabConfig[];
   /** Determines if the tab group is only shown on pages where it's used. */
@@ -62,6 +67,8 @@ export interface Config {
   tabGroups?: TabGroupConfig[];
   /** Excluded tags and IDs for Share/Focus modes */
   shareExclusions?: ShareExclusions;
+  /** Global placeholder definitions */
+  placeholders?: PlaceholderDefinition[];
 }
 
 /**

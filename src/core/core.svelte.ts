@@ -7,7 +7,7 @@ import { URLStateManager } from "./state/url-state-manager";
 import { FocusService } from "./services/focus-service.svelte";
 import { DataStore, initStore } from "./stores/main-store.svelte";
 import { placeholderValueStore } from "./stores/placeholder-value-store.svelte";
-import { DomScanner } from "./utils/dom-scanner";
+import { PlaceholderBinder } from "./services/placeholder-binder";
 
 export interface CustomViewsOptions {
   assetsManager: AssetsManager;
@@ -32,7 +32,9 @@ export class CustomViewsCore {
   private focusService: FocusService;
   
   private showUrlEnabled: boolean;
+  private observer?: MutationObserver;
   private destroyEffectRoot?: () => void;
+  private popstateHandler?: () => void;
 
   constructor(opt: CustomViewsOptions) {
     this.rootEl = opt.rootEl || document.body;
@@ -77,7 +79,7 @@ export class CustomViewsCore {
    * Components (Toggle, TabGroup) self-register during their mount lifecycle.
    * Core only manages global reactivity for URL state and persistence.
    */
-  public async init() {
+  public init() {
     // Restore tab nav visibility preference
     const navPref = this.persistenceManager.getPersistedTabNavVisibility();
     if (navPref !== null) {
@@ -85,7 +87,11 @@ export class CustomViewsCore {
     }
     
     // Run initial scan (non-reactive)
-    DomScanner.scanAndHydrate(this.rootEl);
+    // Clear previous page detections if any, before scan (SPA support)
+    this.store.clearDetectedPlaceholders();
+    PlaceholderBinder.scanAndHydrate(this.rootEl);
+
+    this.setUpObserver();
     
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
@@ -106,20 +112,66 @@ export class CustomViewsCore {
 
         // Effect 3: React to Variable Changes
         $effect(() => {
-            DomScanner.updateAll(placeholderValueStore.values);
+            PlaceholderBinder.updateAll(placeholderValueStore.values);
             placeholderValueStore.persist();
         });
     });
 
+
     // Handle History Popstate
-    window.addEventListener("popstate", () => {
+    this.popstateHandler = () => {
        const urlState = URLStateManager.parseURL();
        if (urlState) {
           this.store.applyState(urlState);
        }
+    };
+    window.addEventListener("popstate", this.popstateHandler);
+  }
+
+  /** 
+   * Sets up a MutationObserver to detect content added dynamically to the page
+   * (e.g. by other scripts, lazy loading, or client-side routing).
+   */
+  private setUpObserver() {
+    this.observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            if (mutation.type !== 'childList') continue;
+            mutation.addedNodes.forEach(node => this.handleForPlaceholders(node));
+        }
     });
 
+    // Observe the entire document tree for changes
+    this.observer.observe(this.rootEl, { childList: true, subtree: true });
+  }
 
+  /**
+   * Processes a newly added DOM node to check for and hydrate placeholders.
+   */
+  private handleForPlaceholders(node: Node) {
+      // Skip our own custom elements to avoid unnecessary scanning
+      if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement;
+          if (el.tagName === 'CV-PLACEHOLDER' || el.tagName === 'CV-PLACEHOLDER-INPUT') {
+              return;
+          }
+      }
+
+      // Case 1: A new HTML element was added (e.g. via innerHTML or appendChild).
+      // Recursively scan inside for any new placeholders.
+      if (node.nodeType === Node.ELEMENT_NODE) {
+          PlaceholderBinder.scanAndHydrate(node as HTMLElement);
+      } 
+      // Case 2: A raw text node was added directly.
+      // Check looks like a variable `[[...]]` to avoid unnecessary scans of plain text.
+      else if (
+          node.nodeType === Node.TEXT_NODE && 
+          node.parentElement && 
+          node.nodeValue?.includes('[[') &&
+          node.nodeValue?.includes(']]')
+      ) {
+          // Re-scan parent to properly wrap text node in reactive span.
+          PlaceholderBinder.scanAndHydrate(node.parentElement);
+      }
   }
 
   // --- Public APIs for Widget/Other ---
@@ -132,7 +184,13 @@ export class CustomViewsCore {
   }
 
   public destroy() {
+      this.observer?.disconnect();
       this.destroyEffectRoot?.();
+      
+      if (this.popstateHandler) {
+          window.removeEventListener("popstate", this.popstateHandler);
+      }
+
       this.focusService.destroy();
   }
 }

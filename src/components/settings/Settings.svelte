@@ -46,7 +46,15 @@
   let activeTabs = $derived(store.state.tabs ?? {});
 
   // Placeholder State
-  let definitions = $derived(placeholderRegistryStore.definitions);
+  let placeholdersToShow = $derived.by(() => {
+     return placeholderRegistryStore.definitions.filter(d => {
+         if (d.hiddenFromSettings) return false;
+         if (d.isLocal) {
+             return store.detectedPlaceholders.has(d.name);
+         }
+         return true;
+     });
+  });
   let values = $derived(placeholderValueStore.values);
 
   // Init
@@ -222,7 +230,7 @@
         navsVisible={navsVisible}
         isResetting={isResetting}
   
-        placeholderDefinitions={definitions}
+        placeholderDefinitions={placeholdersToShow}
         placeholderValues={values}
   
         onclose={closeModal}

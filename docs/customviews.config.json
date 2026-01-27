@@ -37,12 +37,17 @@
         "description": "Select your favorite fruit.",
         "isLocal": false,
         "default": "pear",
+        "placeholderId": "fruit",
         "tabs": [
-          {"tabId": "apple","label": "Apple"},
-          {"tabId": "orange","label": "Orange"},
-          {"tabId": "pear","label": "Pear"}
+          {"tabId": "apple","label": "Apple", "placeholderValue": "apple"},
+          {"tabId": "orange","label": "Orange", "placeholderValue": "orange"},
+          {"tabId": "pear","label": "Pear", "placeholderValue": "pear"}
         ]
       }
+    ],
+    "placeholders": [
+       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username", "defaultValue": "Guest" },
+       { "name": "searchQuery", "settingsLabel": "Search Query", "settingsHint": "Enter search query", "isLocal": true }
     ]
   },
   "baseUrl": "/customviews",

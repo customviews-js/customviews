@@ -19,22 +19,9 @@ CustomViews is configured via a JSON file, typically named `customviews.config.j
 ```json
 {
   "config": {
-    "toggles": [
-      { "toggleId": "toggle1", "label": "Toggle 1", "description": "Description for Toggle 1", "default": "show" }, 
-      { "toggleId": "toggle2", "label": "Toggle 2", "description": "Description for Toggle 2", "default": "hide" },
-      { "toggleId": "localToggle", "label": "Local Toggle", "description": "Description for Local Toggle", "isLocal": true }
-    ],
-    "tabGroups": [
-      {
-        "groupId": "group1",
-        "label": "Group 1",
-        "default": "tabA",
-        "tabs": [
-          { "tabId": "tabA", "label": "Tab A", "description": "Description for Tab A" },
-          { "tabId": "tabB", "label": "Tab B", "description": "Description for Tab B" }
-        ]
-      }
-    ]
+    "toggles": [...],
+    "tabGroups": [...],
+    "placeholders": [...]
   },
   "baseUrl": "/website-baseUrl",
   ...
@@ -51,34 +38,20 @@ Refer to individual components for more details on each configuration option.
 |-------|------|----------|-------------|
 | `toggles` | `object[]` | No | Array of toggle configurations. Each object must have a `toggleId`. |
 | `tabGroups` | `object[]` | No | Array of tab group configurations. |
+| `placeholders` | `object[]` | No | Array of global placeholder definitions. |
 
-### Tab Group Configuration
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `groupId` | `string` | Yes | Unique identifier for the tab group. |
-| `label` | `string` | No | Display name for the tab group (shown in settings). |
-| `tabs` | `object[]` | Yes | Array of tab configurations. |
-| `tabs[].tabId` | `string` | Yes | Unique identifier for the tab. |
-| `tabs[].label` | `string` | No | Display label for the tab. |
-| `default` | `string` | No | The `tabId` of the tab that should be selected by default. If omitted, the first tab is selected. |
+* Tab Group Configuration Settings, see [here](./components/tabs.md#configuration)
+* Toggle Configuration Settings, see [here](./components/toggles.md#configuration)
+* Placeholder Configuration Settings, see [here](./components/placeholders.md#configuration)
 
-### Toggles Configuration
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `toggleId` | `string` | Yes | Unique identifier for the toggle. |
-| `label` | `string` | No | Display label for the toggle. |
-| `description` | `string` | No | Description for the toggle. |
-| `isLocal` | `boolean` | No | Whether the toggle is a local toggle. |
-| `default` | `string` | No | Default state: `"show"`, `"hide"`, or `"peek"`. Implicit default is `"show"`. |
-
-## Default State Behavior
+<!-- ## Default State Behavior
  
 When no user preferences are saved, CustomViews determines the initial state from the configuration:
 
 - **Toggles**: Toggles are enabled by default. Toggles with `"default": "peek"` are in peek mode. Toggles with `"default": "hide"` are hidden.
-- **Tabs**: Tab groups select the tab specified in `default`, or the first tab if not specified.
+- **Tabs**: Tab groups select the tab specified in `default`, or the first tab if not specified. -->
 
 ## Global Options
 
