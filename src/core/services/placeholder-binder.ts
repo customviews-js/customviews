@@ -167,8 +167,6 @@ export class PlaceholderBinder {
   // Update Logic
   // =========================================================================
 
-  // No need for updateTextNodes as components handle themselves
-
   private static updateAttributeBindings(values: Record<string, string>) {
     const attrElements = document.querySelectorAll('[data-cv-attr-templates]');
     attrElements.forEach(el => {
@@ -186,10 +184,34 @@ export class PlaceholderBinder {
     });
   }
 
-  // =========================================================================
-  // Resolution Helpers
-  // =========================================================================
+  /**
+   * Checks if a value is a full URL with protocol 
+   * (e.g., http://, https://, ftp://, data:, mailto:)
+   */
+  private static isFullUrl(value: string): boolean {
+      // Match protocol://... OR protocol: (for mailto:, data:, tel:, etc.)
+      // Protocol must start with letter per RFC 3986
+      return /^[a-z][a-z0-9+.-]*:/i.test(value);
+  }
 
+  /**
+   * Checks if a value is a relative URL path (e.g., /, ./, ../)
+   */
+  private static isRelativeUrl(value: string): boolean {
+      return value.startsWith('/') || value.startsWith('./') || value.startsWith('../');
+  }
+
+  /**
+   * Resolves value for a placeholder by checking and using sources in order of:
+   * 1. user-set value, 2. registry default value, 3. inline fallback value
+   * 
+   * Empty strings are treated as "not set" and will fall through to the next priority level.
+   * 
+   * @param name - The placeholder name to resolve
+   * @param fallback - Optional inline fallback value from the usage syntax (e.g., `[[ name : fallback ]]`)
+   * @param values - Record of user-set placeholder values
+   * @returns The resolved value, or undefined if no value is available from any source
+   */
   private static resolveValue(name: string, fallback: string | undefined, values: Record<string, string>): string | undefined {
         const userVal = values[name];
         
@@ -207,6 +229,22 @@ export class PlaceholderBinder {
         return undefined;
   }
 
+  /**
+   * Interpolates placeholder patterns in a template string with their resolved values.
+   * 
+   * Replaces all `[[ name ]]` or `[[ name : fallback ]]` patterns with their resolved values.
+   * Escaped patterns (e.g., `\[[ name ]]`) are preserved as literal text.
+   * 
+   * For `href` and `src` attributes, applies context-aware URL encoding:
+   * - Full URLs (http://, https://, mailto:, data:, etc.) are preserved as-is
+   * - Relative URLs (/, ./, ../) are preserved as-is
+   * - URL components (query parameters, path segments) are encoded with encodeURIComponent
+   * 
+   * @param template - The template string containing placeholder patterns
+   * @param values - Record of user-set placeholder values
+   * @param attrName - Optional attribute name (enables URL encoding for 'href' and 'src')
+   * @returns The interpolated string with all placeholders replaced
+   */
   private static interpolateString(template: string, values: Record<string, string>, attrName?: string): string {
       return template.replace(VAR_REGEX, (_full, escape, name, fallback) => {
           if (escape) return `[[${name}]]`;
@@ -214,9 +252,12 @@ export class PlaceholderBinder {
           let val = PlaceholderBinder.resolveValue(name, fallback, values);
           if (val === undefined) return `[[${name}]]`;
 
-          // Auto-encode for URL attributes
+          // Context-aware encoding for URL attributes
           if (attrName && (attrName === 'href' || attrName === 'src')) {
-              val = encodeURIComponent(val);
+              // Don't encode full URLs or relative URLs - only encode URL components
+              if (!PlaceholderBinder.isFullUrl(val) && !PlaceholderBinder.isRelativeUrl(val)) {
+                  val = encodeURIComponent(val);
+              }
           }
 
           return val;

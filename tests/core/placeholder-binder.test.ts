@@ -110,7 +110,107 @@ describe('PlaceholderBinder', () => {
              const div = container.querySelector('div')!;
              expect(div.getAttribute('data-value')).toBe('foo bar');
         });
+    });
 
+    describe('Context-Aware URL Encoding', () => {
+        it('should NOT encode full HTTP URLs', () => {
+            container.innerHTML = '<a href="[[url]]" class="cv-bind">Link</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ url: 'https://example.com/path?query=value' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('https://example.com/path?query=value');
+        });
 
+        it('should NOT encode full HTTPS URLs', () => {
+            container.innerHTML = '<a href="[[website]]" class="cv-bind">Visit</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ website: 'https://example.com' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('https://example.com');
+        });
+
+        it('should NOT encode data URLs', () => {
+            container.innerHTML = '<img src="[[dataurl]]" class="cv-bind" />';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ dataurl: 'data:image/png;base64,iVBORw0KGgo=' });
+            
+            const img = container.querySelector('img')!;
+            expect(img.getAttribute('src')).toBe('data:image/png;base64,iVBORw0KGgo=');
+        });
+
+        it('should NOT encode relative URLs starting with /', () => {
+            container.innerHTML = '<a href="[[path]]" class="cv-bind">Link</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ path: '/assets/images/logo.png' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('/assets/images/logo.png');
+        });
+
+        it('should NOT encode relative URLs starting with ./', () => {
+            container.innerHTML = '<a href="[[relpath]]" class="cv-bind">Link</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ relpath: './docs/guide.html' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('./docs/guide.html');
+        });
+
+        it('should NOT encode relative URLs starting with ../', () => {
+            container.innerHTML = '<a href="[[uppath]]" class="cv-bind">Link</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ uppath: '../parent/file.html' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('../parent/file.html');
+        });
+
+        it('should encode URL components (query parameters)', () => {
+            container.innerHTML = '<a href="https://search.com?q=[[query]]" class="cv-bind">Search</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ query: 'hello world' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('https://search.com?q=hello%20world');
+        });
+
+        it('should encode URL components (path segments)', () => {
+            container.innerHTML = '<img src="/assets/[[theme]]/logo.png" class="cv-bind" />';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ theme: 'dark mode' });
+            
+            const img = container.querySelector('img')!;
+            expect(img.getAttribute('src')).toBe('/assets/dark%20mode/logo.png');
+        });
+
+        it('should handle FTP URLs', () => {
+            container.innerHTML = '<a href="[[ftpurl]]" class="cv-bind">Download</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ ftpurl: 'ftp://files.example.com/downloads/file.zip' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('ftp://files.example.com/downloads/file.zip');
+        });
+
+        it('should handle mailto URLs', () => {
+            container.innerHTML = '<a href="[[email]]" class="cv-bind">Email</a>';
+            PlaceholderBinder.scanAndHydrate(container);
+            
+            PlaceholderBinder.updateAll({ email: 'mailto:support@example.com' });
+            
+            const a = container.querySelector('a')!;
+            expect(a.getAttribute('href')).toBe('mailto:support@example.com');
+        });
     });
 });

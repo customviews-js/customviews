@@ -102,7 +102,7 @@ If the user sets `searchQuery` to `hello world`, the link becomes `https://www.g
 
 <br>
 
-> **Automatic Encoding**: Variables used in `href` and `src` attributes are automatically URL-encoded using `encodeURIComponent` to ensure valid URLs.
+> **Automatic Encoding**: Placeholders used in `href` and `src` attributes (e.g. `https://example.com/[[searchQuery]]`) are URL-encoded using `encodeURIComponent` to ensure valid URLs. Else, if the placeholder value is a full URL (e.g. `https://example.com`), a relative path (e.g. `/assets/logo.png`) or a special protocol (e.g. `mailto:email@example.com`), it will not be encoded.
 
 > **Note**: The `class` attribute is **excluded** from placeholder binding to prevent conflicts with dynamic class manipulation by JavaScript or CSS frameworks. If you need dynamic classes, use JavaScript or CSS to add/remove classes instead.
 > Or raise an issue to explore the use case!
