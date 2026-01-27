@@ -11,11 +11,11 @@
      
      // 1. User Value
      const userVal = placeholderValueStore.values[name];
-     if (userVal) return userVal;
+     if (userVal !== undefined && userVal !== '') return userVal;
 
      // 2. Registry Default
      const def = placeholderRegistryStore.get(name);
-     if (def?.defaultValue) return def.defaultValue;
+     if (def?.defaultValue !== undefined && def.defaultValue !== '') return def.defaultValue;
 
      // 3. Fallback
      if (fallback) return fallback;

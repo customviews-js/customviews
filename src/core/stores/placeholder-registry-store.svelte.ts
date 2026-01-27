@@ -35,6 +35,8 @@ export class PlaceholderRegistryStore {
 
   private updateExisting(newDef: PlaceholderDefinition) {
       const existing = this._definitions.get(newDef.name);
+      if (!existing) return;
+
       if (existing && this.hasChanged(existing, newDef)) {
           this._definitions.set(newDef.name, newDef);
       }

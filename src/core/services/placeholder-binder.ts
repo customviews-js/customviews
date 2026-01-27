@@ -132,8 +132,12 @@ export class PlaceholderBinder {
 
       // Iterate all attributes
       for (const attr of Array.from(el.attributes)) {
-          // Skip only specific system attributes
-          if (attr.name === 'data-cv-bind' || attr.name === 'data-cv-attr-templates') {
+          // Skip system attributes and class (to avoid conflicts with dynamic class manipulation)
+          if (
+              attr.name === 'data-cv-bind' ||
+              attr.name === 'data-cv-attr-templates' ||
+              attr.name === 'class'
+          ) {
               continue;
           }
           

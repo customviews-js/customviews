@@ -166,7 +166,8 @@ export class CustomViewsCore {
       else if (
           node.nodeType === Node.TEXT_NODE && 
           node.parentElement && 
-          node.nodeValue?.includes('[[')
+          node.nodeValue?.includes('[[') &&
+          node.nodeValue?.includes(']]')
       ) {
           // Re-scan parent to properly wrap text node in reactive span.
           PlaceholderBinder.scanAndHydrate(node.parentElement);

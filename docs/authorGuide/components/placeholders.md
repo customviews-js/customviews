@@ -56,6 +56,11 @@ Contact us at [[ email : support@example.com ]]
 
 If the user has not set a value for `email`, "support@example.com" will be displayed.
 
+**Note**: Placeholders resolve their displayed value by first using user-set values if available, registered defaults, inline feedback and lastly raw placeholder names, i.e. `\[[name]]`.
+
+> Empty strings (`""`) are treated as "not set" and will fall through to the next resolution level. This means clearing a placeholder value in the settings will cause it to display the registry default or inline fallback instead of showing nothing.
+
+
 ### Manual Component Usage
 
 For more control, you can use the internal custom element directly:
@@ -98,6 +103,9 @@ If the user sets `searchQuery` to `hello world`, the link becomes `https://www.g
 <br>
 
 > **Automatic Encoding**: Variables used in `href` and `src` attributes are automatically URL-encoded using `encodeURIComponent` to ensure valid URLs.
+
+> **Note**: The `class` attribute is **excluded** from placeholder binding to prevent conflicts with dynamic class manipulation by JavaScript or CSS frameworks. If you need dynamic classes, use JavaScript or CSS to add/remove classes instead.
+> Or raise an issue to explore the use case!
 
 **Dynamic Image Source:**
 
