@@ -23,9 +23,21 @@
      // 4. Raw Name
      return `[[${name}]]`;
   });
+  function updateHost(node: HTMLElement) {
+    // With {@attach}, this function runs in an effect context
+    // and re-runs whenever dependencies (like `value`) change.
+    
+    // Write to the host's light DOM so that .textContent works on parent elements
+    // This is safe because we don't have <slot>s, so this text is never rendered
+    const host = node.getRootNode() as ShadowRoot;
+    if (host && host.host) {
+            const hostEl = host.host as HTMLElement;
+            hostEl.innerText = value;
+    }
+  }
 </script>
 
-<span class="cv-var">{value}</span>
+<span class="cv-var" {@attach updateHost}>{value}</span>
 
 <style>
   :host {
