@@ -53,6 +53,8 @@ export interface SettingsOptions {
 
     /** Custom scale factor (default 1) */
     scale?: number;
+    /** Whether to show the icon (default: true) */
+    show?: boolean;
   };
 }
 
@@ -73,6 +75,7 @@ export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme
     backgroundColor?: string | undefined;
     opacity?: number | undefined;
     scale: number;
+    show: boolean;
   };
 };
 
@@ -104,7 +107,8 @@ export class CustomViewsSettings {
         color: options.icon?.color,
         backgroundColor: options.icon?.backgroundColor,
         opacity: options.icon?.opacity,
-        scale: options.icon?.scale ?? 1
+        scale: options.icon?.scale ?? 1,
+        show: options.icon?.show ?? true
       }
     };
   }

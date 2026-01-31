@@ -7,46 +7,61 @@
 
 ## Settings Dialog
 
-The **Settings Dialog** component provides a floating user interface that allows visitors to customize their view of the page. It appears as a gear icon (⚙) positioned on the side of the screen, giving users control over content visibility and tab selections.
+The **Settings Dialog** allows visitors to customize page content visibility and tab selections. It is enabled by default and automatically adapts to your configuration, showing only relevant sections.
 
-The settings widget is enabled by default, and will appear if not explicitly disabled in the configuration file, as long as the Custom Views script is present in the page. The settings interface adapts based on your configuration - sections for description, toggles, and tab groups are only displayed when relevant content is available.
+The settings panel allows users to:
+- Toggle content sections on/off
+- Select active tabs in tab groups
+- Show/hide navigation headers
+- Configure placeholders
+- Select and enter share and highlight view 
+- Reset view to defaults or copy a shareable URL
 
-<!-- Code and Output Separate the Settings, find a better way to display it. -->
 
-The settings modal allows users to:
-- Toggle content sections on/off using toggle switches (only shown when toggles are configured)
-- Show or hide navigation headers for tab groups (only shown when tab groups are configured)
-- Select active tabs in tab groups (only shown when tab groups are configured)
-- View optional description text (only shown when description is configured)
-- Reset to default view
-- Copy a shareable URL with their current selections
+## Settings Icon Trigger
 
-## Intro Callout
+The floating gear icon provides quick access to the settings.
+- **Draggable**: Users can drag the icon vertically to their preferred position.
+- **Persistent**: The icon's position is saved in the browser so it stays where the user left it.
+- **Adaptive**: It stays within the viewport bounds automatically.
+
+It can be disabled as well, and you can opt to trigger the settings dialog via a link or button.
+
+### Intro Popup for Icon Trigger
  
-When `callout.show` is enabled, the settings component displays an introductory callout on the user's first visit to introduce them to the customization features. The callout:
- 
-- **Appears automatically** on first visit (tracked via localStorage)
-- **Points to the settings icon**
-- **Includes customizable content** via `callout.message`
-- **Dismisses permanently** after the user clicks "X" or opens the settings
- 
-The callout helps users discover the customization features and understand how to use the settings.
+An optional popup can appear on the user's first visit to highlight the settings icon. It includes a customizable message and dismisses permanently after interaction.
 
 
-## Conditional Section Display
+## Opening via Link
 
-The settings component dynamically shows or hides sections based on your configuration:
+You can trigger the settings dialog via a link or button:
 
-- **Description Section**: Only appears when a `description` is configured in the settings options. When omitted, this section is completely hidden.
-- **Toggle Section**: Only appears when `config.allToggles` contains at least one toggle. When no toggles are defined, this section is hidden.
-- **Tab Groups Section**: Only appears when `config.tabGroups` contains at least one tab group. When no tab groups are defined, this section is hidden.
-- **Navigation Headers Toggle**: Appears within the Tab Groups section when tab groups are configured, allowing users to show or hide tab navigation headers site-wide.
+### Hash Trigger (Recommended)
+Append `#cv-open` to the URL. Works without reloading the page.
 
-This adaptive behavior ensures the settings interface remains clean and focused, showing only relevant controls to users.
+```markdown
+[Open Settings](#cv-open)
+```
+[Open Settings through hash](#cv-open)
+
+### Query Parameter
+Append `?cv-open=true` to the URL. Works on page load (reloads page) and auto-cleans the URL.
+
+```markdown
+[Open Settings](?cv-open=true)
+```
+[Open Settings through query parameter](?cv-open=true)
+
+
+## Adaptive Display
+
+The settings panel stays clean by only verifying configured elements:
+- **Toggles/Tabs**: Sections appear only if defined in `config`.
+- **Description**: Appears only if `panel.description` is set.
 
 ## Configuration
 
-Enable and configure the settings in your `customviews.config.json`:
+Configure the settings in `customviews.config.json`:
 
 ```json
 {
@@ -81,28 +96,27 @@ Enable and configure the settings in your `customviews.config.json`:
 
 | Name | Type | Default | Description |
 | :--- | :--- | :--- | :--- |
-| `enabled` | `boolean` | `true` | Enables or disables the settings widget. |
-| `theme` | `'light' \| 'dark'` | `'light'` | Theme of the settings widget. |
-| `panel.title` | `string` | `'Customize View'` | Title displayed in the settings modal. |
-| `panel.description` | `string` | - | Description text displayed in the settings modal. |
-| `panel.showTabGroups` | `boolean` | `true` | Whether to show the "Tab Groups" section in the settings panel. |
-| `panel.showReset` | `boolean` | `true` | Whether to show the reset to default button. |
-| `callout.show` | `boolean` | `false` | Whether to show an intro callout on first visit. |
-| `callout.message` | `string` | `"Customize your reading experience here."` | Message to display in the callout. |
-| `callout.enablePulse` | `boolean` | `true` | Whether the callout should pulse to grab attention. |
-| `callout.backgroundColor` | `string` | `white` | Custom background color for the callout. |
-| `callout.textColor` | `string` | `#1a1a1a` | Custom text color for the callout. |
-| `icon.position` | `'middle-left' \| ...` | `'middle-left'` | Position of the settings icon button. |
-| `icon.color` | `string` | `rgba(0, 0, 0, 0.9)` | Custom color for the settings icon. |
-| `icon.backgroundColor` | `string` | `rgba(255, 255, 255, 0.92)` | Custom background color for the settings icon. |
-| `icon.opacity` | `number` | `0.6` | Custom opacity for the settings icon (0-1). |
-| `icon.scale` | `number` | `1` | Custom scale factor for the settings icon. |
+| enabled | `boolean` | `true` | Enables or disables the settings widget. |
+| theme | `'light' \| 'dark'` | `'light'` | Theme of the settings widget. |
+| panel.title | `string` | `'Customize View'` | Title displayed in the settings modal. |
+| panel.description | `string` | - | Description text displayed in the settings modal. |
+| panel.showTabGroups | `boolean` | `true` | Whether to show the "Tab Groups" section in the settings panel. |
+| panel.showReset | `boolean` | `true` | Whether to show the reset to default button. |
+| callout.show | `boolean` | `false` | Whether to show an intro callout on first visit. |
+| callout.message | `string` | `"Customize your reading experience here."` | Message to display in the callout. |
+| callout.enablePulse | `boolean` | `true` | Whether the callout should pulse to grab attention. |
+| callout.backgroundColor | `string` | `white` | Custom background color for the callout. |
+| callout.textColor | `string` | `#1a1a1a` | Custom text color for the callout. |
+| icon.show | `boolean` | `true` | Whether to show the floating settings icon. |
+| icon.position | `'middle-left' \| ...` | `'middle-left'` | Position of the settings icon button. |
+| icon.color | `string` | `rgba(0, 0, 0, 0.9)` | Custom color for the settings icon. |
+| icon.backgroundColor | `string` | `rgba(255, 255, 255, 0.92)` | Custom background color for the settings icon. |
+| icon.opacity | `number` | `0.6` | Custom opacity for the settings icon (0-1). |
+| icon.scale | `number` | `1` | Custom scale factor for the settings icon. |
 
-## Integration with Toggles and Tabs
+## Integration
 
 The settings component automatically discovers:
-- **Toggles** from `config.toggles` - shows checkboxes to control visibility
-- **Tab Groups** from `config.tabGroups` - shows dropdowns to select active tabs
-- **Navigation Headers** - provides a toggle to show/hide tab navigation headers site-wide (persisted in localStorage)
-
-Configure these in your `customviews.config.json` to make them available in the settings.
+- **Toggles** from `config.toggles`
+- **Tab Groups** from `config.tabGroups`
+- **Navigation Headers** (persisted site-wide)

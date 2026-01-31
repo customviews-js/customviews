@@ -65,8 +65,41 @@
 
     // Init Theme Store
     themeStore.init();
-    return themeStore.listen();
+    
+    // Check for trigger initially
+    checkURLForModalOpenTrigger();
+
+    // Listen for URL changes (SPA support)
+    window.addEventListener('popstate', checkURLForModalOpenTrigger);
+    window.addEventListener('hashchange', checkURLForModalOpenTrigger);
+    
+    const cleanup = themeStore.listen();
+    
+    return () => {
+        cleanup();
+        window.removeEventListener('popstate', checkURLForModalOpenTrigger);
+        window.removeEventListener('hashchange', checkURLForModalOpenTrigger);
+    };
   });
+
+  function checkURLForModalOpenTrigger() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hash = window.location.hash;
+
+    // Check query param
+    if (urlParams.has('cv-open')) {
+        openModal();
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('cv-open');
+        window.history.replaceState({}, '', newUrl.toString());
+    } 
+    // Check hash
+    else if (hash === '#cv-open') {
+        openModal();
+        // Clear hash without reload
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }
 
   let introChecked = false;
   $effect(() => {
@@ -177,7 +210,7 @@
   }
 </script>
 
-{#if store.hasMenuOptions || options.showTabGroups || shareStore.isActive || focusStore.isActive}
+{#if store.hasMenuOptions || options.panel.showTabGroups || shareStore.isActive || focusStore.isActive || isModalOpen}
   <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
     <!-- Intro Callout -->
     {#if showCallout}
@@ -201,17 +234,19 @@
     <FocusBanner />
   
     <!-- Widget Icon -->
-    <SettingsIcon 
-      bind:this={settingsIcon}
-      position={options.icon.position} 
-      title={options.panel.title} 
-      pulse={showPulse} 
-      onclick={openModal}
-      iconColor={options.icon?.color}
-      backgroundColor={options.icon?.backgroundColor}
-      opacity={options.icon?.opacity}
-      scale={options.icon?.scale}
-    />
+    {#if options.icon.show}
+      <SettingsIcon 
+        bind:this={settingsIcon}
+        position={options.icon.position} 
+        title={options.panel.title} 
+        pulse={showPulse} 
+        onclick={openModal}
+        iconColor={options.icon?.color}
+        backgroundColor={options.icon?.backgroundColor}
+        opacity={options.icon?.opacity}
+        scale={options.icon?.scale}
+      />
+    {/if}
   
     <!-- Modal -->
     {#if isModalOpen}
