@@ -28,7 +28,7 @@
     ontoggleNav?: (visible: boolean) => void;
     oncopyShareUrl?: () => void;
     onstartShare?: () => void;
-    onvariableChange?: (detail: { name: string, value: string }) => void;
+    onplaceholderChange?: (detail: { name: string, value: string }) => void;
   }
 
   let { 
@@ -52,7 +52,7 @@
     ontoggleNav = () => {},
     oncopyShareUrl = () => {},
     onstartShare = () => {},
-    onvariableChange = () => {}
+    onplaceholderChange = () => {}
   }: Props = $props();
 
   let activeTab = $state<'customize' | 'share'>('customize');
@@ -83,9 +83,9 @@
     ontoggleChange(detail);
   }
 
-  function handleVariableInput(name: string, e: Event) {
+  function handlePlaceholderInput(name: string, e: Event) {
     const target = e.target as HTMLInputElement;
-    onvariableChange({ name, value: target.value });
+    onplaceholderChange({ name, value: target.value });
   }
 
   function handleTabGroupChange(detail: any) {
@@ -164,18 +164,18 @@
 
           {#if placeholderDefinitions.length > 0}
             <div class="section">
-              <div class="section-heading">Variables</div>
-              <div class="variables-container">
+              <div class="section-heading">Placeholders</div>
+              <div class="placeholders-container">
                 {#each placeholderDefinitions as def (def.name)}
-                  <div class="variable-item">
-                    <label class="variable-label" for="cv-var-{def.name}">{def.settingsLabel || def.name}</label>
+                  <div class="placeholder-item">
+                    <label class="placeholder-label" for="cv-placeholder-{def.name}">{def.settingsLabel || def.name}</label>
                     <input 
-                      id="cv-var-{def.name}"
-                      class="variable-input"
+                      id="cv-placeholder-{def.name}"
+                      class="placeholder-input"
                       type="text" 
                       placeholder={def.settingsHint || ''}
                       value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
-                      oninput={(e) => handleVariableInput(def.name, e)}
+                      oninput={(e) => handlePlaceholderInput(def.name, e)}
                     />
                   </div>
                 {/each}
@@ -784,26 +784,26 @@
   height: 1.25rem;
 }
 
-/* Variable Inputs */
-.variables-container {
+/* Placeholder Inputs */
+.placeholders-container {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.variable-item {
+.placeholder-item {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.variable-label {
+.placeholder-label {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--cv-text);
 }
 
-.variable-input {
+.placeholder-input {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--cv-input-border);
   border-radius: 0.375rem;
@@ -813,7 +813,7 @@
   color: var(--cv-text);
 }
 
-.variable-input:focus {
+.placeholder-input:focus {
   outline: none;
   border-color: var(--cv-primary);
   box-shadow: 0 0 0 2px var(--cv-focus-ring);

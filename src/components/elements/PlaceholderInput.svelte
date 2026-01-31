@@ -35,11 +35,11 @@
 
 <div class="cv-input-wrapper">
   {#if effectiveLabel}
-    <label class="variable-label" for="cv-input-{sanitizedId}">{effectiveLabel}</label>
+    <label class="placeholder-label" for="cv-input-{sanitizedId}">{effectiveLabel}</label>
   {/if}
   <input 
       id="cv-input-{sanitizedId}"
-      class="variable-input"
+      class="placeholder-input"
       type="text" 
       placeholder={effectiveHint}
       value={value}
@@ -61,14 +61,14 @@
       gap: 0.25rem;
   }
 
-  .variable-label {
+  .placeholder-label {
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--cv-text, #333);
     margin-bottom: 2px;
   }
 
-  .variable-input {
+  .placeholder-input {
     padding: 0.5rem 0.75rem;
     border: 1px solid var(--cv-input-border, rgba(0,0,0,0.1));
     border-radius: 0.375rem;
@@ -80,7 +80,7 @@
     box-sizing: border-box;
   }
 
-  .variable-input:focus {
+  .placeholder-input:focus {
     outline: none;
     border-color: var(--cv-primary, #3e84f4);
     box-shadow: 0 0 0 2px var(--cv-focus-ring, rgba(62, 132, 244, 0.2));

@@ -204,7 +204,7 @@
     shareStore.toggleActive(true);
   }
 
-  function handleVariableChange(e: any) {
+  function handlePlaceholderChange(e: any) {
     const { name, value } = e;
     placeholderValueStore.set(name, value);
   }
@@ -275,7 +275,7 @@
         ontoggleNav={handleNavToggle}
         oncopyShareUrl={handleCopyShareUrl}
         onstartShare={handleStartShare}
-        onvariableChange={handleVariableChange}
+        onplaceholderChange={handlePlaceholderChange}
       />
     {/if}
   </div>
