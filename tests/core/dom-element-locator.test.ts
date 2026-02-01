@@ -105,7 +105,8 @@ describe('DomElementLocator', () => {
             const descriptor = DomElementLocator.createDescriptor(targetEl);
 
             const resolved = DomElementLocator.resolve(container, descriptor);
-            expect(resolved).toBe(targetEl);
+            expect(resolved).toHaveLength(1);
+            expect(resolved[0]).toBe(targetEl);
         });
 
         it('should resolve even if index changes (Robustness)', () => {
@@ -131,7 +132,8 @@ describe('DomElementLocator', () => {
             const resolved = DomElementLocator.resolve(container, descriptor);
 
             // Should still find it because content match
-            expect(resolved?.textContent).toBe('Correct One');
+            expect(resolved).toHaveLength(1);
+            expect(resolved[0]?.textContent).toBe('Correct One');
         });
 
         it('should return null if score is too low', () => {
@@ -144,7 +146,7 @@ describe('DomElementLocator', () => {
                 textHash: 99999
             };
             const resolved = DomElementLocator.resolve(container, descriptor);
-            expect(resolved).toBeNull();
+            expect(resolved).toHaveLength(0);
         });
     });
 });
