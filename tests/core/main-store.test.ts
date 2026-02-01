@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Polyfill Svelte Runes BEFORE import
 // @ts-ignore
@@ -40,6 +40,7 @@ describe('DataStore', () => {
     let store: any;
 
     beforeEach(async () => {
+        vi.resetModules();
         vi.clearAllMocks();
         
         // Dynamic import to ensure globals are set

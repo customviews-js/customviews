@@ -77,7 +77,7 @@ describe('URLStateManager', () => {
             };
 
             // Mock History
-            window.history.replaceState = vi.fn();
+            vi.spyOn(window.history, 'replaceState').mockImplementation(() => {});
         });
 
         afterEach(() => {
