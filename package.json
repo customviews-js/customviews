@@ -5,7 +5,6 @@
   "type": "module",
   "types": "dist/types/browser.d.ts",
   "main": "dist/custom-views.min.js",
-  "module": "dist/custom-views.min.js",
   "browser": "dist/custom-views.min.js",
   "unpkg": "dist/custom-views.min.js",
   "jsdelivr": "dist/custom-views.min.js",
@@ -16,17 +15,6 @@
   "files": [
     "dist/"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/custom-views.min.js",
-      "require": "./dist/custom-views.min.js",
-      "browser": "./dist/custom-views.min.js"
-    },
-    "./core": {
-      "import": "./dist/custom-views.min.js",
-      "require": "./dist/custom-views.min.js"
-    }
-  },
   "scripts": {
     "clean": "rimraf dist",
     "build:types": "tsc --project tsconfig.json",
