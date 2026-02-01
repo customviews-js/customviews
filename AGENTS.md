@@ -22,12 +22,12 @@ This document provides essential context for AI models interacting with this pro
 ## Architectural Patterns
 
 * Overall Architecture:
-    *   Core Library: A singleton/class-based core (`CustomViewsCore`) that manages state, assets, and configuration.
-    *   Framework Agnostic Facade: The `CustomViews` class serves as the public API entry point, abstracting away the internal Svelte implementation.
+    *   Core Library: A singleton/class-based controller (`CustomViewsController`) that manages state, assets, and configuration.
+    *   No Public API Facade: The library is designed for auto-initialization via script tag. `src/browser.ts` is the main entry point.
     *   Custom Elements: Uses Web Components (via Svelte) for easy integration into any HTML page (e.g., `<cv-tabgroup>`).
 * Directory Structure Philosophy:
     *   /src: Primary source code.
-        *   /src/core: Business logic, state management (`.svelte.ts` files), and services.
+        *   /src/core: Business logic, state management (`.svelte.ts` files), and assets.
         *   `/src/components`: Svelte components and custom elements.
         *   `/src/types`: TypeScript type definitions.
         *   `/src/utils`: Helper functions.
@@ -42,8 +42,8 @@ This document provides essential context for AI models interacting with this pro
     * Semicolons: Always used.
     * Quotes: Double quotes preferred in JSON/HTML, mixed in TS (follow existing file consistency).
 * Naming Conventions:
-    * Classes: PascalCase (e.g., `CustomViews`, `AssetsManager`).
-    * Files: kebab-case (e.g., `custom-views.ts`, `assets-manager.ts`).
+    * Classes: PascalCase (e.g., `CustomViewsController`, `AssetsManager`).
+    * Files: kebab-case (e.g., `controller.svelte.ts`, `assets.ts`).
     * Variables/Functions: camelCase (e.g., `init`, `rootEl`).
     * Private/Internal Properties: Often prefixed with `_` or handled via Svelte runes/privacy mechanisms.
 * Svelte Specifics:
@@ -56,8 +56,8 @@ This document provides essential context for AI models interacting with this pro
 ## Key Files & Entrypoints
 
 * Main Entrypoint(s):
-    *   `src/CustomViews.ts`: Main class for initialization.
-    *   `src/index.ts`: Public API exports.
+    *   `src/browser.ts`: Main entry point for browser auto-initialization.
+    *   `src/index.ts`: (Empty) No public API exports.
 * Configuration:
     *   `package.json`: Project metadata and scripts.
     *   `tsconfig.json`: TypeScript configuration.
@@ -75,7 +75,7 @@ This document provides essential context for AI models interacting with this pro
     *   Tests are located in `/tests` directory.
 * Build Process:
     *   `npm run build`: Cleans `dist`, builds types, and bundles JS.
-    *   Output formats: ESM, CJS, Minified Browser script.
+    *   Output formats: Browser bundles only (UMD).
 
 ## Specific Instructions for AI Collaboration
 
