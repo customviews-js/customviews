@@ -257,7 +257,7 @@
         style="left: {selectionBox.left}px; top: {selectionBox.top}px; width: {selectionBox.width}px; height: {selectionBox.height}px;"
       >
         <span class="selection-label">
-            {shareStore.selectionMode === 'hide' ? 'Select to hide' : (shareStore.selectionMode === 'highlight' ? 'Select to highlight' : 'Select to share')}
+            {shareStore.selectionMode === 'hide' ? 'Select to hide' : (shareStore.selectionMode === 'highlight' ? 'Select to highlight' : 'Select to show')}
         </span>
       </div>
     {/if}
