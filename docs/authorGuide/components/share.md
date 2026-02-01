@@ -143,7 +143,7 @@ Additionally, a banner at the top of the page reminds the user they are in a foc
 
 To use only the focused views feature of CustomViews, we can disable the settings dialog, and only trigger the share mode through links.
 
-To disable the settings dialog, add the following to your `customviews.config.js` file:
+To disable the settings dialog, add the following to your `customviews.config.json` file:
 
 ```json
 {
@@ -156,7 +156,7 @@ To disable the settings dialog, add the following to your `customviews.config.js
 
 
 ### Customizing Share Behavior ( WIP )
-Website authors can customize which elements are excluded from selection (e.g., sidebars, headers) by configuring `shareExclusions` in their `customviews.config.js` file.
+Website authors can customize which elements are excluded from selection (e.g., sidebars, headers) by configuring `shareExclusions` in their `customviews.config.json` file.
 
 ```json
 {

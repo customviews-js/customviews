@@ -25,12 +25,15 @@
   const settingsEnabled = $derived(options.settingsEnabled ?? true);
 
   // --- Services ---
-  const introManager = $derived(new IntroManager(controller.persistenceManager, options.callout));
-  const router = $derived(new UrlActionRouter({
+  const introManager = new IntroManager(
+    () => controller.persistenceManager, 
+    () => options.callout
+  );
+  const router = new UrlActionRouter({
     onOpenModal: openModal,
     onStartShare: handleStartShare,
     checkSettingsEnabled: () => settingsEnabled
-  }));
+  });
 
   // --- UI State ---
   let isModalOpen = $state(false);
@@ -67,9 +70,7 @@
 
   function openModal() {
     if (!settingsEnabled) return;
-
-    if (introManager.showCallout) introManager.dismiss();
-
+    introManager.dismiss();
     isModalOpen = true;
   }
 

@@ -17,13 +17,13 @@ export class IntroManager {
     showCallout = $state(false);
     showPulse = $state(false);
 
-    private persistence: PersistenceManager;
-    private options: UIManagerOptions['callout'];
+    private getPersistence: () => PersistenceManager;
+    private getOptions: () => UIManagerOptions['callout'];
     private hasChecked = false;
 
-    constructor(persistence: PersistenceManager, options: UIManagerOptions['callout']) {
-        this.persistence = persistence;
-        this.options = options;
+    constructor(persistence: PersistenceManager | (() => PersistenceManager), options: UIManagerOptions['callout'] | (() => UIManagerOptions['callout'])) {
+        this.getPersistence = typeof persistence === 'function' ? (persistence as () => PersistenceManager) : () => persistence;
+        this.getOptions = typeof options === 'function' ? (options as () => UIManagerOptions['callout']) : () => options;
     }
 
     /**
@@ -31,7 +31,8 @@ export class IntroManager {
      * and we know there are elements on the page.
      */
     public init(hasPageElements: boolean, settingsEnabled: boolean) {
-        if (settingsEnabled && !this.hasChecked && this.options?.show) {
+        const options = this.getOptions();
+        if (settingsEnabled && !this.hasChecked && options?.show) {
              if (hasPageElements) {
                  this.hasChecked = true;
                  this.checkAndShow();
@@ -40,7 +41,7 @@ export class IntroManager {
     }
 
     private checkAndShow() {
-        if (!this.persistence.getItem(STORAGE_KEY_INTRO_SHOWN)) {
+        if (!this.getPersistence().getItem(STORAGE_KEY_INTRO_SHOWN)) {
             setTimeout(() => {
                 this.showCallout = true;
                 this.showPulse = true;
@@ -51,6 +52,6 @@ export class IntroManager {
     public dismiss() {
         this.showCallout = false;
         this.showPulse = false;
-        this.persistence.setItem(STORAGE_KEY_INTRO_SHOWN, 'true');
+        this.getPersistence().setItem(STORAGE_KEY_INTRO_SHOWN, 'true');
     }
 }
