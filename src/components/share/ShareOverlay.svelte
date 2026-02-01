@@ -11,6 +11,13 @@
   let excludedTagSet = $derived(new Set(excludedTags.map((t: string) => t.toUpperCase())));
   let excludedIdSet = $derived(new Set(excludedIds));
 
+  $effect(() => {
+    document.body.classList.add('cv-share-active');
+    return () => {
+      document.body.classList.remove('cv-share-active');
+    };
+  });
+
   let isDragging = $state(false);
   let dragStart = $state<{x: number, y: number} | null>(null);
   let dragCurrent = $state<{x: number, y: number} | null>(null);
@@ -100,6 +107,9 @@
 
     // Disable drag on touch devices
     if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    // Prevent default browser text selection
+    e.preventDefault();
 
     dragStart = { x: e.clientX, y: e.clientY };
     dragCurrent = { x: e.clientX, y: e.clientY };
@@ -255,8 +265,10 @@
 
   <style>
     /* Global styles injected when active */
-    :global(body) {
+    :global(body.cv-share-active) {
       cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     /* Highlight outlines */
