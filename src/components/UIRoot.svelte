@@ -7,7 +7,8 @@
   import SettingsIcon from './settings/SettingsIcon.svelte';
   import Modal from './modal/Modal.svelte';
   import { showToast } from '../core/stores/toast-store.svelte';
-  import { shareStore } from '../core/stores/share-store.svelte';
+  import { shareStore, type SelectionMode } from '../core/stores/share-store.svelte';
+  import { UrlActionHandler } from '../core/state/url-action-handler';
   import { focusStore } from '../core/stores/focus-store.svelte';
   import { themeStore } from '../core/stores/theme-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../core/constants';
@@ -104,24 +105,19 @@
   }
 
   /**
-   * Checks if the URL (query param or hash) indicates the modal should be opened.
+   * Checks if the URL (query param or hash) indicates the modal or share mode should be opened.
    */
   function checkURLForModalOpenTrigger() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const hash = window.location.hash;
+    const action = UrlActionHandler.detectAction(window.location);
+    if (action) {
+      if (action.type === 'OPEN_MODAL') {
+        openModal();
+      } else if (action.type === 'START_SHARE') {
+        handleStartShare(action.mode);
+      }
 
-    // Check query param
-    if (urlParams.has('cv-open')) {
-        openModal();
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.delete('cv-open');
-        window.history.replaceState({}, '', newUrl.toString());
-    } 
-    // Check hash
-    else if (hash === '#cv-open') {
-        openModal();
-        // Clear hash without reload
-        history.replaceState(null, '', window.location.pathname + window.location.search);
+      const cleanedUrl = UrlActionHandler.getCleanedUrl(window.location, action);
+      window.history.replaceState({}, '', cleanedUrl);
     }
   }
 
@@ -153,8 +149,11 @@
     }, 600);
   }
 
-  function handleStartShare() {
+  function handleStartShare(mode?: SelectionMode) {
     closeModal();
+    if (mode) {
+      shareStore.setSelectionMode(mode);
+    }
     shareStore.toggleActive(true);
   }
 
