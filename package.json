@@ -30,7 +30,7 @@
     "deploydocs": "cd docs && markbind deploy -s site.json",
     "dev": "rollup -c -w",
     "watch": "rollup -c -w",
-    "test": "vitest run"
+    "test": "vitest run --reporter verbose"
   },
   "keywords": [
     "javascript",

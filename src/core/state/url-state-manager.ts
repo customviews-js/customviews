@@ -1,11 +1,9 @@
+import type { State } from "../../types/index";
+
 /**
  * URL State Manager for CustomViews
  * Handles encoding/decoding of states in URL parameters
  */
-
-import type { State } from "../../types/index";
-
-
 export class URLStateManager {
   /**
    * Parse current URL parameters into state object

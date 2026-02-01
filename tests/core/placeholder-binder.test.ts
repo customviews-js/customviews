@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { PlaceholderBinder } from '../../src/core/services/placeholder-binder';
+import { store } from '../../src/core/stores/main-store.svelte';
 
 // Mock main store
 vi.mock('../../src/core/stores/main-store.svelte', () => {
@@ -81,6 +82,26 @@ describe('PlaceholderBinder', () => {
             
             const a = container.querySelector('a')!;
             expect(a.dataset.cvAttrTemplates).toBeUndefined();
+        });
+
+        it('should treat escaped placeholders as literal text', () => {
+            container.innerHTML = '<p>This is \\[[escaped]] value</p>';
+            PlaceholderBinder.scanAndHydrate(container);
+
+            const el = container.querySelector('cv-placeholder');
+            expect(el).toBeNull();
+            expect(container.textContent).toBe('This is [[escaped]] value');
+        });
+
+        it('should NOT register escaped placeholders', () => {
+            container.innerHTML = '<p>Raw: \\[[variable]]</p>';
+            
+            // Mock store register to verify it's NOT called
+            vi.clearAllMocks();
+
+            PlaceholderBinder.scanAndHydrate(container);
+
+            expect(store.registerPlaceholder).not.toHaveBeenCalled();
         });
     });
 
