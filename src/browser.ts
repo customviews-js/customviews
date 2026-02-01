@@ -37,7 +37,7 @@ export function initializeFromScript(): void {
       // Determine effective baseURL (data attribute takes precedence)
       const effectiveBaseURL = baseURL || configFile.baseUrl || '';
 
-      // 3. Initialize Assets
+      // Initialize Assets
       let assetsManager: AssetsManager;
       if (configFile.assetsJsonPath) {
         const assetsPath = prependBaseUrl(configFile.assetsJsonPath, effectiveBaseURL);
@@ -52,7 +52,6 @@ export function initializeFromScript(): void {
          assetsManager = new AssetsManager({}, effectiveBaseURL);
       }
 
-      // 4. Initialize Core
       const coreOptions: ControllerOptions = {
         assetsManager,
         config: configFile.config || {},
@@ -63,7 +62,6 @@ export function initializeFromScript(): void {
       const controller = new CustomViewsController(coreOptions);
       controller.init();
 
-      // 4. Initialize UI Manager
       initUIManager(controller, configFile);
       
       // Mark initialized
