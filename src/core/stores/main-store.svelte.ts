@@ -1,5 +1,7 @@
 import { SvelteSet } from 'svelte/reactivity';
 import type { Config, State, TabGroupConfig } from "../../types/index";
+import type { ConfigSectionKey } from "../../types/index";
+import { isValidConfigSection } from "../../types/index";
 import type { AssetsManager } from "../managers/assets-manager";
 import { placeholderValueStore } from "./placeholder-value-store.svelte";
 import { placeholderRegistryStore } from "./placeholder-registry-store.svelte";
@@ -18,6 +20,12 @@ export class DataStore {
      * Contains definitions for toggles, tab groups, and defaults.
      */
     config = $state<Config>({});
+    
+    /**
+     * Explicit order of sections derived from the initial configuration JSON.
+     * Guaranteed to preserve user definition order, unlike Object.keys() on proxy objects.
+     */
+    configSectionOrder = $state<ConfigSectionKey[]>([]);
 
     /**
      * Mutable application state representing user choices.
@@ -322,6 +330,9 @@ export function initStore(config: Config): DataStore {
             });
         });
     }
+
+    // Compute Section Order from raw config keys
+    store.configSectionOrder = Object.keys(config).filter(isValidConfigSection);
 
     return store;
 }

@@ -1,5 +1,5 @@
 import type { CustomViewsCore } from "./core.svelte";
-import Settings from "../components/settings/Settings.svelte";
+import WidgetRoot from "../components/WidgetRoot.svelte";
 import { mount, unmount } from "svelte";
 
 export interface SettingsOptions {
@@ -122,7 +122,7 @@ export class CustomViewsSettings {
     }
 
     // Mount Svelte App using Svelte 5 API
-    this.app = mount(Settings, {
+    this.app = mount(WidgetRoot, {
       target: this.options.container,
       props: {
         core: this.options.core,
