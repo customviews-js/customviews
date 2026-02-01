@@ -4,8 +4,8 @@ import UIRoot from "../components/UIRoot.svelte";
 import { mount, unmount } from "svelte";
 
 export interface UIManagerOptions {
-  /** The CustomViews core instance to control */
-  core: CustomViewsController;
+  /** The CustomViews controller instance to control */
+  controller: CustomViewsController;
 
   /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
@@ -91,7 +91,7 @@ export class CustomViewsUIManager {
   constructor(options: UIManagerOptions) {
     // Set defaults
     this.options = {
-      core: options.core, // 'core' is a required property and must be explicitly passed
+      controller: options.controller, // 'controller' is a required property
       container: options.container || document.body,
       settingsEnabled: options.settingsEnabled ?? true,
       theme: options.theme || 'light',
@@ -131,7 +131,7 @@ export class CustomViewsUIManager {
     this.app = mount(UIRoot, {
       target: this.options.container,
       props: {
-        core: this.options.core,
+        controller: this.options.controller,
         options: this.options
       }
     });
@@ -151,11 +151,11 @@ export class CustomViewsUIManager {
 /**
  * Initializes the settings if enabled in the config.
  */
-export function initUIManager(core: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
+export function initUIManager(controller: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
   const settingsEnabled = config.settings?.enabled !== false;
   
   const uiManager = new CustomViewsUIManager({
-    core,
+    controller,
     settingsEnabled,
     ...config.settings
   });
