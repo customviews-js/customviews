@@ -318,6 +318,7 @@
               <span>Select elements to share</span>
             </button>
             
+            {#if hasCustomizeContent}
             <button class="share-action-btn copy-url-btn" onclick={copyShareUrl}>
               <span class="btn-icon">
                 {#if copySuccess}
@@ -334,6 +335,7 @@
                 {/if}
               </span>
             </button>
+            {/if}
           </div>
         </div>
       {/if}
