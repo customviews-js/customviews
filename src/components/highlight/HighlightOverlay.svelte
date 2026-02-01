@@ -74,12 +74,28 @@
 
   .cv-highlight-box {
     position: absolute;
-    border: 4px solid #d13438;
-    /* Layer 1: Sharp/Close, Layer 2: Soft/Deep */
+    /* Slightly thicker border looks more like a marker stroke */
+    border: 5px solid #d13438;
+    box-sizing: border-box;
+    
+    /* Asymmetric border-radius creates 'wobbly' corners */
+    /* 8 point radius */
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    
+    /* A subtle transform to make it look slightly tilted/imperfect */
+    transform: rotate(-0.5deg);
+
+    /* Balanced shadows from before, but adjusted for the wobble */
     box-shadow: 
-      0 5px 10px rgba(0, 0, 0, 0.1), 
-      0 15px 35px rgba(0, 0, 0, 0.15);
+      2px 6px 15px rgba(0, 0, 0, 0.13), 
+      /* The inset shadow now follows the wobbly border-radius */
+      inset 0 0 10px 2px rgba(0, 0, 0, 0.12);
+
     pointer-events: none;
+    /* Smoother rendering for the wobbled edges */
+    backface-visibility: hidden;
+
+    opacity: 0.92;
   }
 
   .cv-highlight-arrow {
