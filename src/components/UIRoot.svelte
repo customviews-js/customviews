@@ -165,9 +165,17 @@
     // Core's effect will capture this change and persist it
     store.isTabGroupNavHeadingVisible = visible;
   }
+  // --- Derived Visibility ---
+  const shouldRenderWidget = $derived(
+    store.hasMenuOptions || 
+    options.panel.showTabGroups || 
+    shareStore.isActive || 
+    focusStore.isActive || 
+    isModalOpen
+  );
 </script>
 
-{#if store.hasMenuOptions || options.panel.showTabGroups || shareStore.isActive || focusStore.isActive || isModalOpen}
+{#if shouldRenderWidget}
   <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
     <!-- Intro Callout -->
     {#if showCallout}
