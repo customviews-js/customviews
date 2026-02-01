@@ -124,4 +124,30 @@ describe('PersistenceManager', () => {
             expect(manager.getItem('other-key')).toBe('keep-me');
         });
     });
+
+    describe('Robustness', () => {
+        it('should return null and log error when state json is corrupted', () => {
+             const manager = new PersistenceManager('corrupt');
+             // Manually inject bad JSON
+             localStorage.setItem('corrupt-customviews-state', '{ "incomplete": ');
+
+             const state = manager.getPersistedState();
+             expect(state).toBeNull();
+        });
+
+        it('should handle errors in removeItem gracefully', () => {
+            const manager = new PersistenceManager('error');
+            
+            // Mock removeItem to throw
+            const originalRemove = localStorage.removeItem;
+            localStorage.removeItem = () => { throw new Error("Storage Blocked"); };
+
+            try {
+                // Should not throw
+                manager.removeItem('some-key');
+            } finally {
+                localStorage.removeItem = originalRemove;
+            }
+        });
+    });
 });

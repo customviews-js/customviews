@@ -50,7 +50,11 @@ export class PersistenceManager {
    */
   public removeItem(key: string): void {
      if (!this.isStorageAvailable()) return;
-     localStorage.removeItem(this.getPrefixedKey(key));
+     try {
+       localStorage.removeItem(this.getPrefixedKey(key));
+     } catch (error) {
+       console.warn(`Failed to remove key ${key}:`, error);
+     }
   }
 
   private getPrefixedKey(key: string): string {
@@ -65,7 +69,13 @@ export class PersistenceManager {
 
   public getPersistedState(): State | null {
     const raw = this.getItem('customviews-state');
-    return raw ? JSON.parse(raw) : null;
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      console.error("Failed to parse persisted state:", e);
+      return null;
+    }
   }
 
   public clearAll(): void {
