@@ -1,7 +1,5 @@
 import { prependBaseUrl } from "./url-utils";
 import type { ConfigFile } from "../types/index";
-import { CustomViewsUIManager } from "../core/ui-manager";
-import type { CustomViewsCore } from "../core/core.svelte";
 
 /**
  * structure for script attributes
@@ -69,21 +67,5 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
   } catch (error) {
     console.error('[CustomViews] Error loading config file:', error);
     return fallbackConfig;
-  }
-}
-
-/**
- * Initializes the settings if enabled in the config.
- */
-export function initializeWidget(core: CustomViewsCore, config: ConfigFile): CustomViewsUIManager | undefined {
-  if (config.settings?.enabled !== false) {
-    const uiManager = new CustomViewsUIManager({
-      core,
-      ...config.settings
-    });
-    uiManager.render();
-    return uiManager;
-  } else {
-    return undefined;
   }
 }

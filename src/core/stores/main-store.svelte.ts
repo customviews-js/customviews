@@ -2,7 +2,7 @@ import { SvelteSet } from 'svelte/reactivity';
 import type { Config, State, TabGroupConfig } from "../../types/index";
 import type { ConfigSectionKey } from "../../types/index";
 import { isValidConfigSection } from "../../types/index";
-import type { AssetsManager } from "../managers/assets-manager";
+import type { AssetsManager } from "../assets";
 import { placeholderValueStore } from "./placeholder-value-store.svelte";
 import { placeholderRegistryStore } from "./placeholder-registry-store.svelte";
 

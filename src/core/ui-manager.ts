@@ -1,10 +1,11 @@
-import type { CustomViewsCore } from "./core.svelte";
+import type { CustomViewsController } from "./controller.svelte";
+import type { ConfigFile } from "../types/index";
 import UIRoot from "../components/UIRoot.svelte";
 import { mount, unmount } from "svelte";
 
 export interface UIManagerOptions {
   /** The CustomViews core instance to control */
-  core: CustomViewsCore;
+  core: CustomViewsController;
 
   /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
@@ -139,5 +140,21 @@ export class CustomViewsUIManager {
       unmount(this.app);
       this.app = null;
     }
+  }
+}
+
+/**
+ * Initializes the settings if enabled in the config.
+ */
+export function initUIManager(core: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
+  if (config.settings?.enabled !== false) {
+    const uiManager = new CustomViewsUIManager({
+      core,
+      ...config.settings
+    });
+    uiManager.render();
+    return uiManager;
+  } else {
+    return undefined;
   }
 }

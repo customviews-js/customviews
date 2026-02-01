@@ -1,5 +1,5 @@
 import type { Config } from "../types/index";
-import type { AssetsManager } from "./managers/assets-manager";
+import type { AssetsManager } from "./assets";
 
 import { PersistenceManager } from "./state/persistence";
 import { URLStateManager } from "./state/url-state-manager";
@@ -9,7 +9,7 @@ import { DataStore, initStore } from "./stores/main-store.svelte";
 import { placeholderValueStore } from "./stores/placeholder-value-store.svelte";
 import { PlaceholderBinder } from "./services/placeholder-binder";
 
-export interface CustomViewsOptions {
+export interface ControllerOptions {
   assetsManager: AssetsManager;
   config: Config;
   rootEl?: HTMLElement | undefined;
@@ -21,7 +21,7 @@ export interface CustomViewsOptions {
  * Uses Svelte 5 Effects ($effect) to automatically apply state changes from the store to URL and persistence.
  * Components (Toggle, TabGroup) are self-contained and self-managing via the global store.
  */
-export class CustomViewsCore {
+export class CustomViewsController {
   /**
    * The single source of truth for application state.
    */
@@ -36,7 +36,7 @@ export class CustomViewsCore {
   private destroyEffectRoot?: () => void;
   private popstateHandler?: () => void;
 
-  constructor(opt: CustomViewsOptions) {
+  constructor(opt: ControllerOptions) {
     this.rootEl = opt.rootEl || document.body;
     this.persistenceManager = new PersistenceManager();
     this.showUrlEnabled = opt.showUrl ?? false;

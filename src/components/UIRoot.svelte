@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { CustomViewsCore } from '../core/core.svelte';
+  import type { CustomViewsController } from '../core/controller.svelte';
   import type { UIManagerOptions } from '../core/ui-manager';
   
   import IntroCallout from './settings/IntroCallout.svelte';
@@ -19,7 +19,7 @@
   import FocusBanner from './focus/FocusBanner.svelte';
   import { findHighestVisibleElement, scrollToElement } from '../utils/scroll-utils';
 
-  let { core, options } = $props<{ core: CustomViewsCore, options: UIManagerOptions }>();
+  let { core, options } = $props<{ core: CustomViewsController, options: UIManagerOptions }>();
 
   // Derived state
   const store = $derived(core.store);

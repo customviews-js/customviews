@@ -1,5 +1,5 @@
 import type { CustomViewAsset } from "../types/index";
-import type { AssetsManager } from "./managers/assets-manager";
+import type { AssetsManager } from "./assets";
 
 /** --- Basic renderers --- */
 
