@@ -3,26 +3,8 @@ import { getScriptAttributes, fetchConfig, initializeWidget } from "./utils/init
 import type { initOptions } from "./CustomViews";
 
 
-// --- Public API Exports ---
-// These will be available on the global `CustomViews` object in the browser
-// e.g., window.CustomViews.CustomViewsUIManager
-export { CustomViewsCore } from "./core/core.svelte";
-export type { CustomViewsOptions } from "./core/core.svelte";
-export { CustomViewsUIManager } from "./core/ui-manager";
-export type { UIManagerOptions } from "./core/ui-manager";
-export { PersistenceManager } from "./core/state/persistence";
-export { URLStateManager } from "./core/state/url-state-manager";
-export { AssetsManager } from "./core/managers/assets-manager";
-export type { Config, ConfigFile } from "./types/index";
-
-// Re-export the main class for manual usage if needed
-export { CustomViews };
-
-/**
- * Main initialization function.
- * This is aliased as `CustomViews.init` in the global namespace because it's a named export.
- */
-export const init = CustomViews.init;
+// --- No Public API Exports ---
+// The script auto-initializes via initializeFromScript().
 
 /**
  * Initialize CustomViews from script tag attributes and config file

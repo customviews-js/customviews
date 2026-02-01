@@ -3,9 +3,9 @@
   "version": "1.6.0",
   "description": "A JavaScript dynamic custom views Library.",
   "type": "module",
-  "types": "dist/index.d.ts",
+  "types": "dist/types/browser.d.ts",
   "main": "dist/custom-views.min.js",
-  "module": "dist/custom-views.esm.js",
+  "module": "dist/custom-views.min.js",
   "browser": "dist/custom-views.min.js",
   "unpkg": "dist/custom-views.min.js",
   "jsdelivr": "dist/custom-views.min.js",
@@ -18,14 +18,13 @@
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/custom-views.esm.js",
+      "import": "./dist/custom-views.min.js",
       "require": "./dist/custom-views.min.js",
       "browser": "./dist/custom-views.min.js"
     },
     "./core": {
-      "import": "./dist/custom-views.esm.js",
-      "require": "./dist/custom-views.cjs.js"
+      "import": "./dist/custom-views.min.js",
+      "require": "./dist/custom-views.min.js"
     }
   },
   "scripts": {
