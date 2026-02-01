@@ -2,62 +2,71 @@
   import { fade, scale } from 'svelte/transition';
   import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon, getSunIcon, getMoonIcon } from '../../utils/icons';
   import { themeStore } from '../../core/stores/theme-store.svelte';
-  import type { ToggleConfig, TabGroupConfig } from '../../types/index';
-  import type { ConfigSectionKey } from '../../types/index';
+  import type { CustomViewsController } from '../../core/controller.svelte';
+  import { URLStateManager } from '../../core/state/url-state-manager';
+  import { showToast } from '../../core/stores/toast-store.svelte';
+  import { placeholderRegistryStore } from '../../core/stores/placeholder-registry-store.svelte';
+  import { placeholderValueStore } from '../../core/stores/placeholder-value-store.svelte';
+  import { findHighestVisibleElement, scrollToElement } from '../../utils/scroll-utils';
+  
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
   import PlaceholderItem from './PlaceholderItem.svelte';
-  import type { PlaceholderDefinition } from '../../core/stores/placeholder-registry-store.svelte';
 
   interface Props {
+    core: CustomViewsController;
     title?: string;
     description?: string;
     showReset?: boolean;
     showTabGroups?: boolean;
-    toggles?: ToggleConfig[];
-    tabGroups?: TabGroupConfig[];
-    shownToggles?: string[];
-    peekToggles?: string[];
-    activeTabs?: Record<string, string>;
     navsVisible?: boolean;
     isResetting?: boolean;
-    placeholderDefinitions?: PlaceholderDefinition[];
-    placeholderValues?: Record<string, string>;
     onclose?: () => void;
     onreset?: () => void;
-    ontoggleChange?: (detail: any) => void;
-    ontabGroupChange?: (detail: any) => void;
     ontoggleNav?: (visible: boolean) => void;
-    oncopyShareUrl?: () => void;
     onstartShare?: () => void;
-    onplaceholderChange?: (detail: { name: string, value: string }) => void;
-    sectionOrder?: ConfigSectionKey[];
   }
 
   let { 
+    core,
     title = 'Customize View',
     description = '',
     showReset = true,
     showTabGroups = true,
-    toggles = [],
-    tabGroups = [],
-    shownToggles = [],
-    peekToggles = [],
-    activeTabs = {},
     navsVisible = true,
     isResetting = false,
-    placeholderDefinitions = [],
-    placeholderValues = {},
-    sectionOrder = ['toggles', 'placeholders', 'tabGroups'] as ConfigSectionKey[],
     onclose = () => {},
     onreset = () => {},
-    ontoggleChange = () => {},
-    ontabGroupChange = () => {},
     ontoggleNav = () => {},
-    oncopyShareUrl = () => {},
     onstartShare = () => {},
-    onplaceholderChange = () => {}
   }: Props = $props();
+
+  // --- Derived State from Core ---
+  const store = $derived(core.store);
+  
+  // Config Items
+  const toggles = $derived(store.menuToggles);
+  const tabGroups = $derived(store.menuTabGroups);
+  const sectionOrder = $derived(store.configSectionOrder);
+
+  // State Items
+  let shownToggles = $derived(store.state.shownToggles ?? []);
+  let peekToggles = $derived(store.state.peekToggles ?? []);
+  let activeTabs = $derived(store.state.tabs ?? {});
+  
+  // Placeholder Data
+  let placeholderDefinitions = $derived.by(() => {
+     return placeholderRegistryStore.definitions.filter(d => {
+         if (d.hiddenFromSettings) return false;
+         if (d.isLocal) {
+             return store.detectedPlaceholders.has(d.name);
+         }
+         return true;
+     });
+  });
+  let placeholderValues = $derived(placeholderValueStore.values);
+
+  // --- UI Logic ---
 
   let hasCustomizeContent = $derived(
     toggles.length > 0 || 
@@ -106,20 +115,52 @@
     ontoggleNav(!navsVisible);
   }
 
+  // --- Core Actions ---
+
   function handleToggleChange(detail: any) {
-    ontoggleChange(detail);
+    const { toggleId, value } = detail;
+    const currentShown = store.state.shownToggles || [];
+    const currentPeek = store.state.peekToggles || [];
+
+    const newShown = currentShown.filter((id: string) => id !== toggleId);
+    const newPeek = currentPeek.filter((id: string) => id !== toggleId);
+
+    if (value === 'show') newShown.push(toggleId);
+    if (value === 'peek') newPeek.push(toggleId);
+
+    store.setToggles(newShown, newPeek);
   }
 
   function handleTabGroupChange(detail: any) {
-    ontabGroupChange(detail);
+    const { groupId, tabId } = detail;
+    // Scroll Logic: Capture target before state update
+    const groupToScrollTo = findHighestVisibleElement('cv-tabgroup');
+
+    store.setPinnedTab(groupId, tabId);
+
+    // Restore scroll after update
+    if (groupToScrollTo) {
+        queueMicrotask(() => {
+             scrollToElement(groupToScrollTo);
+        });
+    }
+  }
+  
+  function handlePlaceholderChange(detail: { name: string, value: string }) {
+    placeholderValueStore.set(detail.name, detail.value);
   }
 
   function copyShareUrl() {
-    oncopyShareUrl();
-    copySuccess = true;
-    setTimeout(() => {
-      copySuccess = false;
-    }, 2000);
+    const url = URLStateManager.generateShareableURL(store.state);
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('Link copied to clipboard!');
+      copySuccess = true;
+      setTimeout(() => {
+        copySuccess = false;
+      }, 2000);
+    }).catch(() => {
+      showToast('Failed to copy URL!');
+    });
   }
 
   function computeToggleState(id: string, currentShown: string[], currentPeek: string[]): 'show' | 'hide' | 'peek' {
@@ -202,7 +243,7 @@
                     <PlaceholderItem 
                       definition={def}
                       value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
-                      onchange={onplaceholderChange}
+                      onchange={handlePlaceholderChange}
                     />
                   {/each}
                 </div>

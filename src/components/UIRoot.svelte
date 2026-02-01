@@ -6,18 +6,14 @@
   import IntroCallout from './settings/IntroCallout.svelte';
   import SettingsIcon from './settings/SettingsIcon.svelte';
   import Modal from './modal/Modal.svelte';
-  import { URLStateManager } from '../core/state/url-state-manager';
   import { showToast } from '../core/stores/toast-store.svelte';
   import { shareStore } from '../core/stores/share-store.svelte';
   import { focusStore } from '../core/stores/focus-store.svelte';
-  import { placeholderRegistryStore } from '../core/stores/placeholder-registry-store.svelte';
-  import { placeholderValueStore } from '../core/stores/placeholder-value-store.svelte';
   import { themeStore } from '../core/stores/theme-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../core/constants';
   import Toast from './elements/Toast.svelte';
   import ShareOverlay from './share/ShareOverlay.svelte';
   import FocusBanner from './focus/FocusBanner.svelte';
-  import { findHighestVisibleElement, scrollToElement } from '../utils/scroll-utils';
 
   let { core, options } = $props<{ core: CustomViewsController, options: UIManagerOptions }>();
 
@@ -43,23 +39,6 @@
   const excludedTags = $derived([...DEFAULT_EXCLUDED_TAGS, ...(shareExclusions.tags || [])]);
   const excludedIds = $derived([...DEFAULT_EXCLUDED_IDS, ...(shareExclusions.ids || [])]);
   
-  // Store State helpers for Modal
-  let shownToggles = $derived(store.state.shownToggles ?? []);
-  let peekToggles = $derived(store.state.peekToggles ?? []);
-  let activeTabs = $derived(store.state.tabs ?? {});
-
-  // Placeholder Data
-  let visiblePlaceholders = $derived.by(() => {
-     return placeholderRegistryStore.definitions.filter(d => {
-         if (d.hiddenFromSettings) return false;
-         if (d.isLocal) {
-             return store.detectedPlaceholders.has(d.name);
-         }
-         return true;
-     });
-  });
-  let placeholderValues = $derived(placeholderValueStore.values);
-
   // --- Initialization ---
 
   onMount(() => {
@@ -181,55 +160,10 @@
 
   // --- Settings Handlers ---
 
-  function handleToggleChange(detail: any) {
-    const { toggleId, value } = detail;
-    const currentShown = store.state.shownToggles || [];
-    const currentPeek = store.state.peekToggles || [];
-
-    const newShown = currentShown.filter((id: string) => id !== toggleId);
-    const newPeek = currentPeek.filter((id: string) => id !== toggleId);
-
-    if (value === 'show') newShown.push(toggleId);
-    if (value === 'peek') newPeek.push(toggleId);
-
-    store.setToggles(newShown, newPeek);
-  }
-
-  function handleTabGroupChange(detail: any) {
-    const { groupId, tabId } = detail;
-    // Scroll Logic: Capture target before state update
-    const groupToScrollTo = findHighestVisibleElement('cv-tabgroup');
-
-    store.setPinnedTab(groupId, tabId);
-
-    // Restore scroll after update
-    if (groupToScrollTo) {
-        queueMicrotask(() => {
-             scrollToElement(groupToScrollTo);
-        });
-    }
-  }
-
   function handleNavToggle(visible: boolean) {
     areTabNavsVisible = visible;
     // Core's effect will capture this change and persist it
     store.isTabGroupNavHeadingVisible = visible;
-  }
-
-  function handlePlaceholderChange(e: any) {
-    const { name, value } = e;
-    placeholderValueStore.set(name, value);
-  }
-
-  // --- Share Handlers ---
-
-  function handleCopyShareUrl() {
-    const url = URLStateManager.generateShareableURL(store.state);
-    navigator.clipboard.writeText(url).then(() => {
-      showToast('Link copied to clipboard!');
-    }).catch(() => {
-      showToast('Failed to copy URL!');
-    });
   }
 </script>
 
@@ -275,32 +209,18 @@
     <!-- Modal -->
     {#if isModalOpen}
       <Modal 
+        {core}
         title={options.panel.title}
         description={options.panel.description}
         showReset={options.panel.showReset}
         showTabGroups={options.panel.showTabGroups}
-        
-        toggles={store.menuToggles}
-        tabGroups={store.menuTabGroups}
-        
-        shownToggles={shownToggles}
-        peekToggles={peekToggles}
-        activeTabs={activeTabs}
         navsVisible={areTabNavsVisible}
         isResetting={isResetting}
   
-        placeholderDefinitions={visiblePlaceholders}
-        placeholderValues={placeholderValues}
-        sectionOrder={store.configSectionOrder}
-
         onclose={closeModal}
         onreset={handleReset}
-        ontoggleChange={handleToggleChange}
-        ontabGroupChange={handleTabGroupChange}
         ontoggleNav={handleNavToggle}
-        oncopyShareUrl={handleCopyShareUrl}
         onstartShare={handleStartShare}
-        onplaceholderChange={handlePlaceholderChange}
       />
     {/if}
   </div>
