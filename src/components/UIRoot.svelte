@@ -24,6 +24,7 @@
   // --- Derived State ---
   const store = $derived(core.store);
   const storeConfig = $derived(core.store.config);
+  const settingsEnabled = $derived(options.settingsEnabled ?? true);
 
   // --- UI State ---
   let isModalOpen = $state(false);
@@ -78,7 +79,7 @@
   // Intro Callout Logic
   let hasCheckedIntro = false;
   $effect(() => {
-    if (!hasCheckedIntro && options.callout?.show) {
+    if (settingsEnabled && !hasCheckedIntro && options.callout?.show) {
        // Only show if there are actual components on the page
        if (store.hasPageElements) {
            hasCheckedIntro = true;
@@ -111,7 +112,9 @@
     const action = UrlActionHandler.detectAction(window.location);
     if (action) {
       if (action.type === 'OPEN_MODAL') {
-        openModal();
+        if (settingsEnabled) {
+          openModal();
+        }
       } else if (action.type === 'START_SHARE') {
         handleStartShare(action.mode);
       }
@@ -124,6 +127,8 @@
   // --- Modal Actions ---
 
   function openModal() {
+    if (!settingsEnabled) return;
+    
     if (showCallout) dismissCallout();
     // Mark intro as shown if user manually opens settings
     core.persistenceManager.setItem(STORAGE_KEY_INTRO_SHOWN, 'true');
@@ -146,6 +151,7 @@
     
     setTimeout(() => {
       isResetting = false;
+      settingsIcon?.resetPosition();
     }, 600);
   }
 
@@ -170,14 +176,14 @@
     options.panel.showTabGroups || 
     shareStore.isActive || 
     focusStore.isActive || 
-    isModalOpen
+    (settingsEnabled && isModalOpen)
   );
 </script>
 
 {#if shouldRenderWidget}
   <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
     <!-- Intro Callout -->
-    {#if showCallout}
+    {#if showCallout && settingsEnabled}
       <IntroCallout 
         position={options.icon.position} 
         message={options.callout?.message}
@@ -198,7 +204,7 @@
     <FocusBanner />
   
     <!-- Widget Icon -->
-    {#if options.icon.show}
+    {#if settingsEnabled && options.icon.show}
       <SettingsIcon 
         bind:this={settingsIcon}
         position={options.icon.position} 
@@ -214,7 +220,7 @@
     {/if}
   
     <!-- Modal -->
-    {#if isModalOpen}
+    {#if settingsEnabled && isModalOpen}
       <Modal 
         {core}
         title={options.panel.title}

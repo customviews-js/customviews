@@ -13,7 +13,7 @@
 * [Configuration]({{baseUrl}}/authorGuide/configuration.html)
 * [Components]({{baseUrl}}/authorGuide/components/all.html) :expanded:
   * [Settings Dialog]({{baseUrl}}/authorGuide/components/settings.html)
-  * [Share & Focus]({{baseUrl}}/authorGuide/components/share.html)
+  * [Focused Views]({{baseUrl}}/authorGuide/components/share.html)
   * [Toggles]({{baseUrl}}/authorGuide/components/toggles.html)
   * [Tabs]({{baseUrl}}/authorGuide/components/tabs.html)
   * [Placeholders]({{baseUrl}}/authorGuide/components/placeholders.html)

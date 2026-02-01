@@ -34,7 +34,8 @@ To access share mode, you can open the settings dialog and click the "Share" tab
 You can trigger the Share Mode UI in headless mode directly via URL links. This is useful if you do not wish to use any other features of CustomViews, such as the settings dialog, which you can disable.
 
 * Two modes are supported, through the hash and query parameters. 
-* Note that clicking on the query parameter link will refresh the page.
+* Note that clicking on the query parameter link will refresh the page. However, using the query allows you to append additional hash parameters to the URL.
+  * E.g. `https://yoursite.com/guide.html?cv-share-highlight#selecting-elements`
 
 | Trigger (Hash) | Trigger (Query) | Mode Activated |
 | :--- | :--- | :--- |
@@ -46,15 +47,13 @@ You can trigger the Share Mode UI in headless mode directly via URL links. This 
 **Example:**
 To create links that trigger share mode:
 
-[Default Mode (Hash)](#cv-share) (through `[Default Mode (Hash)](#cv-share)`)
+[Highlight Mode (Hash)](#cv-share-highlight) (`[Highlight Mode (Hash)](#cv-share-highlight)`)
 
-[Highlight Mode (Hash)](#cv-share-highlight) (through `[Highlight Mode (Hash)](#cv-share-highlight)`)
+[Show Mode (Hash)](#cv-share-show) (`[Show Mode (Hash)](#cv-share-show)`)
 
-[Show Mode (Hash)](#cv-share-show) (through `[Show Mode (Hash)](#cv-share-show)`)
+[Hide Mode (Hash)](#cv-share-hide) (`[Hide Mode (Hash)](#cv-share-hide)`)
 
-[Hide Mode (Hash)](#cv-share-hide) (through `[Hide Mode (Hash)](#cv-share-hide)`)
-
-[Highlight Mode (Query)](./share.md?cv-share-highlight) (through `[Highlight Mode (Query)](./share.md?cv-share-highlight)`)
+[Highlight Mode (Query + Hash)](./share.html?cv-share-highlight#selecting-elements) (`[Highlight Mode (Query + Hash)](./share.html?cv-share-highlight#selecting-elements)`)
 
 
 ### Selecting Elements
@@ -139,6 +138,22 @@ Additionally, a banner at the top of the page reminds the user they are in a foc
 
 
 ## Configurations
+
+### Using CustomViews without the Settings Dialog
+
+To use only the focused views feature of CustomViews, we can disable the settings dialog, and only trigger the share mode through links.
+
+To disable the settings dialog, add the following to your `customviews.config.js` file:
+
+```json
+{
+  "baseUrl": "/",
+  "settings": {
+    "enabled": false
+  }
+}
+```
+
 
 ### Customizing Share Behavior ( WIP )
 Website authors can customize which elements are excluded from selection (e.g., sidebars, headers) by configuring `shareExclusions` in their `customviews.config.js` file.

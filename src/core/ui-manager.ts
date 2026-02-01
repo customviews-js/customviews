@@ -10,6 +10,9 @@ export interface UIManagerOptions {
   /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
 
+  /** Whether the settings feature (icon/modal) is enabled */
+  settingsEnabled?: boolean;
+
   /** Settings panel configuration */
   panel?: {
     /** Title displayed in the settings modal */
@@ -61,6 +64,7 @@ export interface UIManagerOptions {
 
 export type ResolvedUIManagerOptions = Omit<UIManagerOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
   container: HTMLElement;
+  settingsEnabled: boolean;
   theme: NonNullable<UIManagerOptions['theme']>;
   panel: Required<NonNullable<UIManagerOptions['panel']>>;
   callout: {
@@ -89,6 +93,7 @@ export class CustomViewsUIManager {
     this.options = {
       core: options.core, // 'core' is a required property and must be explicitly passed
       container: options.container || document.body,
+      settingsEnabled: options.settingsEnabled ?? true,
       theme: options.theme || 'light',
       panel: {
         title: options.panel?.title || 'Customize View',
@@ -147,14 +152,13 @@ export class CustomViewsUIManager {
  * Initializes the settings if enabled in the config.
  */
 export function initUIManager(core: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
-  if (config.settings?.enabled !== false) {
-    const uiManager = new CustomViewsUIManager({
-      core,
-      ...config.settings
-    });
-    uiManager.render();
-    return uiManager;
-  } else {
-    return undefined;
-  }
+  const settingsEnabled = config.settings?.enabled !== false;
+  
+  const uiManager = new CustomViewsUIManager({
+    core,
+    settingsEnabled,
+    ...config.settings
+  });
+  uiManager.render();
+  return uiManager;
 }
