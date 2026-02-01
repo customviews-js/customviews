@@ -16,6 +16,9 @@ For the latest stable release, visit [here](https://customviews-js.github.io).**
     <li>
       <a href="https://github.com/customviews-js/customviews" target="_blank" class="nav-link"><md>:fab-github:</md></a>
     </li>
+    <li>
+      <a href="#cv-open" class="nav-link">OPEN DIALOG</a>
+    </li>
     <li slot="right">
       <form class="navbar-form">
         <searchbar :data="searchData" placeholder="Search" :on-hit="searchCallback" menu-align-right></searchbar>

@@ -40,7 +40,7 @@ You can trigger the settings dialog via a link or button:
 Append `#cv-open` to the URL. Works without reloading the page.
 
 ```markdown
-[Open Settings](#cv-open)
+[Open Settings](./#cv-open)
 ```
 [Open Settings through hash](#cv-open)
 
@@ -48,9 +48,9 @@ Append `#cv-open` to the URL. Works without reloading the page.
 Append `?cv-open=true` to the URL. Works on page load (reloads page) and auto-cleans the URL.
 
 ```markdown
-[Open Settings](?cv-open=true)
+[Open Settings](./?cv-open=true)
 ```
-[Open Settings through query parameter](?cv-open=true)
+[Open Settings through query parameter](./settings.md?cv-open=true)
 
 
 ## Adaptive Display
