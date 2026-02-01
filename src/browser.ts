@@ -5,11 +5,11 @@ import type { initOptions } from "./CustomViews";
 
 // --- Public API Exports ---
 // These will be available on the global `CustomViews` object in the browser
-// e.g., window.CustomViews.CustomViewsSettings
+// e.g., window.CustomViews.CustomViewsUIManager
 export { CustomViewsCore } from "./core/core.svelte";
 export type { CustomViewsOptions } from "./core/core.svelte";
-export { CustomViewsSettings } from "./core/settings";
-export type { SettingsOptions } from "./core/settings";
+export { CustomViewsUIManager } from "./core/ui-manager";
+export type { UIManagerOptions } from "./core/ui-manager";
 export { PersistenceManager } from "./core/state/persistence";
 export { URLStateManager } from "./core/state/url-state-manager";
 export { AssetsManager } from "./core/managers/assets-manager";
@@ -79,10 +79,10 @@ export function initializeFromScript(): void {
       // Store instance on the global object for debugging/access
       window.customViewsInstance = { core };
 
-      // 4. Initialize Settings
-      const settings = initializeWidget(core, configFile);
-      if (settings) {
-        window.customViewsInstance.settings = settings;
+      // 4. Initialize UI Manager
+      const uiManager = initializeWidget(core, configFile);
+      if (uiManager) {
+        window.customViewsInstance.uiManager = uiManager;
       }
 
       // Mark initialized

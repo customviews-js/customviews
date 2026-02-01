@@ -1,8 +1,8 @@
 import type { CustomViewsCore } from "./core.svelte";
-import WidgetRoot from "../components/WidgetRoot.svelte";
+import UIRoot from "../components/UIRoot.svelte";
 import { mount, unmount } from "svelte";
 
-export interface SettingsOptions {
+export interface UIManagerOptions {
   /** The CustomViews core instance to control */
   core: CustomViewsCore;
 
@@ -58,10 +58,10 @@ export interface SettingsOptions {
   };
 }
 
-export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
+export type ResolvedUIManagerOptions = Omit<UIManagerOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
   container: HTMLElement;
-  theme: NonNullable<SettingsOptions['theme']>;
-  panel: Required<NonNullable<SettingsOptions['panel']>>;
+  theme: NonNullable<UIManagerOptions['theme']>;
+  panel: Required<NonNullable<UIManagerOptions['panel']>>;
   callout: {
     show: boolean;
     message: string;
@@ -70,7 +70,7 @@ export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme
     textColor?: string | undefined;
   };
   icon: {
-    position: NonNullable<NonNullable<SettingsOptions['icon']>['position']>;
+    position: NonNullable<NonNullable<UIManagerOptions['icon']>['position']>;
     color?: string | undefined;
     backgroundColor?: string | undefined;
     opacity?: number | undefined;
@@ -79,11 +79,11 @@ export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme
   };
 };
 
-export class CustomViewsSettings {
+export class CustomViewsUIManager {
   private app: ReturnType<typeof mount> | null = null;
-  private options: ResolvedSettingsOptions;
+  private options: ResolvedUIManagerOptions;
 
-  constructor(options: SettingsOptions) {
+  constructor(options: UIManagerOptions) {
     // Set defaults
     this.options = {
       core: options.core, // 'core' is a required property and must be explicitly passed
@@ -116,13 +116,13 @@ export class CustomViewsSettings {
   /**
    * Render the settings widget
    */
-  public renderModalIcon(): void {
+  public render(): void {
     if (this.app) {
       return;
     }
 
     // Mount Svelte App using Svelte 5 API
-    this.app = mount(WidgetRoot, {
+    this.app = mount(UIRoot, {
       target: this.options.container,
       props: {
         core: this.options.core,

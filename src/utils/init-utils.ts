@@ -1,6 +1,6 @@
 import { prependBaseUrl } from "./url-utils";
 import type { ConfigFile } from "../types/index";
-import { CustomViewsSettings } from "../core/settings";
+import { CustomViewsUIManager } from "../core/ui-manager";
 import type { CustomViewsCore } from "../core/core.svelte";
 
 /**
@@ -57,8 +57,6 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
 
   try {
     const fullConfigPath = prependBaseUrl(configPath, baseURL);
-    console.log(`[CustomViews] Loading config from: ${fullConfigPath}`);
-    
     const response = await fetch(fullConfigPath);
     
     if (!response.ok) {
@@ -66,7 +64,6 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
       return fallbackConfig;
     } else {
       const config = await response.json();
-      console.log('[CustomViews] Config loaded successfully');
       return config;
     }
   } catch (error) {
@@ -78,17 +75,15 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
 /**
  * Initializes the settings if enabled in the config.
  */
-export function initializeWidget(core: CustomViewsCore, config: ConfigFile): CustomViewsSettings | undefined {
+export function initializeWidget(core: CustomViewsCore, config: ConfigFile): CustomViewsUIManager | undefined {
   if (config.settings?.enabled !== false) {
-    const settings = new CustomViewsSettings({
+    const uiManager = new CustomViewsUIManager({
       core,
       ...config.settings
     });
-    settings.renderModalIcon();
-    console.log('[CustomViews] Settings initialized and rendered');
-    return settings;
+    uiManager.render();
+    return uiManager;
   } else {
-    console.log('[CustomViews] Settings disabled in config - skipping initialization');
     return undefined;
   }
 }
