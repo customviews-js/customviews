@@ -51,6 +51,7 @@
     ]
   },
   "baseUrl": "/customviews",
+  "storageKey": "cv-docs-beta",
   "settings": {
     "panel": {
       "title": "Custom Views Settings Dialog",

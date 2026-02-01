@@ -5,7 +5,6 @@
 <h1 class="display-3"><md>**CustomViews**</md></h1>
 
 
-
 What is _Custom Views_?
 
 Custom Views is a small runtime that provides specially designed, customizable, framework-agnostic UI components.
@@ -28,6 +27,8 @@ With Custom Views, you can:
 Whether you are building a static site, a dashboard, or a documentation portal, Custom Views gives you the tools to make your content interactive and adaptable while keeping things lightweight and simple.
 
 ## Quick Demo
+
+Hi there [[ username ]]!
 
 ### Toggles
 

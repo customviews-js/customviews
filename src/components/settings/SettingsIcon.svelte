@@ -9,7 +9,8 @@
     iconColor = undefined,
     backgroundColor = undefined,
     opacity = undefined,
-    scale = undefined
+    scale = undefined,
+    persistence = undefined
   }: {
     position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
     title?: string;
@@ -19,10 +20,11 @@
     backgroundColor?: string;
     opacity?: number;
     scale?: number;
+    persistence?: any;
   } = $props();
 
   // Constants
-  const STORAGE_KEY = 'cv-settings-icon-offset';
+  const STORAGE_KEY_BASE = 'cv-settings-icon-offset';
   const VIEWPORT_MARGIN = 10;
   const DRAG_THRESHOLD = 5;
 
@@ -36,12 +38,14 @@
   let maxOffset = Infinity;
 
   let settingsIconElement: HTMLElement;
-
+  
   onMount(() => {
     // Load persisted offset
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      currentOffset = parseFloat(saved);
+    if (persistence) {
+      const savedPosition = persistence.getItem(STORAGE_KEY_BASE);
+      if (savedPosition) {
+        currentOffset = parseFloat(savedPosition);
+      }
     }
 
     // Global event listeners to handle drag leaving the element
@@ -69,7 +73,9 @@
   export function resetPosition() {
     currentOffset = 0;
     dragStartOffset = 0;
-    localStorage.removeItem(STORAGE_KEY);
+    if (persistence) {
+      persistence.removeItem(STORAGE_KEY_BASE);
+    }
   }
 
   function constrainPositionToViewport() {
@@ -156,7 +162,9 @@
   }
 
   function savePosition() {
-      localStorage.setItem(STORAGE_KEY, currentOffset.toString());
+      if (persistence) {
+        persistence.setItem(STORAGE_KEY_BASE, currentOffset.toString());
+      }
   }
   
   function onClick(e: MouseEvent) {

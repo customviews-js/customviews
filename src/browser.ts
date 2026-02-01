@@ -56,7 +56,8 @@ export function initializeFromScript(): void {
         assetsManager,
         config: configFile.config || {},
         rootEl: document.body,
-        showUrl: configFile.showUrl || false
+        showUrl: configFile.showUrl || false,
+        storageKey: configFile.storageKey
       };
       
       const controller = new CustomViewsController(coreOptions);

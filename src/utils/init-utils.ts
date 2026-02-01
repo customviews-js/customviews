@@ -47,8 +47,7 @@ export function getScriptAttributes(): ScriptAttributes {
  * Fetches and parses the configuration file.
  */
 export async function fetchConfig(configPath: string, baseURL: string): Promise<ConfigFile> {
-  // Default minimal config
-  const fallbackConfig: ConfigFile = { 
+  const fallbackMinimalConfig: ConfigFile = { 
     config: {},
     settings: { enabled: true }
   };
@@ -59,13 +58,14 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
     
     if (!response.ok) {
       console.warn(`[CustomViews] Config file not found at ${fullConfigPath}. Using defaults.`);
-      return fallbackConfig;
-    } else {
-      const config = await response.json();
-      return config;
-    }
+      return fallbackMinimalConfig;
+    } 
+  
+    const config = await response.json();
+    return config;
+  
   } catch (error) {
     console.error('[CustomViews] Error loading config file:', error);
-    return fallbackConfig;
+    return fallbackMinimalConfig;
   }
 }
