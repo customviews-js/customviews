@@ -56,6 +56,22 @@ describe('UrlActionHandler', () => {
         }
     });
 
+    it('should detect START_SHARE with modes via hash', () => {
+        const modes = ['show', 'hide', 'highlight'];
+        for (const mode of modes) {
+            const loc = mockLocation('', `#cv-share-${mode}`);
+            const action = UrlActionHandler.detectAction(loc);
+            expect(action).toMatchObject({ 
+                type: 'START_SHARE', 
+                mode, 
+                triggerSource: 'hash'
+            });
+
+            const clean = UrlActionHandler.getCleanedUrl(loc, action!);
+            expect(clean).toBe('http://localhost/');
+        }
+    });
+
     it('should detect legacy cv-share-focus as show mode', () => {
         const loc = mockLocation('?cv-share-focus', '');
         const action = UrlActionHandler.detectAction(loc);

@@ -11,7 +11,7 @@ CustomViews provides a powerful way to share specific content from a page. "Shar
 
 ## Share Mode
 
-### Types ofSharing
+### Types of Sharing
 
 There are three modes of sharing:
 
@@ -38,13 +38,13 @@ You can trigger the Share Mode UI in headless mode directly via URL links. This 
 
 | Trigger (Hash) | Trigger (Query) | Mode Activated |
 | :--- | :--- | :--- |
-| `#cv-share` | `?cv-share` | Opens Share Mode (default mode, which is share mode) |
+| `#cv-share` | `?cv-share` | Opens Share Mode (default selection mode) |
 | `#cv-share-show` | `?cv-share-show` | Opens Share Mode in **Show** mode |
 | `#cv-share-hide` | `?cv-share-hide` | Opens Share Mode in **Hide** mode |
 | `#cv-share-highlight` | `?cv-share-highlight` | Opens Share Mode in **Highlight** mode |
 
 **Example:**
-To create a link that toggle the highlight mode through the links:
+To create links that trigger share mode:
 
 [Default Mode (Hash)](#cv-share) (through `[Default Mode (Hash)](#cv-share)`)
 
@@ -125,11 +125,11 @@ To leave Share Mode, click the **"Exit"** button on the floating bar.
 
 ## Focus Mode
 
-When someone opens the link you generated, they enter **Focus View**. This allows them in each mode:
+When someone opens the link you generated, they enter **Focus View**. The behavior in each mode is as follows:
 
-* Show Mode: Only the elements you selected (and their necessary context) are shown. Irrelevant content is hidden.
-* Hide Mode: The selected elements are hidden, while the rest of the page remains visible.
-* Highlight Mode: The selected elements are highlighted in red with an arrow indicator, while the rest of the page remains visible.
+* **Show Mode**: Only the elements you selected (and their necessary context) are shown. Irrelevant content is hidden.
+* **Hide Mode**: The selected elements are hidden, while the rest of the page remains visible.
+* **Highlight Mode**: The selected elements are highlighted in red with an arrow indicator, while the rest of the page remains visible.
 
 For show or hide mode, where content has been hidden, you will see markers like `... 3 sections hidden ...`. Clicking on these markers reveals the hidden content, allowing the viewer to see more context if needed.
 
