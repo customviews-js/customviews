@@ -3,7 +3,6 @@
   "version": "1.6.0",
   "description": "A JavaScript dynamic custom views Library.",
   "type": "module",
-  "types": "dist/types/browser.d.ts",
   "main": "dist/custom-views.min.js",
   "browser": "dist/custom-views.min.js",
   "unpkg": "dist/custom-views.min.js",
