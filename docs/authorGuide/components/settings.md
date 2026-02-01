@@ -57,6 +57,7 @@ Append `?cv-open=true` to the URL. Works on page load (reloads page) and auto-cl
 
 The settings panel stays clean by only verifying configured elements:
 - **Toggles/Tabs**: Sections appear only if defined in `config`.
+- **Order of Sections**: The order of Toggles, Tab Groups, and Placeholders in the modal follows their order in your `customviews.config.json`.
 - **Description**: Appears only if `panel.description` is set.
 
 ## Configuration
