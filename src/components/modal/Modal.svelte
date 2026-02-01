@@ -84,7 +84,7 @@
   });
 
   $effect(() => {
-    if (activeTab === 'customize') {
+    if (activeTab === 'customize' && mainClientHeight > preservedHeight) {
         preservedHeight = mainClientHeight;
     }
   });
