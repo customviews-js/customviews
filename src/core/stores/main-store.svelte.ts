@@ -1,5 +1,5 @@
 import { SvelteSet } from 'svelte/reactivity';
-import type { Config, State, TabGroupConfig } from "../../types/types";
+import type { Config, State, TabGroupConfig } from "../../types/index";
 import type { AssetsManager } from "../managers/assets-manager";
 import { placeholderValueStore } from "./placeholder-value-store.svelte";
 import { placeholderRegistryStore } from "./placeholder-registry-store.svelte";

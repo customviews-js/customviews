@@ -13,7 +13,7 @@ export type { SettingsOptions } from "./core/settings";
 export { PersistenceManager } from "./core/state/persistence";
 export { URLStateManager } from "./core/state/url-state-manager";
 export { AssetsManager } from "./core/managers/assets-manager";
-export type { Config, ConfigFile } from "./types/types";
+export type { Config, ConfigFile } from "./types/index";
 
 // Re-export the main class for manual usage if needed
 export { CustomViews };

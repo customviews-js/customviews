@@ -8,8 +8,8 @@ export type { initOptions } from "./CustomViews";
 export { PersistenceManager } from "./core/state/persistence";
 export { URLStateManager } from "./core/state/url-state-manager";
 export { AssetsManager } from "./core/managers/assets-manager";
-export type { Config } from "./types/types";
-export type { ConfigFile } from "./types/types";
+export type { Config } from "./types/index";
+export type { ConfigFile } from "./types/index";
 
 // Note: No auto-initialization here. 
 // For browser script tag usage, use dist/custom-views.min.js (built from src/entry/browser-entry.ts)

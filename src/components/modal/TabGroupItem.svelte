@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TabGroupConfig } from '../../types/types';
+  import type { TabGroupConfig } from '../../types/index';
 
   let { 
     group, 

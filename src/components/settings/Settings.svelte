@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import type { CustomViewsCore } from '../../core/core.svelte';
   import type { SettingsOptions } from '../../core/settings';
+  import { isValidConfigSection } from '../../types/index';
   
   import IntroCallout from './IntroCallout.svelte';
   import SettingsIcon from './SettingsIcon.svelte';
@@ -267,7 +268,8 @@
   
         placeholderDefinitions={placeholdersToShow}
         placeholderValues={values}
-  
+        sectionOrder={Object.keys(config).filter(isValidConfigSection)}
+
         onclose={closeModal}
         onreset={handleReset}
         ontoggleChange={handleToggleChange}

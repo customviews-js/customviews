@@ -1,4 +1,4 @@
-import type { Config } from "../types/types";
+import type { Config } from "../types/index";
 import type { AssetsManager } from "./managers/assets-manager";
 
 import { PersistenceManager } from "./state/persistence";

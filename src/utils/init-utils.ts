@@ -1,5 +1,5 @@
 import { prependBaseUrl } from "./url-utils";
-import type { ConfigFile } from "../types/types";
+import type { ConfigFile } from "../types/index";
 import { CustomViewsSettings } from "../core/settings";
 import type { CustomViewsCore } from "../core/core.svelte";
 
