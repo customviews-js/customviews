@@ -1,37 +1,47 @@
-const STORAGE_KEY = 'cv-user-variables';
+import type { PersistenceManager } from "../state/persistence";
+
+const STORAGE_KEY_BASE = 'cv-user-variables';
 
 export class PlaceholderValueStore {
   values = $state<Record<string, string>>({});
+  private persistence?: PersistenceManager;
 
   constructor() {
-    this.load();
+    // Lazy load
   }
 
-  private load() {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
+  public init(persistence: PersistenceManager) {
+    this.persistence = persistence;
+    this.loadSavedPlaceholderValues();
+  }
+
+  private loadSavedPlaceholderValues() {
+    if (!this.persistence) return;
+    
+    const stored = this.persistence.getItem(STORAGE_KEY_BASE);
+    if (stored) {
+      try {
         this.values = JSON.parse(stored);
+      } catch (e) {
+        console.warn('[CustomViews] Failed to parse user variables:', e);
       }
-    } catch (e) {
-      console.warn('[CustomViews] Failed to load user variables:', e);
+    } else {
+        console.log('[CustomViews] No stored placeholders found for key:', STORAGE_KEY_BASE);
     }
   }
-
-  public persist() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.values));
-    } catch (e) {
-      console.warn('[CustomViews] Failed to save user variables:', e);
-    }
-  }
-
+  
   getValue(name: string): string | undefined {
     return this.values[name];
   }
-
+  
   set(name: string, value: string) {
     this.values[name] = value;
+    this.persistValue();
+  }
+  
+  public persistValue() {
+    if (!this.persistence) return;
+    this.persistence.setItem(STORAGE_KEY_BASE, JSON.stringify(this.values));
   }
 }
 

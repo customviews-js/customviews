@@ -5,10 +5,11 @@ import type { State } from "../../types/index";
  */
 export class PersistenceManager {
   // Storage keys for localStorage
-  private static readonly STORAGE_KEYS = {
-    STATE: 'customviews-state',
-    TAB_NAV_VISIBILITY: 'cv-tab-navs-visible'
-  } as const;
+  private prefix: string;
+
+  constructor(storageKey?: string) {
+    this.prefix = storageKey ? `${storageKey}-` : '';
+  }
 
   /**
    * Check if localStorage is available in the current environment
@@ -17,75 +18,71 @@ export class PersistenceManager {
     return typeof window !== 'undefined' && window.localStorage !== undefined;
   }
 
-  
+  /**
+   * Generic set item with prefix
+   */
+  public setItem(key: string, value: string): void {
+    if (!this.isStorageAvailable()) return;
+    try {
+      localStorage.setItem(this.getPrefixedKey(key), value);
+    } catch (error) {
+      console.warn(`Failed to persist key ${key}:`, error);
+    }
+  }
+
+  /**
+   * Generic get item with prefix
+   * Keys are automatically prefixed with user specified storageKey
+   */
+  public getItem(key: string): string | null {
+    if (!this.isStorageAvailable()) return null;
+    try {
+      return localStorage.getItem(this.getPrefixedKey(key));
+    } catch (error) {
+      console.warn(`Failed to get key ${key}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Generic remove item with prefix
+   * Keys are automatically prefixed with user specified storageKey
+   */
+  public removeItem(key: string): void {
+     if (!this.isStorageAvailable()) return;
+     localStorage.removeItem(this.getPrefixedKey(key));
+  }
+
+  private getPrefixedKey(key: string): string {
+      return this.prefix + key;
+  }
+
+  // --- Type-Safe State Accessors (Wrappers around generic storage) ---
+
   public persistState(state: State): void {
-    if (!this.isStorageAvailable()) return;
-
-    try {
-      localStorage.setItem(PersistenceManager.STORAGE_KEYS.STATE, JSON.stringify(state));
-    } catch (error) {
-      console.warn('Failed to persist state:', error);
-    }
+    this.setItem('customviews-state', JSON.stringify(state));
   }
 
-  
   public getPersistedState(): State | null {
-    if (!this.isStorageAvailable()) return null;
-    try {
-      const raw = localStorage.getItem(PersistenceManager.STORAGE_KEYS.STATE);
-      return raw ? JSON.parse(raw) : null;
-    } catch (error) {
-      console.warn('Failed to parse persisted state:', error);
-      return null;
-    }
+    const raw = this.getItem('customviews-state');
+    return raw ? JSON.parse(raw) : null;
   }
 
- 
-  /**
-   * Clear persisted state
-   */
   public clearAll(): void {
-    if (!this.isStorageAvailable()) return;
-
-    localStorage.removeItem(PersistenceManager.STORAGE_KEYS.STATE);
-    localStorage.removeItem(PersistenceManager.STORAGE_KEYS.TAB_NAV_VISIBILITY);
+    this.removeItem('customviews-state');
+    this.removeItem('cv-tab-navs-visible');
   }
 
-  /**
-   * Persist tab nav visibility preference
-   */
   public persistTabNavVisibility(visible: boolean): void {
-    if (!this.isStorageAvailable()) return;
-
-    try {
-      localStorage.setItem(PersistenceManager.STORAGE_KEYS.TAB_NAV_VISIBILITY, visible ? 'true' : 'false');
-    } catch (error) {
-      console.warn('Failed to persist tab nav visibility:', error);
-    }
+    this.setItem('cv-tab-navs-visible', visible ? 'true' : 'false');
   }
 
-  /**
-   * Get persisted tab nav visibility preference
-   */
   public getPersistedTabNavVisibility(): boolean | null {
-    if (!this.isStorageAvailable()) return null;
-    try {
-      const raw = localStorage.getItem(PersistenceManager.STORAGE_KEYS.TAB_NAV_VISIBILITY);
-      return raw === null ? null : raw === 'true';
-    } catch (error) {
-      console.warn('Failed to get persisted tab nav visibility:', error);
-      return null;
-    }
+    const raw = this.getItem('cv-tab-navs-visible');
+    return raw === null ? null : raw === 'true';
   }
 
-  /**
-   * Check if any persistence data exists
-   */
   public hasPersistedData(): boolean {
-    if (!this.isStorageAvailable()) {
-      return false;
-    }
     return !!this.getPersistedState();
   }
-
 }

@@ -14,6 +14,7 @@ export interface ControllerOptions {
   config: Config;
   rootEl?: HTMLElement | undefined;
   showUrl?: boolean;
+  storageKey?: string | undefined;
 }
 
 /**
@@ -28,7 +29,7 @@ export class CustomViewsController {
   public store: DataStore;
   
   private rootEl: HTMLElement;
-  private persistenceManager: PersistenceManager;
+  public persistenceManager: PersistenceManager;
   private focusService: FocusService;
   
   private showUrlEnabled: boolean;
@@ -38,7 +39,7 @@ export class CustomViewsController {
 
   constructor(opt: ControllerOptions) {
     this.rootEl = opt.rootEl || document.body;
-    this.persistenceManager = new PersistenceManager();
+    this.persistenceManager = new PersistenceManager(opt.storageKey);
     this.showUrlEnabled = opt.showUrl ?? false;
     
     // Initialize Reactive Store Singleton
@@ -86,6 +87,9 @@ export class CustomViewsController {
       this.store.isTabGroupNavHeadingVisible = navPref;
     }
     
+    // Initialize Stores
+    placeholderValueStore.init(this.persistenceManager);
+
     // Run initial scan (non-reactive)
     // Clear previous page detections if any, before scan (SPA support)
     this.store.clearDetectedPlaceholders();
@@ -113,7 +117,6 @@ export class CustomViewsController {
         // Effect 3: React to Variable Changes
         $effect(() => {
             PlaceholderBinder.updateAll(placeholderValueStore.values);
-            placeholderValueStore.persist();
         });
     });
 

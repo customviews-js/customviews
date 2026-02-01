@@ -5,9 +5,12 @@ function isThemeMode(value: string | null): value is ThemeMode {
   return value === 'auto' || value === 'light' || value === 'dark';
 }
 
+import type { PersistenceManager } from "../state/persistence";
+
 export class ThemeStore {
   mode = $state<ThemeMode>('light'); // Default to light
   systemIsDark = $state(false);
+  private persistence?: PersistenceManager;
 
   constructor() {
     // Initialize system preference
@@ -17,38 +20,18 @@ export class ThemeStore {
     }
   }
 
-  listen() {
-    // Auto feature disabled for now
-    /*
-    if (typeof window === 'undefined') return () => {};
-    
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    // Update initial state just in case
-    this.systemIsDark = mediaQuery.matches;
-
-    const handler = (e: MediaQueryListEvent) => {
-      this.systemIsDark = e.matches;
-    };
-
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
-    */
-    return () => {};
-  }
-
-  init() {
-    if (typeof localStorage !== 'undefined') {
-        const saved = localStorage.getItem('cv-theme-pref');
-        if (isThemeMode(saved)) {
-            this.mode = saved;
-        }
+  init(persistence: PersistenceManager) {
+    this.persistence = persistence;
+    const saved = this.persistence.getItem('cv-theme-pref');
+    if (isThemeMode(saved)) {
+        this.mode = saved;
     }
   }
 
   setMode(newMode: ThemeMode) {
     this.mode = newMode;
-    if (typeof localStorage !== 'undefined') {
-        localStorage.setItem('cv-theme-pref', newMode);
+    if (this.persistence) {
+        this.persistence.setItem('cv-theme-pref', newMode);
     }
   }
 

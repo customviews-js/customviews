@@ -83,6 +83,8 @@ export interface ConfigFile {
   baseUrl?: string;
   /** Whether to keep the `view` state parameter visible in the browser URL bar */
   showUrl?: boolean;
+  /** Optional key to namespace localStorage items for isolation */
+  storageKey?: string;
 
   /** Widget configuration options */
   settings?: {

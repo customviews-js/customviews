@@ -21,32 +21,35 @@
 
   let { core, options } = $props<{ core: CustomViewsController, options: UIManagerOptions }>();
 
-  // Derived state
-  const store = $derived(core.store);
+  // --- Constants ---
+  const STORAGE_KEY_INTRO_SHOWN = 'cv-intro-shown';
 
-  // UI State
+  // --- Derived State ---
+  const store = $derived(core.store);
+  const storeConfig = $derived(core.store.config);
+
+  // --- UI State ---
   let isModalOpen = $state(false);
   let showCallout = $state(false);
   let isResetting = $state(false);
   let showPulse = $state(false);
+  let areTabNavsVisible = $state(true);
   let settingsIcon: { resetPosition: () => void } | undefined = $state();
 
-  // Nav Visibility
-  let navsVisible = $state(true);
-
-  // Computed Props for ShareOverlay
-  const config = $derived(core.store.config);
-  const shareExclusions = $derived(config.shareExclusions || {});
+  // --- Computed Props ---
+  
+  // Share Configuration
+  const shareExclusions = $derived(storeConfig.shareExclusions || {});
   const excludedTags = $derived([...DEFAULT_EXCLUDED_TAGS, ...(shareExclusions.tags || [])]);
   const excludedIds = $derived([...DEFAULT_EXCLUDED_IDS, ...(shareExclusions.ids || [])]);
   
-  // Reactively track store state for passing to Modal
+  // Store State helpers for Modal
   let shownToggles = $derived(store.state.shownToggles ?? []);
   let peekToggles = $derived(store.state.peekToggles ?? []);
   let activeTabs = $derived(store.state.tabs ?? {});
 
-  // Placeholder State
-  let placeholdersToShow = $derived.by(() => {
+  // Placeholder Data
+  let visiblePlaceholders = $derived.by(() => {
      return placeholderRegistryStore.definitions.filter(d => {
          if (d.hiddenFromSettings) return false;
          if (d.isLocal) {
@@ -55,33 +58,75 @@
          return true;
      });
   });
-  let values = $derived(placeholderValueStore.values);
+  let placeholderValues = $derived(placeholderValueStore.values);
 
-  // Init
+  // --- Initialization ---
+
   onMount(() => {
-    // Check Nav Visibility
-    // Store is the single source of truth, handled by Core's persistence effect
-    navsVisible = store.isTabGroupNavHeadingVisible;
-
-    // Init Theme Store
-    themeStore.init();
+    initTheme();
+    initNavVisibility();
+    initRouteListeners();
     
-    // Check for trigger initially
-    checkURLForModalOpenTrigger();
-
-    // Listen for URL changes (SPA support)
-    window.addEventListener('popstate', checkURLForModalOpenTrigger);
-    window.addEventListener('hashchange', checkURLForModalOpenTrigger);
-    
-    const cleanup = themeStore.listen();
-    
-    return () => {
-        cleanup();
-        window.removeEventListener('popstate', checkURLForModalOpenTrigger);
-        window.removeEventListener('hashchange', checkURLForModalOpenTrigger);
-    };
+    return teardownRouteListeners;
   });
 
+  function initTheme() {
+    themeStore.init(core.persistenceManager);
+  }
+
+  /**
+   * Sync local nav visibility with the store's persisted state.
+   * Store is the single source of truth.
+   */
+  function initNavVisibility() {
+    areTabNavsVisible = store.isTabGroupNavHeadingVisible;
+  }
+
+  function initRouteListeners() {
+    checkURLForModalOpenTrigger();
+    window.addEventListener('popstate', checkURLForModalOpenTrigger);
+    window.addEventListener('hashchange', checkURLForModalOpenTrigger);
+  }
+
+  function teardownRouteListeners() {
+    window.removeEventListener('popstate', checkURLForModalOpenTrigger);
+    window.removeEventListener('hashchange', checkURLForModalOpenTrigger);
+  }
+
+  // --- Effects ---
+
+  // Intro Callout Logic
+  let hasCheckedIntro = false;
+  $effect(() => {
+    if (!hasCheckedIntro && options.callout?.show) {
+       // Only show if there are actual components on the page
+       if (store.hasPageElements) {
+           hasCheckedIntro = true;
+           checkIntro();
+       }
+    }
+  });
+
+  // --- Logic / Handlers ---
+
+  function checkIntro() {
+    if (!core.persistenceManager.getItem(STORAGE_KEY_INTRO_SHOWN)) {
+      setTimeout(() => {
+          showCallout = true;
+          showPulse = true;
+      }, 1000);
+    }
+  }
+
+  function dismissCallout() {
+    showCallout = false;
+    showPulse = false;
+    core.persistenceManager.setItem(STORAGE_KEY_INTRO_SHOWN, 'true');
+  }
+
+  /**
+   * Checks if the URL (query param or hash) indicates the modal should be opened.
+   */
   function checkURLForModalOpenTrigger() {
     const urlParams = new URLSearchParams(window.location.search);
     const hash = window.location.hash;
@@ -101,37 +146,12 @@
     }
   }
 
-  let introChecked = false;
-  $effect(() => {
-    if (!introChecked && options.callout?.show) {
-       // Only show if there are actual components on the page
-       if (store.hasPageElements) {
-           introChecked = true;
-           checkIntro();
-       }
-    }
-  });
-
-  function checkIntro() {
-    try {
-      if (!localStorage.getItem('cv-intro-shown')) {
-        setTimeout(() => {
-           showCallout = true;
-           showPulse = true;
-        }, 1000);
-      }
-    } catch (e) { }
-  }
-
-  function dismissCallout() {
-    showCallout = false;
-    showPulse = false;
-    try { localStorage.setItem('cv-intro-shown', 'true'); } catch (e) { }
-  }
+  // --- Modal Actions ---
 
   function openModal() {
     if (showCallout) dismissCallout();
-    try { localStorage.setItem('cv-intro-shown', 'true'); } catch (e) { }
+    // Mark intro as shown if user manually opens settings
+    core.persistenceManager.setItem(STORAGE_KEY_INTRO_SHOWN, 'true');
     isModalOpen = true;
   }
 
@@ -139,14 +159,13 @@
     isModalOpen = false;
   }
 
-  // --- Handlers ---
-
   function handleReset() {
     isResetting = true;
     core.resetToDefault();
     settingsIcon?.resetPosition();
+    
     // Sync local state
-    navsVisible = true; 
+    areTabNavsVisible = true; 
     
     showToast('Settings reset to default');
     
@@ -154,6 +173,13 @@
       isResetting = false;
     }, 600);
   }
+
+  function handleStartShare() {
+    closeModal();
+    shareStore.toggleActive(true);
+  }
+
+  // --- Settings Handlers ---
 
   function handleToggleChange(detail: any) {
     const { toggleId, value } = detail;
@@ -185,10 +211,17 @@
   }
 
   function handleNavToggle(visible: boolean) {
-    navsVisible = visible;
+    areTabNavsVisible = visible;
     // Core's effect will capture this change and persist it
     store.isTabGroupNavHeadingVisible = visible;
   }
+
+  function handlePlaceholderChange(e: any) {
+    const { name, value } = e;
+    placeholderValueStore.set(name, value);
+  }
+
+  // --- Share Handlers ---
 
   function handleCopyShareUrl() {
     const url = URLStateManager.generateShareableURL(store.state);
@@ -197,16 +230,6 @@
     }).catch(() => {
       showToast('Failed to copy URL!');
     });
-  }
-
-  function handleStartShare() {
-    closeModal();
-    shareStore.toggleActive(true);
-  }
-
-  function handlePlaceholderChange(e: any) {
-    const { name, value } = e;
-    placeholderValueStore.set(name, value);
   }
 </script>
 
@@ -245,6 +268,7 @@
         backgroundColor={options.icon?.backgroundColor}
         opacity={options.icon?.opacity}
         scale={options.icon?.scale}
+        persistence={core.persistenceManager}
       />
     {/if}
   
@@ -262,11 +286,11 @@
         shownToggles={shownToggles}
         peekToggles={peekToggles}
         activeTabs={activeTabs}
-        navsVisible={navsVisible}
+        navsVisible={areTabNavsVisible}
         isResetting={isResetting}
   
-        placeholderDefinitions={placeholdersToShow}
-        placeholderValues={values}
+        placeholderDefinitions={visiblePlaceholders}
+        placeholderValues={placeholderValues}
         sectionOrder={store.configSectionOrder}
 
         onclose={closeModal}
