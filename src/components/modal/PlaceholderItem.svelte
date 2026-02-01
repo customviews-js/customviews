@@ -18,12 +18,14 @@
     value = target.value;
     onchange({ name: definition.name, value: target.value });
   }
+
+  const sanitizedId = $derived(`cv-placeholder-${definition.name.replace(/[^a-zA-Z0-9-_]/g, '-')}`);
 </script>
 
 <div class="placeholder-item">
-  <label class="placeholder-label" for="cv-placeholder-{definition.name}">{definition.settingsLabel || definition.name}</label>
+  <label class="placeholder-label" for={sanitizedId}>{definition.settingsLabel || definition.name}</label>
   <input 
-    id="cv-placeholder-{definition.name}"
+    id={sanitizedId}
     class="placeholder-input"
     type="text" 
     placeholder={definition.settingsHint || ''}

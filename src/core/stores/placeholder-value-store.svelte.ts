@@ -25,8 +25,6 @@ export class PlaceholderValueStore {
       } catch (e) {
         console.warn('[CustomViews] Failed to parse user variables:', e);
       }
-    } else {
-        console.log('[CustomViews] No stored placeholders found for key:', STORAGE_KEY_BASE);
     }
   }
   

@@ -1,11 +1,10 @@
-
+import type { PersistenceManager } from "../state/persistence";
 export type ThemeMode = 'auto' | 'light' | 'dark';
 
 function isThemeMode(value: string | null): value is ThemeMode {
   return value === 'auto' || value === 'light' || value === 'dark';
 }
 
-import type { PersistenceManager } from "../state/persistence";
 
 export class ThemeStore {
   mode = $state<ThemeMode>('light'); // Default to light

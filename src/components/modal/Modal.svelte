@@ -12,6 +12,7 @@
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
   import PlaceholderItem from './PlaceholderItem.svelte';
+  import { copyToClipboard } from '../../utils/clipboard-utils';
 
   interface Props {
     core: CustomViewsController;
@@ -150,17 +151,19 @@
     placeholderValueStore.set(detail.name, detail.value);
   }
 
-  function copyShareUrl() {
+  async function copyShareUrl() {
     const url = URLStateManager.generateShareableURL(store.state);
-    navigator.clipboard.writeText(url).then(() => {
+    try {
+      await copyToClipboard(url);
       showToast('Link copied to clipboard!');
       copySuccess = true;
       setTimeout(() => {
         copySuccess = false;
       }, 2000);
-    }).catch(() => {
-      showToast('Failed to copy URL!');
-    });
+    } catch (err) {
+      console.error('Copy failed:', err);
+      showToast('Failed to copy URL. Please copy manually.');
+    }
   }
 
   function computeToggleState(id: string, currentShown: string[], currentPeek: string[]): 'show' | 'hide' | 'peek' {
