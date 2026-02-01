@@ -1,28 +1,14 @@
-import { CustomViews } from "./CustomViews";
-import { getScriptAttributes, fetchConfig, initializeWidget } from "./utils/init-utils";
-import type { initOptions } from "./CustomViews";
+import { getScriptAttributes, fetchConfig } from "./utils/init-utils";
+import { initUIManager } from "./core/ui-manager";
+import { CustomViewsController, type ControllerOptions } from "./core/controller.svelte";
+import { AssetsManager } from "./core/assets";
+import type { CustomViewAsset } from "./types/index";
+import { prependBaseUrl } from "./utils/url-utils";
+import './registry';
 
 
-// --- Public API Exports ---
-// These will be available on the global `CustomViews` object in the browser
-// e.g., window.CustomViews.CustomViewsSettings
-export { CustomViewsCore } from "./core/core.svelte";
-export type { CustomViewsOptions } from "./core/core.svelte";
-export { CustomViewsSettings } from "./core/settings";
-export type { SettingsOptions } from "./core/settings";
-export { PersistenceManager } from "./core/state/persistence";
-export { URLStateManager } from "./core/state/url-state-manager";
-export { AssetsManager } from "./core/managers/assets-manager";
-export type { Config, ConfigFile } from "./types/types";
-
-// Re-export the main class for manual usage if needed
-export { CustomViews };
-
-/**
- * Main initialization function.
- * This is aliased as `CustomViews.init` in the global namespace because it's a named export.
- */
-export const init = CustomViews.init;
+// --- No Public API Exports ---
+// The script auto-initializes via initializeFromScript().
 
 /**
  * Initialize CustomViews from script tag attributes and config file
@@ -41,53 +27,47 @@ export function initializeFromScript(): void {
   document.addEventListener('DOMContentLoaded', async function() {
     if (window.__customViewsInitInProgress || window.__customViewsInitialized) return;
     window.__customViewsInitInProgress = true;
-    
     try {
-      // 1. Get attributes from script tag
+      // Get attributes from script tag
       const { baseURL, configPath } = getScriptAttributes();
 
-      // 2. Fetch Config
+      // Fetch Config
       const configFile = await fetchConfig(configPath, baseURL);
 
       // Determine effective baseURL (data attribute takes precedence)
       const effectiveBaseURL = baseURL || configFile.baseUrl || '';
 
-      const options: initOptions = {
-        baseURL: effectiveBaseURL,
-      }
-      
-      if (configFile.config) {
-        options.config = configFile.config;
-      }
-      
+      // Initialize Assets
+      let assetsManager: AssetsManager;
       if (configFile.assetsJsonPath) {
-        options.assetsJsonPath = configFile.assetsJsonPath;
+        const assetsPath = prependBaseUrl(configFile.assetsJsonPath, effectiveBaseURL);
+        try {
+          const assetsJson: Record<string, CustomViewAsset> = await (await fetch(assetsPath)).json();
+          assetsManager = new AssetsManager(assetsJson, effectiveBaseURL);
+        } catch (error) {
+           console.error(`[CustomViews] Failed to load assets JSON from ${assetsPath}:`, error);
+           assetsManager = new AssetsManager({}, effectiveBaseURL);
+        }
+      } else {
+         assetsManager = new AssetsManager({}, effectiveBaseURL);
       }
 
-      if (configFile.showUrl !== undefined) {
-        options.showUrl = configFile.showUrl;
-      }
+      const coreOptions: ControllerOptions = {
+        assetsManager,
+        config: configFile.config || {},
+        rootEl: document.body,
+        showUrl: configFile.showUrl || false
+      };
+      
+      const controller = new CustomViewsController(coreOptions);
+      controller.init();
 
-      // 3. Initialize Core
-      const core = await CustomViews.init(options);
-
-      if (!core) {
-        console.error('[CustomViews] Failed to initialize core.');
-        return; 
-      }
-
-      // Store instance on the global object for debugging/access
-      window.customViewsInstance = { core };
-
-      // 4. Initialize Settings
-      const settings = initializeWidget(core, configFile);
-      if (settings) {
-        window.customViewsInstance.settings = settings;
-      }
-
+      initUIManager(controller, configFile);
+      
       // Mark initialized
       window.__customViewsInitialized = true;
       window.__customViewsInitInProgress = false;
+
 
     } catch (error) {
       window.__customViewsInitInProgress = false;

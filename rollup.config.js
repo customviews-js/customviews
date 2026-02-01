@@ -59,32 +59,8 @@ const onwarn = (warning, warn) => {
   warn(warning);
 };
 
-// Run build 3 times to create different files
 const builds = [
-  // ESM build (for bundlers)
-  {
-    input: 'src/index.ts',
-    output: {
-      file: 'dist/custom-views.esm.js',
-      format: 'esm',
-      banner,
-      sourcemap: true
-    },
-    plugins
-  },
-  
-  // CommonJS build (for Node.js)
-  {
-    input: 'src/index.ts',
-    output: {
-      file: 'dist/custom-views.cjs.js',
-      format: 'cjs',
-      banner,
-      sourcemap: true,
-      exports: 'named',
-    },
-    plugins
-  },
+  // Node/Bundler builds (ESM/CJS) disabled for now as public API is not exposed.
   
   // Browser UMD build (non-minified)
   {

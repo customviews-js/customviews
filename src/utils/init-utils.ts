@@ -1,7 +1,5 @@
 import { prependBaseUrl } from "./url-utils";
-import type { ConfigFile } from "../types/types";
-import { CustomViewsSettings } from "../core/settings";
-import type { CustomViewsCore } from "../core/core.svelte";
+import type { ConfigFile } from "../types/index";
 
 /**
  * structure for script attributes
@@ -57,8 +55,6 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
 
   try {
     const fullConfigPath = prependBaseUrl(configPath, baseURL);
-    console.log(`[CustomViews] Loading config from: ${fullConfigPath}`);
-    
     const response = await fetch(fullConfigPath);
     
     if (!response.ok) {
@@ -66,29 +62,10 @@ export async function fetchConfig(configPath: string, baseURL: string): Promise<
       return fallbackConfig;
     } else {
       const config = await response.json();
-      console.log('[CustomViews] Config loaded successfully');
       return config;
     }
   } catch (error) {
     console.error('[CustomViews] Error loading config file:', error);
     return fallbackConfig;
-  }
-}
-
-/**
- * Initializes the settings if enabled in the config.
- */
-export function initializeWidget(core: CustomViewsCore, config: ConfigFile): CustomViewsSettings | undefined {
-  if (config.settings?.enabled !== false) {
-    const settings = new CustomViewsSettings({
-      core,
-      ...config.settings
-    });
-    settings.renderModalIcon();
-    console.log('[CustomViews] Settings initialized and rendered');
-    return settings;
-  } else {
-    console.log('[CustomViews] Settings disabled in config - skipping initialization');
-    return undefined;
   }
 }

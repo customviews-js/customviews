@@ -1,10 +1,11 @@
-import type { CustomViewsCore } from "./core.svelte";
-import Settings from "../components/settings/Settings.svelte";
+import type { CustomViewsController } from "./controller.svelte";
+import type { ConfigFile } from "../types/index";
+import UIRoot from "../components/UIRoot.svelte";
 import { mount, unmount } from "svelte";
 
-export interface SettingsOptions {
+export interface UIManagerOptions {
   /** The CustomViews core instance to control */
-  core: CustomViewsCore;
+  core: CustomViewsController;
 
   /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
@@ -58,10 +59,10 @@ export interface SettingsOptions {
   };
 }
 
-export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
+export type ResolvedUIManagerOptions = Omit<UIManagerOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
   container: HTMLElement;
-  theme: NonNullable<SettingsOptions['theme']>;
-  panel: Required<NonNullable<SettingsOptions['panel']>>;
+  theme: NonNullable<UIManagerOptions['theme']>;
+  panel: Required<NonNullable<UIManagerOptions['panel']>>;
   callout: {
     show: boolean;
     message: string;
@@ -70,7 +71,7 @@ export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme
     textColor?: string | undefined;
   };
   icon: {
-    position: NonNullable<NonNullable<SettingsOptions['icon']>['position']>;
+    position: NonNullable<NonNullable<UIManagerOptions['icon']>['position']>;
     color?: string | undefined;
     backgroundColor?: string | undefined;
     opacity?: number | undefined;
@@ -79,11 +80,11 @@ export type ResolvedSettingsOptions = Omit<SettingsOptions, 'container' | 'theme
   };
 };
 
-export class CustomViewsSettings {
+export class CustomViewsUIManager {
   private app: ReturnType<typeof mount> | null = null;
-  private options: ResolvedSettingsOptions;
+  private options: ResolvedUIManagerOptions;
 
-  constructor(options: SettingsOptions) {
+  constructor(options: UIManagerOptions) {
     // Set defaults
     this.options = {
       core: options.core, // 'core' is a required property and must be explicitly passed
@@ -116,13 +117,13 @@ export class CustomViewsSettings {
   /**
    * Render the settings widget
    */
-  public renderModalIcon(): void {
+  public render(): void {
     if (this.app) {
       return;
     }
 
     // Mount Svelte App using Svelte 5 API
-    this.app = mount(Settings, {
+    this.app = mount(UIRoot, {
       target: this.options.container,
       props: {
         core: this.options.core,
@@ -139,5 +140,21 @@ export class CustomViewsSettings {
       unmount(this.app);
       this.app = null;
     }
+  }
+}
+
+/**
+ * Initializes the settings if enabled in the config.
+ */
+export function initUIManager(core: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
+  if (config.settings?.enabled !== false) {
+    const uiManager = new CustomViewsUIManager({
+      core,
+      ...config.settings
+    });
+    uiManager.render();
+    return uiManager;
+  } else {
+    return undefined;
   }
 }

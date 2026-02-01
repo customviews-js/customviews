@@ -9,7 +9,7 @@
 
 `\[[ variable_name ]]`
 
-Placeholders allow you to create dynamic "Mad Libs" style documentation. Authors can define variables that readers can customize via the Settings Widget. The values entered by the reader are persisted and automatically update text, code blocks, and other content across the site.
+Placeholders allow you to create dynamic "Mad Libs" style documentation. Authors can define variable placeholders that readers can customize via the Settings Widget. The values entered by the reader are persisted and automatically update text, code blocks, and other content across the site.
 
 
 ## Usage

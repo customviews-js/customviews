@@ -244,7 +244,7 @@ export class FocusService {
         if (el.id && this.excludedIds.has(el.id)) return;
         if (el.getAttribute('aria-hidden') === 'true') return;
         
-        // Exclude Toast/Banner/Overlay/SettingsIcon/WidgetRoot
+        // Exclude Toast/Banner/Overlay/SettingsIcon/UIRoot
         if (el.closest('.toast-container') 
             || el.id === 'cv-exit-focus-banner' 
             || el.classList.contains('cv-settings-icon')

@@ -1,25 +1,25 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { CustomViewsCore } from '../../core/core.svelte';
-  import type { SettingsOptions } from '../../core/settings';
+  import type { CustomViewsController } from '../core/controller.svelte';
+  import type { UIManagerOptions } from '../core/ui-manager';
   
-  import IntroCallout from './IntroCallout.svelte';
-  import SettingsIcon from './SettingsIcon.svelte';
-  import Modal from '../modal/Modal.svelte';
-  import { URLStateManager } from '../../core/state/url-state-manager';
-  import { showToast } from '../../core/stores/toast-store.svelte';
-  import { shareStore } from '../../core/stores/share-store.svelte';
-  import { focusStore } from '../../core/stores/focus-store.svelte';
-  import { placeholderRegistryStore } from '../../core/stores/placeholder-registry-store.svelte';
-  import { placeholderValueStore } from '../../core/stores/placeholder-value-store.svelte';
-  import { themeStore } from '../../core/stores/theme-store.svelte';
-  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../../core/constants';
-  import Toast from '../elements/Toast.svelte';
-  import ShareOverlay from '../share/ShareOverlay.svelte';
-  import FocusBanner from '../focus/FocusBanner.svelte';
-  import { findHighestVisibleElement, scrollToElement } from '../../utils/scroll-utils';
+  import IntroCallout from './settings/IntroCallout.svelte';
+  import SettingsIcon from './settings/SettingsIcon.svelte';
+  import Modal from './modal/Modal.svelte';
+  import { URLStateManager } from '../core/state/url-state-manager';
+  import { showToast } from '../core/stores/toast-store.svelte';
+  import { shareStore } from '../core/stores/share-store.svelte';
+  import { focusStore } from '../core/stores/focus-store.svelte';
+  import { placeholderRegistryStore } from '../core/stores/placeholder-registry-store.svelte';
+  import { placeholderValueStore } from '../core/stores/placeholder-value-store.svelte';
+  import { themeStore } from '../core/stores/theme-store.svelte';
+  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../core/constants';
+  import Toast from './elements/Toast.svelte';
+  import ShareOverlay from './share/ShareOverlay.svelte';
+  import FocusBanner from './focus/FocusBanner.svelte';
+  import { findHighestVisibleElement, scrollToElement } from '../utils/scroll-utils';
 
-  let { core, options } = $props<{ core: CustomViewsCore, options: SettingsOptions }>();
+  let { core, options } = $props<{ core: CustomViewsController, options: UIManagerOptions }>();
 
   // Derived state
   const store = $derived(core.store);
@@ -204,7 +204,7 @@
     shareStore.toggleActive(true);
   }
 
-  function handleVariableChange(e: any) {
+  function handlePlaceholderChange(e: any) {
     const { name, value } = e;
     placeholderValueStore.set(name, value);
   }
@@ -267,7 +267,8 @@
   
         placeholderDefinitions={placeholdersToShow}
         placeholderValues={values}
-  
+        sectionOrder={store.configSectionOrder}
+
         onclose={closeModal}
         onreset={handleReset}
         ontoggleChange={handleToggleChange}
@@ -275,7 +276,7 @@
         ontoggleNav={handleNavToggle}
         oncopyShareUrl={handleCopyShareUrl}
         onstartShare={handleStartShare}
-        onvariableChange={handleVariableChange}
+        onplaceholderChange={handlePlaceholderChange}
       />
     {/if}
   </div>

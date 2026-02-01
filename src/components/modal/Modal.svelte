@@ -2,7 +2,8 @@
   import { fade, scale } from 'svelte/transition';
   import { getNavHeadingOnIcon, getNavHeadingOffIcon, getNavDashed, getShareIcon, getCopyIcon, getTickIcon, getGitHubIcon, getResetIcon, getGearIcon, getCloseIcon, getSunIcon, getMoonIcon } from '../../utils/icons';
   import { themeStore } from '../../core/stores/theme-store.svelte';
-  import type { ToggleConfig, TabGroupConfig } from '../../types/types';
+  import type { ToggleConfig, TabGroupConfig } from '../../types/index';
+  import type { ConfigSectionKey } from '../../types/index';
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
   import type { PlaceholderDefinition } from '../../core/stores/placeholder-registry-store.svelte';
@@ -28,7 +29,8 @@
     ontoggleNav?: (visible: boolean) => void;
     oncopyShareUrl?: () => void;
     onstartShare?: () => void;
-    onvariableChange?: (detail: { name: string, value: string }) => void;
+    onplaceholderChange?: (detail: { name: string, value: string }) => void;
+    sectionOrder?: ConfigSectionKey[];
   }
 
   let { 
@@ -45,6 +47,7 @@
     isResetting = false,
     placeholderDefinitions = [],
     placeholderValues = {},
+    sectionOrder = ['toggles', 'placeholders', 'tabGroups'] as ConfigSectionKey[],
     onclose = () => {},
     onreset = () => {},
     ontoggleChange = () => {},
@@ -52,15 +55,38 @@
     ontoggleNav = () => {},
     oncopyShareUrl = () => {},
     onstartShare = () => {},
-    onvariableChange = () => {}
+    onplaceholderChange = () => {}
   }: Props = $props();
 
+  let hasCustomizeContent = $derived(
+    toggles.length > 0 || 
+    placeholderDefinitions.length > 0 || 
+    (showTabGroups && tabGroups.length > 0)
+  );
+
   let activeTab = $state<'customize' | 'share'>('customize');
+  
   let copySuccess = $state(false);
   let navIconHtml = $state('');
+  
+  // Height preservation logic
+  let mainClientHeight = $state(0);
+  let preservedHeight = $state(0);
 
   $effect(() => {
     updateNavIcon(navsVisible, false);
+  });
+
+  $effect(() => {
+    if (!hasCustomizeContent && activeTab === 'customize') {
+      activeTab = 'share';
+    }
+  });
+
+  $effect(() => {
+    if (activeTab === 'customize' && mainClientHeight > preservedHeight) {
+        preservedHeight = mainClientHeight;
+    }
   });
 
   function updateNavIcon(isVisible: boolean, isHovering: boolean) {
@@ -83,9 +109,9 @@
     ontoggleChange(detail);
   }
 
-  function handleVariableInput(name: string, e: Event) {
+  function handlePlaceholderInput(name: string, e: Event) {
     const target = e.target as HTMLInputElement;
-    onvariableChange({ name, value: target.value });
+    onplaceholderChange({ name, value: target.value });
   }
 
   function handleTabGroupChange(detail: any) {
@@ -130,12 +156,18 @@
       </button>
     </header>
 
-    <main class="main">
+    <main 
+      class="main" 
+      bind:clientHeight={mainClientHeight}
+      style:min-height={activeTab === 'share' && preservedHeight > 0 ? `${preservedHeight}px` : undefined}
+    >
       <div class="tabs">
-        <button 
-          class="tab {activeTab === 'customize' ? 'active' : ''}" 
-          onclick={() => activeTab = 'customize'}
-        >Customize</button>
+        {#if hasCustomizeContent}
+          <button 
+            class="tab {activeTab === 'customize' ? 'active' : ''}" 
+            onclick={() => activeTab = 'customize'}
+          >Customize</button>
+        {/if}
         <button 
           class="tab {activeTab === 'share' ? 'active' : ''}" 
           onclick={() => activeTab = 'share'}
@@ -147,90 +179,96 @@
           {#if description}
             <p class="description">{description}</p>
           {/if}
-          {#if toggles.length > 0}
-            <div class="section">
-              <div class="section-heading">Toggles</div>
-              <div class="toggles-container">
-                {#each toggles as toggle (toggle.toggleId)}
-                  <ToggleItem 
-                    toggle={toggle} 
-                    value={computeToggleState(toggle.toggleId, shownToggles, peekToggles)} 
-                    onchange={handleToggleChange}
-                  />
-                {/each}
-              </div>
-            </div>
-          {/if}
 
-          {#if placeholderDefinitions.length > 0}
-            <div class="section">
-              <div class="section-heading">Variables</div>
-              <div class="variables-container">
-                {#each placeholderDefinitions as def (def.name)}
-                  <div class="variable-item">
-                    <label class="variable-label" for="cv-var-{def.name}">{def.settingsLabel || def.name}</label>
-                    <input 
-                      id="cv-var-{def.name}"
-                      class="variable-input"
-                      type="text" 
-                      placeholder={def.settingsHint || ''}
-                      value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
-                      oninput={(e) => handleVariableInput(def.name, e)}
-                    />
-                  </div>
-                {/each}
-              </div>
-            </div>
-          {/if}
-
-          {#if showTabGroups && tabGroups.length > 0}
-            <div class="section">
-              <div class="section-heading">Tab Groups</div>
-              <div class="tabgroups-container">
-                <!-- Navigation Headers Toggle -->
-                <div 
-                  class="tabgroup-card header-card" 
-                  onmouseenter={() => handleNavHover(true)}
-                  onmouseleave={() => handleNavHover(false)}
-                  role="group"
-                >
-                  <div class="tabgroup-row">
-                    <div class="logo-box" id="cv-nav-icon-box">
-                      <div class="nav-icon">{@html navIconHtml}</div>
-                    </div>
-                    <div class="tabgroup-info">
-                      <div class="tabgroup-title-container">
-                        <p class="tabgroup-title">Show only the selected tab</p>
-                      </div>
-                      <p class="tabgroup-description">Hide the navigation headers</p>
-                    </div>
-                    <label class="toggle-switch nav-toggle">
-                      <input 
-                        class="nav-pref-input" 
-                        type="checkbox" 
-                        checked={!navsVisible}
-                        onchange={handleNavToggle} 
-                        aria-label="Show only the selected tab" 
-                      />
-                      <span class="switch-bg"></span>
-                      <span class="switch-knob"></span>
-                    </label>
-                  </div>
-                </div>
-
-                <!-- Tab Groups List -->
-                <div class="tab-groups-list">
-                  {#each tabGroups as group (group.groupId)}
-                    <TabGroupItem 
-                      group={group} 
-                      activeTabId={activeTabs[group.groupId] || group.tabs[0]?.tabId} 
-                      onchange={handleTabGroupChange}
+          {#each sectionOrder as section}
+            <!-- Toggles Section -->
+            {#if section === 'toggles' && toggles.length > 0}
+              <div class="section">
+                <div class="section-heading">Toggles</div>
+                <div class="toggles-container">
+                  {#each toggles as toggle (toggle.toggleId)}
+                    <ToggleItem 
+                      toggle={toggle} 
+                      value={computeToggleState(toggle.toggleId, shownToggles, peekToggles)} 
+                      onchange={handleToggleChange}
                     />
                   {/each}
                 </div>
               </div>
-            </div>
-          {/if}
+            {/if}
+
+            <!-- Placeholders Section -->
+            {#if section === 'placeholders' && placeholderDefinitions.length > 0}
+              <div class="section">
+                <div class="section-heading">Placeholders</div>
+                <div class="placeholders-container">
+                  {#each placeholderDefinitions as def (def.name)}
+                    <div class="placeholder-item">
+                      <label class="placeholder-label" for="cv-placeholder-{def.name}">{def.settingsLabel || def.name}</label>
+                      <input 
+                        id="cv-placeholder-{def.name}"
+                        class="placeholder-input"
+                        type="text" 
+                        placeholder={def.settingsHint || ''}
+                        value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
+                        oninput={(e) => handlePlaceholderInput(def.name, e)}
+                      />
+                    </div>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+
+            <!-- Tab Groups Section -->
+            {#if section === 'tabGroups' && showTabGroups && tabGroups.length > 0}
+              <div class="section">
+                <div class="section-heading">Tab Groups</div>
+                <div class="tabgroups-container">
+                  <!-- Navigation Headers Toggle -->
+                  <div 
+                    class="tabgroup-card header-card" 
+                    onmouseenter={() => handleNavHover(true)}
+                    onmouseleave={() => handleNavHover(false)}
+                    role="group"
+                  >
+                    <div class="tabgroup-row">
+                      <div class="logo-box" id="cv-nav-icon-box">
+                        <div class="nav-icon">{@html navIconHtml}</div>
+                      </div>
+                      <div class="tabgroup-info">
+                        <div class="tabgroup-title-container">
+                          <p class="tabgroup-title">Show only the selected tab</p>
+                        </div>
+                        <p class="tabgroup-description">Hide the navigation headers</p>
+                      </div>
+                      <label class="toggle-switch nav-toggle">
+                        <input 
+                          class="nav-pref-input" 
+                          type="checkbox" 
+                          checked={!navsVisible}
+                          onchange={handleNavToggle} 
+                          aria-label="Show only the selected tab" 
+                        />
+                        <span class="switch-bg"></span>
+                        <span class="switch-knob"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Tab Groups List -->
+                  <div class="tab-groups-list">
+                    {#each tabGroups as group (group.groupId)}
+                      <TabGroupItem 
+                        group={group} 
+                        activeTabId={activeTabs[group.groupId] || group.tabs[0]?.tabId} 
+                        onchange={handleTabGroupChange}
+                      />
+                    {/each}
+                  </div>
+                </div>
+              </div>
+            {/if}
+          {/each}
 
           <!-- Hide Light Dark Theme Selection for now -->
           {#if false}
@@ -280,6 +318,7 @@
               <span>Select elements to share</span>
             </button>
             
+            {#if hasCustomizeContent}
             <button class="share-action-btn copy-url-btn" onclick={copyShareUrl}>
               <span class="btn-icon">
                 {#if copySuccess}
@@ -296,6 +335,7 @@
                 {/if}
               </span>
             </button>
+            {/if}
           </div>
         </div>
       {/if}
@@ -416,6 +456,7 @@
   flex-direction: column;
   overflow-y: auto;
   max-height: calc(80vh - 8rem);
+  min-height: var(--cv-modal-min-height, 20rem);
 }
 
 .description {
@@ -784,26 +825,26 @@
   height: 1.25rem;
 }
 
-/* Variable Inputs */
-.variables-container {
+/* Placeholder Inputs */
+.placeholders-container {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-.variable-item {
+.placeholder-item {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
-.variable-label {
+.placeholder-label {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--cv-text);
 }
 
-.variable-input {
+.placeholder-input {
   padding: 0.5rem 0.75rem;
   border: 1px solid var(--cv-input-border);
   border-radius: 0.375rem;
@@ -813,7 +854,7 @@
   color: var(--cv-text);
 }
 
-.variable-input:focus {
+.placeholder-input:focus {
   outline: none;
   border-color: var(--cv-primary);
   box-shadow: 0 0 0 2px var(--cv-focus-ring);

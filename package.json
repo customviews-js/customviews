@@ -3,9 +3,7 @@
   "version": "1.6.0",
   "description": "A JavaScript dynamic custom views Library.",
   "type": "module",
-  "types": "dist/index.d.ts",
   "main": "dist/custom-views.min.js",
-  "module": "dist/custom-views.esm.js",
   "browser": "dist/custom-views.min.js",
   "unpkg": "dist/custom-views.min.js",
   "jsdelivr": "dist/custom-views.min.js",
@@ -16,18 +14,6 @@
   "files": [
     "dist/"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/custom-views.esm.js",
-      "require": "./dist/custom-views.min.js",
-      "browser": "./dist/custom-views.min.js"
-    },
-    "./core": {
-      "import": "./dist/custom-views.esm.js",
-      "require": "./dist/custom-views.cjs.js"
-    }
-  },
   "scripts": {
     "clean": "rimraf dist",
     "build:types": "tsc --project tsconfig.json",

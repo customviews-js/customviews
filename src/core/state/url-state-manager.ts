@@ -3,7 +3,7 @@
  * Handles encoding/decoding of states in URL parameters
  */
 
-import type { State } from "../../types/types";
+import type { State } from "../../types/index";
 
 
 export class URLStateManager {
