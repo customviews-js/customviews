@@ -6,6 +6,7 @@
   import type { ConfigSectionKey } from '../../types/index';
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
+  import PlaceholderItem from './PlaceholderItem.svelte';
   import type { PlaceholderDefinition } from '../../core/stores/placeholder-registry-store.svelte';
 
   interface Props {
@@ -109,11 +110,6 @@
     ontoggleChange(detail);
   }
 
-  function handlePlaceholderInput(name: string, e: Event) {
-    const target = e.target as HTMLInputElement;
-    onplaceholderChange({ name, value: target.value });
-  }
-
   function handleTabGroupChange(detail: any) {
     ontabGroupChange(detail);
   }
@@ -203,17 +199,11 @@
                 <div class="section-heading">Placeholders</div>
                 <div class="placeholders-container">
                   {#each placeholderDefinitions as def (def.name)}
-                    <div class="placeholder-item">
-                      <label class="placeholder-label" for="cv-placeholder-{def.name}">{def.settingsLabel || def.name}</label>
-                      <input 
-                        id="cv-placeholder-{def.name}"
-                        class="placeholder-input"
-                        type="text" 
-                        placeholder={def.settingsHint || ''}
-                        value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
-                        oninput={(e) => handlePlaceholderInput(def.name, e)}
-                      />
-                    </div>
+                    <PlaceholderItem 
+                      definition={def}
+                      value={placeholderValues[def.name] ?? def.defaultValue ?? ''}
+                      onchange={onplaceholderChange}
+                    />
                   {/each}
                 </div>
               </div>
@@ -364,11 +354,6 @@
 </div>
 
 <style>
-/* 
-  Styles from widget.ts/widget-styles.ts 
-  Adapted for Svelte
-*/
-
 /* Modal Overlay & Modal Frame */
 .modal-overlay {
   position: fixed;
@@ -830,34 +815,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-.placeholder-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.placeholder-label {
-  font-size: 0.85rem;
-  font-weight: 500;
-  color: var(--cv-text);
-}
-
-.placeholder-input {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--cv-input-border);
-  border-radius: 0.375rem;
-  font-size: 0.9rem;
-  transition: border-color 0.2s;
-  background: var(--cv-input-bg);
-  color: var(--cv-text);
-}
-
-.placeholder-input:focus {
-  outline: none;
-  border-color: var(--cv-primary);
-  box-shadow: 0 0 0 2px var(--cv-focus-ring);
 }
 </style>
 
