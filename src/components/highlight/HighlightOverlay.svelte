@@ -77,19 +77,24 @@
     /* Slightly thicker border looks more like a marker stroke */
     border: 5px solid #d13438;
     box-sizing: border-box;
-    
-    /* Asymmetric border-radius creates 'wobbly' corners */
-    /* 8 point radius */
-    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    
+
+    /* Top-Left: 5px (Sharp)
+      Top-Right: 80px
+      Bottom-Right: 40px
+      Bottom-Left: 100px
+      (Separated by the slash for organic asymmetry)
+      Horizontal Radius / Vertical Radius
+    */
+    border-radius: 200px 15px 225px 15px / 15px 225px 15px 255px;
+
     /* A subtle transform to make it look slightly tilted/imperfect */
     transform: rotate(-0.5deg);
 
     /* Balanced shadows from before, but adjusted for the wobble */
     box-shadow: 
-      2px 6px 15px rgba(0, 0, 0, 0.13), 
+      0 6px 15px rgba(0, 0, 0, 0.13), 
       /* The inset shadow now follows the wobbly border-radius */
-      inset 0 0 10px 2px rgba(0, 0, 0, 0.12);
+      inset 0 0 8px 1px rgba(0, 0, 0, 0.12);
 
     pointer-events: none;
     /* Smoother rendering for the wobbled edges */
@@ -100,20 +105,29 @@
 
   .cv-highlight-arrow {
     position: absolute;
-    font-size: 30px;
+    font-size: 35px; /* Slightly larger for the "marker" feel */
     color: #d13438;
     font-weight: bold;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
     text-align: center;
-    filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.5));
+    
+    /* Hand-drawn style for the arrow: 
+       1. Slight tilt to match the box
+       2. Multi-layer drop shadow to match the box's elevation 
+    */
+    transform: rotate(3deg); 
+    filter: 
+      drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.15))
+      drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   }
 
-  .cv-highlight-arrow.left { animation: floatArrowLeft 1.5s infinite; }
-  .cv-highlight-arrow.right { animation: floatArrowRight 1.5s infinite; }
-  .cv-highlight-arrow.top { animation: floatArrowTop 1.5s infinite; }
-  .cv-highlight-arrow.bottom { animation: floatArrowBottom 1.5s infinite; }
+  /* Animations set to run 4 times and stop (forwards) */
+  .cv-highlight-arrow.left { animation: floatArrowLeft 1.5s 4 forwards; }
+  .cv-highlight-arrow.right { animation: floatArrowRight 1.5s 4 forwards; }
+  .cv-highlight-arrow.top { animation: floatArrowTop 1.5s 4 forwards; }
+  .cv-highlight-arrow.bottom { animation: floatArrowBottom 1.5s 4 forwards; }
 
   @keyframes floatArrowLeft {
       0%, 100% { transform: translateX(0); }
