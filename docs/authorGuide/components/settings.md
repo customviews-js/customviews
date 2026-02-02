@@ -45,12 +45,12 @@ Append `#cv-open` to the URL. Works without reloading the page.
 [Open Settings through hash](#cv-open)
 
 ### Query Parameter
-Append `?cv-open=true` to the URL. Works on page load (reloads page) and auto-cleans the URL.
+Append `?cv-open=true`, or simply `?cv-open` to the URL. Works on page load (reloads page) and auto-cleans the URL.
 
 ```markdown
-[Open Settings](./?cv-open=true)
+[Open Settings](./settings.html?cv-open)
 ```
-[Open Settings through query parameter](./settings.md?cv-open=true)
+[Open Settings through query parameter](./settings.html?cv-open=true)
 
 
 ## Adaptive Display

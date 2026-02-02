@@ -149,7 +149,7 @@ export class CustomViewsUIManager {
 }
 
 /**
- * Initializes the settings if enabled in the config.
+ * Initializes the UI manager (settings and share UI) using the provided config.
  */
 export function initUIManager(controller: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
   const settingsEnabled = config.settings?.enabled !== false;

@@ -91,4 +91,19 @@ describe('UrlActionRouter', () => {
         expect(options.onStartShare).toHaveBeenCalledWith('show');
         expect(window.history.replaceState).toHaveBeenCalled();
     });
+
+    it('should trigger onStartShare when URL action is detected EVEN IF settings are disabled', () => {
+        options.checkSettingsEnabled = vi.fn().mockReturnValue(false);
+        vi.spyOn(UrlActionHandler, 'detectAction').mockReturnValue({
+            type: 'START_SHARE',
+            mode: 'show',
+            triggerKey: 'cv-share-show',
+            triggerSource: 'query'
+        });
+
+        router.init();
+
+        expect(options.onStartShare).toHaveBeenCalledWith('show');
+        expect(window.history.replaceState).toHaveBeenCalled();
+    });
 });
