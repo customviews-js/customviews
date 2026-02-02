@@ -113,10 +113,10 @@ This means that "Show" overrides "Peek", and "Peek" overrides "Hide". Explicit i
 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
-| `toggle-id` | string | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
-| `asset-id` | string | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
-| `show-peek-border` | boolean | `false` | If present, adds a subtle border to the top and sides of the toggle content. The border is only applied while the toggle is in Peek mode (whether collapsed or user‑expanded). When the toggle is fully shown (non‑Peek), no border is rendered even if this attribute is set. |
-| `show-label` | boolean | `false` | If present, displays the category label (e.g. "MacOS") at the top-left corner of the toggle. |
+| toggle-id | `string` | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
+| asset-id | `string` | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
+| show-peek-border | `boolean` | `false` | If present, adds a subtle border to the top and sides of the toggle content. The border is only applied while the toggle is in Peek mode (whether collapsed or user‑expanded). When the toggle is fully shown (non‑Peek), no border is rendered even if this attribute is set. |
+| show-label | `boolean` | `false` | If present, displays the category label (e.g. "MacOS") at the top-left corner of the toggle. |
 
 ## Configuration 
 
@@ -140,11 +140,11 @@ To make toggles discoverable by the settings, you must define them in your `cust
 
 | Name | Type | Default | Description |
 |------|------|----------|-------------|
-| `toggleId` | string | **required** | Defines the category for the cv-toggle element. Example: `toggleId="mac"`. |
-| `label` | string | - | Label for the toggle in the settings. |
-| `description` | string | - | Description for the toggle in the settings. |
-| `default` | string | `show` | Default state: `"show"`, `"hide"`, or `"peek"`. |
-| `isLocal` | boolean | false | Whether the toggle is local (only appears in the settings on pages where it is used). |
+| toggleId | `string` | **required** | Defines the category for the cv-toggle element. Example: `toggleId="mac"`. |
+| label | `string` | - | Label for the toggle in the settings. |
+| description | `string` | - | Description for the toggle in the settings. |
+| default | `string` | `show` | Default state: `"show"`, `"hide"`, or `"peek"`. |
+| isLocal | `boolean` | false | Whether the toggle is local (only appears in the settings on pages where it is used). |
 
 
 ### Visibility Resolution Order

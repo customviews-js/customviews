@@ -136,11 +136,11 @@ Google search for <a href="https://www.google.com/search?q=[[username]]" class="
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `name` | `string` | **Required**. Unique identifier (e.g., `api_key`). |
-| `settingsLabel` | `string` | Display label in Settings. |
-| `settingsHint` | `string` | Helper text in input field. |
-| `defaultValue` | `string` | Initial value if unset. |
-| `isLocal` | `boolean` | If `true`, the input field only appears in Settings when the placeholder is actually used on the current page. |
+| name | `string` | **Required**. Unique identifier (e.g., `api_key`). |
+| settingsLabel | `string` | Display label in Settings. |
+| settingsHint | `string` | Helper text in input field. |
+| defaultValue | `string` | Initial value if unset. |
+| isLocal | `boolean` | If `true`, the input field only appears in Settings when the placeholder is actually used on the current page. |
 
 ## Escaping Syntax
 

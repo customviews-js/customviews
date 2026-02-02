@@ -551,15 +551,15 @@ This feature is pending review.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `group-id` | string | **(required)** | Unique identifier for the tab group. Tab groups with the same ID will synchronize. |
-| `nav` | string | `"auto"` | Navigation display mode. Use `"none"` to hide navigation headers. |
+| group-id | `string` | **(required)** | Unique identifier for the tab group. Tab groups with the same ID will synchronize. |
+| nav | `string` | `"auto"` | Navigation display mode. Use `"none"` to hide navigation headers. |
 
 ### `<cv-tab>` Attributes
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `tab-id` | string | **(required)** | Unique identifier for the tab within its group. |
-| `header` | string | Tab ID | Display label for the tab. Supports plain text and raw HTML (e.g., icons via `<i>` tags). Does not support MarkBind shortcodes. |
+| tab-id | `string` | **(required)** | Unique identifier for the tab within its group. |
+| header | `string` | Tab ID | Display label for the tab. Supports plain text and raw HTML (e.g., icons via `<i>` tags). Does not support MarkBind shortcodes. |
 
 ### `<cv-tab-header>` Attributes
 
@@ -615,12 +615,12 @@ The TabGroupConfig object is for defining tabgroups in JSON configuration.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `groupId` | string | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
-| `label` | string | - | Display name shown in the settings. |
-| `description` | string | - | Optional description to display below functionality. |
-| `isLocal` | boolean | `false` | Set to `true` to make the group only appear in the settings on pages where it's used. |
-| `default` | string | - | The `tabId` of the tab that should be selected by default. |
-| `tabs` | TabConfig[] | **(required)** | Array of tab configurations. |
+| groupId | `string` | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
+| label | `string` | - | Display name shown in the settings. |
+| description | `string` | - | Optional description to display below functionality. |
+| isLocal | `boolean` | `false` | Set to `true` to make the group only appear in the settings on pages where it's used. |
+| default | `string` | - | The `tabId` of the tab that should be selected by default. |
+| tabs | TabConfig[] | **(required)** | Array of tab configurations. |
 
 #### TabConfig
 
@@ -628,8 +628,8 @@ The TabConfig object is for defining tabs in JSON configuration.
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `tabId` | string | **(required)** | Tab identifier (must match HTML `cv-tab` id). |
-| `label` | string | - | Display label for the tab (used in settings and as fallback for header). |
+| tabId | `string` | **(required)** | Tab identifier (must match HTML `cv-tab` id). |
+| label | `string` | - | Display label for the tab (used in settings and as fallback for header). |
 
 
 <box type="info">
@@ -643,8 +643,8 @@ You can bind a tab group to a placeholder variable. Selecting a tab will automat
 
 | Name | Type | Description |
 |------|------|-------------|
-| `placeholderId` | string | Added to `TabGroupConfig`. The name of the placeholder variable to update. |
-| `placeholderValue` | string | Added to `TabConfig`. The value to set when this tab is active. |
+| placeholderId | `string` | Added to `TabGroupConfig`. The name of the placeholder variable to update. |
+| placeholderValue | `string` | Added to `TabConfig`. The value to set when this tab is active. |
 
 **Example:**
 ```json

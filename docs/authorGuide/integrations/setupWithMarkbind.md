@@ -12,7 +12,7 @@ This allows you to declaratively toggle content visibility, manage tab groups, a
 
 ---
 
-## 1. Create the Plugin File
+## Create the Plugin File
 
 In your MarkBind project root, create a new folder named `/_markbind/plugins/` if it doesn’t already exist.  
 Then, add a file named **`customviews.js`** inside it with the following content:
@@ -40,9 +40,9 @@ Note: Depending on your MarkBind JS environment, if you are operating in an ESM 
 
 ```js
 function getScripts() {
-return [
-'<script src="../../../dist/custom-views.min.js"></script>'
-];
+  return [
+    '<script src="../../../dist/custom-views.min.js"></script>'
+  ];
 }
 
 export { getScripts };
@@ -77,35 +77,55 @@ At your project root, create a `customviews.config.json` file to define your tog
 ```json
 {
   "config": {
-    "allToggles": ["mac", "linux", "windows"],
-    "defaultState": {
-      "toggles": ["mac"],
-      "tabs": {
-        "fruit": "apple"
-      }
-    },
+    "toggles": [
+      {"toggleId": "mac","label": "MacOS", "description": "Show content for macOS users", "default": "peek"},
+      {"toggleId": "linux","label": "Linux", "description": "Show content for Linux users"},
+      {"toggleId": "windows","label": "Windows", "default": "show"}
+    ],
     "tabGroups": [
       {
-        "id": "fruit",
+        "groupId": "fruit",
         "label": "Fruit Selection",
+        "description": "Select your favorite fruit.",
+        "isLocal": false,
+        "default": "pear",
+        "placeholderId": "fruit",
         "tabs": [
-          { "id": "apple", "label": "Apple" },
-          { "id": "orange", "label": "Orange" },
-          { "id": "pear", "label": "Pear" }
+          {"tabId": "apple","label": "Apple", "placeholderValue": "apple"},
+          {"tabId": "orange","label": "Orange", "placeholderValue": "orange"},
+          {"tabId": "pear","label": "Pear", "placeholderValue": "pear"}
         ]
       }
+    ],
+    "placeholders": [
+       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username", "defaultValue": "Guest" },
     ]
   },
-  "baseUrl": "website-baseUrl",
-  "widget": {
-    "showWelcome": true
-  },
+  "baseUrl": "/customviews",
+  "storageKey": "cv-docs-beta",
+  "settings": {
+    "panel": {
+      "title": "Custom Views Settings Dialog",
+      "description": "Toggle different content sections to customize your view."
+    },
+    "callout": {
+      "show": true,
+      "enablePulse": true,
+      "message": "Open the CustomViews settings to customize your view.",
+      "backgroundColor": "#198755",
+      "textColor": "#ffffff"
+    },
+    "icon": {
+      "position": "middle-left",
+      "color": "#ffffff",
+      "backgroundColor": "#198755",
+      "opacity": 0.9,
+      "scale": 1.1
+    }
+  }
 }
 ```
 
-This file tells CustomViews which toggles and tab groups are available, and configures how the floating widget behaves.
-
-## 4. Verify Installation
 
 After saving, run your MarkBind site locally:
 
@@ -113,29 +133,4 @@ After saving, run your MarkBind site locally:
 markbind serve
 ```
 
-If everything is configured correctly, you should see the CustomViews widget floating on your site.
-Try toggling between views or switching tabs to confirm your setup is working.
-
-## Example Usage in MarkBind Pages
-
-Now you can declaratively use CustomViews attributes directly in your .md or .mbd files.
-
-```html
-<!-- Toggle-based content -->
-<div data-cv-toggle="mac">
-  <p>Shown only for macOS users 🍎</p>
-</div>
-
-<div data-cv-toggle="windows">
-  <p>Shown only for Windows users 🪟</p>
-</div>
-
-<!-- Tab group example -->
-<cv-tabgroup group-id="fruit" nav="auto">
-  <cv-tab tab-id="apple" header="Apple">Apple info here...</cv-tab>
-  <cv-tab tab-id="orange" header="Orange">Orange info here...</cv-tab>
-  <cv-tab tab-id="pear" header="Pear">Pear info here...</cv-tab>
-</cv-tabgroup>
-```
-
-CustomViews will automatically handle visibility, persistence, and synchronization across all tabs and toggles.
+If everything is configured correctly, you should see the CustomViews widget floating on your site. Try toggling between views or switching tabs to confirm your setup is working. CustomViews will automatically handle visibility, persistence, and synchronization across all tabs and toggles.
