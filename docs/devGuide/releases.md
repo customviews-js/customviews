@@ -18,7 +18,7 @@ npm login
 # OR ensure you have an access token configured in .npmrc
 ```
 
-## 1. Beta Release (Experimental)
+## Beta Release on NPM (Experimental)
 Use for testing new features.
 
 ```sh
@@ -55,7 +55,7 @@ jsDelivr:
 <script src="https://cdn.jsdelivr.net/npm/@customviews-js/customviews@beta"></script>
 ```
 
-## 2. Production Release (Stable)
+## Production Release on NPM (Stable)
 Use when beta is stable and ready for everyone.
 
 ```sh
@@ -91,4 +91,15 @@ jsDelivr:
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@customviews-js/customviews@latest"></script>
 ```
+
+## Making the Release on GitHub
+
+After making the release on NPM, push the tags to GitHub if not done so already.
+
+```sh
+# Push tags to GitHub
+git push --tags
+```
+
+Thereafter, make a release on GitHub.
   
