@@ -7,29 +7,37 @@
   import SettingsIcon from './settings/SettingsIcon.svelte';
   import Modal from './modal/Modal.svelte';
   import { showToast } from '../core/stores/toast-store.svelte';
-  import { shareStore } from '../core/stores/share-store.svelte';
-  import { focusStore } from '../core/stores/focus-store.svelte';
+  import { shareStore, type SelectionMode } from '../core/stores/share-store.svelte';
   import { themeStore } from '../core/stores/theme-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '../core/constants';
   import Toast from './elements/Toast.svelte';
   import ShareOverlay from './share/ShareOverlay.svelte';
   import FocusBanner from './focus/FocusBanner.svelte';
+  
+  import { UrlActionRouter } from '../core/services/url-action-router.svelte';
+  import { IntroManager } from '../core/services/intro-manager.svelte';
 
-  let { core, options } = $props<{ core: CustomViewsController, options: UIManagerOptions }>();
-
-  // --- Constants ---
-  const STORAGE_KEY_INTRO_SHOWN = 'cv-intro-shown';
+  let { controller, options } = $props<{ controller: CustomViewsController, options: UIManagerOptions }>();
 
   // --- Derived State ---
-  const store = $derived(core.store);
-  const storeConfig = $derived(core.store.config);
+  const store = $derived(controller.store);
+  const storeConfig = $derived(controller.store.config);
+  const settingsEnabled = $derived(options.settingsEnabled ?? true);
+
+  // --- Services ---
+  const introManager = new IntroManager(
+    () => controller.persistenceManager, 
+    () => options.callout
+  );
+  const router = new UrlActionRouter({
+    onOpenModal: openModal,
+    onStartShare: handleStartShare,
+    checkSettingsEnabled: () => settingsEnabled
+  });
 
   // --- UI State ---
   let isModalOpen = $state(false);
-  let showCallout = $state(false);
   let isResetting = $state(false);
-  let showPulse = $state(false);
-  let areTabNavsVisible = $state(true);
   let settingsIcon: { resetPosition: () => void } | undefined = $state();
 
   // --- Computed Props ---
@@ -43,94 +51,26 @@
 
   onMount(() => {
     initTheme();
-    initNavVisibility();
-    initRouteListeners();
+    router.init();
     
-    return teardownRouteListeners;
+    return () => router.destroy();
   });
 
   function initTheme() {
-    themeStore.init(core.persistenceManager);
-  }
-
-  /**
-   * Sync local nav visibility with the store's persisted state.
-   * Store is the single source of truth.
-   */
-  function initNavVisibility() {
-    areTabNavsVisible = store.isTabGroupNavHeadingVisible;
-  }
-
-  function initRouteListeners() {
-    checkURLForModalOpenTrigger();
-    window.addEventListener('popstate', checkURLForModalOpenTrigger);
-    window.addEventListener('hashchange', checkURLForModalOpenTrigger);
-  }
-
-  function teardownRouteListeners() {
-    window.removeEventListener('popstate', checkURLForModalOpenTrigger);
-    window.removeEventListener('hashchange', checkURLForModalOpenTrigger);
+    themeStore.init(controller.persistenceManager);
   }
 
   // --- Effects ---
 
-  // Intro Callout Logic
-  let hasCheckedIntro = false;
   $effect(() => {
-    if (!hasCheckedIntro && options.callout?.show) {
-       // Only show if there are actual components on the page
-       if (store.hasPageElements) {
-           hasCheckedIntro = true;
-           checkIntro();
-       }
-    }
+    introManager.init(store.hasPageElements, settingsEnabled);
   });
-
-  // --- Logic / Handlers ---
-
-  function checkIntro() {
-    if (!core.persistenceManager.getItem(STORAGE_KEY_INTRO_SHOWN)) {
-      setTimeout(() => {
-          showCallout = true;
-          showPulse = true;
-      }, 1000);
-    }
-  }
-
-  function dismissCallout() {
-    showCallout = false;
-    showPulse = false;
-    core.persistenceManager.setItem(STORAGE_KEY_INTRO_SHOWN, 'true');
-  }
-
-  /**
-   * Checks if the URL (query param or hash) indicates the modal should be opened.
-   */
-  function checkURLForModalOpenTrigger() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const hash = window.location.hash;
-
-    // Check query param
-    if (urlParams.has('cv-open')) {
-        openModal();
-        const newUrl = new URL(window.location.href);
-        newUrl.searchParams.delete('cv-open');
-        window.history.replaceState({}, '', newUrl.toString());
-    } 
-    // Check hash
-    else if (hash === '#cv-open') {
-        openModal();
-        // Clear hash without reload
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
-  }
 
   // --- Modal Actions ---
 
   function openModal() {
-    if (showCallout) dismissCallout();
-    // Mark intro as shown if user manually opens settings
-    core.persistenceManager.setItem(STORAGE_KEY_INTRO_SHOWN, 'true');
+    if (!settingsEnabled) return;
+    introManager.dismiss();
     isModalOpen = true;
   }
 
@@ -140,102 +80,100 @@
 
   function handleReset() {
     isResetting = true;
-    core.resetToDefault();
+    controller.resetToDefault();
     settingsIcon?.resetPosition();
-    
-    // Sync local state
-    areTabNavsVisible = true; 
     
     showToast('Settings reset to default');
     
     setTimeout(() => {
       isResetting = false;
+      settingsIcon?.resetPosition();
     }, 600);
   }
 
-  function handleStartShare() {
+  function handleStartShare(mode?: SelectionMode) {
     closeModal();
+    if (mode) {
+      shareStore.setSelectionMode(mode);
+    }
     shareStore.toggleActive(true);
   }
 
-  // --- Settings Handlers ---
-
-  function handleNavToggle(visible: boolean) {
-    areTabNavsVisible = visible;
-    // Core's effect will capture this change and persist it
-    store.isTabGroupNavHeadingVisible = visible;
-  }
-  // --- Derived Visibility ---
-  const shouldRenderWidget = $derived(
-    store.hasMenuOptions || 
-    options.panel.showTabGroups || 
-    shareStore.isActive || 
-    focusStore.isActive || 
-    isModalOpen
+  // --- Settings Visibility ---
+  const shouldRenderSettings = $derived(
+    settingsEnabled && (
+      store.hasMenuOptions || 
+      options.panel.showTabGroups || 
+      isModalOpen
+    )
   );
 </script>
 
-{#if shouldRenderWidget}
-  <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
-    <!-- Intro Callout -->
-    {#if showCallout}
-      <IntroCallout 
-        position={options.icon.position} 
-        message={options.callout?.message}
-        enablePulse={options.callout?.enablePulse}
-        backgroundColor={options.callout?.backgroundColor}
-        textColor={options.callout?.textColor}
-        onclose={dismissCallout} 
-      />
-    {/if}
-  
-    <!-- Toast Container -->
-    <Toast />
-  
-    {#if shareStore.isActive}
-      <ShareOverlay {excludedTags} {excludedIds} />
-    {/if}
-  
-    <FocusBanner />
-  
-    <!-- Widget Icon -->
-    {#if options.icon.show}
-      <SettingsIcon 
-        bind:this={settingsIcon}
-        position={options.icon.position} 
-        title={options.panel.title} 
-        pulse={showPulse} 
-        onclick={openModal}
-        iconColor={options.icon?.color}
-        backgroundColor={options.icon?.backgroundColor}
-        opacity={options.icon?.opacity}
-        scale={options.icon?.scale}
-        persistence={core.persistenceManager}
-      />
-    {/if}
-  
-    <!-- Modal -->
-    {#if isModalOpen}
-      <Modal 
-        {core}
-        title={options.panel.title}
-        description={options.panel.description}
-        showReset={options.panel.showReset}
-        showTabGroups={options.panel.showTabGroups}
-        navsVisible={areTabNavsVisible}
-        isResetting={isResetting}
-  
-        onclose={closeModal}
-        onreset={handleReset}
-        ontoggleNav={handleNavToggle}
-        onstartShare={handleStartShare}
-      />
-    {/if}
-  </div>
-{/if}
+<div class="cv-widget-root" data-theme={themeStore.currentTheme}>
+  <!-- Intro Callout -->
+  {#if introManager.showCallout && settingsEnabled}
+    <IntroCallout 
+      position={options.icon.position} 
+      message={options.callout?.message}
+      enablePulse={options.callout?.enablePulse}
+      backgroundColor={options.callout?.backgroundColor}
+      textColor={options.callout?.textColor}
+      onclose={() => introManager.dismiss()} 
+    />
+  {/if}
+
+  <!-- Toast Container -->
+  <Toast />
+
+  {#if shareStore.isActive}
+    <ShareOverlay {excludedTags} {excludedIds} />
+  {/if}
+
+  <FocusBanner />
+
+  <!-- Widget Icon: Only specific to Settings -->
+  {#if shouldRenderSettings && options.icon.show}
+    <SettingsIcon 
+      bind:this={settingsIcon}
+      position={options.icon.position} 
+      title={options.panel.title} 
+      pulse={introManager.showPulse} 
+      onclick={openModal}
+      iconColor={options.icon?.color}
+      backgroundColor={options.icon?.backgroundColor}
+      opacity={options.icon?.opacity}
+      scale={options.icon?.scale}
+      persistence={controller.persistenceManager}
+    />
+  {/if}
+
+  <!-- Modal: Only specific to Settings -->
+  {#if settingsEnabled && isModalOpen}
+    <Modal 
+      {controller}
+      title={options.panel.title}
+      description={options.panel.description}
+      showReset={options.panel.showReset}
+      showTabGroups={options.panel.showTabGroups}
+      isResetting={isResetting}
+      onclose={closeModal}
+      onreset={handleReset}
+      onstartShare={handleStartShare}
+    />
+  {/if}
+</div>
 
 <style>
+  /* Root should allow clicks to pass through to the page unless hitting checking/interactive element */
   :global(.cv-widget-root) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 9999;
+    pointer-events: none; /* Crucial: Allow clicks to pass through */
+
     /* Light Theme Defaults */
     --cv-bg: white;
     --cv-text: rgba(0, 0, 0, 0.9);
@@ -265,6 +203,16 @@
     --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
 
     font-family: inherit; /* Inherit font from host */
+  }
+
+  /* But interactive children need pointer-events back */
+  :global(.cv-widget-root > *) {
+    pointer-events: auto;
+  }
+
+  /* Exception: ShareOverlay manages its own pointer events */
+  :global(.cv-widget-root .cv-share-overlay) {
+    pointer-events: none; /* Overlay often passes clicks until specialized handles active */
   }
 
   :global(.cv-widget-root[data-theme="dark"]) {

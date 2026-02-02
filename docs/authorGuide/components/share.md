@@ -5,57 +5,104 @@
   pageNavTitle: "Topics"
 </frontmatter>
 
-## Share Mode & Focus View
+## Focused Views
 
 CustomViews provides a powerful way to share specific content from a page. "Share Mode" allows you to select exactly what you want to highlight, and "Focus View" (or Presentation View) displays that content to the recipient, filtering out distractions.
 
-## Sharing Content
+## Share Mode
 
-### 1. Activating Share Mode
-To activate Share Mode, click the **floating share button** located at the bottom right of the screen. A floating bar will appear at the bottom, and the page becomes interactive for selection.
+### Types of Sharing
 
-### 2. Selecting Elements
+There are three modes of sharing:
+
+* **Show**: Generates a custom view that shows *only* the specific elements you selected. All other content is hidden.
+* **Hide**: Generates a view that hides the selected elements. All others are shown.
+* **Highlight**: Generates a view that keeps the full page but **visually outlines** the selected elements in red with an arrow indicator. This is ideal for pointing out specific sections without losing the surrounding context.
+
+To toggle between modes, use the floating toolbar at the bottom of the page in share mode.
+
+### Toggling Share Mode
+
+There are two ways to toggle Share Mode:
+
+#### Settings Toggle
+
+To access share mode, you can open the settings dialog and click the "Share" tab, and click 'select elements to share'.
+
+#### Link Toggle
+
+You can trigger the Share Mode UI in headless mode directly via URL links. This is useful if you do not wish to use any other features of CustomViews, such as the settings dialog, which you can disable.
+
+* Two modes are supported, through the hash and query parameters. 
+* Note that clicking on the query parameter link will refresh the page. However, using the query allows you to append additional hash parameters to the URL.
+  * E.g. `https://yoursite.com/guide.html?cv-share-highlight#selecting-elements`
+
+| Trigger (Hash) | Trigger (Query) | Mode Activated |
+| :--- | :--- | :--- |
+| `#cv-share` | `?cv-share` | Opens Share Mode (default selection mode) |
+| `#cv-share-show` | `?cv-share-show` | Opens Share Mode in **Show** mode |
+| `#cv-share-hide` | `?cv-share-hide` | Opens Share Mode in **Hide** mode |
+| `#cv-share-highlight` | `?cv-share-highlight` | Opens Share Mode in **Highlight** mode |
+
+**Example:**
+To create links that trigger share mode:
+
+[Highlight Mode (Hash)](#cv-share-highlight) (`[Highlight Mode (Hash)](#cv-share-highlight)`)
+
+[Show Mode (Hash)](#cv-share-show) (`[Show Mode (Hash)](#cv-share-show)`)
+
+[Hide Mode (Hash)](#cv-share-hide) (`[Hide Mode (Hash)](#cv-share-hide)`)
+
+[Highlight Mode (Query + Hash)](./share.html?cv-share-highlight#selecting-elements) (`[Highlight Mode (Query + Hash)](./share.html?cv-share-highlight#selecting-elements)`)
+
+
+### Selecting Elements
+
 Hover over any part of the page to see it highlighted.
-- **Click to Select**: Click any highlighted element to select it. It will turn green.
+
+- **Click to Select**: Click any highlighted element to select it. A border will be shown around it.
 - **Click to Deselect**: Click a selected element again to remove it.
 - **Multiple Selection**: You can select as many different sections of the page as you need.
 
-### 3. Choosing a Mode
-On the floating toolbar, you can switch between three modes:
-- **Show**: Generates a Focus View that shows *only* the selected elements.
-- **Hide**: Generates a Focus View that hides the selected elements.
-- **Highlight**: Generates a Highlight View that keeps the full page but **visually outlines** the selected elements in red with an arrow indicator. This is ideal for pointing out specific sections without losing the surrounding context.
+If you select a large container, all of its children are automatically selected. You cannot select a child element separately if its parent is already selected.
 
-### 4. Smart Selection Guidelines
+<box type="info" dismissible>
+  You can also drag in share mode to select multiple elements at one time.
+</box>
 
-- **Parent Selection**: If you select a large container (like a whole section), individual items inside it are automatically included. You cannot select a child element separately if its parent is already selected.
-- **"Up" Button**: When hovering over an element, a small helper tooltip appears. Click the **"↰" (Up Arrow)** button in this tooltip to quickly select the parent container instead of the specific element.
-- **Direct Selection**: The tooltip also has a **"✓" (Tick)** button to select the current element without clicking it directly—useful for precise selection.
 
-### 5. Generating the Link
+**Helper Tooltip:**
+
+* When hovering over an element, a small helper tooltip appears. Click the **"↰" (Up Arrow)** button in this tooltip to quickly select the parent container instead of the specific element.
+* The tooltip also has a **"✓" (Tick)** button to select the current element without clicking it directly.
+
+
+### Generating Share Link
+
 Once you have selected one or more items, use the floating bar at the bottom:
 
 - **Preview**: Click **"Preview"** to open the generated link in a new tab immediately. This lets you verify exactly what the recipient will see.
 - **Generate Link**: Click **"Generate Link"** to copy the unique link to your clipboard.
 
-### Exiting
-To leave Share Mode, click the **"Exit"** button on the floating bar, press the **`Esc`** key, or click the floating share button again.
+<div id="example-share">
 
-## Manual URL Construction
+#### Manual URL Link Construction
 
 While the Share Mode UI generates robust, encoded links automatically, you may sometimes want to manually create a readable link for documentation or communication.
 
-CustomViews supports a human-readable format using element IDs:
+CustomViews supports a human-readable format using HTML element IDs:
 
 | Parameter | format | Description |
 | :--- | :--- | :--- |
-| `cv-focus` | `id1,id2,id3` | **Shows** only the specified elements. All others are hidden. |
+| `cv-show` | `id1,id2` | **Shows** only the specified elements. All others are hidden. (Replaces legacy `cv-focus`) |
 | `cv-hide` | `id1,id2` | **Hides** the specified elements. All others are shown. |
 | `cv-highlight` | `id1,id2` | **Highlights** the specified elements. Full page remains visible. |
 
 **Example:**
-To focus on the `#setup` and `#config` sections:
-`https://yoursite.com/guide.html?cv-focus=setup,config`
+To show only the `#setup` and `#config` sections:
+`https://yoursite.com/guide.html?cv-show=setup,config`
+
+* For example, one such link could be [this](./share.html?cv-highlight=example-share): `[this](./share.html?cv-highlight=example-share)`
 
 **Note:**
 * IDs are case-sensitive.
@@ -63,19 +110,53 @@ To focus on the `#setup` and `#config` sections:
 * Note that `,` will be URL-encoded to `%2C` when used in a URL, after visiting the page. 
 * If an ID contains special characters, it should be URL-encoded, but standard alphanumeric IDs work directly.
 
----
+</div>
 
-## Focus View (Recipient Experience)
+### Exiting Share Mode
 
-When someone opens the link you generated, they enter **Focus View**.
+To leave Share Mode, click the **"Exit"** button on the floating bar.
 
-- **Distraction-Free**: Only the elements you selected (and their necessary context) are shown. Irrelevant content is hidden.
-- **Context Indicators**: Where content has been hidden, you will see markers like `... 3 sections hidden ...`.
-- **Expandable Context**: Clicking on these markers reveals the hidden content, allowing the viewer to see more context if needed.
-- **Exit Focus**: A banner at the top of the page reminds the user they are in a focused view. They can click **"Show Full Page"** to return to the normal website view.
+<box type="info" dismissible>
 
-## Customizing Share Behavior ( TO REFINE )
-Website authors can customize which elements are excluded from selection (e.g., sidebars, headers) by configuring `shareExclusions` in their `customviews.config.js` file.
+  You can also press the **`Esc`** key to exit Share Mode.
+</box>
+
+
+## Focus Mode
+
+When someone opens the link you generated, they enter **Focus View**. The behavior in each mode is as follows:
+
+* **Show Mode**: Only the elements you selected (and their necessary context) are shown. Irrelevant content is hidden.
+* **Hide Mode**: The selected elements are hidden, while the rest of the page remains visible.
+* **Highlight Mode**: The selected elements are highlighted in red with an arrow indicator, while the rest of the page remains visible.
+
+For show or hide mode, where content has been hidden, you will see markers like `... 3 sections hidden ...`. Clicking on these markers reveals the hidden content, allowing the viewer to see more context if needed.
+
+Additionally, a banner at the top of the page reminds the user they are in a focused view. They can click **"Show Full Page"** to return to the normal website view.
+
+
+
+
+## Configurations
+
+### Using CustomViews without the Settings Dialog
+
+To use only the focused views feature of CustomViews, we can disable the settings dialog, and only trigger the share mode through links.
+
+To disable the settings dialog, add the following to your `customviews.config.json` file:
+
+```json
+{
+  "baseUrl": "/",
+  "settings": {
+    "enabled": false
+  }
+}
+```
+
+
+### Customizing Share Behavior ( WIP )
+Website authors can customize which elements are excluded from selection (e.g., sidebars, headers) by configuring `shareExclusions` in their `customviews.config.json` file.
 
 ```json
 {

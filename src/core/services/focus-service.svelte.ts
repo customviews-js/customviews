@@ -5,7 +5,8 @@ import * as DomElementLocator from '../utils/dom-element-locator';
 import FocusDivider from '../../components/focus/FocusDivider.svelte';
 import { SvelteURL } from 'svelte/reactivity';
 
-const FOCUS_PARAM = 'cv-focus';
+const SHOW_PARAM = 'cv-show';
+const FOCUS_PARAM_LEGACY = 'cv-focus';
 const HIDE_PARAM = 'cv-hide';
 const BODY_FOCUS_CLASS = 'cv-focus-mode';
 const HIDDEN_CLASS = 'cv-focus-hidden';
@@ -54,13 +55,14 @@ export class FocusService {
             // 2. React to URL changes (URL changes affect UI)
             // This effect handles the "Read" direction: URL -> App State
             $effect(() => {
-                const focusDescriptors = this.url.searchParams.get(FOCUS_PARAM);
+                // Check cv-show first, then legacy cv-focus
+                const showDescriptors = this.url.searchParams.get(SHOW_PARAM) || this.url.searchParams.get(FOCUS_PARAM_LEGACY);
                 const hideDescriptors = this.url.searchParams.get(HIDE_PARAM);
                 const highlightDescriptors = this.url.searchParams.get(HIGHLIGHT_PARAM);
 
                 untrack(() => {
-                    if (focusDescriptors) {
-                        this.applyFocusMode(focusDescriptors);
+                    if (showDescriptors) {
+                        this.applyFocusMode(showDescriptors);
                     } else if (hideDescriptors) {
                         this.applyHideMode(hideDescriptors);
                     } else if (highlightDescriptors) { 
@@ -345,8 +347,11 @@ export class FocusService {
         }
 
         if (updateUrl) {
-            if (this.url.searchParams.has(FOCUS_PARAM)) {
-                this.url.searchParams.delete(FOCUS_PARAM);
+            if (this.url.searchParams.has(SHOW_PARAM)) {
+                this.url.searchParams.delete(SHOW_PARAM);
+            }
+            if (this.url.searchParams.has(FOCUS_PARAM_LEGACY)) {
+                this.url.searchParams.delete(FOCUS_PARAM_LEGACY);
             }
             if (this.url.searchParams.has(HIDE_PARAM)) {
                 this.url.searchParams.delete(HIDE_PARAM);

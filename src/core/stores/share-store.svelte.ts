@@ -28,11 +28,11 @@ export function isGenericWrapper(el: HTMLElement): boolean {
     return !hasBackground && !hasBorder && !hasShadow;
 }
 
-export type SelectionMode = 'focus' | 'hide' | 'highlight';
+export type SelectionMode = 'show' | 'hide' | 'highlight';
 
 export class ShareStore {
     isActive = $state(false);
-    selectionMode = $state<SelectionMode>('focus');
+    selectionMode = $state<SelectionMode>('show');
     selectedElements = $state<SvelteSet<HTMLElement>>(new SvelteSet<HTMLElement>());
     currentHoverTarget = $state<HTMLElement | null>(null);
 
@@ -46,11 +46,11 @@ export class ShareStore {
             if (this.currentHoverTarget) {
                 this._removeHighlightClass(this.currentHoverTarget);
             }
-            
+  
             // Reset state
             this.isActive = false;
             this.currentHoverTarget = null;
-            document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide', 'cv-share-active-highlight');
+            document.body.classList.remove('cv-share-active-show', 'cv-share-active-hide', 'cv-share-active-highlight');
         } else {
             this.isActive = true;
             this.updateBodyClass();
@@ -74,7 +74,7 @@ export class ShareStore {
     }
 
     updateBodyClass() {
-        document.body.classList.remove('cv-share-active-focus', 'cv-share-active-hide', 'cv-share-active-highlight');
+        document.body.classList.remove('cv-share-active-show', 'cv-share-active-hide', 'cv-share-active-highlight');
         document.body.classList.add(`cv-share-active-${this.selectionMode}`);
     }
 
@@ -194,7 +194,7 @@ export class ShareStore {
         const url = new URL(window.location.href);
         
         // Clear all potential params first
-        url.searchParams.delete('cv-focus');
+        url.searchParams.delete('cv-show');
         url.searchParams.delete('cv-hide');
         url.searchParams.delete('cv-highlight');
 
@@ -203,7 +203,7 @@ export class ShareStore {
         } else if (this.selectionMode === 'highlight') {
             url.searchParams.set('cv-highlight', serialized);
         } else {
-            url.searchParams.set('cv-focus', serialized);
+            url.searchParams.set('cv-show', serialized);
         }
 
         // Copy to clipboard
@@ -224,7 +224,7 @@ export class ShareStore {
         const serialized = DomElementLocator.serialize(descriptors);
 
         const url = new URL(window.location.href);
-        url.searchParams.delete('cv-focus');
+        url.searchParams.delete('cv-show');
         url.searchParams.delete('cv-hide');
         url.searchParams.delete('cv-highlight');
         
@@ -233,7 +233,7 @@ export class ShareStore {
         } else if (this.selectionMode === 'highlight') {
             url.searchParams.set('cv-highlight', serialized);
         } else {
-            url.searchParams.set('cv-focus', serialized);
+            url.searchParams.set('cv-show', serialized);
         }
         
         window.open(url.toString(), '_blank');

@@ -4,11 +4,14 @@ import UIRoot from "../components/UIRoot.svelte";
 import { mount, unmount } from "svelte";
 
 export interface UIManagerOptions {
-  /** The CustomViews core instance to control */
-  core: CustomViewsController;
+  /** The CustomViews controller instance to control */
+  controller: CustomViewsController;
 
   /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
+
+  /** Whether the settings feature (icon/modal) is enabled */
+  settingsEnabled?: boolean;
 
   /** Settings panel configuration */
   panel?: {
@@ -61,6 +64,7 @@ export interface UIManagerOptions {
 
 export type ResolvedUIManagerOptions = Omit<UIManagerOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
   container: HTMLElement;
+  settingsEnabled: boolean;
   theme: NonNullable<UIManagerOptions['theme']>;
   panel: Required<NonNullable<UIManagerOptions['panel']>>;
   callout: {
@@ -87,8 +91,9 @@ export class CustomViewsUIManager {
   constructor(options: UIManagerOptions) {
     // Set defaults
     this.options = {
-      core: options.core, // 'core' is a required property and must be explicitly passed
+      controller: options.controller, // 'controller' is a required property
       container: options.container || document.body,
+      settingsEnabled: options.settingsEnabled ?? true,
       theme: options.theme || 'light',
       panel: {
         title: options.panel?.title || 'Customize View',
@@ -126,7 +131,7 @@ export class CustomViewsUIManager {
     this.app = mount(UIRoot, {
       target: this.options.container,
       props: {
-        core: this.options.core,
+        controller: this.options.controller,
         options: this.options
       }
     });
@@ -144,17 +149,16 @@ export class CustomViewsUIManager {
 }
 
 /**
- * Initializes the settings if enabled in the config.
+ * Initializes the UI manager (settings and share UI) using the provided config.
  */
-export function initUIManager(core: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
-  if (config.settings?.enabled !== false) {
-    const uiManager = new CustomViewsUIManager({
-      core,
-      ...config.settings
-    });
-    uiManager.render();
-    return uiManager;
-  } else {
-    return undefined;
-  }
+export function initUIManager(controller: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
+  const settingsEnabled = config.settings?.enabled !== false;
+  
+  const uiManager = new CustomViewsUIManager({
+    controller,
+    settingsEnabled,
+    ...config.settings
+  });
+  uiManager.render();
+  return uiManager;
 }

@@ -15,35 +15,32 @@
   import { copyToClipboard } from '../../utils/clipboard-utils';
 
   interface Props {
-    core: CustomViewsController;
+    controller: CustomViewsController;
     title?: string;
     description?: string;
     showReset?: boolean;
     showTabGroups?: boolean;
-    navsVisible?: boolean;
     isResetting?: boolean;
     onclose?: () => void;
     onreset?: () => void;
-    ontoggleNav?: (visible: boolean) => void;
     onstartShare?: () => void;
   }
 
   let { 
-    core,
+    controller,
     title = 'Customize View',
     description = '',
     showReset = true,
     showTabGroups = true,
-    navsVisible = true,
     isResetting = false,
     onclose = () => {},
     onreset = () => {},
-    ontoggleNav = () => {},
     onstartShare = () => {},
   }: Props = $props();
 
   // --- Derived State from Core ---
-  const store = $derived(core.store);
+  const store = $derived(controller.store);
+  const areTabNavsVisible = $derived(store.isTabGroupNavHeadingVisible);
   
   // Config Items
   const toggles = $derived(store.menuToggles);
@@ -85,10 +82,6 @@
   let preservedHeight = $state(0);
 
   $effect(() => {
-    updateNavIcon(navsVisible, false);
-  });
-
-  $effect(() => {
     if (!hasCustomizeContent && activeTab === 'customize') {
       activeTab = 'share';
     }
@@ -100,6 +93,10 @@
     }
   });
 
+  $effect(() => {
+    updateNavIcon(areTabNavsVisible, false);
+  });
+
   function updateNavIcon(isVisible: boolean, isHovering: boolean) {
      if (isHovering) {
        navIconHtml = getNavDashed();
@@ -109,11 +106,11 @@
   }
 
   function handleNavHover(hovering: boolean) {
-    updateNavIcon(navsVisible, hovering);
+    updateNavIcon(areTabNavsVisible, hovering);
   }
 
   function handleNavToggle() {
-    ontoggleNav(!navsVisible);
+    store.isTabGroupNavHeadingVisible = !areTabNavsVisible;
   }
 
   // --- Core Actions ---
@@ -279,7 +276,7 @@
                         <input 
                           class="nav-pref-input" 
                           type="checkbox" 
-                          checked={!navsVisible}
+                          checked={!areTabNavsVisible}
                           onchange={handleNavToggle} 
                           aria-label="Show only the selected tab" 
                         />
