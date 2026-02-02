@@ -231,10 +231,11 @@
       "headings": {
         "release-workflow": "Release Workflow",
         "prerequisites": "Prerequisites",
-        "1-beta-release-experimental": "1. Beta Release (Experimental)",
+        "beta-release-on-npm-experimental": "Beta Release on NPM (Experimental)",
         "using-the-beta-release": "Using the beta release",
-        "2-production-release-stable": "2. Production Release (Stable)",
-        "using-the-production-release": "Using the production release"
+        "production-release-on-npm-stable": "Production Release on NPM (Stable)",
+        "using-the-production-release": "Using the production release",
+        "making-the-release-on-github": "Making the Release on GitHub"
       },
       "headingKeywords": {}
     },
