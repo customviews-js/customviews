@@ -60,11 +60,15 @@
       "title": "CustomViews - Settings",
       "headings": {
         "settings-dialog": "Settings Dialog",
-        "intro-callout": "Intro Callout",
-        "conditional-section-display": "Conditional Section Display",
+        "settings-icon-trigger": "Settings Icon Trigger",
+        "intro-popup-for-icon-trigger": "Intro Popup for Icon Trigger",
+        "opening-via-link": "Opening via Link",
+        "hash-trigger-recommended": "Hash Trigger (Recommended)",
+        "query-parameter": "Query Parameter",
+        "adaptive-display": "Adaptive Display",
         "configuration": "Configuration",
         "settings-options": "Settings Options",
-        "integration-with-toggles-and-tabs": "Integration with Toggles and Tabs"
+        "integration": "Integration"
       },
       "headingKeywords": {}
     },
@@ -72,17 +76,17 @@
       "src": "authorGuide/components/share.md",
       "title": "Author Guide - Sharing",
       "headings": {
-        "share-mode-and-amp-focus-view": "Share Mode &amp; Focus View",
-        "sharing-content": "Sharing Content",
-        "1-activating-share-mode": "1. Activating Share Mode",
-        "2-selecting-elements": "2. Selecting Elements",
-        "3-choosing-a-mode": "3. Choosing a Mode",
-        "4-smart-selection-guidelines": "4. Smart Selection Guidelines",
-        "5-generating-the-link": "5. Generating the Link",
-        "exiting": "Exiting",
-        "manual-url-construction": "Manual URL Construction",
-        "focus-view-recipient-experience": "Focus View (Recipient Experience)",
-        "customizing-share-behavior-to-refine": "Customizing Share Behavior ( TO REFINE )"
+        "focused-views": "Focused Views",
+        "share-mode": "Share Mode",
+        "types-of-sharing": "Types of Sharing",
+        "toggling-share-mode": "Toggling Share Mode",
+        "selecting-elements": "Selecting Elements",
+        "generating-share-link": "Generating Share Link",
+        "exiting-share-mode": "Exiting Share Mode",
+        "focus-mode": "Focus Mode",
+        "configurations": "Configurations",
+        "using-customviews-without-the-settings-dialog": "Using CustomViews without the Settings Dialog",
+        "customizing-share-behavior-wip": "Customizing Share Behavior ( WIP )"
       },
       "headingKeywords": {}
     },
@@ -167,11 +171,9 @@
       "title": "Installation (MarkBind Setup)",
       "headings": {
         "setting-up-customviews-in-a-markbind-site": "Setting up CustomViews in a MarkBind Site",
-        "1-create-the-plugin-file": "1. Create the Plugin File",
+        "create-the-plugin-file": "Create the Plugin File",
         "2-register-the-plugin-in-site-json": "2. Register the Plugin in site.json",
-        "3-create-customviews-config-json": "3. Create customviews.config.json",
-        "4-verify-installation": "4. Verify Installation",
-        "example-usage-in-markbind-pages": "Example Usage in MarkBind Pages"
+        "3-create-customviews-config-json": "3. Create customviews.config.json"
       },
       "headingKeywords": {}
     },
