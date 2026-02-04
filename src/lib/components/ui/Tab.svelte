@@ -3,8 +3,8 @@
     tag: 'cv-tab',
     props: {
       tabId: { reflect: true, type: 'String', attribute: 'tab-id' },
-      header: { reflect: true, type: 'String', attribute: 'header' }
-    }
+      header: { reflect: true, type: 'String', attribute: 'header' },
+    },
   }}
 />
 
@@ -18,7 +18,7 @@
   // The parent (TabGroup) will set the .active property directly.
 </script>
 
-<div class="cv-tab-content" class:active={active}>
+<div class="cv-tab-content" class:active>
   <slot></slot>
 </div>
 
@@ -30,15 +30,15 @@
   :host(.cv-hidden) {
     display: none !important;
   }
-  
+
   :host(.cv-visible) {
     display: block !important;
   }
 
-  :host([active="true"]) {
+  :host([active='true']) {
     display: block;
   }
-  
+
   .cv-tab-content {
     display: none;
     animation: fade-in 0.2s ease-in-out;
@@ -63,7 +63,11 @@
   }
 
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 </style>

@@ -1,4 +1,4 @@
-import type { State } from "$lib/types/index";
+import type { State } from '$lib/types/index';
 
 /**
  * URL State Manager for CustomViews
@@ -77,8 +77,8 @@ export class URLStateManager {
   }
 
   /**
-   * Encode state into URL-safe string 
-   * 
+   * Encode state into URL-safe string
+   *
    * (Covers Toggles, Tabs and Focus currently)
    */
   private static encodeState(state: State): string | null {
@@ -128,7 +128,7 @@ export class URLStateManager {
 
   /**
    * Decode custom state from URL parameter
-   * 
+   *
    * (Covers Toggles, Tabs and Focus currently)
    */
   private static decodeState(encoded: string): State | null {
@@ -162,7 +162,7 @@ export class URLStateManager {
       // Reconstruct Toggles
       const state: State = {
         shownToggles: Array.isArray(compact.t) ? compact.t : [],
-        peekToggles: Array.isArray(compact.p) ? compact.p : []
+        peekToggles: Array.isArray(compact.p) ? compact.p : [],
       };
 
       // Reconstruct Tabs
@@ -186,6 +186,4 @@ export class URLStateManager {
       return null;
     }
   }
-
-
 }

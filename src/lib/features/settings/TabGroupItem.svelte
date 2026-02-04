@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { TabGroupConfig } from '$lib/types/index';
 
-  let { 
-    group, 
-    activeTabId = $bindable(''), 
-    onchange = () => {} 
-  }: { 
-    group: TabGroupConfig; 
-    activeTabId?: string | undefined; 
-    onchange?: (detail: { groupId: string, tabId: string }) => void;
+  let {
+    group,
+    activeTabId = $bindable(''),
+    onchange = () => {},
+  }: {
+    group: TabGroupConfig;
+    activeTabId?: string | undefined;
+    onchange?: (detail: { groupId: string; tabId: string }) => void;
   } = $props();
 
   function onChange(event: Event) {
@@ -27,12 +27,7 @@
       <p class="description">{group.description}</p>
     {/if}
   </div>
-  <select 
-    id="tab-group-{group.groupId}" 
-    class="select" 
-    value={activeTabId} 
-    onchange={onChange}
-  >
+  <select id="tab-group-{group.groupId}" class="select" value={activeTabId} onchange={onChange}>
     {#each group.tabs as tab}
       <option value={tab.tabId}>{tab.label || tab.tabId}</option>
     {/each}
@@ -40,7 +35,6 @@
 </div>
 
 <style>
-
   .root {
     display: flex;
     flex-direction: column;

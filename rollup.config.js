@@ -36,9 +36,9 @@ const sveltePluginRegular = svelte({
   // Regular non-custom components
   compilerOptions: {
     ...svelteConfig.compilerOptions,
-    customElement: false
+    customElement: false,
   },
-  emitCss: false
+  emitCss: false,
 });
 
 // Plugin tools pipeline, build is for browser, dedupe prevents bundling Svelte multiple times
@@ -47,21 +47,21 @@ const plugins = [
     entries: [
       { find: '$lib', replacement: path.resolve('src/lib') },
       { find: '$features', replacement: path.resolve('src/lib/features') },
-      { find: '$ui', replacement: path.resolve('src/lib/components/ui') }
-    ]
+      { find: '$ui', replacement: path.resolve('src/lib/components/ui') },
+    ],
   }),
   resolve({
-    browser: true,      // Build is for browser
-    dedupe: ['svelte']  // Prevents bundling Svelte multiple times
+    browser: true, // Build is for browser
+    dedupe: ['svelte'], // Prevents bundling Svelte multiple times
   }),
   sveltePluginRegular,
   sveltePluginCustomElements,
-  typescript({ sourceMap: true, inlineSources: true })
+  typescript({ sourceMap: true, inlineSources: true }),
 ];
 
 const onwarn = (warning, warn) => {
-  // According to Svelte GitHub Issue #10140 
-  // Circular Dependency Warnings during compilation (Cause TBD) 
+  // According to Svelte GitHub Issue #10140
+  // Circular Dependency Warnings during compilation (Cause TBD)
   // Warnings clutter compilation logs, but are otherwise harmless.
   // Hide Svelte circular dependency warnings from node_modules
   if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('node_modules')) {
@@ -72,7 +72,7 @@ const onwarn = (warning, warn) => {
 
 const builds = [
   // Node/Bundler builds (ESM/CJS) disabled for now as public API is not exposed.
-  
+
   // Browser UMD build (non-minified)
   {
     input: 'src/browser.ts',
@@ -81,9 +81,9 @@ const builds = [
       format: 'umd',
       name: 'CustomViews',
       banner,
-      sourcemap: true
+      sourcemap: true,
     },
-    plugins
+    plugins,
   },
 
   // Browser UMD build (minified)
@@ -94,13 +94,10 @@ const builds = [
       format: 'umd',
       name: 'CustomViews',
       banner,
-      sourcemap: true
+      sourcemap: true,
     },
-    plugins: [
-      ...plugins,
-      terser()
-    ]
-  }
+    plugins: [...plugins, terser()],
+  },
 ];
 
-export default builds.map(config => ({ ...config, onwarn }));
+export default builds.map((config) => ({ ...config, onwarn }));

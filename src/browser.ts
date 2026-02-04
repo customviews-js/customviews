@@ -1,11 +1,10 @@
-import { getScriptAttributes, fetchConfig } from "$lib/utils/init-utils";
-import { initUIManager } from "$lib/ui-manager";
-import { CustomViewsController, type ControllerOptions } from "$lib/controller.svelte";
-import { AssetsManager } from "$lib/assets";
-import type { CustomViewAsset } from "$lib/types/index";
-import { prependBaseUrl } from "$lib/utils/url-utils";
+import { getScriptAttributes, fetchConfig } from '$lib/utils/init-utils';
+import { initUIManager } from '$lib/ui-manager';
+import { CustomViewsController, type ControllerOptions } from '$lib/controller.svelte';
+import { AssetsManager } from '$lib/assets';
+import type { CustomViewAsset } from '$lib/types/index';
+import { prependBaseUrl } from '$lib/utils/url-utils';
 import '$lib/registry';
-
 
 // --- No Public API Exports ---
 // The script auto-initializes via initializeFromScript().
@@ -24,7 +23,7 @@ export function initializeFromScript(): void {
     return;
   }
 
-  document.addEventListener('DOMContentLoaded', async function() {
+  document.addEventListener('DOMContentLoaded', async function () {
     if (window.__customViewsInitInProgress || window.__customViewsInitialized) return;
     window.__customViewsInitInProgress = true;
     try {
@@ -42,14 +41,16 @@ export function initializeFromScript(): void {
       if (configFile.assetsJsonPath) {
         const assetsPath = prependBaseUrl(configFile.assetsJsonPath, effectiveBaseURL);
         try {
-          const assetsJson: Record<string, CustomViewAsset> = await (await fetch(assetsPath)).json();
+          const assetsJson: Record<string, CustomViewAsset> = await (
+            await fetch(assetsPath)
+          ).json();
           assetsManager = new AssetsManager(assetsJson, effectiveBaseURL);
         } catch (error) {
-           console.error(`[CustomViews] Failed to load assets JSON from ${assetsPath}:`, error);
-           assetsManager = new AssetsManager({}, effectiveBaseURL);
+          console.error(`[CustomViews] Failed to load assets JSON from ${assetsPath}:`, error);
+          assetsManager = new AssetsManager({}, effectiveBaseURL);
         }
       } else {
-         assetsManager = new AssetsManager({}, effectiveBaseURL);
+        assetsManager = new AssetsManager({}, effectiveBaseURL);
       }
 
       const coreOptions: ControllerOptions = {
@@ -57,19 +58,17 @@ export function initializeFromScript(): void {
         config: configFile.config || {},
         rootEl: document.body,
         showUrl: configFile.showUrl || false,
-        storageKey: configFile.storageKey
+        storageKey: configFile.storageKey,
       };
-      
+
       const controller = new CustomViewsController(coreOptions);
       controller.init();
 
       initUIManager(controller, configFile);
-      
+
       // Mark initialized
       window.__customViewsInitialized = true;
       window.__customViewsInitInProgress = false;
-
-
     } catch (error) {
       window.__customViewsInitInProgress = false;
       console.error('[CustomViews] Auto-initialization error:', error);
@@ -78,6 +77,6 @@ export function initializeFromScript(): void {
 }
 
 // Auto-run initialization logic when this file is evaluated
-if (typeof window !== "undefined") {
-   initializeFromScript();
+if (typeof window !== 'undefined') {
+  initializeFromScript();
 }

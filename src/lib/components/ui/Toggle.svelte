@@ -1,12 +1,14 @@
-<svelte:options customElement={{
+<svelte:options
+  customElement={{
     tag: 'cv-toggle',
     props: {
       toggleId: { reflect: true, type: 'String', attribute: 'toggle-id' },
       assetId: { reflect: true, type: 'String', attribute: 'asset-id' },
       showPeekBorder: { reflect: true, type: 'Boolean', attribute: 'show-peek-border' },
-      showLabel: { reflect: true, type: 'Boolean', attribute: 'show-label' }
-    }
-  }} />
+      showLabel: { reflect: true, type: 'Boolean', attribute: 'show-label' },
+    },
+  }}
+/>
 
 <script lang="ts">
   import { getChevronDownIcon, getChevronUpIcon } from '$lib/utils/icons';
@@ -14,19 +16,29 @@
   import { renderAssetInto } from '$lib/render';
 
   // Props using Svelte 5 runes
-  let { toggleId = '', assetId = '', showPeekBorder = false, showLabel = false }: { toggleId?: string; assetId?: string; showPeekBorder?: boolean; showLabel?: boolean } = $props();
+  let {
+    toggleId = '',
+    assetId = '',
+    showPeekBorder = false,
+    showLabel = false,
+  }: {
+    toggleId?: string;
+    assetId?: string;
+    showPeekBorder?: boolean;
+    showLabel?: boolean;
+  } = $props();
   // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
   let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
-  let toggleConfig = $derived(store.config.toggles?.find(t => t.toggleId === toggleIds[0]));
-  
+  let toggleConfig = $derived(store.config.toggles?.find((t) => t.toggleId === toggleIds[0]));
+
   $effect(() => {
-    toggleIds.forEach(id => store.registerToggle(id));
+    toggleIds.forEach((id) => store.registerToggle(id));
   });
 
   // Derive label text from config
   let labelText = $derived.by(() => {
-      if (!toggleConfig) return '';
-      return toggleConfig.label || toggleIds[0];
+    if (!toggleConfig) return '';
+    return toggleConfig.label || toggleIds[0];
   });
 
   let localExpanded = $state(false);
@@ -38,17 +50,17 @@
 
   // Derive visibility from store state
   let showState = $derived.by(() => {
-      // Default to SHOWN if config hasn't loaded yet (prevent pop-in)
-      if (!store.config.toggles) return true;
-      
-      const shownToggles = store.state.shownToggles ?? [];
-      return toggleIds.some(id => shownToggles.includes(id));
+    // Default to SHOWN if config hasn't loaded yet (prevent pop-in)
+    if (!store.config.toggles) return true;
+
+    const shownToggles = store.state.shownToggles ?? [];
+    return toggleIds.some((id) => shownToggles.includes(id));
   });
 
   // Derive peek state from store state
   let peekState = $derived.by(() => {
-      const peekToggles = store.state.peekToggles ?? [];
-      return !showState && toggleIds.some(id => peekToggles.includes(id));
+    const peekToggles = store.state.peekToggles ?? [];
+    return !showState && toggleIds.some((id) => peekToggles.includes(id));
   });
 
   const PEEK_HEIGHT = 70;
@@ -59,45 +71,47 @@
     if (!contentEl) return;
 
     const observer = new ResizeObserver(() => {
-        // We measure the inner element's height
-        // contentEl is the window, innerEl is the content
-        if (innerEl) {
-             scrollHeight = innerEl.offsetHeight;
-        }
+      // We measure the inner element's height
+      // contentEl is the window, innerEl is the content
+      if (innerEl) {
+        scrollHeight = innerEl.offsetHeight;
+      }
 
-        // Always track small content state to avoid race conditions/stale state
-        if (scrollHeight > 0) {
-             if (scrollHeight <= PEEK_HEIGHT) {
-                 isSmallContent = true;
-             } else if (!isSmallContent) {
-                 // Only set to false if it wasn't already true (latch behavior)
-                 // This ensures if it STARTS small, growing won't add the button.
-                 isSmallContent = false;
-             }
+      // Always track small content state to avoid race conditions/stale state
+      if (scrollHeight > 0) {
+        if (scrollHeight <= PEEK_HEIGHT) {
+          isSmallContent = true;
+        } else if (!isSmallContent) {
+          // Only set to false if it wasn't already true (latch behavior)
+          // This ensures if it STARTS small, growing won't add the button.
+          isSmallContent = false;
         }
+      }
     });
 
     if (innerEl) {
-        observer.observe(innerEl);
-        scrollHeight = innerEl.offsetHeight;
+      observer.observe(innerEl);
+      scrollHeight = innerEl.offsetHeight;
     }
 
     return () => {
-       observer.disconnect();
+      observer.disconnect();
     };
   });
 
-  let showFullContent = $derived(showState || (peekState && localExpanded) || (peekState && isSmallContent));
+  let showFullContent = $derived(
+    showState || (peekState && localExpanded) || (peekState && isSmallContent),
+  );
 
   // Reset unconstrained state when toggling
   $effect(() => {
-     if (showFullContent) {
-         // Expanding: start constrained (to animate), will unlock on transitionend
-         isUnconstrained = false; 
-     } else {
-         // Collapsing: must recapture height immediately (snap) or stay constrained
-         isUnconstrained = false;
-     }
+    if (showFullContent) {
+      // Expanding: start constrained (to animate), will unlock on transitionend
+      isUnconstrained = false;
+    } else {
+      // Collapsing: must recapture height immediately (snap) or stay constrained
+      isUnconstrained = false;
+    }
   });
   // Only show peek styling (mask) if it's peeking, not expanded locally, AND content is actually taller than peek height
   let showPeekContent = $derived(!showState && peekState && !localExpanded && !isSmallContent);
@@ -105,20 +119,20 @@
 
   // Calculate dynamic max-height for animation
   let currentMaxHeight = $derived.by(() => {
-      if (isHidden) return '0px';
-      if (isUnconstrained && showFullContent) return 'none'; /* Release constraint when stable */
-      if (showPeekContent) return `${PEEK_HEIGHT}px`;
-      if (showFullContent) return scrollHeight > 0 ? `${scrollHeight}px` : '9999px'; 
-      return '0px';
+    if (isHidden) return '0px';
+    if (isUnconstrained && showFullContent) return 'none'; /* Release constraint when stable */
+    if (showPeekContent) return `${PEEK_HEIGHT}px`;
+    if (showFullContent) return scrollHeight > 0 ? `${scrollHeight}px` : '9999px';
+    return '0px';
   });
 
   function handleTransitionEnd(e: TransitionEvent) {
     // Only care about max-height transitions on the content element
     if (e.propertyName !== 'max-height' || e.target !== contentEl) return;
-    
+
     // If we finished expanding, release the height constraint
     if (showFullContent) {
-        isUnconstrained = true;
+      isUnconstrained = true;
     }
   }
 
@@ -136,33 +150,33 @@
   });
 </script>
 
-<div 
-  class="cv-toggle-wrapper" 
-  class:expanded={showFullContent && !showPeekContent} 
-  class:peeking={showPeekContent} 
+<div
+  class="cv-toggle-wrapper"
+  class:expanded={showFullContent && !showPeekContent}
+  class:peeking={showPeekContent}
   class:peek-mode={peekState}
-  class:hidden={isHidden} 
+  class:hidden={isHidden}
   class:has-border={showPeekBorder && peekState}
 >
   {#if showLabel && labelText && !isHidden}
-     <div class="cv-toggle-label">{labelText}</div>
+    <div class="cv-toggle-label">{labelText}</div>
   {/if}
 
-  <div 
-    class="cv-toggle-content" 
+  <div
+    class="cv-toggle-content"
     bind:this={contentEl}
     style:max-height={currentMaxHeight}
     ontransitionend={handleTransitionEnd}
   >
     <div class="cv-toggle-inner" bind:this={innerEl}>
-       <slot></slot>
+      <slot></slot>
     </div>
   </div>
 
   {#if peekState && !isSmallContent}
-    <button 
-      class="cv-expand-btn" 
-      aria-label={localExpanded ? "Collapse content" : "Expand content"}
+    <button
+      class="cv-expand-btn"
+      aria-label={localExpanded ? 'Collapse content' : 'Expand content'}
       onclick={toggleExpand}
     >
       {@html localExpanded ? getChevronUpIcon() : getChevronDownIcon()}
@@ -200,7 +214,10 @@
 
   .cv-toggle-content {
     overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease, overflow 0s 0s;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.3s ease,
+      overflow 0s 0s;
     /* CSS max-height defaults are handled by inline styles now */
   }
 
@@ -217,28 +234,31 @@
   /* Bordered State */
   .has-border {
     box-sizing: border-box; /* Ensure padding/border doesn't increase width */
-    
+
     /* Dashed border */
     border: 2px dashed rgba(0, 0, 0, 0.15);
     border-bottom: none;
-    
+
     /* Inner shadow to look like it's going into something + outer shadow */
-    box-shadow: 
-      0 2px 8px rgba(0, 0, 0, 0.05), /* Subtle outer */
-      inset 0 -15px 10px -10px rgba(0, 0, 0, 0.1); /* Inner bottom shadow */
-    
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      /* Subtle outer */ inset 0 -15px 10px -10px rgba(0, 0, 0, 0.1); /* Inner bottom shadow */
+
     border-radius: 8px 8px 0 0;
-    
+
     padding: 12px 0 0 0; /* bottom 0 px until expanded */
     margin-top: 4px;
   }
-  
+
   /* Visible / Expanded State */
   .expanded .cv-toggle-content {
     opacity: 1;
     transform: translateY(0);
     overflow: visible;
-    transition: max-height 0.3s ease, opacity 0.3s ease, overflow 0s 0.3s;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.3s ease,
+      overflow 0s 0.3s;
   }
 
   /* When expanded, complete the border */
@@ -256,7 +276,7 @@
     mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   }
-  
+
   /* Label Style */
   .cv-toggle-label {
     position: absolute;
@@ -270,13 +290,13 @@
     border-radius: 4px;
     z-index: 10;
     pointer-events: auto;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
   /* Adjust label position if bordered */
   .has-border .cv-toggle-label {
-      top: -10px;
-      left: 0;
+    top: -10px;
+    left: 0;
   }
 
   /* Expand Button */

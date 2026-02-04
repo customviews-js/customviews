@@ -6,7 +6,7 @@
 
 # Custom Components
 
-* Tabs 
-* Toggles
+- Tabs
+- Toggles
 
 More details coming soon!

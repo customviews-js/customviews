@@ -1,11 +1,15 @@
 <script lang="ts">
-  import { shareStore, SHAREABLE_SELECTOR, isGenericWrapper } from '$features/share/stores/share-store.svelte';
+  import {
+    shareStore,
+    SHAREABLE_SELECTOR,
+    isGenericWrapper,
+  } from '$features/share/stores/share-store.svelte';
   import ShareToolbar from './ShareToolbar.svelte';
   import HoverHelper from './HoverHelper.svelte';
 
   let {
     excludedTags = ['HEADER', 'NAV', 'FOOTER'],
-    excludedIds = ['cv-floating-action-bar', 'cv-hover-helper']
+    excludedIds = ['cv-floating-action-bar', 'cv-hover-helper'],
   }: { excludedTags?: string[]; excludedIds?: string[] } = $props();
 
   let excludedTagSet = $derived(new Set(excludedTags.map((t: string) => t.toUpperCase())));
@@ -19,10 +23,10 @@
   });
 
   let isDragging = $state(false);
-  let dragStart = $state<{x: number, y: number} | null>(null);
-  let dragCurrent = $state<{x: number, y: number} | null>(null);
+  let dragStart = $state<{ x: number; y: number } | null>(null);
+  let dragCurrent = $state<{ x: number; y: number } | null>(null);
   let wasDragging = false;
-  
+
   // Cache candidates when active to avoid repeated DOM queries
   let cachedCandidates: HTMLElement[] = [];
 
@@ -45,7 +49,7 @@
 
     // 1. If we are on the helper or toolbar, do nothing (keep current selection)
     if (target.closest('.hover-helper') || target.closest('.floating-bar')) {
-        return;
+      return;
     }
 
     // 2. Exclude by Tag/ID
@@ -53,7 +57,7 @@
 
     // 3. Find nearest shareable
     const shareablePart = target.closest(SHAREABLE_SELECTOR);
-    
+
     // If not on a shareable part, clear selection immediately
     if (!shareablePart) {
       shareStore.setHoverTarget(null);
@@ -62,10 +66,10 @@
 
     const finalTarget = shareablePart as HTMLElement;
 
-    // Check ancestors selection (level up logic) 
+    // Check ancestors selection (level up logic)
     let parent = finalTarget.parentElement;
     let selectedAncestor: HTMLElement | null = null;
-    while(parent) {
+    while (parent) {
       if (shareStore.selectedElements.has(parent)) {
         selectedAncestor = parent;
         break;
@@ -86,12 +90,11 @@
 
     // Check selection is not child of current hover target
     if (shareStore.currentHoverTarget !== finalTarget) {
-        if (shareStore.currentHoverTarget && 
-            shareStore.currentHoverTarget.contains(finalTarget)) {
-             return;
-        }
+      if (shareStore.currentHoverTarget && shareStore.currentHoverTarget.contains(finalTarget)) {
+        return;
+      }
 
-        shareStore.setHoverTarget(finalTarget);
+      shareStore.setHoverTarget(finalTarget);
     }
   }
 
@@ -133,51 +136,55 @@
 
   function handleMouseUp(_: MouseEvent) {
     if (isDragging && dragStart && dragCurrent) {
-        // Perform selection logic
-        const width = Math.abs(dragCurrent.x - dragStart.x);
-        const height = Math.abs(dragCurrent.y - dragStart.y);
+      // Perform selection logic
+      const width = Math.abs(dragCurrent.x - dragStart.x);
+      const height = Math.abs(dragCurrent.y - dragStart.y);
 
-        // Optimization: Skip if drag area is too small (avoids accidental micro-selections)
-        if (width < 10 || height < 10) {
-            isDragging = false;
-            dragStart = null;
-            dragCurrent = null;
-            return;
+      // Optimization: Skip if drag area is too small (avoids accidental micro-selections)
+      if (width < 10 || height < 10) {
+        isDragging = false;
+        dragStart = null;
+        dragCurrent = null;
+        return;
+      }
+
+      const left = Math.min(dragStart.x, dragCurrent.x);
+      const top = Math.min(dragStart.y, dragCurrent.y);
+      const right = left + width;
+      const bottom = top + height;
+
+      // Populate cache only if needed (lazy loading)
+      if (cachedCandidates.length === 0) {
+        cachedCandidates = Array.from(
+          document.querySelectorAll(SHAREABLE_SELECTOR),
+        ) as HTMLElement[];
+      }
+
+      const selected: HTMLElement[] = [];
+
+      cachedCandidates.forEach((node) => {
+        const el = node as HTMLElement;
+        if (isOrHasExcludedParentElement(el)) return;
+
+        const rect = el.getBoundingClientRect();
+        // Check containment (element must be fully inside selection box)
+        // AND check if it's not just a generic wrapper
+        if (
+          rect.left >= left &&
+          rect.right <= right &&
+          rect.top >= top &&
+          rect.bottom <= bottom &&
+          !isGenericWrapper(el)
+        ) {
+          selected.push(el);
         }
+      });
 
-        const left = Math.min(dragStart.x, dragCurrent.x);
-        const top = Math.min(dragStart.y, dragCurrent.y);
-        const right = left + width;
-        const bottom = top + height;
+      if (selected.length > 0) {
+        shareStore.addMultipleElements(selected);
+      }
 
-        // Populate cache only if needed (lazy loading)
-        if (cachedCandidates.length === 0) {
-            cachedCandidates = Array.from(document.querySelectorAll(SHAREABLE_SELECTOR)) as HTMLElement[];
-        }
-        
-        const selected: HTMLElement[] = [];
-
-        cachedCandidates.forEach(node => {
-            const el = node as HTMLElement;
-            if (isOrHasExcludedParentElement(el)) return;
-
-            const rect = el.getBoundingClientRect();
-            // Check containment (element must be fully inside selection box)
-            // AND check if it's not just a generic wrapper
-            if (
-                rect.left >= left && rect.right <= right && 
-                rect.top >= top && rect.bottom <= bottom &&
-                !isGenericWrapper(el)
-            ) {
-                selected.push(el);
-            }
-        });
-
-        if (selected.length > 0) {
-            shareStore.addMultipleElements(selected);
-        }
-
-        wasDragging = true;
+      wasDragging = true;
     }
 
     isDragging = false;
@@ -187,10 +194,10 @@
 
   function handleClick(e: MouseEvent) {
     if (wasDragging) {
-        e.preventDefault();
-        e.stopPropagation();
-        wasDragging = false; // Synchronous reset
-        return;
+      e.preventDefault();
+      e.stopPropagation();
+      wasDragging = false; // Synchronous reset
+      return;
     }
 
     const target = e.target as HTMLElement;
@@ -217,8 +224,12 @@
 
   function isOrHasExcludedParentElement(el: HTMLElement): boolean {
     // Exclude our own UI
-    if (el.closest('.share-overlay-ui') || el.closest('.hover-helper') || el.closest('.floating-bar')) {
-        return true;
+    if (
+      el.closest('.share-overlay-ui') ||
+      el.closest('.hover-helper') ||
+      el.closest('.floating-bar')
+    ) {
+      return true;
     }
 
     // Check self
@@ -227,8 +238,11 @@
     }
     // Check  all the way up
     let ancestor = el.parentElement;
-    while(ancestor) {
-      if (excludedTagSet.has(ancestor.tagName.toUpperCase()) || (ancestor.id && excludedIdSet.has(ancestor.id))) {
+    while (ancestor) {
+      if (
+        excludedTagSet.has(ancestor.tagName.toUpperCase()) ||
+        (ancestor.id && excludedIdSet.has(ancestor.id))
+      ) {
         return true;
       }
       ancestor = ancestor.parentElement;
@@ -237,115 +251,123 @@
   }
 </script>
 
-  <!-- https://svelte.dev/docs/svelte/svelte-window -->
-  <svelte:window
-    on:mouseover={handleHover}
-    on:mousedown={handleMouseDown}
-    on:mousemove={handleMouseMove}
-    on:mouseup={handleMouseUp}
-    on:click|capture={handleClick}
-    on:keydown={handleKeydown}
-  />
+<!-- https://svelte.dev/docs/svelte/svelte-window -->
+<svelte:window
+  on:mouseover={handleHover}
+  on:mousedown={handleMouseDown}
+  on:mousemove={handleMouseMove}
+  on:mouseup={handleMouseUp}
+  on:click|capture={handleClick}
+  on:keydown={handleKeydown}
+/>
 
-  <div class="share-overlay-ui">
-    <ShareToolbar />
-    <HoverHelper />
+<div class="share-overlay-ui">
+  <ShareToolbar />
+  <HoverHelper />
 
-    {#if selectionBox}
-      <div 
-        class="selection-box {shareStore.selectionMode === 'hide' ? 'hide-mode' : (shareStore.selectionMode === 'highlight' ? 'highlight-mode' : '')}"
-        style="left: {selectionBox.left}px; top: {selectionBox.top}px; width: {selectionBox.width}px; height: {selectionBox.height}px;"
-      >
-        <span class="selection-label">
-            {shareStore.selectionMode === 'hide' ? 'Select to hide' : (shareStore.selectionMode === 'highlight' ? 'Select to highlight' : 'Select to show')}
-        </span>
-      </div>
-    {/if}
-  </div>
+  {#if selectionBox}
+    <div
+      class="selection-box {shareStore.selectionMode === 'hide'
+        ? 'hide-mode'
+        : shareStore.selectionMode === 'highlight'
+          ? 'highlight-mode'
+          : ''}"
+      style="left: {selectionBox.left}px; top: {selectionBox.top}px; width: {selectionBox.width}px; height: {selectionBox.height}px;"
+    >
+      <span class="selection-label">
+        {shareStore.selectionMode === 'hide'
+          ? 'Select to hide'
+          : shareStore.selectionMode === 'highlight'
+            ? 'Select to highlight'
+            : 'Select to show'}
+      </span>
+    </div>
+  {/if}
+</div>
 
-  <style>
-    /* Global styles injected when active */
-    :global(body.cv-share-active) {
-      cursor: default;
-      user-select: none;
-      -webkit-user-select: none;
-    }
+<style>
+  /* Global styles injected when active */
+  :global(body.cv-share-active) {
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
-    /* Highlight outlines */
-    :global(.cv-highlight-target) {
-      outline: 2px dashed #0078D4 !important;
-      outline-offset: 2px;
-      cursor: crosshair;
-    }
+  /* Highlight outlines */
+  :global(.cv-highlight-target) {
+    outline: 2px dashed #0078d4 !important;
+    outline-offset: 2px;
+    cursor: crosshair;
+  }
 
-    :global(.cv-share-selected) {
-      outline: 3px solid #005a9e !important;
-      outline-offset: 2px;
-      background-color: rgba(0, 120, 212, 0.05);
-    }
+  :global(.cv-share-selected) {
+    outline: 3px solid #005a9e !important;
+    outline-offset: 2px;
+    background-color: rgba(0, 120, 212, 0.05);
+  }
 
-    :global(.cv-highlight-target-hide) {
-      outline: 2px dashed #d13438 !important;
-      outline-offset: 2px;
-      cursor: crosshair;
-    }
+  :global(.cv-highlight-target-hide) {
+    outline: 2px dashed #d13438 !important;
+    outline-offset: 2px;
+    cursor: crosshair;
+  }
 
-    :global(.cv-share-selected-hide) {
-      outline: 3px solid #a4262c !important;
-      outline-offset: 2px;
-      background-color: rgba(209, 52, 56, 0.05);
-    }
+  :global(.cv-share-selected-hide) {
+    outline: 3px solid #a4262c !important;
+    outline-offset: 2px;
+    background-color: rgba(209, 52, 56, 0.05);
+  }
 
-    :global(.cv-highlight-target-mode) {
-      outline: 2px dashed #d97706 !important;
-      outline-offset: 2px;
-      cursor: crosshair;
-    }
+  :global(.cv-highlight-target-mode) {
+    outline: 2px dashed #d97706 !important;
+    outline-offset: 2px;
+    cursor: crosshair;
+  }
 
-    :global(.cv-share-selected-highlight) {
-      outline: 3px solid #b45309 !important;
-      outline-offset: 2px;
-      background-color: rgba(245, 158, 11, 0.05);
-    }
+  :global(.cv-share-selected-highlight) {
+    outline: 3px solid #b45309 !important;
+    outline-offset: 2px;
+    background-color: rgba(245, 158, 11, 0.05);
+  }
 
-    .selection-box {
-      position: fixed;
-      border: 1px solid rgba(0, 120, 212, 0.4);
-      background-color: rgba(0, 120, 212, 0.1);
-      pointer-events: none;
-      z-index: 10000;
-      box-sizing: border-box; 
-    }
-    
-    .selection-box.hide-mode {
-      border: 1px solid rgba(209, 52, 56, 0.4);
-      background-color: rgba(209, 52, 56, 0.1);
-    }
+  .selection-box {
+    position: fixed;
+    border: 1px solid rgba(0, 120, 212, 0.4);
+    background-color: rgba(0, 120, 212, 0.1);
+    pointer-events: none;
+    z-index: 10000;
+    box-sizing: border-box;
+  }
 
-    .selection-box.highlight-mode {
-      border: 1px solid rgba(255, 140, 0, 0.6); /* Orange/Gold for highlight */
-      background-color: rgba(255, 140, 0, 0.1);
-    }
+  .selection-box.hide-mode {
+    border: 1px solid rgba(209, 52, 56, 0.4);
+    background-color: rgba(209, 52, 56, 0.1);
+  }
 
-    .selection-label {
-        position: absolute;
-        top: -24px;
-        left: 0;
-        background: #0078D4;
-        color: white;
-        padding: 2px 6px;
-        font-size: 11px;
-        border-radius: 3px;
-        white-space: nowrap;
-        font-family: sans-serif;
-        opacity: 0.9;
-    }
+  .selection-box.highlight-mode {
+    border: 1px solid rgba(255, 140, 0, 0.6); /* Orange/Gold for highlight */
+    background-color: rgba(255, 140, 0, 0.1);
+  }
 
-    .hide-mode .selection-label {
-        background: #d13438;
-    }
+  .selection-label {
+    position: absolute;
+    top: -24px;
+    left: 0;
+    background: #0078d4;
+    color: white;
+    padding: 2px 6px;
+    font-size: 11px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-family: sans-serif;
+    opacity: 0.9;
+  }
 
-    .highlight-mode .selection-label {
-        background: #d97706; /* Darker orange for text bg */
-    }
-  </style>
+  .hide-mode .selection-label {
+    background: #d13438;
+  }
+
+  .highlight-mode .selection-label {
+    background: #d97706; /* Darker orange for text bg */
+  }
+</style>

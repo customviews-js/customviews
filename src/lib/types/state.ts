@@ -2,7 +2,7 @@ export type ToggleId = string;
 
 /**
  * Represents a specific state of a custom view.
- * States contain the list of toggle categories that should be displayed in this state. 
+ * States contain the list of toggle categories that should be displayed in this state.
  */
 export interface State {
   /** List of toggle categories that should be fully displayed ("Show" state) */

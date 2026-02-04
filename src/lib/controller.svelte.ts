@@ -1,13 +1,13 @@
-import type { Config } from "$lib/types/index";
-import type { AssetsManager } from "./assets";
+import type { Config } from '$lib/types/index';
+import type { AssetsManager } from './assets';
 
-import { PersistenceManager } from "./state/persistence";
-import { URLStateManager } from "./state/url-state-manager";
+import { PersistenceManager } from './state/persistence';
+import { URLStateManager } from './state/url-state-manager';
 
-import { FocusService } from "$features/focus/services/focus-service.svelte";
-import { DataStore, initStore } from "./stores/main-store.svelte";
-import { placeholderValueStore } from "./stores/placeholder-value-store.svelte";
-import { PlaceholderBinder } from "./services/placeholder-binder";
+import { FocusService } from '$features/focus/services/focus-service.svelte';
+import { DataStore, initStore } from './stores/main-store.svelte';
+import { placeholderValueStore } from './stores/placeholder-value-store.svelte';
+import { PlaceholderBinder } from './services/placeholder-binder';
 
 export interface ControllerOptions {
   assetsManager: AssetsManager;
@@ -27,11 +27,11 @@ export class CustomViewsController {
    * The single source of truth for application state.
    */
   public store: DataStore;
-  
+
   private rootEl: HTMLElement;
   public persistenceManager: PersistenceManager;
   private focusService: FocusService;
-  
+
   private showUrlEnabled: boolean;
   private observer?: MutationObserver;
   private destroyEffectRoot?: () => void;
@@ -41,10 +41,10 @@ export class CustomViewsController {
     this.rootEl = opt.rootEl || document.body;
     this.persistenceManager = new PersistenceManager(opt.storageKey);
     this.showUrlEnabled = opt.showUrl ?? false;
-    
+
     // Initialize Reactive Store Singleton
     this.store = initStore(opt.config);
-    
+
     // Store assetsManager in global store for component access
     this.store.setAssetsManager(opt.assetsManager);
 
@@ -52,31 +52,30 @@ export class CustomViewsController {
     this.resolveInitialState();
 
     // Resolve Exclusions
-    this.focusService = new FocusService(this.rootEl, { 
-       shareExclusions: opt.config.shareExclusions || {}
+    this.focusService = new FocusService(this.rootEl, {
+      shareExclusions: opt.config.shareExclusions || {},
     });
   }
 
   private resolveInitialState() {
-     // 1. URL State
-     const urlState = URLStateManager.parseURL();
-     if (urlState) {
-       this.store.applyState(urlState);
-       return;
-     }
- 
-     // 2. Persisted State
-     const persistedState = this.persistenceManager.getPersistedState();
-     if (persistedState) {
-        this.store.applyState(persistedState);
-        return;
-     }
+    // 1. URL State
+    const urlState = URLStateManager.parseURL();
+    if (urlState) {
+      this.store.applyState(urlState);
+      return;
+    }
 
+    // 2. Persisted State
+    const persistedState = this.persistenceManager.getPersistedState();
+    if (persistedState) {
+      this.store.applyState(persistedState);
+      return;
+    }
   }
 
   /**
    * Initializes the CustomViews core.
-   * 
+   *
    * Components (Toggle, TabGroup) self-register during their mount lifecycle.
    * Core only manages global reactivity for URL state and persistence.
    */
@@ -86,7 +85,7 @@ export class CustomViewsController {
     if (navPref !== null) {
       this.store.isTabGroupNavHeadingVisible = navPref;
     }
-    
+
     // Initialize Stores
     placeholderValueStore.init(this.persistenceManager);
 
@@ -96,51 +95,50 @@ export class CustomViewsController {
     PlaceholderBinder.scanAndHydrate(this.rootEl);
 
     this.setUpObserver();
-    
+
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
-        // Effect 1: Update URL
-        $effect(() => {
-            if (this.showUrlEnabled) {
-                URLStateManager.updateURL(this.store.state);
-            } else {
-                URLStateManager.clearURL();
-            }
-        });
+      // Effect 1: Update URL
+      $effect(() => {
+        if (this.showUrlEnabled) {
+          URLStateManager.updateURL(this.store.state);
+        } else {
+          URLStateManager.clearURL();
+        }
+      });
 
-        // Effect 2: Persistence
-        $effect(() => {
-            this.persistenceManager.persistState(this.store.state);
-            this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
-        });
+      // Effect 2: Persistence
+      $effect(() => {
+        this.persistenceManager.persistState(this.store.state);
+        this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
+      });
 
-        // Effect 3: React to Variable Changes
-        $effect(() => {
-            PlaceholderBinder.updateAll(placeholderValueStore.values);
-        });
+      // Effect 3: React to Variable Changes
+      $effect(() => {
+        PlaceholderBinder.updateAll(placeholderValueStore.values);
+      });
     });
-
 
     // Handle History Popstate
     this.popstateHandler = () => {
-       const urlState = URLStateManager.parseURL();
-       if (urlState) {
-          this.store.applyState(urlState);
-       }
+      const urlState = URLStateManager.parseURL();
+      if (urlState) {
+        this.store.applyState(urlState);
+      }
     };
-    window.addEventListener("popstate", this.popstateHandler);
+    window.addEventListener('popstate', this.popstateHandler);
   }
 
-  /** 
+  /**
    * Sets up a MutationObserver to detect content added dynamically to the page
    * (e.g. by other scripts, lazy loading, or client-side routing).
    */
   private setUpObserver() {
     this.observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-            if (mutation.type !== 'childList') continue;
-            mutation.addedNodes.forEach(node => this.handleForPlaceholders(node));
-        }
+      for (const mutation of mutations) {
+        if (mutation.type !== 'childList') continue;
+        mutation.addedNodes.forEach((node) => this.handleForPlaceholders(node));
+      }
     });
 
     // Observe the entire document tree for changes
@@ -151,50 +149,49 @@ export class CustomViewsController {
    * Processes a newly added DOM node to check for and hydrate placeholders.
    */
   private handleForPlaceholders(node: Node) {
-      // Skip our own custom elements to avoid unnecessary scanning
-      if (node.nodeType === Node.ELEMENT_NODE) {
-          const el = node as HTMLElement;
-          if (el.tagName === 'CV-PLACEHOLDER' || el.tagName === 'CV-PLACEHOLDER-INPUT') {
-              return;
-          }
+    // Skip our own custom elements to avoid unnecessary scanning
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as HTMLElement;
+      if (el.tagName === 'CV-PLACEHOLDER' || el.tagName === 'CV-PLACEHOLDER-INPUT') {
+        return;
       }
+    }
 
-      // Case 1: A new HTML element was added (e.g. via innerHTML or appendChild).
-      // Recursively scan inside for any new placeholders.
-      if (node.nodeType === Node.ELEMENT_NODE) {
-          PlaceholderBinder.scanAndHydrate(node as HTMLElement);
-      } 
-      // Case 2: A raw text node was added directly.
-      // Check looks like a variable `[[...]]` to avoid unnecessary scans of plain text.
-      else if (
-          node.nodeType === Node.TEXT_NODE && 
-          node.parentElement && 
-          node.nodeValue?.includes('[[') &&
-          node.nodeValue?.includes(']]')
-      ) {
-          // Re-scan parent to properly wrap text node in reactive span.
-          PlaceholderBinder.scanAndHydrate(node.parentElement);
-      }
+    // Case 1: A new HTML element was added (e.g. via innerHTML or appendChild).
+    // Recursively scan inside for any new placeholders.
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      PlaceholderBinder.scanAndHydrate(node as HTMLElement);
+    }
+    // Case 2: A raw text node was added directly.
+    // Check looks like a variable `[[...]]` to avoid unnecessary scans of plain text.
+    else if (
+      node.nodeType === Node.TEXT_NODE &&
+      node.parentElement &&
+      node.nodeValue?.includes('[[') &&
+      node.nodeValue?.includes(']]')
+    ) {
+      // Re-scan parent to properly wrap text node in reactive span.
+      PlaceholderBinder.scanAndHydrate(node.parentElement);
+    }
   }
 
   // --- Public APIs for Widget/Other ---
 
   public resetToDefault() {
-      this.persistenceManager.clearAll();
-      this.store.reset();
-      this.store.isTabGroupNavHeadingVisible = true;
-      URLStateManager.clearURL();
+    this.persistenceManager.clearAll();
+    this.store.reset();
+    this.store.isTabGroupNavHeadingVisible = true;
+    URLStateManager.clearURL();
   }
 
   public destroy() {
-      this.observer?.disconnect();
-      this.destroyEffectRoot?.();
-      
-      if (this.popstateHandler) {
-          window.removeEventListener("popstate", this.popstateHandler);
-      }
+    this.observer?.disconnect();
+    this.destroyEffectRoot?.();
 
-      this.focusService.destroy();
+    if (this.popstateHandler) {
+      window.removeEventListener('popstate', this.popstateHandler);
+    }
+
+    this.focusService.destroy();
   }
 }
-

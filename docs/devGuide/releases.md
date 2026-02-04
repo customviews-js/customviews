@@ -10,8 +10,9 @@
 # Release Workflow
 
 ## Prerequisites
-* Ensure you have NPM access to the organization and package on NPM to make releases for CustomViews. [NPM Link](https://www.npmjs.com/package/@customviews-js/customviews).
-* **Login to NPM**: Ensure you are authenticated.
+
+- Ensure you have NPM access to the organization and package on NPM to make releases for CustomViews. [NPM Link](https://www.npmjs.com/package/@customviews-js/customviews).
+- **Login to NPM**: Ensure you are authenticated.
 
 ```sh
 npm login
@@ -19,6 +20,7 @@ npm login
 ```
 
 ## Beta Release on NPM (Experimental)
+
 Use for testing new features.
 
 ```sh
@@ -28,14 +30,15 @@ npm run bump:beta
 # 2. Release to NPM (@beta tag)
 npm run release:beta
 ```
-* Note that running `npm run bump:beta` will update the release version to the next beta version, incrementing the beta version number if the last release was a beta release.
-* `npm version prerelease --preid=beta` creates a release commit and tag, but does not automatically publish to NPM.
-* `npm run release:beta` will publish the release to NPM with the `@beta` tag.
+
+- Note that running `npm run bump:beta` will update the release version to the next beta version, incrementing the beta version number if the last release was a beta release.
+- `npm version prerelease --preid=beta` creates a release commit and tag, but does not automatically publish to NPM.
+- `npm run release:beta` will publish the release to NPM with the `@beta` tag.
 
 After making the beta release, update the MarkBind documentation website if needed.
 Do this by running `npm run deploydocs`. This updates the site at `https://customviews-js.github.io/customviews`, which is the beta documentation site.
 
-* Make sure to update the `data-base-url` in the customviews plugin script to make sure that it is the right value i.e. (`data-base-url="/customviews"`).
+- Make sure to update the `data-base-url` in the customviews plugin script to make sure that it is the right value i.e. (`data-base-url="/customviews"`).
 
 ### Using the beta release
 
@@ -56,6 +59,7 @@ jsDelivr:
 ```
 
 ## Production Release on NPM (Stable)
+
 Use when beta is stable and ready for everyone.
 
 ```sh
@@ -72,7 +76,7 @@ npm run release:prod
 After making a production release, update the MarkBind documentation website if needed.
 Do this by running `npm run deploydocs:stable`. This updates the site at `https://customviews-js.github.io`, which is the stable documentation site.
 
-* Make sure to update the `data-base-url` in the customviews plugin script to make sure that it is the right value (i.e. `data-base-url=""`).
+- Make sure to update the `data-base-url` in the customviews plugin script to make sure that it is the right value (i.e. `data-base-url=""`).
 
 ### Using the production release
 
@@ -102,4 +106,3 @@ git push --tags
 ```
 
 Thereafter, make a release on GitHub.
-  

@@ -2,8 +2,8 @@
   customElement={{
     tag: 'cv-tabgroup',
     props: {
-      groupId: { reflect: true, type: 'String', attribute: 'group-id' }
-    }
+      groupId: { reflect: true, type: 'String', attribute: 'group-id' },
+    },
   }}
 />
 
@@ -19,10 +19,10 @@
   });
 
   let tabs: Array<{
-    id: string,
-    rawId: string,
-    header: string,
-    element: HTMLElement
+    id: string;
+    rawId: string;
+    header: string;
+    element: HTMLElement;
   }> = $state([]);
 
   let contentWrapper: HTMLElement | undefined = $state();
@@ -35,7 +35,7 @@
   // Derive pinnedTab from store (shared across groups with same ID)
   let pinnedTab = $derived.by(() => {
     const tabs$ = store.state.tabs ?? {};
-    return (groupId && tabs$[groupId]) ? tabs$[groupId] : null;
+    return groupId && tabs$[groupId] ? tabs$[groupId] : null;
   });
 
   // Track the last seen store state to detect real changes
@@ -47,13 +47,13 @@
     // Note: strict inequality works here because both are strings or null
     if (pinnedTab !== lastSeenStoreState) {
       lastSeenStoreState = pinnedTab;
-      
+
       // If there is a pinned tab, it overrides local state
       if (pinnedTab) {
         // Check if we actually need to update (avoid redundant DOM work)
         if (localActiveTabId !== pinnedTab) {
-            localActiveTabId = pinnedTab;
-            updateVisibility();
+          localActiveTabId = pinnedTab;
+          updateVisibility();
         }
       }
     }
@@ -66,21 +66,23 @@
   const pinIconHtml = getPinIcon(true);
 
   onMount(() => {
-     if (contentWrapper) {
-         slotEl = contentWrapper.querySelector('slot');
-         if (slotEl) {
-             slotEl.addEventListener('slotchange', handleSlotChange);
-             handleSlotChange();
-         }
-     }
+    if (contentWrapper) {
+      slotEl = contentWrapper.querySelector('slot');
+      if (slotEl) {
+        slotEl.addEventListener('slotchange', handleSlotChange);
+        handleSlotChange();
+      }
+    }
   });
 
-
   function splitTabIds(tabId: string): string[] {
-    return tabId.split(/[\s|]+/).filter(id => id.trim() !== '').map(id => id.trim());
+    return tabId
+      .split(/[\s|]+/)
+      .filter((id) => id.trim() !== '')
+      .map((id) => id.trim());
   }
 
-  // Todo: For handleSlotChange(), consider if there is a svelte way 
+  // Todo: For handleSlotChange(), consider if there is a svelte way
   // to do this without the need for the slotchange event.
 
   /**
@@ -91,14 +93,15 @@
    */
   function handleSlotChange() {
     if (!slotEl) return;
-    
-    const elements = slotEl.assignedElements().filter(el => el.tagName.toLowerCase() === 'cv-tab');
-    
+
+    const elements = slotEl
+      .assignedElements()
+      .filter((el) => el.tagName.toLowerCase() === 'cv-tab');
 
     tabs = elements.map((el, index) => {
       const element = el as HTMLElement;
       let rawId = element.getAttribute('tab-id');
-      
+
       // If tab has no tab-id, generate one based on position
       if (!rawId) {
         rawId = `${groupId || 'tabgroup'}-tab-${index}`;
@@ -110,7 +113,7 @@
 
       // Extract Header
       let header = '';
-      
+
       // Check for <cv-tab-header>
       const headerEl = element.querySelector('cv-tab-header');
       if (headerEl) {
@@ -119,8 +122,8 @@
         // Attribute syntax
         header = element.getAttribute('header') || '';
         if (!header) {
-           // Fallback to tab-id or default
-           header = element.getAttribute('tab-id') ? primaryId : `Tab ${index + 1}`;
+          // Fallback to tab-id or default
+          header = element.getAttribute('tab-id') ? primaryId : `Tab ${index + 1}`;
         }
       }
 
@@ -128,7 +131,7 @@
         id: primaryId,
         rawId,
         header,
-        element
+        element,
       };
     });
 
@@ -142,11 +145,10 @@
       }
       initialized = true;
     } else if (initialized) {
-        // Re-run visibility in case new tabs matched current activeTab
-        updateVisibility();
+      // Re-run visibility in case new tabs matched current activeTab
+      updateVisibility();
     }
   }
-
 
   /**
    * Updates the visibility of the child `<cv-tab>` elements based on the current `activeTab`.
@@ -155,11 +157,11 @@
   function updateVisibility() {
     if (!tabs.length) return;
 
-    tabs.forEach(tab => {
-        const splitIds = splitTabIds(tab.rawId);
-        const isActive = splitIds.includes(localActiveTabId);
-        // Set property directly to trigger Svelte component reactivity
-        (tab.element as any).active = isActive;
+    tabs.forEach((tab) => {
+      const splitIds = splitTabIds(tab.rawId);
+      const isActive = splitIds.includes(localActiveTabId);
+      // Set property directly to trigger Svelte component reactivity
+      (tab.element as any).active = isActive;
     });
   }
 
@@ -170,7 +172,7 @@
 
   function handleTabClick(tabId: string, event: MouseEvent) {
     event.preventDefault();
-    
+
     // Optimistic Update: Update local state immediately
     if (localActiveTabId !== tabId) {
       localActiveTabId = tabId;
@@ -184,15 +186,13 @@
    */
   function handleTabDoubleClick(tabId: string, event: MouseEvent) {
     event.preventDefault();
-    
+
     if (!groupId) return;
-    
+
     // Update store directly - this will sync to all tab groups with same group-id
     store.setPinnedTab(groupId, tabId);
   }
-
 </script>
-
 
 <!-- Container for the tab group -->
 <div class="cv-tabgroup-container">
@@ -204,21 +204,24 @@
         {@const isActive = splitIds.includes(localActiveTabId)}
         {@const isPinned = pinnedTab && splitIds.includes(pinnedTab)}
         <li class="nav-item">
-          <a class="nav-link" 
-             href={'#' + tab.id} 
-             class:active={isActive}
-             role="tab"
-             aria-selected={isActive}
-             onclick={(e) => handleTabClick(tab.id, e)}
-             ondblclick={(e) => handleTabDoubleClick(tab.id, e)}
-             title="Double-click a tab to 'pin' it in all similar tab groups."
-             data-tab-id={tab.id}
-             data-raw-tab-id={tab.rawId}
-             data-group-id={groupId}
+          <a
+            class="nav-link"
+            href={'#' + tab.id}
+            class:active={isActive}
+            role="tab"
+            aria-selected={isActive}
+            onclick={(e) => handleTabClick(tab.id, e)}
+            ondblclick={(e) => handleTabDoubleClick(tab.id, e)}
+            title="Double-click a tab to 'pin' it in all similar tab groups."
+            data-tab-id={tab.id}
+            data-raw-tab-id={tab.rawId}
+            data-group-id={groupId}
           >
             <span class="cv-tab-header-container">
-               <span class="cv-tab-header-text">{@html tab.header}</span>
-               <span class="cv-tab-pin-icon" style:display={isPinned ? 'inline-flex' : 'none'}>{@html pinIconHtml}</span>
+              <span class="cv-tab-header-text">{@html tab.header}</span>
+              <span class="cv-tab-pin-icon" style:display={isPinned ? 'inline-flex' : 'none'}
+                >{@html pinIconHtml}</span
+              >
             </span>
           </a>
         </li>
@@ -228,14 +231,14 @@
 
   <!-- Inject global stylesheets to support icons (FontAwesome, etc.) inside Shadow DOM -->
   {#each Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as link}
-     <link rel="stylesheet" href={(link as HTMLLinkElement).href}>
+    <link rel="stylesheet" href={(link as HTMLLinkElement).href} />
   {/each}
 
   <!-- Content i.e. tab elements -->
   <div class="cv-tabgroup-content" bind:this={contentWrapper}>
-      <slot></slot>
+    <slot></slot>
   </div>
-  
+
   <div class="cv-tabgroup-bottom-border"></div>
 </div>
 
@@ -244,7 +247,7 @@
     display: block;
     margin-bottom: 24px;
   }
-  
+
   /* Tab navigation styles */
   ul.nav-tabs {
     display: flex;
@@ -275,7 +278,10 @@
     border: 1px solid transparent;
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    transition:
+      color 0.15s ease-in-out,
+      background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out;
     cursor: pointer;
     min-height: 2.5rem;
     box-sizing: border-box;
@@ -303,9 +309,9 @@
   }
 
   .cv-tab-header-container {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .cv-tab-header-text {
@@ -313,10 +319,10 @@
   }
 
   .cv-tab-pin-icon {
-      display: inline-flex;
-      align-items: center;
-      line-height: 0;
-      flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+    flex-shrink: 0;
   }
 
   .cv-tab-pin-icon :global(svg) {

@@ -1,5 +1,5 @@
-import type { CustomViewAsset } from "$lib/types/index";
-import type { AssetsManager } from "./assets";
+import type { CustomViewAsset } from '$lib/types/index';
+import type { AssetsManager } from './assets';
 
 /** --- Basic renderers --- */
 
@@ -9,7 +9,7 @@ function renderImage(el: HTMLElement, asset: CustomViewAsset) {
   const img = document.createElement('img');
   img.src = asset.src;
   img.alt = asset.alt || '';
-  
+
   // Apply custom styling if provided
   if (asset.className) {
     img.className = asset.className;
@@ -17,7 +17,7 @@ function renderImage(el: HTMLElement, asset: CustomViewAsset) {
   if (asset.style) {
     img.setAttribute('style', asset.style);
   }
-  
+
   // Default styles (can be overridden by asset.style)
   img.style.maxWidth = img.style.maxWidth || '100%';
   img.style.height = img.style.height || 'auto';
@@ -29,7 +29,7 @@ function renderText(el: HTMLElement, asset: CustomViewAsset) {
   if (asset.content != null) {
     el.textContent = asset.content;
   }
-  
+
   // Apply custom styling if provided
   if (asset.className) {
     el.className = asset.className;
@@ -43,7 +43,7 @@ function renderHtml(el: HTMLElement, asset: CustomViewAsset) {
   if (asset.content != null) {
     el.innerHTML = asset.content;
   }
-  
+
   // Apply custom styling if provided
   if (asset.className) {
     el.className = asset.className;
@@ -58,20 +58,16 @@ function renderHtml(el: HTMLElement, asset: CustomViewAsset) {
 function detectAssetType(asset: CustomViewAsset): 'image' | 'text' | 'html' {
   // If src exists, it's an image
   if (asset.src) return 'image';
-  
+
   // If content contains HTML tags, it's HTML
   if (asset.content && /<[^>]+>/.test(asset.content)) {
     return 'html';
   }
-  
+
   return 'text';
 }
 
-export function renderAssetInto(
-  el: HTMLElement,
-  assetId: string,
-  assetsManager: AssetsManager
-) {
+export function renderAssetInto(el: HTMLElement, assetId: string, assetsManager: AssetsManager) {
   const asset = assetsManager.get(assetId);
   if (!asset) return;
 

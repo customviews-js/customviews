@@ -65,15 +65,13 @@ Windows-specific install steps...
 
 When the active toggle state includes `mac`, only the `<cv-toggle toggle-id="mac">` element will be visible. The component reactively updates based on the global toggle state.
 
-## Multi-ID Toggles 
+## Multi-ID Toggles
 
 You can apply multiple toggles to a single element by separating categories with spaces.
 This allows content to appear as long as one toggle category is active.
 
 ```html
-<cv-toggle toggle-id="mac linux">
-  This section appears for both macOS and Linux users.
-</cv-toggle>
+<cv-toggle toggle-id="mac linux"> This section appears for both macOS and Linux users. </cv-toggle>
 ```
 
 ### Toggles with Peek Mode
@@ -97,9 +95,10 @@ When multiple IDs are used, the effective visibility is determined by the most "
 3.  **Hide** (Lowest)
 
 **Logic:**
-*   If **ANY** of the IDs are set to **Show**, the content is completely **Shown**.
-*   If **NONE** show, but **ANY** are **Peek**, the content is shown in **Peek** mode.
-*   If **ALL** are **Hide** (or undefined), the content is **Hidden**.
+
+- If **ANY** of the IDs are set to **Show**, the content is completely **Shown**.
+- If **NONE** show, but **ANY** are **Peek**, the content is shown in **Peek** mode.
+- If **ALL** are **Hide** (or undefined), the content is **Hidden**.
 
 This means that "Show" overrides "Peek", and "Peek" overrides "Hide". Explicit interest always overrides disinterest.
 
@@ -108,17 +107,16 @@ This means that "Show" overrides "Peek", and "Peek" overrides "Hide". Explicit i
 **Note on Peek Mode:** If the content height is less than the standard peek height (70px), the component will automatically display the full content without the "expand" button or fade effect, even if the result state is "Peek". This ensures that short content isn't unnecessarily obscured.
 </box>
 
-
 ## Attributes & Options of `<cv-toggle>`
 
-| Name | Type | Default | Description |
-|------|------|----------|-------------|
-| toggle-id | `string` | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`. |
-| asset-id | `string` | - | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`. |
-| show-peek-border | `boolean` | `false` | If present, adds a subtle border to the top and sides of the toggle content. The border is only applied while the toggle is in Peek mode (whether collapsed or user‑expanded). When the toggle is fully shown (non‑Peek), no border is rendered even if this attribute is set. |
-| show-label | `boolean` | `false` | If present, displays the category label (e.g. "MacOS") at the top-left corner of the toggle. |
+| Name             | Type      | Default      | Description                                                                                                                                                                                                                                                                    |
+| ---------------- | --------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| toggle-id        | `string`  | **required** | Defines the category for the cv-toggle element. Example: `toggle-id="mac"`.                                                                                                                                                                                                    |
+| asset-id         | `string`  | -            | ID for dynamic asset rendering. When the toggle becomes visible, matching assets from `assets.json` will be automatically rendered into the toggle content. Example: `asset-id="mac-assets"`.                                                                                  |
+| show-peek-border | `boolean` | `false`      | If present, adds a subtle border to the top and sides of the toggle content. The border is only applied while the toggle is in Peek mode (whether collapsed or user‑expanded). When the toggle is fully shown (non‑Peek), no border is rendered even if this attribute is set. |
+| show-label       | `boolean` | `false`      | If present, displays the category label (e.g. "MacOS") at the top-left corner of the toggle.                                                                                                                                                                                   |
 
-## Configuration 
+## Configuration
 
 To make toggles discoverable by the settings, you must define them in your `customviews.config.json`.
 
@@ -126,10 +124,25 @@ To make toggles discoverable by the settings, you must define them in your `cust
 {
   "config": {
     "toggles": [
-      { "toggleId": "mac", "label": "MacOS", "description": "Show content for macOS users", "default": "show" },
-      { "toggleId": "linux", "label": "Linux", "description": "Show content for Linux users", "default": "peek" },
+      {
+        "toggleId": "mac",
+        "label": "MacOS",
+        "description": "Show content for macOS users",
+        "default": "show"
+      },
+      {
+        "toggleId": "linux",
+        "label": "Linux",
+        "description": "Show content for Linux users",
+        "default": "peek"
+      },
       { "toggleId": "windows", "label": "Windows", "default": "hide" },
-      { "toggleId": "localToggle", "label": "Local Toggle", "description": "Show content for local users", "isLocal": true }
+      {
+        "toggleId": "localToggle",
+        "label": "Local Toggle",
+        "description": "Show content for local users",
+        "isLocal": true
+      }
     ]
   }
 }
@@ -137,15 +150,13 @@ To make toggles discoverable by the settings, you must define them in your `cust
 
 ## Key Configuration Fields in `customviews.config.json` for Toggles
 
-
-| Name | Type | Default | Description |
-|------|------|----------|-------------|
-| toggleId | `string` | **required** | Defines the category for the cv-toggle element. Example: `toggleId="mac"`. |
-| label | `string` | - | Label for the toggle in the settings. |
-| description | `string` | - | Description for the toggle in the settings. |
-| default | `string` | `show` | Default state: `"show"`, `"hide"`, or `"peek"`. |
-| isLocal | `boolean` | false | Whether the toggle is local (only appears in the settings on pages where it is used). |
-
+| Name        | Type      | Default      | Description                                                                           |
+| ----------- | --------- | ------------ | ------------------------------------------------------------------------------------- |
+| toggleId    | `string`  | **required** | Defines the category for the cv-toggle element. Example: `toggleId="mac"`.            |
+| label       | `string`  | -            | Label for the toggle in the settings.                                                 |
+| description | `string`  | -            | Description for the toggle in the settings.                                           |
+| default     | `string`  | `show`       | Default state: `"show"`, `"hide"`, or `"peek"`.                                       |
+| isLocal     | `boolean` | false        | Whether the toggle is local (only appears in the settings on pages where it is used). |
 
 ### Visibility Resolution Order
 
@@ -155,12 +166,11 @@ To make toggles discoverable by the settings, you must define them in your `cust
 
 Elements whose toggles match the active state are shown; all others are hidden.
 
-
 ## Global vs. Local Toggles
 
 By default, all toggles defined in your configuration are **global**—they will appear in the settings on every page of your site.
 
-You can mark a toggle as **local** to make it appear in the settings *only* on pages where that specific toggle is actually used. This is useful for keeping the settings clean and only showing relevant options to the user.
+You can mark a toggle as **local** to make it appear in the settings _only_ on pages where that specific toggle is actually used. This is useful for keeping the settings clean and only showing relevant options to the user.
 
 To mark a toggle as local, add `"isLocal": true` to its configuration.
 
@@ -172,8 +182,8 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 {
   "config": {
     "toggles": [
-      { "toggleId": "localToggle", "label": "Local Toggle", "isLocal": true},
-      { "toggleId": "mac", "label": "MacOS", "isLocal": false},
+      { "toggleId": "localToggle", "label": "Local Toggle", "isLocal": true },
+      { "toggleId": "mac", "label": "MacOS", "isLocal": false },
       { "toggleId": "linux", "label": "Linux" },
       { "toggleId": "windows", "label": "Windows" }
     ]
@@ -184,32 +194,28 @@ If you have a `mac` toggle that is only used on a few pages, setting it as local
 And present on this page:
 
 ```html
-<cv-toggle toggle-id="localToggle">
-
-Local Toggle content 
-
-</cv-toggle>
+<cv-toggle toggle-id="localToggle"> Local Toggle content </cv-toggle>
 ```
 
-
 <cv-toggle toggle-id="localToggle">
 
-Local Toggle content 
+Local Toggle content
 
 Some long long text content to make sure the box is scrollable
 
 Use toggles to separate platform-specific or audience-specific instructions:
+
 - `mac`: Steps tailored for macOS users.
 - `linux`: Commands for common Linux distributions.
 - `windows`: Installer-based setup for Windows.
-Scroll within this panel to review additional best practices:
+  Scroll within this panel to review additional best practices:
 - Keep toggle IDs short, descriptive, and lowercase (e.g. `advanced`, `dark-mode`).
 - Prefer reusing the same toggle IDs across pages for consistency.
 - Avoid introducing toggles that overlap heavily in meaning (users may be confused).
 - Document what each toggle controls in your configuration or contributor guide.
 - Test that content is still understandable when individual toggles are on or off.
 - Consider a sensible default combination of toggles for new visitors.
-These extra lines ensure the box remains scrollable while conveying useful guidance.
+  These extra lines ensure the box remains scrollable while conveying useful guidance.
 
 </cv-toggle>
 
@@ -227,22 +233,16 @@ For example, to make the local toggles with IDs `advanced` and `dark-mode` avail
 
 This will ensure that the specified local toggles appear in the configuration settings, allowing users to control them even if they are not immediately visible on the page.
 
-
-
-
 # Troubleshooting
 
-* Toggles not appearing in settings?
-	* Check that your `config.toggles` array is correctly formatted with `toggleId` and `label` for each toggle.
+- Toggles not appearing in settings?
+  - Check that your `config.toggles` array is correctly formatted with `toggleId` and `label` for each toggle.
 
-* No effect when toggling?
-	* Ensure the element uses `<cv-toggle toggle-id="...">` and the category matches a configured toggle ID.
+- No effect when toggling?
+  - Ensure the element uses `<cv-toggle toggle-id="...">` and the category matches a configured toggle ID.
 
-* URL state not persisting in URL bar?
-	* Enable showUrl in the configuration.
+- URL state not persisting in URL bar?
+  - Enable showUrl in the configuration.
 
-* Settings icon not loading?
-	* Verify the script is included and customviews.config.json is accessible.
-
-
-
+- Settings icon not loading?
+  - Verify the script is included and customviews.config.json is accessible.

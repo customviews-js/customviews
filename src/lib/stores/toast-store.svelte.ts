@@ -7,24 +7,24 @@ export interface ToastConfig {
 }
 
 export class ToastStore {
-    items = $state<ToastConfig[]>([]);
-    nextId = 0;
+  items = $state<ToastConfig[]>([]);
+  nextId = 0;
 
-    show(message: string, duration = 2500) {
-        const id = this.nextId++;
-        const toast: ToastConfig = { message, duration, id };
-        this.items.push(toast);
+  show(message: string, duration = 2500) {
+    const id = this.nextId++;
+    const toast: ToastConfig = { message, duration, id };
+    this.items.push(toast);
 
-        if (duration > 0) {
-            setTimeout(() => {
-                this.dismiss(id);
-            }, duration);
-        }
+    if (duration > 0) {
+      setTimeout(() => {
+        this.dismiss(id);
+      }, duration);
     }
+  }
 
-    dismiss(id: number) {
-        this.items = this.items.filter(t => t.id !== id);
-    }
+  dismiss(id: number) {
+    this.items = this.items.filter((t) => t.id !== id);
+  }
 }
 
 export const toast = new ToastStore();

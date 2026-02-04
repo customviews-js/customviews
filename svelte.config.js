@@ -8,8 +8,8 @@ const config = {
   compilerOptions: {
     // Use <svelte:options customElement="tag-name" /> to wrap components (opt-in individual files).
     // Placed in svelte.config.js to address linter warnings.
-    customElement: true
-  }
+    customElement: true,
+  },
 };
 
 export default config;

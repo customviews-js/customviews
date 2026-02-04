@@ -8,12 +8,12 @@
 
 <div class="toast-container">
   {#each toast.items as t (t.id)}
-    <div 
+    <div
       class="{TOAST_CLASS} toast-item"
-      role="alert" 
+      role="alert"
       aria-live="polite"
-      in:fly="{{ y: -20, duration: 300 }}"
-      out:fade="{{ duration: 200 }}"
+      in:fly={{ y: -20, duration: 300 }}
+      out:fade={{ duration: 200 }}
       animate:flip
     >
       {t.message}

@@ -20,26 +20,25 @@
 </script>
 
 <div class="floating-bar" transition:fly={{ y: 50, duration: 200 }}>
-  
   <div class="mode-toggle">
-    <button 
-      class="mode-btn {shareStore.selectionMode === 'show' ? 'active' : ''}" 
+    <button
+      class="mode-btn {shareStore.selectionMode === 'show' ? 'active' : ''}"
       onclick={() => shareStore.setSelectionMode('show')}
       title="Show only selected elements"
       aria-pressed={shareStore.selectionMode === 'show'}
     >
       Show
     </button>
-    <button 
-      class="mode-btn {shareStore.selectionMode === 'hide' ? 'active' : ''}" 
+    <button
+      class="mode-btn {shareStore.selectionMode === 'hide' ? 'active' : ''}"
       onclick={() => shareStore.setSelectionMode('hide')}
       title="Hide selected elements"
       aria-pressed={shareStore.selectionMode === 'hide'}
     >
       Hide
     </button>
-    <button 
-      class="mode-btn {shareStore.selectionMode === 'highlight' ? 'active' : ''}" 
+    <button
+      class="mode-btn {shareStore.selectionMode === 'highlight' ? 'active' : ''}"
       onclick={() => shareStore.setSelectionMode('highlight')}
       title="Highlight selected elements"
       aria-pressed={shareStore.selectionMode === 'highlight'}
@@ -51,14 +50,14 @@
   <span class="divider"></span>
 
   <span class="count">
-    {shareStore.shareCount} item{shareStore.shareCount === 1 ? '' : 's'} to 
-    {shareStore.selectionMode === 'show' 
-      ? 'show' 
-      : (shareStore.selectionMode === 'highlight' 
-        ? 'highlight' 
-        : 'hide')}
+    {shareStore.shareCount} item{shareStore.shareCount === 1 ? '' : 's'} to
+    {shareStore.selectionMode === 'show'
+      ? 'show'
+      : shareStore.selectionMode === 'highlight'
+        ? 'highlight'
+        : 'hide'}
   </span>
-  
+
   <button class="btn clear" onclick={handleClear}>Clear</button>
   <button class="btn preview" onclick={handlePreview}>Preview</button>
   <button class="btn generate" onclick={handleGenerate}>Copy Link</button>
@@ -81,7 +80,10 @@
     align-items: center;
     gap: 12px;
     z-index: 99999;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
     font-size: 14px;
     border: 1px solid #4a4a4a;
     pointer-events: auto;
@@ -116,7 +118,7 @@
   .mode-btn.active {
     background: #4a4a4a;
     color: #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 
   .divider {
@@ -135,7 +137,7 @@
   }
 
   .btn {
-    background-color: #0078D4;
+    background-color: #0078d4;
     color: white;
     border: none;
     padding: 6px 12px;
@@ -199,9 +201,11 @@
       margin-left: auto;
       order: 2;
     }
-  
-    .divider { display: none; }
-  
+
+    .divider {
+      display: none;
+    }
+
     .count {
       width: 100%;
       text-align: center;
@@ -211,15 +215,17 @@
       border-bottom: 1px solid #3a3a3a;
       margin: 4px 0;
     }
-  
-    .btn.clear, .btn.preview, .btn.generate {
+
+    .btn.clear,
+    .btn.preview,
+    .btn.generate {
       flex: 1;
       text-align: center;
       font-size: 12px;
       padding: 8px 4px;
       order: 4;
     }
-  
+
     .btn.generate {
       flex: 1.5;
     }

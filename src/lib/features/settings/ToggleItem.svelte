@@ -7,13 +7,7 @@
     onchange?: (detail: { toggleId: string; value: 'show' | 'hide' | 'peek' }) => void;
   }
 
-  let { 
-    toggle, 
-    value = $bindable('show'), 
-    onchange = () => {} 
-  }: Props = $props();
-
-
+  let { toggle, value = $bindable('show'), onchange = () => {} }: Props = $props();
 </script>
 
 <div class="card">
@@ -26,33 +20,33 @@
     </div>
     <div class="radios">
       <label class="radio-label" title="Hide">
-        <input 
-          class="toggle-input" 
-          type="radio" 
-          name="cv-toggle-{toggle.toggleId}" 
-          value="hide" 
+        <input
+          class="toggle-input"
+          type="radio"
+          name="cv-toggle-{toggle.toggleId}"
+          value="hide"
           bind:group={value}
           onchange={() => onchange({ toggleId: toggle.toggleId, value: 'hide' })}
         />
         <span>Hide</span>
       </label>
       <label class="radio-label" title="Peek">
-        <input 
-          class="toggle-input" 
-          type="radio" 
-          name="cv-toggle-{toggle.toggleId}" 
-          value="peek" 
+        <input
+          class="toggle-input"
+          type="radio"
+          name="cv-toggle-{toggle.toggleId}"
+          value="peek"
           bind:group={value}
           onchange={() => onchange({ toggleId: toggle.toggleId, value: 'peek' })}
         />
         <span>Peek</span>
       </label>
       <label class="radio-label" title="Show">
-        <input 
-          class="toggle-input" 
-          type="radio" 
-          name="cv-toggle-{toggle.toggleId}" 
-          value="show" 
+        <input
+          class="toggle-input"
+          type="radio"
+          name="cv-toggle-{toggle.toggleId}"
+          value="show"
           bind:group={value}
           onchange={() => onchange({ toggleId: toggle.toggleId, value: 'show' })}
         />

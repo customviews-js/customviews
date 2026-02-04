@@ -11,7 +11,6 @@
 
 Placeholders allow you to create dynamic "Mad Libs" style documentation. Authors can define variable placeholders that readers can customize via the Settings Widget. The values entered by the reader are persisted and automatically update text, code blocks, and other content across the site.
 
-
 ## Usage
 
 ### Define the Placeholder
@@ -22,27 +21,26 @@ Placeholders are defined in your `customviews.config.json` under the `placeholde
 {
   "config": {
     "placeholders": [
-       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username" },
-       { "name": "api_key", "settingsLabel": "API Key", "isLocal": true }
+      { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username" },
+      { "name": "api_key", "settingsLabel": "API Key", "isLocal": true }
     ]
   }
 }
 ```
 
-
 ### Use the placeholder
+
 To use the variable in your content, wrap the variable name in double square brackets: `[[ variable_name ]]`.
 
 For example, we write `Hello, \[[username]]` here:
 
 ```markdown
-Hello, \[[username]]! 
-↓ 
+Hello, \[[username]]!
+↓
 Hello, [[username]]!
 ```
 
 The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.
-
 
 ### Inline Fallback
 
@@ -50,8 +48,8 @@ You can provide a fallback value directly in the usage syntax. This is useful if
 
 ```markdown
 Contact us at \[[ email : support@example.com ]]
-↓ 
-Contact us at [[ email : support@example.com ]]
+↓
+Contact us at [[email : support@example.com]]
 ```
 
 If the user has not set a value for `email`, "support@example.com" will be displayed.
@@ -59,7 +57,6 @@ If the user has not set a value for `email`, "support@example.com" will be displ
 **Note**: Placeholders resolve their displayed value by first using user-set values if available, registered defaults, inline feedback and lastly raw placeholder names, i.e. `\[[name]]`.
 
 > Empty strings (`""`) are treated as "not set" and will fall through to the next resolution level. This means clearing a placeholder value in the settings will cause it to display the registry default or inline fallback instead of showing nothing.
-
 
 ### Manual Component Usage
 
@@ -76,6 +73,7 @@ This is functionally equivalent to `[[ email : support@example.com ]]` but can b
 In addition to text, you can interpolate variables into HTML attributes, such as `href` or `src`. This is useful for creating dynamic links or loading images based on user preferences.
 
 **Requirements:**
+
 1. You must use standard HTML syntax (e.g., `<a href="...">`) rather than Markdown links.
 2. You must add the `class="cv-bind"` (or `data-cv-bind`) attribute to the element. This signals the system to scan the element's attributes.
 
@@ -90,15 +88,12 @@ In addition to text, you can interpolate variables into HTML attributes, such as
 </a>
 ```
 
-This renders into: 
+This renders into:
 <a href="https://www.google.com/search?q=[[searchQuery]]" class="cv-bind">
-  Search Google for '[[searchQuery]]'
+Search Google for '[[searchQuery]]'
 </a>
 
-
-
 If the user sets `searchQuery` to `hello world`, the link becomes `https://www.google.com/search?q=hello%20world`.
-
 
 <br>
 
@@ -127,20 +122,19 @@ This component is fully two-way bound. Typing in it will instantly update all `[
 
 <cv-placeholder-input name="username" label="Who are you?" hint="Type here..."></cv-placeholder-input>
 
-Hello, [[ username : Guest ]]!
+Hello, [[username : Guest]]!
 
 Google search for <a href="https://www.google.com/search?q=[[username]]" class="cv-bind"> [[username]] </a>
 
-
 ## Configuration
 
-| Field | Type | Description |
-|-------|------|-------------|
-| name | `string` | **Required**. Unique identifier (e.g., `api_key`). |
-| settingsLabel | `string` | Display label in Settings. |
-| settingsHint | `string` | Helper text in input field. |
-| defaultValue | `string` | Initial value if unset. |
-| isLocal | `boolean` | If `true`, the input field only appears in Settings when the placeholder is actually used on the current page. |
+| Field         | Type      | Description                                                                                                    |
+| ------------- | --------- | -------------------------------------------------------------------------------------------------------------- |
+| name          | `string`  | **Required**. Unique identifier (e.g., `api_key`).                                                             |
+| settingsLabel | `string`  | Display label in Settings.                                                                                     |
+| settingsHint  | `string`  | Helper text in input field.                                                                                    |
+| defaultValue  | `string`  | Initial value if unset.                                                                                        |
+| isLocal       | `boolean` | If `true`, the input field only appears in Settings when the placeholder is actually used on the current page. |
 
 ## Escaping Syntax
 
@@ -183,19 +177,15 @@ Double click a tab below to update the variable.
     <cv-tab tab-id="pear"> I love pears. </cv-tab>
 </cv-tabgroup>
 
-[[ fruit ]]
+[[fruit]]
 
 My favourite fruit is `[[fruit]]`, and it updates automatically!
 
-
 </box>
-
 
 ## Persistence
 
 Values entered by the user are saved in the browser's `localStorage` (key: `cv-user-variables`). This means:
+
 1. Values persist across page reloads.
 2. Values persist when navigating between different pages of the documentation.
-
-
-

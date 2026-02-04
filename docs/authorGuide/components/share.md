@@ -15,9 +15,9 @@ CustomViews provides a powerful way to share specific content from a page. "Shar
 
 There are three modes of sharing:
 
-* **Show**: Generates a custom view that shows *only* the specific elements you selected. All other content is hidden.
-* **Hide**: Generates a view that hides the selected elements. All others are shown.
-* **Highlight**: Generates a view that keeps the full page but **visually outlines** the selected elements in red with an arrow indicator. This is ideal for pointing out specific sections without losing the surrounding context.
+- **Show**: Generates a custom view that shows _only_ the specific elements you selected. All other content is hidden.
+- **Hide**: Generates a view that hides the selected elements. All others are shown.
+- **Highlight**: Generates a view that keeps the full page but **visually outlines** the selected elements in red with an arrow indicator. This is ideal for pointing out specific sections without losing the surrounding context.
 
 To toggle between modes, use the floating toolbar at the bottom of the page in share mode.
 
@@ -33,16 +33,16 @@ To access share mode, you can open the settings dialog and click the "Share" tab
 
 You can trigger the Share Mode UI in headless mode directly via URL links. This is useful if you do not wish to use any other features of CustomViews, such as the settings dialog, which you can disable.
 
-* Two modes are supported, through the hash and query parameters. 
-* Note that clicking on the query parameter link will refresh the page. However, using the query allows you to append additional hash parameters to the URL.
-  * E.g. `https://yoursite.com/guide.html?cv-share-highlight#selecting-elements`
+- Two modes are supported, through the hash and query parameters.
+- Note that clicking on the query parameter link will refresh the page. However, using the query allows you to append additional hash parameters to the URL.
+  - E.g. `https://yoursite.com/guide.html?cv-share-highlight#selecting-elements`
 
-| Trigger (Hash) | Trigger (Query) | Mode Activated |
-| :--- | :--- | :--- |
-| `#cv-share` | `?cv-share` | Opens Share Mode (default selection mode) |
-| `#cv-share-show` | `?cv-share-show` | Opens Share Mode in **Show** mode |
-| `#cv-share-hide` | `?cv-share-hide` | Opens Share Mode in **Hide** mode |
-| `#cv-share-highlight` | `?cv-share-highlight` | Opens Share Mode in **Highlight** mode |
+| Trigger (Hash)        | Trigger (Query)       | Mode Activated                            |
+| :-------------------- | :-------------------- | :---------------------------------------- |
+| `#cv-share`           | `?cv-share`           | Opens Share Mode (default selection mode) |
+| `#cv-share-show`      | `?cv-share-show`      | Opens Share Mode in **Show** mode         |
+| `#cv-share-hide`      | `?cv-share-hide`      | Opens Share Mode in **Hide** mode         |
+| `#cv-share-highlight` | `?cv-share-highlight` | Opens Share Mode in **Highlight** mode    |
 
 **Example:**
 To create links that trigger share mode:
@@ -54,7 +54,6 @@ To create links that trigger share mode:
 [Hide Mode (Hash)](#cv-share-hide) (`[Hide Mode (Hash)](#cv-share-hide)`)
 
 [Highlight Mode (Query + Hash)](./share.html?cv-share-highlight#selecting-elements) (`[Highlight Mode (Query + Hash)](./share.html?cv-share-highlight#selecting-elements)`)
-
 
 ### Selecting Elements
 
@@ -70,12 +69,10 @@ If you select a large container, all of its children are automatically selected.
   You can also drag in share mode to select multiple elements at one time.
 </box>
 
-
 **Helper Tooltip:**
 
-* When hovering over an element, a small helper tooltip appears. Click the **"↰" (Up Arrow)** button in this tooltip to quickly select the parent container instead of the specific element.
-* The tooltip also has a **"✓" (Tick)** button to select the current element without clicking it directly.
-
+- When hovering over an element, a small helper tooltip appears. Click the **"↰" (Up Arrow)** button in this tooltip to quickly select the parent container instead of the specific element.
+- The tooltip also has a **"✓" (Tick)** button to select the current element without clicking it directly.
 
 ### Generating Share Link
 
@@ -92,23 +89,24 @@ While the Share Mode UI generates robust, encoded links automatically, you may s
 
 CustomViews supports a human-readable format using HTML element IDs:
 
-| Parameter | format | Description |
-| :--- | :--- | :--- |
-| `cv-show` | `id1,id2` | **Shows** only the specified elements. All others are hidden. (Replaces legacy `cv-focus`) |
-| `cv-hide` | `id1,id2` | **Hides** the specified elements. All others are shown. |
-| `cv-highlight` | `id1,id2` | **Highlights** the specified elements. Full page remains visible. |
+| Parameter      | format    | Description                                                                                |
+| :------------- | :-------- | :----------------------------------------------------------------------------------------- |
+| `cv-show`      | `id1,id2` | **Shows** only the specified elements. All others are hidden. (Replaces legacy `cv-focus`) |
+| `cv-hide`      | `id1,id2` | **Hides** the specified elements. All others are shown.                                    |
+| `cv-highlight` | `id1,id2` | **Highlights** the specified elements. Full page remains visible.                          |
 
 **Example:**
 To show only the `#setup` and `#config` sections:
 `https://yoursite.com/guide.html?cv-show=setup,config`
 
-* For example, one such link could be [this](./share.html?cv-highlight=example-share): `[this](./share.html?cv-highlight=example-share)`
+- For example, one such link could be [this](./share.html?cv-highlight=example-share): `[this](./share.html?cv-highlight=example-share)`
 
 **Note:**
-* IDs are case-sensitive.
-* Use `,` (comma), or use `+` (plus sign) to separate multiple IDs.
-* Note that `,` will be URL-encoded to `%2C` when used in a URL, after visiting the page. 
-* If an ID contains special characters, it should be URL-encoded, but standard alphanumeric IDs work directly.
+
+- IDs are case-sensitive.
+- Use `,` (comma), or use `+` (plus sign) to separate multiple IDs.
+- Note that `,` will be URL-encoded to `%2C` when used in a URL, after visiting the page.
+- If an ID contains special characters, it should be URL-encoded, but standard alphanumeric IDs work directly.
 
 </div>
 
@@ -118,24 +116,20 @@ To leave Share Mode, click the **"Exit"** button on the floating bar.
 
 <box type="info" dismissible>
 
-  You can also press the **`Esc`** key to exit Share Mode.
+You can also press the **`Esc`** key to exit Share Mode.
 </box>
-
 
 ## Focus Mode
 
 When someone opens the link you generated, they enter **Focus View**. The behavior in each mode is as follows:
 
-* **Show Mode**: Only the elements you selected (and their necessary context) are shown. Irrelevant content is hidden.
-* **Hide Mode**: The selected elements are hidden, while the rest of the page remains visible.
-* **Highlight Mode**: The selected elements are highlighted in red with an arrow indicator, while the rest of the page remains visible.
+- **Show Mode**: Only the elements you selected (and their necessary context) are shown. Irrelevant content is hidden.
+- **Hide Mode**: The selected elements are hidden, while the rest of the page remains visible.
+- **Highlight Mode**: The selected elements are highlighted in red with an arrow indicator, while the rest of the page remains visible.
 
 For show or hide mode, where content has been hidden, you will see markers like `... 3 sections hidden ...`. Clicking on these markers reveals the hidden content, allowing the viewer to see more context if needed.
 
 Additionally, a banner at the top of the page reminds the user they are in a focused view. They can click **"Show Full Page"** to return to the normal website view.
-
-
-
 
 ## Configurations
 
@@ -154,8 +148,8 @@ To disable the settings dialog, add the following to your `customviews.config.js
 }
 ```
 
-
 ### Customizing Share Behavior ( WIP )
+
 Website authors can customize which elements are excluded from selection (e.g., sidebars, headers) by configuring `shareExclusions` in their `customviews.config.json` file.
 
 ```json
@@ -166,5 +160,3 @@ Website authors can customize which elements are excluded from selection (e.g., 
   }
 }
 ```
-
-

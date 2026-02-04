@@ -1,15 +1,15 @@
 <script lang="ts">
   // Component is mounted manually via `mount`, use props for communication.
-  let { hiddenCount = 0, onExpand } = $props<{ hiddenCount: number, onExpand: () => void }>();
+  let { hiddenCount = 0, onExpand } = $props<{ hiddenCount: number; onExpand: () => void }>();
 
   function handleClick() {
     if (onExpand) onExpand();
   }
 </script>
 
-<div 
-  class="cv-context-divider" 
-  role="button" 
+<div
+  class="cv-context-divider"
+  role="button"
   tabindex="0"
   onclick={handleClick}
   onkeydown={(e) => e.key === 'Enter' && handleClick()}

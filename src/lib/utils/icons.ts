@@ -112,7 +112,6 @@ export function getNavDashed(): string {
           </svg>`;
 }
 
-
 export function getPinIcon(isPinned: boolean = false): string {
   const opacity = isPinned ? '1' : '0.6'; // Optional: additional dimming effect
 

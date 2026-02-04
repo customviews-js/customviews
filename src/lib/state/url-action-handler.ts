@@ -16,7 +16,10 @@ export interface UrlAction {
  */
 interface UrlRule {
   parseForMatch(location: Pick<Location, 'search' | 'hash'>): UrlAction | null;
-  getCleanedUrl(location: Pick<Location, 'href' | 'search' | 'hash'>, action: UrlAction): string | null;
+  getCleanedUrl(
+    location: Pick<Location, 'href' | 'search' | 'hash'>,
+    action: UrlAction,
+  ): string | null;
 }
 
 /**
@@ -34,7 +37,10 @@ class OpenModalRule implements UrlRule {
     return null;
   }
 
-  getCleanedUrl(location: Pick<Location, 'href' | 'search' | 'hash'>, action: UrlAction): string | null {
+  getCleanedUrl(
+    location: Pick<Location, 'href' | 'search' | 'hash'>,
+    action: UrlAction,
+  ): string | null {
     if (action.type !== 'OPEN_MODAL') return null;
     return cleanHelper(location, action);
   }
@@ -55,7 +61,10 @@ class BasicShareRule implements UrlRule {
     return null;
   }
 
-  getCleanedUrl(location: Pick<Location, 'href' | 'search' | 'hash'>, action: UrlAction): string | null {
+  getCleanedUrl(
+    location: Pick<Location, 'href' | 'search' | 'hash'>,
+    action: UrlAction,
+  ): string | null {
     if (action.type !== 'START_SHARE' || action.mode) return null; // Only basic share
     return cleanHelper(location, action);
   }
@@ -66,15 +75,15 @@ class BasicShareRule implements UrlRule {
  */
 class SpecificShareModeRule implements UrlRule {
   private static SHARE_MODES: Record<string, SelectionMode> = {
-    'show': 'show',
-    'focus': 'show', // Legacy
-    'hide': 'hide',
-    'highlight': 'highlight'
+    show: 'show',
+    focus: 'show', // Legacy
+    hide: 'hide',
+    highlight: 'highlight',
   };
 
   parseForMatch(location: Pick<Location, 'search' | 'hash'>): UrlAction | null {
     const urlParams = new URLSearchParams(location.search);
-    
+
     // Check Query
     for (const [suffix, mode] of Object.entries(SpecificShareModeRule.SHARE_MODES)) {
       const param = `cv-share-${suffix}`;
@@ -93,14 +102,20 @@ class SpecificShareModeRule implements UrlRule {
     return null;
   }
 
-  getCleanedUrl(location: Pick<Location, 'href' | 'search' | 'hash'>, action: UrlAction): string | null {
+  getCleanedUrl(
+    location: Pick<Location, 'href' | 'search' | 'hash'>,
+    action: UrlAction,
+  ): string | null {
     if (action.type !== 'START_SHARE' || !action.mode) return null;
     return cleanHelper(location, action);
   }
 }
 
 // Helper for common cleanup logic
-function cleanHelper(location: Pick<Location, 'href' | 'search' | 'hash'>, action: UrlAction): string {
+function cleanHelper(
+  location: Pick<Location, 'href' | 'search' | 'hash'>,
+  action: UrlAction,
+): string {
   const newUrl = new URL(location.href);
 
   if (action.triggerSource === 'query') {
@@ -113,13 +128,12 @@ function cleanHelper(location: Pick<Location, 'href' | 'search' | 'hash'>, actio
   return newUrl.toString();
 }
 
-
 export class UrlActionHandler {
   // The order of array determines priority (First match wins)
   private static rules: UrlRule[] = [
     new OpenModalRule(),
     new BasicShareRule(),
-    new SpecificShareModeRule()
+    new SpecificShareModeRule(),
   ];
 
   /**
@@ -138,7 +152,10 @@ export class UrlActionHandler {
    * Pure function: Returns the clean URL string after removing the action trigger.
    * Delegates cleanup to the appropriate rule.
    */
-  static getCleanedUrl(location: Pick<Location, 'href' | 'search' | 'hash'>, action: UrlAction): string {
+  static getCleanedUrl(
+    location: Pick<Location, 'href' | 'search' | 'hash'>,
+    action: UrlAction,
+  ): string {
     for (const rule of this.rules) {
       const cleanUrl = rule.getCleanedUrl(location, action);
       if (cleanUrl) return cleanUrl;

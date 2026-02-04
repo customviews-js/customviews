@@ -4,14 +4,10 @@
   interface Props {
     definition: PlaceholderDefinition;
     value?: string;
-    onchange?: (detail: { name: string, value: string }) => void;
+    onchange?: (detail: { name: string; value: string }) => void;
   }
 
-  let {
-    definition,
-    value = $bindable(''),
-    onchange = () => {}
-  }: Props = $props();
+  let { definition, value = $bindable(''), onchange = () => {} }: Props = $props();
 
   function handleInput(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -23,13 +19,15 @@
 </script>
 
 <div class="placeholder-item">
-  <label class="placeholder-label" for={sanitizedId}>{definition.settingsLabel || definition.name}</label>
-  <input 
+  <label class="placeholder-label" for={sanitizedId}
+    >{definition.settingsLabel || definition.name}</label
+  >
+  <input
     id={sanitizedId}
     class="placeholder-input"
-    type="text" 
+    type="text"
     placeholder={definition.settingsHint || ''}
-    value={value}
+    {value}
     oninput={handleInput}
   />
 </div>

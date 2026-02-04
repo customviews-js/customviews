@@ -13,8 +13,9 @@
 
 <div class="indented">
 
-  :white_check_mark: a basic knowledge of [HTML](https://www.w3schools.com/html/) syntax<br>
-  :white_check_mark: (Optional) [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/get-npm) if you plan to use the package manager
+:white_check_mark: a basic knowledge of [HTML](https://www.w3schools.com/html/) syntax<br>
+:white_check_mark: (Optional) [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/get-npm) if you plan to use the package manager
+
 </div>
 
 ---
@@ -93,6 +94,7 @@ Open your HTML file in a browser. If installed correctly:
 <panel header=":fa-solid-lightbulb: Troubleshooting">
 
 **Settings icon not appearing?**
+
 - Check your browser console for errors.
 - Ensure `customviews.config.json` is accessible (check the Network tab).
 - If using a local file (file:// protocol), browser security policies might block loading the JSON config. strongly recommend using a local server (like `http-server` or VS Code's Live Server).

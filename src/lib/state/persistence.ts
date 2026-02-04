@@ -1,4 +1,4 @@
-import type { State } from "$lib/types/index";
+import type { State } from '$lib/types/index';
 
 /**
  * Manages persistence of custom views state using browser localStorage
@@ -49,16 +49,16 @@ export class PersistenceManager {
    * Keys are automatically prefixed with user specified storageKey
    */
   public removeItem(key: string): void {
-     if (!this.isStorageAvailable()) return;
-     try {
-       localStorage.removeItem(this.getPrefixedKey(key));
-     } catch (error) {
-       console.warn(`Failed to remove key ${key}:`, error);
-     }
+    if (!this.isStorageAvailable()) return;
+    try {
+      localStorage.removeItem(this.getPrefixedKey(key));
+    } catch (error) {
+      console.warn(`Failed to remove key ${key}:`, error);
+    }
   }
 
   private getPrefixedKey(key: string): string {
-      return this.prefix + key;
+    return this.prefix + key;
   }
 
   // --- Type-Safe State Accessors (Wrappers around generic storage) ---
@@ -73,7 +73,7 @@ export class PersistenceManager {
     try {
       return JSON.parse(raw);
     } catch (e) {
-      console.error("Failed to parse persisted state:", e);
+      console.error('Failed to parse persisted state:', e);
       return null;
     }
   }

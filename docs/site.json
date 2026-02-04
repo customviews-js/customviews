@@ -14,28 +14,27 @@
     ".gitignore",
     "node_modules/*"
   ],
-  "pagesExclude": [
-    "node_modules/*"
-  ],
+  "pagesExclude": ["node_modules/*"],
   "pages": [
     {
       "src": "index.md"
     },
     {
-      "glob": [
-        "**/index.md",
-        "**/*.md"
-      ]
+      "glob": ["**/index.md", "**/*.md"]
     }
   ],
   "style": {
     "codeTheme": "light"
   },
   "plugins": [
-    "customviews", "filterTags", "codeBlockCopyButtons", "codeBlockWrapButtons", "mermaid"
+    "customviews",
+    "filterTags",
+    "codeBlockCopyButtons",
+    "codeBlockWrapButtons",
+    "mermaid"
   ],
-  "pluginsContext" : {
-    "filterTags" : {
+  "pluginsContext": {
+    "filterTags": {
       "tags": ["beta-release"]
     }
   },
