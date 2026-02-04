@@ -71,18 +71,6 @@ describe('UrlActionHandler', () => {
     }
   });
 
-  it('should detect legacy cv-share-focus as show mode', () => {
-    const loc = mockLocation('?cv-share-focus', '');
-    const action = UrlActionHandler.detectAction(loc);
-    expect(action).toMatchObject({
-      type: 'START_SHARE',
-      mode: 'show',
-    });
-
-    const clean = UrlActionHandler.getCleanedUrl(loc, action!);
-    expect(clean).toBe('http://localhost/');
-  });
-
   it('should prioritize query params over hash', () => {
     const loc = mockLocation('?cv-open', '#cv-share');
     const action = UrlActionHandler.detectAction(loc);

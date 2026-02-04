@@ -31,11 +31,11 @@ Alternatively, you may receive a link for **Highlight Mode**:
 
 ## Advanced: Readable URLs
 
-While generated links typically use an encoded format (e.g., `?cv-focus=ey...`), CustomViews also supports human-readable URLs for easier sharing.
+While generated links typically use an encoded format (e.g., `?cv-show=ey...`), CustomViews also supports human-readable URLs for easier sharing.
 
 If you know the **ID** of the element you want to share, you can construct a URL manually:
 
-- `https://example.com/page.html?cv-focus=introduction,installation`
+- `https://example.com/page.html?cv-show=introduction,installation`
 
 This would focus **only** the elements with IDs `#introduction` and `#installation`.
 
@@ -44,6 +44,6 @@ Similarly, you can use **Highlight Mode** (`cv-highlight`) to visually mark elem
 - `https://example.com/page.html?cv-highlight=introduction,installation`
 
 **Note on separators:** IDs are separated by **commas**.
-So `cv-focus=introduction,installation` is interpreted as the list `["introduction", "installation"]`.
+So `cv-show=introduction,installation` is interpreted as the list `["introduction", "installation"]`.
 
-For example, try `https://customviews-js.github.io{{baseUrl}}?cv-focus=customviews` at this [link](https://customviews-js.github.io{{baseUrl}}?cv-focus=customviews).
+For example, try `https://customviews-js.github.io{{baseUrl}}?cv-show=customviews` at this [link](https://customviews-js.github.io{{baseUrl}}?cv-show=customviews).

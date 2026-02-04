@@ -35,7 +35,7 @@ When a link is opened, the system locates the elements using a "fuzzy match" alg
 
 The selected state is serialized into a compact, URL-safe string and appended to the page URL. This means the share state is entirely client-side and requires no database or backend storage.
 
-- **Focus Param**: `?cv-focus=...` is used when elements are selected to be shown (filtering out everything else).
+- **Show Param**: `?cv-show=...` is used when elements are selected to be shown (filtering out everything else).
 - **Hide Param**: `?cv-hide=...` is used when elements are selected to be hidden (redacting specific parts).
 
-When a user visits a link containing these parameters, the application automatically enters **Focus Mode**, applying the necessary visibility filters immediately upon load.
+When a user visits a link containing these parameters, the application automatically enters **Show Mode**, applying the necessary visibility filters immediately upon load.

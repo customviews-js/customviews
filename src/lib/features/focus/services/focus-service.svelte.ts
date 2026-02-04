@@ -6,11 +6,11 @@ import * as DomElementLocator from '$lib/utils/dom-element-locator';
 import FocusDivider from '$features/focus/FocusDivider.svelte';
 import { SvelteSet, SvelteURL } from 'svelte/reactivity';
 
-const FOCUS_PARAM = 'cv-focus';
+const SHOW_PARAM = 'cv-show';
 const HIDE_PARAM = 'cv-hide';
-const BODY_FOCUS_CLASS = 'cv-focus-mode';
-const HIDDEN_CLASS = 'cv-focus-hidden';
-const FOCUSED_CLASS = 'cv-focused-element';
+const BODY_SHOW_CLASS = 'cv-show-mode';
+const HIDDEN_CLASS = 'cv-show-hidden';
+const SHOW_ELEMENT_CLASS = 'cv-show-element';
 
 import {
   HighlightService,
@@ -48,6 +48,7 @@ export class FocusService {
     this.excludedIds = new SvelteSet([...DEFAULT_EXCLUDED_IDS, ...userIds]);
 
     this.highlightService = new HighlightService(this.rootEl);
+    this.injectStyles();
 
     // Subscribe to store for exit signal
     this.unsubscribe = $effect.root(() => {
@@ -64,24 +65,24 @@ export class FocusService {
       // 2. React to URL changes (URL changes affect UI)
       // This effect handles the "Read" direction: URL -> App State
       $effect(() => {
-        // Check cv-show first, then legacy cv-focus
-        const focusDescriptors = this.url.searchParams.get(FOCUS_PARAM);
+        // Check cv-show first
+        const showDescriptors = this.url.searchParams.get(SHOW_PARAM);
         const hideDescriptors = this.url.searchParams.get(HIDE_PARAM);
         const highlightDescriptors = this.url.searchParams.get(HIGHLIGHT_PARAM);
 
         untrack(() => {
-          if (focusDescriptors) {
-            this.applyFocusMode(focusDescriptors);
+          if (showDescriptors) {
+            this.applyShowMode(showDescriptors);
           } else if (hideDescriptors) {
             this.applyHideMode(hideDescriptors);
           } else if (highlightDescriptors) {
             this.applyHighlightMode(highlightDescriptors);
           } else {
             if (
-              document.body.classList.contains(BODY_FOCUS_CLASS) ||
+              document.body.classList.contains(BODY_SHOW_CLASS) ||
               document.body.classList.contains(BODY_HIGHLIGHT_CLASS)
             ) {
-              this.exitFocusMode();
+              this.exitShowMode();
             }
           }
         });
@@ -91,10 +92,10 @@ export class FocusService {
       $effect(() => {
         if (
           !focusStore.isActive &&
-          (document.body.classList.contains(BODY_FOCUS_CLASS) ||
+          (document.body.classList.contains(BODY_SHOW_CLASS) ||
             document.body.classList.contains(BODY_HIGHLIGHT_CLASS))
         ) {
-          this.exitFocusMode();
+          this.exitShowMode();
         }
       });
     });
@@ -111,18 +112,39 @@ export class FocusService {
   };
 
   /**
+   * Inject global styles for focus/show mode.
+   * This ensures a single source of truth for class names.
+   */
+  private injectStyles() {
+    if (document.getElementById('cv-focus-service-styles')) return;
+
+    const style = document.createElement('style');
+    style.id = 'cv-focus-service-styles';
+    style.textContent = `
+      :global(.${HIDDEN_CLASS}) {
+        display: none !important;
+      }
+      :global(body.${BODY_SHOW_CLASS}),
+      :global(body.${BODY_HIGHLIGHT_CLASS}) {
+        margin-top: 50px !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /**
    * Applies focus mode to the specified descriptors.
    * @param encodedDescriptors - The encoded descriptors to apply.
    */
-  public applyFocusMode(encodedDescriptors: string): void {
+  public applyShowMode(encodedDescriptors: string): void {
     // Check if we are already in the right state to avoid re-rendering loops if feasible
     if (
-      document.body.classList.contains(BODY_FOCUS_CLASS) ||
+      document.body.classList.contains(BODY_SHOW_CLASS) ||
       document.body.classList.contains(BODY_HIGHLIGHT_CLASS)
     ) {
       // If we are already active, we might want to check if descriptors changed?
       // For now, simple clear and re-apply.
-      this.exitFocusMode(false); // don't clear URL here
+      this.exitShowMode(false); // don't clear URL here
     }
 
     const descriptors = DomElementLocator.deserialize(encodedDescriptors);
@@ -139,7 +161,7 @@ export class FocusService {
 
     if (targets.length === 0) {
       showToast('Some shared sections could not be found.');
-      this.exitFocusMode(); // Clears URL and resets state, preventing effect loop
+      this.exitShowMode(); // Clears URL and resets state, preventing effect loop
       return;
     }
 
@@ -149,17 +171,17 @@ export class FocusService {
 
     // Activate Store
     focusStore.setIsActive(true);
-    document.body.classList.add(BODY_FOCUS_CLASS);
+    document.body.classList.add(BODY_SHOW_CLASS);
 
-    this.renderFocusedView(targets);
+    this.renderShowView(targets);
   }
 
   public applyHideMode(encodedDescriptors: string): void {
     if (
-      document.body.classList.contains(BODY_FOCUS_CLASS) ||
+      document.body.classList.contains(BODY_SHOW_CLASS) ||
       document.body.classList.contains(BODY_HIGHLIGHT_CLASS)
     ) {
-      this.exitFocusMode(false);
+      this.exitShowMode(false);
     }
 
     const descriptors = DomElementLocator.deserialize(encodedDescriptors);
@@ -175,7 +197,7 @@ export class FocusService {
 
     if (targets.length === 0) {
       showToast('Some shared sections could not be found.');
-      this.exitFocusMode(); // Clears URL and resets state
+      this.exitShowMode(); // Clears URL and resets state
       return;
     }
 
@@ -185,17 +207,17 @@ export class FocusService {
 
     // Activate Store
     focusStore.setIsActive(true);
-    document.body.classList.add(BODY_FOCUS_CLASS);
+    document.body.classList.add(BODY_SHOW_CLASS);
 
     this.renderHiddenView(targets);
   }
 
   public applyHighlightMode(encodedDescriptors: string): void {
     if (
-      document.body.classList.contains(BODY_FOCUS_CLASS) ||
+      document.body.classList.contains(BODY_SHOW_CLASS) ||
       document.body.classList.contains(BODY_HIGHLIGHT_CLASS)
     ) {
-      this.exitFocusMode(false);
+      this.exitShowMode(false);
     }
     this.highlightService.apply(encodedDescriptors);
   }
@@ -218,9 +240,9 @@ export class FocusService {
     });
   }
 
-  private renderFocusedView(targets: HTMLElement[]): void {
+  private renderShowView(targets: HTMLElement[]): void {
     // 1. Mark targets
-    targets.forEach((t) => t.classList.add(FOCUSED_CLASS));
+    targets.forEach((t) => t.classList.add(SHOW_ELEMENT_CLASS));
 
     // 2. Identify Elements to Keep Visible (Targets + Ancestors)
     const keepVisible = new SvelteSet<HTMLElement>();
@@ -240,7 +262,7 @@ export class FocusService {
       if (!parent) return;
 
       // Parent Dominance: If parent is focused, don't hide its children
-      if (parent.classList.contains(FOCUSED_CLASS)) {
+      if (parent.classList.contains(SHOW_ELEMENT_CLASS)) {
         return;
       }
 
@@ -348,8 +370,8 @@ export class FocusService {
     }
   }
 
-  public exitFocusMode(updateUrl = true): void {
-    document.body.classList.remove(BODY_FOCUS_CLASS, BODY_HIGHLIGHT_CLASS);
+  public exitShowMode(updateUrl = true): void {
+    document.body.classList.remove(BODY_SHOW_CLASS, BODY_HIGHLIGHT_CLASS);
 
     this.hiddenElements.forEach((el) => el.classList.remove(HIDDEN_CLASS));
     this.hiddenElements.clear();
@@ -362,8 +384,8 @@ export class FocusService {
     document.querySelectorAll('.cv-divider-wrapper').forEach((el) => el.remove());
 
     // Remove styling from targets
-    const targets = document.querySelectorAll(`.${FOCUSED_CLASS}`);
-    targets.forEach((t) => t.classList.remove(FOCUSED_CLASS));
+    const targets = document.querySelectorAll(`.${SHOW_ELEMENT_CLASS}`);
+    targets.forEach((t) => t.classList.remove(SHOW_ELEMENT_CLASS));
 
     this.highlightService.exit();
 
@@ -372,8 +394,8 @@ export class FocusService {
     }
 
     if (updateUrl) {
-      if (this.url.searchParams.has(FOCUS_PARAM)) {
-        this.url.searchParams.delete(FOCUS_PARAM);
+      if (this.url.searchParams.has(SHOW_PARAM)) {
+        this.url.searchParams.delete(SHOW_PARAM);
       }
       if (this.url.searchParams.has(HIDE_PARAM)) {
         this.url.searchParams.delete(HIDE_PARAM);
@@ -385,7 +407,7 @@ export class FocusService {
   }
 
   public destroy() {
-    this.exitFocusMode();
+    this.exitShowMode();
     this.unsubscribe();
     window.removeEventListener('popstate', this.handlePopState);
   }

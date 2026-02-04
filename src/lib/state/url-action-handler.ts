@@ -74,27 +74,20 @@ class BasicShareRule implements UrlRule {
  * Handles specific share mode triggers: ?cv-share-show, ?cv-share-hide, or #cv-share-highlight, etc.
  */
 class SpecificShareModeRule implements UrlRule {
-  private static SHARE_MODES: Record<string, SelectionMode> = {
-    show: 'show',
-    focus: 'show', // Legacy
-    hide: 'hide',
-    highlight: 'highlight',
-  };
+  private static SHARE_MODES: SelectionMode[] = ['show', 'hide', 'highlight'];
 
   parseForMatch(location: Pick<Location, 'search' | 'hash'>): UrlAction | null {
     const urlParams = new URLSearchParams(location.search);
 
-    // Check Query
-    for (const [suffix, mode] of Object.entries(SpecificShareModeRule.SHARE_MODES)) {
-      const param = `cv-share-${suffix}`;
+    for (const mode of SpecificShareModeRule.SHARE_MODES) {
+      // Check Query
+      const param = `cv-share-${mode}`;
       if (urlParams.has(param)) {
         return { type: 'START_SHARE', mode, triggerKey: param, triggerSource: 'query' };
       }
-    }
 
-    // Check Hash
-    for (const [suffix, mode] of Object.entries(SpecificShareModeRule.SHARE_MODES)) {
-      const hashKey = `#cv-share-${suffix}`;
+      // Check Hash
+      const hashKey = `#cv-share-${mode}`;
       if (location.hash === hashKey) {
         return { type: 'START_SHARE', mode, triggerKey: hashKey, triggerSource: 'hash' };
       }
