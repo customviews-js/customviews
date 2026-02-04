@@ -1,4 +1,4 @@
-import type { CustomViewAsset } from "$lib/types/index";
+import type { CustomViewAsset } from '$lib/types/index';
 
 export class AssetsManager {
   assets: Record<string, CustomViewAsset>;
@@ -14,7 +14,7 @@ export class AssetsManager {
 
   // Check each asset has content or src
   validate(): boolean {
-    return Object.values(this.assets).every(a => a.src || a.content);
+    return Object.values(this.assets).every((a) => a.src || a.content);
   }
 
   get(assetId: string): CustomViewAsset | undefined {
@@ -26,7 +26,7 @@ export class AssetsManager {
       // Create a shallow copy to avoid mutating the original asset
       return {
         ...asset,
-        src: this.prependBaseURL(asset.src)
+        src: this.prependBaseURL(asset.src),
       };
     }
 
@@ -42,7 +42,7 @@ export class AssetsManager {
     // Ensure baseURL doesn't end with / and path starts with /
     const cleanBaseURL = this.baseURL.endsWith('/') ? this.baseURL.slice(0, -1) : this.baseURL;
     const cleanPath = path.startsWith('/') ? path : '/' + path;
-    
+
     return cleanBaseURL + cleanPath;
   }
 
@@ -53,5 +53,4 @@ export class AssetsManager {
   loadAdditionalAssets(additionalAssets: Record<string, CustomViewAsset>) {
     this.assets = { ...this.assets, ...additionalAssets };
   }
-
 }

@@ -1,31 +1,31 @@
 {
   "compilerOptions": {
     // Project structure
-    "rootDir": "./src",     
-    "outDir": "./dist",           
-    "module": "esnext",                
-    "target": "esnext",              
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "esnext",
+    "target": "esnext",
 
-    "declaration": true,               // Generate .d.ts files
+    "declaration": true, // Generate .d.ts files
     "declarationDir": "./dist/types",
     "emitDeclarationOnly": true,
     "declarationMap": true,
 
     // Type safety & strictness
-    "strict": true,                    // Enable all strict type checks
-    "noUncheckedIndexedAccess": true,  // Add undefined to indexed access types
-    "exactOptionalPropertyTypes": true,// Optional properties are exactly optional
+    "strict": true, // Enable all strict type checks
+    "noUncheckedIndexedAccess": true, // Add undefined to indexed access types
+    "exactOptionalPropertyTypes": true, // Optional properties are exactly optional
 
     // Interop & module resolution
-    "esModuleInterop": true,           // Allow default imports from CommonJS
-    "verbatimModuleSyntax": true,      // Use import/export syntax as written
-    "moduleDetection": "force",        // Only treat files with import/export as modules
+    "esModuleInterop": true, // Allow default imports from CommonJS
+    "verbatimModuleSyntax": true, // Use import/export syntax as written
+    "moduleDetection": "force", // Only treat files with import/export as modules
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
     "noUncheckedSideEffectImports": true, // Warn on imports with side effects
-    "skipLibCheck": true,              // Skip type checking of declaration files
+    "skipLibCheck": true, // Skip type checking of declaration files
 
     // Types (empty unless you want to include global types)
     "types": ["svelte"],
@@ -38,6 +38,6 @@
       "$ui/*": ["src/lib/components/ui/*"]
     }
   },
-  "include": ["src", "svelte.config.js"],                 
-  "exclude": ["node_modules", "dist", "test", "docs"] 
+  "include": ["src", "svelte.config.js"],
+  "exclude": ["node_modules", "dist", "test", "docs"]
 }

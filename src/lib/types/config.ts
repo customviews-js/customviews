@@ -1,4 +1,3 @@
-
 import type { PlaceholderDefinition } from '$lib/stores/placeholder-registry-store.svelte';
 
 /**
@@ -119,7 +118,13 @@ export interface ConfigFile {
     /** Custom icon styling options */
     icon?: {
       /** Widget position */
-      position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
+      position?:
+        | 'top-right'
+        | 'top-left'
+        | 'bottom-right'
+        | 'bottom-left'
+        | 'middle-left'
+        | 'middle-right';
       /** Custom icon color */
       color?: string;
       /** Custom background color */

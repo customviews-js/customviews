@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { prependBaseUrl } from "../../../src/lib/utils/url-utils";
+import { prependBaseUrl } from '../../../src/lib/utils/url-utils';
 
 describe('url-utils', () => {
   describe('prependBaseUrl', () => {
@@ -33,9 +33,9 @@ describe('url-utils', () => {
     });
 
     it('should handle root base URL', () => {
-        // Technically / is mostly empty string equivalent for this logic, but good to check
-        // prependBaseUrl('path', '/') -> '/path'
-        expect(prependBaseUrl('path', '/')).toBe('/path');
+      // Technically / is mostly empty string equivalent for this logic, but good to check
+      // prependBaseUrl('path', '/') -> '/path'
+      expect(prependBaseUrl('path', '/')).toBe('/path');
     });
   });
 });

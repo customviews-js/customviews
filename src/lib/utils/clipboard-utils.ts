@@ -16,21 +16,21 @@ export async function copyToClipboard(text: string): Promise<void> {
 
   // Fallback: execCommand('copy')
   try {
-    const textArea = document.createElement("textarea");
+    const textArea = document.createElement('textarea');
     textArea.value = text;
-    
+
     // Ensure hidden but part of DOM
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    textArea.style.top = "0";
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    textArea.style.top = '0';
     document.body.appendChild(textArea);
-    
+
     textArea.focus();
     textArea.select();
-    
+
     const successful = document.execCommand('copy');
     document.body.removeChild(textArea);
-    
+
     if (successful) {
       return Promise.resolve();
     } else {

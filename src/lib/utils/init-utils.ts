@@ -1,5 +1,5 @@
-import { prependBaseUrl } from "./url-utils";
-import type { ConfigFile } from "$lib/types/index";
+import { prependBaseUrl } from './url-utils';
+import type { ConfigFile } from '$lib/types/index';
 
 /**
  * structure for script attributes
@@ -18,14 +18,20 @@ export function getScriptAttributes(): ScriptAttributes {
   const defaults = { baseURL: '', configPath: '/customviews.config.json' };
 
   if (!scriptTag || !scriptTag.hasAttribute('data-base-url')) {
-    const dataAttrMatch = document.querySelector('script[data-base-url]') as HTMLScriptElement | null;
+    const dataAttrMatch = document.querySelector(
+      'script[data-base-url]',
+    ) as HTMLScriptElement | null;
     if (dataAttrMatch) {
       scriptTag = dataAttrMatch;
     } else {
       // Fallback: try to find script by src pattern
       for (const script of document.scripts) {
         const src = script.src || '';
-        if (/(?:custom[-_]views|@customviews-js\/customviews)(?:\.min)?\.(?:esm\.)?js($|\?)/i.test(src)) {
+        if (
+          /(?:custom[-_]views|@customviews-js\/customviews)(?:\.min)?\.(?:esm\.)?js($|\?)/i.test(
+            src,
+          )
+        ) {
           scriptTag = script as HTMLScriptElement;
           break;
         }
@@ -36,7 +42,7 @@ export function getScriptAttributes(): ScriptAttributes {
   if (scriptTag) {
     return {
       baseURL: scriptTag.getAttribute('data-base-url') || defaults.baseURL,
-      configPath: scriptTag.getAttribute('data-config-path') || defaults.configPath
+      configPath: scriptTag.getAttribute('data-config-path') || defaults.configPath,
     };
   }
 
@@ -47,23 +53,22 @@ export function getScriptAttributes(): ScriptAttributes {
  * Fetches and parses the configuration file.
  */
 export async function fetchConfig(configPath: string, baseURL: string): Promise<ConfigFile> {
-  const fallbackMinimalConfig: ConfigFile = { 
+  const fallbackMinimalConfig: ConfigFile = {
     config: {},
-    settings: { enabled: true }
+    settings: { enabled: true },
   };
 
   try {
     const fullConfigPath = prependBaseUrl(configPath, baseURL);
     const response = await fetch(fullConfigPath);
-    
+
     if (!response.ok) {
       console.warn(`[CustomViews] Config file not found at ${fullConfigPath}. Using defaults.`);
       return fallbackMinimalConfig;
-    } 
-  
+    }
+
     const config = await response.json();
     return config;
-  
   } catch (error) {
     console.error('[CustomViews] Error loading config file:', error);
     return fallbackMinimalConfig;

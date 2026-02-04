@@ -4,14 +4,10 @@
   import { placeholderValueStore } from '$lib/stores/placeholder-value-store.svelte';
   import { placeholderRegistryStore } from '$lib/stores/placeholder-registry-store.svelte';
 
-  let { 
-    name, 
-    label, 
-    hint 
-  } = $props<{ name: string, label?: string, hint?: string }>();
+  let { name, label, hint } = $props<{ name: string; label?: string; hint?: string }>();
 
   let value = $derived(placeholderValueStore.values[name] ?? '');
-  
+
   let effectiveLabel = $derived.by(() => {
     if (label) return label;
     const def = placeholderRegistryStore.get(name);
@@ -37,13 +33,13 @@
   {#if effectiveLabel}
     <label class="placeholder-label" for="cv-input-{sanitizedId}">{effectiveLabel}</label>
   {/if}
-  <input 
-      id="cv-input-{sanitizedId}"
-      class="placeholder-input"
-      type="text" 
-      placeholder={effectiveHint}
-      value={value}
-      oninput={handleInput}
+  <input
+    id="cv-input-{sanitizedId}"
+    class="placeholder-input"
+    type="text"
+    placeholder={effectiveHint}
+    {value}
+    oninput={handleInput}
   />
 </div>
 
@@ -56,9 +52,9 @@
 
   /* Reuse styles from Modal/Settings */
   .cv-input-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
   .placeholder-label {
@@ -70,7 +66,7 @@
 
   .placeholder-input {
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--cv-input-border, rgba(0,0,0,0.1));
+    border: 1px solid var(--cv-input-border, rgba(0, 0, 0, 0.1));
     border-radius: 0.375rem;
     font-size: 0.9rem;
     transition: border-color 0.2s;

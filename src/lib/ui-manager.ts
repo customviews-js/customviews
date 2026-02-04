@@ -1,7 +1,7 @@
-import type { CustomViewsController } from "./controller.svelte";
-import type { ConfigFile } from "$lib/types/index";
+import type { CustomViewsController } from './controller.svelte';
+import type { ConfigFile } from '$lib/types/index';
 import UIRoot from '$lib/components/UIRoot.svelte';
-import { mount, unmount } from "svelte";
+import { mount, unmount } from 'svelte';
 
 export interface UIManagerOptions {
   /** The CustomViews controller instance to control */
@@ -45,7 +45,13 @@ export interface UIManagerOptions {
   /** Custom icon styling options */
   icon?: {
     /** Widget position (default: middle-left) */
-    position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'middle-left' | 'middle-right';
+    position?:
+      | 'top-right'
+      | 'top-left'
+      | 'bottom-right'
+      | 'bottom-left'
+      | 'middle-left'
+      | 'middle-right';
     /** Custom icon color (e.g. #000, rgba(0,0,0,1)) */
     color?: string | undefined;
 
@@ -62,7 +68,10 @@ export interface UIManagerOptions {
   };
 }
 
-export type ResolvedUIManagerOptions = Omit<UIManagerOptions, 'container' | 'theme' | 'panel' | 'callout' | 'icon'> & {
+export type ResolvedUIManagerOptions = Omit<
+  UIManagerOptions,
+  'container' | 'theme' | 'panel' | 'callout' | 'icon'
+> & {
   container: HTMLElement;
   settingsEnabled: boolean;
   theme: NonNullable<UIManagerOptions['theme']>;
@@ -99,14 +108,14 @@ export class CustomViewsUIManager {
         title: options.panel?.title || 'Customize View',
         description: options.panel?.description || '',
         showTabGroups: options.panel?.showTabGroups ?? true,
-        showReset: options.panel?.showReset ?? true
+        showReset: options.panel?.showReset ?? true,
       },
       callout: {
         show: options.callout?.show ?? false,
         message: options.callout?.message || 'Customize your reading experience here.',
         enablePulse: options.callout?.enablePulse ?? true,
         backgroundColor: options.callout?.backgroundColor,
-        textColor: options.callout?.textColor
+        textColor: options.callout?.textColor,
       },
       icon: {
         position: options.icon?.position || 'middle-left',
@@ -114,8 +123,8 @@ export class CustomViewsUIManager {
         backgroundColor: options.icon?.backgroundColor,
         opacity: options.icon?.opacity,
         scale: options.icon?.scale ?? 1,
-        show: options.icon?.show ?? true
-      }
+        show: options.icon?.show ?? true,
+      },
     };
   }
 
@@ -132,8 +141,8 @@ export class CustomViewsUIManager {
       target: this.options.container,
       props: {
         controller: this.options.controller,
-        options: this.options
-      }
+        options: this.options,
+      },
     });
   }
 
@@ -151,13 +160,16 @@ export class CustomViewsUIManager {
 /**
  * Initializes the UI manager (settings and share UI) using the provided config.
  */
-export function initUIManager(controller: CustomViewsController, config: ConfigFile): CustomViewsUIManager | undefined {
+export function initUIManager(
+  controller: CustomViewsController,
+  config: ConfigFile,
+): CustomViewsUIManager | undefined {
   const settingsEnabled = config.settings?.enabled !== false;
-  
+
   const uiManager = new CustomViewsUIManager({
     controller,
     settingsEnabled,
-    ...config.settings
+    ...config.settings,
   });
   uiManager.render();
   return uiManager;

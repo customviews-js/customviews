@@ -10,10 +10,9 @@
 `<cv-tabgroup>`
 `<cv-tab>`
 
-The **Tabs** component lets you define **mutually exclusive content sections** that users can toggle between — perfect for organizing platform-specific, step-based, or categorized documentation.  
+The **Tabs** component lets you define **mutually exclusive content sections** that users can toggle between — perfect for organizing platform-specific, step-based, or categorized documentation.
 
 When multiple tab groups (`<cv-tabgroup/>`) share the same `group-id` attribute, they stay synchronized automatically across the entire page.
-
 
 <cv-tabgroup group-id="fruit" >
   
@@ -21,7 +20,7 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `group-id` attribute,
   
   **Apple Information**
 
-  Apples are crisp, sweet fruits that come in many varieties. They are rich in fiber and vitamin C.
+Apples are crisp, sweet fruits that come in many varieties. They are rich in fiber and vitamin C.
 
   <box type="important" icon=":apple:">
       An apple a day keeps the doctor away!
@@ -32,7 +31,7 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `group-id` attribute,
   
   **Orange Information**
 
-  Oranges are citrus fruits known for their high vitamin C content and refreshing juice.
+Oranges are citrus fruits known for their high vitamin C content and refreshing juice.
 
   <box type="warning" icon=":orange:">
       The color orange was named after the fruit, not the other way around
@@ -43,7 +42,7 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `group-id` attribute,
   
   **Pear Information**
 
-  Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high in fiber and antioxidants.
+Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high in fiber and antioxidants.
 
   <box type="success" icon=":pear:">
     Pears do not ripen on the tree; they ripen from the inside out after being picked. 
@@ -56,34 +55,33 @@ When multiple tab groups (`<cv-tabgroup/>`) share the same `group-id` attribute,
   <cv-tab-header>
 
 :fa-solid-heart: Apple Types
-  </cv-tab-header>
-  <cv-tab-body>
+</cv-tab-header>
+<cv-tab-body>
 
 Apple types include **Granny Smith** and the **Cosmic Crisp**.
-  </cv-tab-body>
-  </cv-tab>
-  <cv-tab tab-id="orange">
-  <cv-tab-header>
+</cv-tab-body>
+</cv-tab>
+<cv-tab tab-id="orange">
+<cv-tab-header>
 
 :fa-solid-circle: Orange Types
-  </cv-tab-header>
-  <cv-tab-body>
+</cv-tab-header>
+<cv-tab-body>
 
 Orange types include the **Blood orange** and **Valencia orange**.
-  </cv-tab-body>
-  </cv-tab>
-  <cv-tab tab-id="pear">
-  <cv-tab-header>
+</cv-tab-body>
+</cv-tab>
+<cv-tab tab-id="pear">
+<cv-tab-header>
 
 :fa-solid-leaf: Pear Types
-  </cv-tab-header>
-  <cv-tab-body>
+</cv-tab-header>
+<cv-tab-body>
 
 Pear types include the **Asian pear** and the **European pear**
-  </cv-tab-body>
-  </cv-tab>
+</cv-tab-body>
+</cv-tab>
 </cv-tabgroup>
-
 
 <panel header="Code for above Tab Group">
 <!-- ------------------------ CODE OUTPUT ---------------------------- -->
@@ -91,7 +89,7 @@ Pear types include the **Asian pear** and the **European pear**
 ```html
 <cv-tabgroup group-id="fruit">
   <cv-tab tab-id="apple" header="Apple">
-  
+
 **Apple Information**
 
 Apples are crisp, sweet fruits that come in many varieties. They are rich in fiber and vitamin C.
@@ -102,7 +100,7 @@ Apples are crisp, sweet fruits that come in many varieties. They are rich in fib
 
   </cv-tab>
   <cv-tab tab-id="orange" header="Orange">
-  
+
 **Orange Information**
 
 Oranges are citrus fruits known for their high vitamin C content and refreshing juice.
@@ -113,13 +111,13 @@ Oranges are citrus fruits known for their high vitamin C content and refreshing 
 
   </cv-tab>
   <cv-tab tab-id="pear" header="Pear">
-  
+
 **Pear Information**
 
 Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high in fiber and antioxidants.
 
 <box type="success" icon=":pear:">
-    Pears do not ripen on the tree; they ripen from the inside out after being picked. 
+    Pears do not ripen on the tree; they ripen from the inside out after being picked.
 </box>
 
   </cv-tab>
@@ -155,14 +153,14 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
 </cv-tabgroup>
 
 ```
+
 </panel>
 
 <br>
 
-
-* **Single-Click Behavior** — Click once to switch tabs locally within that specific tab group only. The change is visual only and is not saved.
-* **Double-Click Behavior** — Double-click to synchronize the tab selection across all tab groups with the same `id` on the page. The state is saved to browser storage and persists across page reloads.
-* **Example:** If you have two tab groups both with `id="fruit"`, a single-click on "Orange" in the first group only changes that group locally. Double-clicking on "Orange" will sync both groups to show "Orange" and save the state.
+- **Single-Click Behavior** — Click once to switch tabs locally within that specific tab group only. The change is visual only and is not saved.
+- **Double-Click Behavior** — Double-click to synchronize the tab selection across all tab groups with the same `id` on the page. The state is saved to browser storage and persists across page reloads.
+- **Example:** If you have two tab groups both with `id="fruit"`, a single-click on "Orange" in the first group only changes that group locally. Double-clicking on "Orange" will sync both groups to show "Orange" and save the state.
 
 ## No-ID Tabs
 
@@ -178,11 +176,11 @@ For example:
 <cv-tabgroup>
 <cv-tab>
 
-  Tab 1 Content
+Tab 1 Content
 </cv-tab>
 <cv-tab>
 
-  Tab 2 Content
+Tab 2 Content
 </cv-tab>
 </cv-tabgroup>
 </variable>
@@ -190,30 +188,26 @@ For example:
 <cv-tabgroup>
 <cv-tab>
 
-  Tab 1 Content
+Tab 1 Content
 </cv-tab>
 <cv-tab>
 
-  Tab 2 Content
+Tab 2 Content
 </cv-tab>
 </cv-tabgroup>
 </variable>
 </include>
 
-
-
-
 ## Multi-ID Tabs
 
 You can create a single tab that represents multiple alternative IDs by specifying multiple IDs separated by spaces or `|`
 
-* This will create **one tab** in the navigation bar that activates when **any** of the specified IDs is selected.
-* The tab header displays the label of the first ID in the list (or the `header` attribute if provided).
-* The content inside the tab is shared for all IDs listed.
-* **Use case:** When multiple options (e.g., `python java`) present the same content, show a single tab instead of duplicates that might confuse readers into thinking the content differs.
+- This will create **one tab** in the navigation bar that activates when **any** of the specified IDs is selected.
+- The tab header displays the label of the first ID in the list (or the `header` attribute if provided).
+- The content inside the tab is shared for all IDs listed.
+- **Use case:** When multiple options (e.g., `python java`) present the same content, show a single tab instead of duplicates that might confuse readers into thinking the content differs.
 
 <!-- ------------------------ CODE OUTPUT ---------------------------- -->
-
 
 **Example:**
 
@@ -287,9 +281,7 @@ Install JavaScript by downloading Node.js from nodejs.org.
 
 <!-- ------------------------ CODE OUTPUT ---------------------------- -->
 
-
 **Behavior:** In the second tab group, you'll see a single "Installation" tab in the navigation bar that becomes active when either Python or Java is selected in the first group. This avoids showing duplicate tabs with identical content.
-
 
 ## Setting the Default Tab
 
@@ -316,18 +308,19 @@ To make the "orange" tab selected by default for the "fruit" group:
 
 <br>
 
-
 ## Header Syntax with Rich Formatting
 
 In addition to the standard `header` attribute, you can use an alternative syntax with `<cv-tab-header>` and `<cv-tab-body>` elements to enable **rich HTML formatting** in your tab headers.
 
 This is useful when you need:
+
 - **Bold, italic, or colored text** in headers
 - **Icons or badges** alongside the header text
 - **Complex nested elements** with custom styling
 - **Multi-line or specially formatted headers**
 
 **Key Points:**
+
 - `<cv-tab-header>` is the recommended way to define headers. It takes precedence over the `header` attribute.
 - **Icon Support:**
   - **Inside `<cv-tab-header>`:** Supports both MarkBind shortcodes (e.g., `:fa-user:`) and raw HTML. MarkBind processes the content automatically.
@@ -335,10 +328,10 @@ This is useful when you need:
 - **HTML Support:** Both methods support general HTML.
 - If `<cv-tab-header>` exists but is empty, the tab ID is used as the fallback header label.
 
-
 ### Syntax & Rules
 
 **Structure:**
+
 ```html
 <cv-tab tab-id="tab-id">
   <cv-tab-header>Header content (supports HTML)</cv-tab-header>
@@ -527,14 +520,13 @@ This feature is pending review.
 </include>
 
 **Example with direct HTML:**
+
 ```html
 <cv-tab tab-id="enabled" header="<i class='fa-solid fa-virus'></i> Enabled">
   <cv-tab-header><i class="fa-solid fa-virus"></i> Enabled</cv-tab-header>
   <cv-tab-body>This feature is enabled.</cv-tab-body>
 </cv-tab>
 ```
-
-
 
 **Note:** `<cv-tab-header>` accepts any HTML elements. Icon shortcodes like `:fa-solid-virus:` work because MarkBind pre-processes them inside the element content. For `header` attributes, you must use direct HTML tags like `<i class="fa-solid fa-virus"></i>` as MarkBind does not process attributes.
 
@@ -544,22 +536,21 @@ This feature is pending review.
 
 <br>
 
-
 ## Attributes & Options
 
 ### `<cv-tabgroup>` Attributes
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
+| Name     | Type     | Default        | Description                                                                        |
+| -------- | -------- | -------------- | ---------------------------------------------------------------------------------- |
 | group-id | `string` | **(required)** | Unique identifier for the tab group. Tab groups with the same ID will synchronize. |
-| nav | `string` | `"auto"` | Navigation display mode. Use `"none"` to hide navigation headers. |
+| nav      | `string` | `"auto"`       | Navigation display mode. Use `"none"` to hide navigation headers.                  |
 
 ### `<cv-tab>` Attributes
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| tab-id | `string` | **(required)** | Unique identifier for the tab within its group. |
-| header | `string` | Tab ID | Display label for the tab. Supports plain text and raw HTML (e.g., icons via `<i>` tags). Does not support MarkBind shortcodes. |
+| Name   | Type     | Default        | Description                                                                                                                     |
+| ------ | -------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| tab-id | `string` | **(required)** | Unique identifier for the tab within its group.                                                                                 |
+| header | `string` | Tab ID         | Display label for the tab. Supports plain text and raw HTML (e.g., icons via `<i>` tags). Does not support MarkBind shortcodes. |
 
 ### `<cv-tab-header>` Attributes
 
@@ -601,7 +592,7 @@ For more control (such as settings integration or default selections), configure
           { "tabId": "b", "label": "Beta" },
           { "tabId": "c", "label": "Charlie" }
         ]
-      },
+      }
     ]
   }
 }
@@ -613,24 +604,23 @@ For more control (such as settings integration or default selections), configure
 
 The TabGroupConfig object is for defining tabgroups in JSON configuration.
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| groupId | `string` | **(required)** | Group identifier (must match HTML `cv-tabgroup` id). |
-| label | `string` | - | Display name shown in the settings. |
-| description | `string` | - | Optional description to display below functionality. |
-| isLocal | `boolean` | `false` | Set to `true` to make the group only appear in the settings on pages where it's used. |
-| default | `string` | - | The `tabId` of the tab that should be selected by default. |
-| tabs | TabConfig[] | **(required)** | Array of tab configurations. |
+| Name        | Type        | Default        | Description                                                                           |
+| ----------- | ----------- | -------------- | ------------------------------------------------------------------------------------- |
+| groupId     | `string`    | **(required)** | Group identifier (must match HTML `cv-tabgroup` id).                                  |
+| label       | `string`    | -              | Display name shown in the settings.                                                   |
+| description | `string`    | -              | Optional description to display below functionality.                                  |
+| isLocal     | `boolean`   | `false`        | Set to `true` to make the group only appear in the settings on pages where it's used. |
+| default     | `string`    | -              | The `tabId` of the tab that should be selected by default.                            |
+| tabs        | TabConfig[] | **(required)** | Array of tab configurations.                                                          |
 
 #### TabConfig
 
 The TabConfig object is for defining tabs in JSON configuration.
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| tabId | `string` | **(required)** | Tab identifier (must match HTML `cv-tab` id). |
-| label | `string` | - | Display label for the tab (used in settings and as fallback for header). |
-
+| Name  | Type     | Default        | Description                                                              |
+| ----- | -------- | -------------- | ------------------------------------------------------------------------ |
+| tabId | `string` | **(required)** | Tab identifier (must match HTML `cv-tab` id).                            |
+| label | `string` | -              | Display label for the tab (used in settings and as fallback for header). |
 
 <box type="info">
 
@@ -641,12 +631,13 @@ The TabConfig object is for defining tabs in JSON configuration.
 
 You can bind a tab group to a placeholder variable. Selecting a tab will automatically set the variable's value.
 
-| Name | Type | Description |
-|------|------|-------------|
-| placeholderId | `string` | Added to `TabGroupConfig`. The name of the placeholder variable to update. |
-| placeholderValue | `string` | Added to `TabConfig`. The value to set when this tab is active. |
+| Name             | Type     | Description                                                                |
+| ---------------- | -------- | -------------------------------------------------------------------------- |
+| placeholderId    | `string` | Added to `TabGroupConfig`. The name of the placeholder variable to update. |
+| placeholderValue | `string` | Added to `TabConfig`. The value to set when this tab is active.            |
 
 **Example:**
+
 ```json
 {
   "groupId": "code-switch",
@@ -658,12 +649,11 @@ You can bind a tab group to a placeholder variable. Selecting a tab will automat
 }
 ```
 
-
 # Global vs. Local Tab Groups
 
 By default, all tab groups defined in your configuration are **global**—they will appear in the settings on every page of your site.
 
-You can mark a tab group as **local** to make it appear in the settings *only* on pages where that specific tab group is actually used. This is useful for keeping the settings clean and only showing relevant options to the user.
+You can mark a tab group as **local** to make it appear in the settings _only_ on pages where that specific tab group is actually used. This is useful for keeping the settings clean and only showing relevant options to the user.
 
 To mark a tab group as local, add `"isLocal": true` to its configuration.
 
@@ -687,17 +677,12 @@ For example, this tab group is only specific to this page:
 
 ```html
 <cv-tabgroup group-id="ltab">
-<cv-tab tab-id="lt1">
-  Tab 1
-</cv-tab>
-<cv-tab tab-id="lt2">
-  Tab 2
-</cv-tab>
-<cv-tab tab-id="lt3">
-  Tab 3
-</cv-tab>
+  <cv-tab tab-id="lt1"> Tab 1 </cv-tab>
+  <cv-tab tab-id="lt2"> Tab 2 </cv-tab>
+  <cv-tab tab-id="lt3"> Tab 3 </cv-tab>
 </cv-tabgroup>
 ```
+
 </panel>
 
 <br>
@@ -707,6 +692,7 @@ By setting it as **local** in the configuration, the "Local Tab Configuration" o
 If all tab configurations (and other component configurations) are local, and a given page has no configured elements, neither the modal nor the modal icon will appear.
 
 **Configuration file** setting this option:
+
 ```json
 {
   "config": {
@@ -720,12 +706,11 @@ If all tab configurations (and other component configurations) are local, and a 
           { "tabId": "lt2", "label": "Tab Option 2" },
           { "tabId": "lt3", "label": "Tab Option 3" }
         ]
-      },
+      }
     ]
   }
 }
 ```
-
 
 # Defining Local Components
 

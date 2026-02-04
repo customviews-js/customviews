@@ -4,7 +4,6 @@
 
 <h1 class="display-3"><md>**CustomViews**</md></h1>
 
-
 What is _Custom Views_?
 
 Custom Views is a small runtime that provides specially designed, customizable, framework-agnostic UI components.
@@ -12,7 +11,6 @@ Custom Views is a small runtime that provides specially designed, customizable, 
 :white_check_mark: Entirely Native: Built on web standards with no excess tooling and no third party bloat.
 
 :white_check_mark: Open Source: Use Custom Views however you like, always free and open source.
-
 
 ## Introduction
 
@@ -28,7 +26,7 @@ Whether you are building a static site, a dashboard, or a documentation portal, 
 
 ## Quick Demo
 
-Hi there [[ username ]]!
+Hi there [[username]]!
 
 ### Toggles
 
@@ -42,13 +40,10 @@ Choose your operating system to see platform-specific content:
 
 You're viewing macOS-specific installation steps. Install using Homebrew:
 
-
 `brew install customviews`
 
 </box>
 </cv-toggle>
-
-
 
 <cv-toggle toggle-id="linux" show-label>
 
@@ -58,12 +53,10 @@ You're viewing macOS-specific installation steps. Install using Homebrew:
 
 You're viewing Linux-specific installation steps. Install using your package manager:
 
-
 `sudo apt-get install customviews`
 </box>
 
 </cv-toggle>
-
 
 <cv-toggle toggle-id="windows" >
 
@@ -73,12 +66,10 @@ You're viewing Linux-specific installation steps. Install using your package man
 
 You're viewing Windows-specific installation steps. Install using npm:
 
-
 `npm install customviews`
 </box>
 
 </cv-toggle>
-
 
 ### Tabs
 
@@ -117,4 +108,3 @@ Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high 
 ---
 
 [:fa-brands-github: GitHub Link&nbsp; :fa-solid-arrow-up-right-from-square:](https://github.com/customviews-js/customviews)
-

@@ -6,7 +6,7 @@
  */
 export function prependBaseUrl(path: string, baseUrl: string): string {
   if (!baseUrl) return path;
-  
+
   // Don't prepend if the path is already absolute (starts with http:// or https://)
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return path;
@@ -15,6 +15,6 @@ export function prependBaseUrl(path: string, baseUrl: string): string {
   // Ensure baseUrl doesn't end with / and path starts with /
   const cleanbaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
   const cleanPath = path.startsWith('/') ? path : '/' + path;
-  
+
   return cleanbaseUrl + cleanPath;
 }

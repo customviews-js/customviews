@@ -1,4 +1,3 @@
-
 /**
  * Calculates the height of a fixed or sticky header, if present.
  * This is used to offset scroll positions so content isn't hidden behind the header.
@@ -9,7 +8,7 @@ export function getHeaderOffset(): number {
 
   const headerStyle = window.getComputedStyle(headerEl);
   const isHeaderFixedOrSticky = ['fixed', 'sticky'].includes(headerStyle.position);
-  
+
   return isHeaderFixedOrSticky ? headerEl.getBoundingClientRect().height : 0;
 }
 
@@ -25,8 +24,8 @@ export function findHighestVisibleElement(selector: string): HTMLElement | null 
   // 1. Find all matching elements, filtering out any inside the main header (if fixed/sticky).
   const allElements = Array.from(document.querySelectorAll<HTMLElement>(selector));
   const headerEl = document.querySelector('header');
-  
-  const candidateElements = allElements.filter(el => {
+
+  const candidateElements = allElements.filter((el) => {
     // If header is sticky/fixed, ignore elements inside it to avoid false positives
     if (headerOffset > 0 && headerEl && el.closest('header') === headerEl) {
       return false;
@@ -42,7 +41,7 @@ export function findHighestVisibleElement(selector: string): HTMLElement | null 
     const rect = el.getBoundingClientRect();
     // Visible if not completely above content area and not completely below viewport
     const isVisibleInContentArea = rect.bottom > contentTop && rect.top < window.innerHeight;
-    
+
     if (isVisibleInContentArea) {
       // We want the one closest to the top
       if (rect.top < highestVisibleTop) {
@@ -51,12 +50,12 @@ export function findHighestVisibleElement(selector: string): HTMLElement | null 
       }
     }
   }
-  
+
   return highestVisibleEl;
 }
 
 /**
- * Scrolls the page to align the element to the top of the viewport, 
+ * Scrolls the page to align the element to the top of the viewport,
  * accounting for fixed/sticky headers and adding some padding.
  * @param element The element to scroll to.
  */
@@ -81,7 +80,7 @@ export function scrollToElement(element: HTMLElement): void {
 export function handleScrollAnchor(scrollAnchor: { element: HTMLElement; top: number }): void {
   requestAnimationFrame(() => {
     const { element, top: initialTop } = scrollAnchor;
-    
+
     // Check if element is still in document
     if (!element || !document.contains(element)) return;
 
@@ -92,7 +91,7 @@ export function handleScrollAnchor(scrollAnchor: { element: HTMLElement; top: nu
     if (Math.abs(scrollDelta) > 1) {
       window.scrollBy({
         top: scrollDelta,
-        behavior: 'instant'
+        behavior: 'instant',
       });
     }
   });

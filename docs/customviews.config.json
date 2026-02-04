@@ -1,11 +1,21 @@
 {
   "config": {
     "toggles": [
-      {"toggleId": "lt","label": "Local Toggle","isLocal": true},
-      {"toggleId": "localToggle","label": "Local Toggle Label","isLocal": true, "default": "peek"},
-      {"toggleId": "mac","label": "MacOS", "description": "Show content for macOS users", "default": "peek"},
-      {"toggleId": "linux","label": "Linux", "description": "Show content for Linux users"},
-      {"toggleId": "windows","label": "Windows", "default": "show"}
+      { "toggleId": "lt", "label": "Local Toggle", "isLocal": true },
+      {
+        "toggleId": "localToggle",
+        "label": "Local Toggle Label",
+        "isLocal": true,
+        "default": "peek"
+      },
+      {
+        "toggleId": "mac",
+        "label": "MacOS",
+        "description": "Show content for macOS users",
+        "default": "peek"
+      },
+      { "toggleId": "linux", "label": "Linux", "description": "Show content for Linux users" },
+      { "toggleId": "windows", "label": "Windows", "default": "show" }
     ],
     "tabGroups": [
       {
@@ -15,9 +25,9 @@
         "isLocal": true,
         "default": "lt1",
         "tabs": [
-          {"tabId": "lt1","label": "Tab Option 1"},
-          {"tabId": "lt2","label": "Tab Option 2"},  
-          {"tabId": "lt3","label": "Tab Option 3"}
+          { "tabId": "lt1", "label": "Tab Option 1" },
+          { "tabId": "lt2", "label": "Tab Option 2" },
+          { "tabId": "lt3", "label": "Tab Option 3" }
         ]
       },
       {
@@ -39,15 +49,25 @@
         "default": "pear",
         "placeholderId": "fruit",
         "tabs": [
-          {"tabId": "apple","label": "Apple", "placeholderValue": "apple"},
-          {"tabId": "orange","label": "Orange", "placeholderValue": "orange"},
-          {"tabId": "pear","label": "Pear", "placeholderValue": "pear"}
+          { "tabId": "apple", "label": "Apple", "placeholderValue": "apple" },
+          { "tabId": "orange", "label": "Orange", "placeholderValue": "orange" },
+          { "tabId": "pear", "label": "Pear", "placeholderValue": "pear" }
         ]
       }
     ],
     "placeholders": [
-       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username", "defaultValue": "Guest" },
-       { "name": "searchQuery", "settingsLabel": "Search Query", "settingsHint": "Enter search query", "isLocal": true }
+      {
+        "name": "username",
+        "settingsLabel": "Your Username",
+        "settingsHint": "Enter username",
+        "defaultValue": "Guest"
+      },
+      {
+        "name": "searchQuery",
+        "settingsLabel": "Search Query",
+        "settingsHint": "Enter search query",
+        "isLocal": true
+      }
     ]
   },
   "baseUrl": "/customviews",

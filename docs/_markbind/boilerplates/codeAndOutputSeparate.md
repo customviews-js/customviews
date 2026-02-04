@@ -8,26 +8,31 @@
 
 {% macro codeBox() %}
 %%CODE:%%
+
 <div class="indented">
 
 ```{{ highlightStyle | safe }}{ {% if heading %}heading="{{heading}}"{% endif %}}
 {{ code | safe | trim }}
 ```
+
 </div>
 {% endmacro %}
 
 {% macro outputBox() %}
 %%OUTPUT:%%
+
 <div class="indented">
 
 <box border-left-color="grey" background-color="white">
 
 {{ output | safe }}
 </box>
+
 </div>
 {% endmacro %}
 
 {% if horizontal != null %}
+
 <div style="overflow-x: auto">
 <table style="width: 100%">
 <tbody>

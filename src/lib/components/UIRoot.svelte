@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import type { CustomViewsController } from '$lib/controller.svelte';
   import type { UIManagerOptions } from '$lib/ui-manager';
-  
+
   import IntroCallout from '$features/settings/IntroCallout.svelte';
   import SettingsIcon from '$features/settings/SettingsIcon.svelte';
   import Modal from '$features/settings/Modal.svelte';
@@ -13,11 +13,14 @@
   import Toast from '$ui/Toast.svelte';
   import ShareOverlay from '$features/share/ShareOverlay.svelte';
   import FocusBanner from '$features/focus/FocusBanner.svelte';
-  
+
   import { UrlActionRouter } from '$lib/services/url-action-router.svelte';
   import { IntroManager } from '$lib/services/intro-manager.svelte';
 
-  let { controller, options } = $props<{ controller: CustomViewsController, options: UIManagerOptions }>();
+  let { controller, options } = $props<{
+    controller: CustomViewsController;
+    options: UIManagerOptions;
+  }>();
 
   // --- Derived State ---
   const store = $derived(controller.store);
@@ -26,13 +29,13 @@
 
   // --- Services ---
   const introManager = new IntroManager(
-    () => controller.persistenceManager, 
-    () => options.callout
+    () => controller.persistenceManager,
+    () => options.callout,
   );
   const router = new UrlActionRouter({
     onOpenModal: openModal,
     onStartShare: handleStartShare,
-    checkSettingsEnabled: () => settingsEnabled
+    checkSettingsEnabled: () => settingsEnabled,
   });
 
   // --- UI State ---
@@ -41,18 +44,18 @@
   let settingsIcon: { resetPosition: () => void } | undefined = $state();
 
   // --- Computed Props ---
-  
+
   // Share Configuration
   const shareExclusions = $derived(storeConfig.shareExclusions || {});
   const excludedTags = $derived([...DEFAULT_EXCLUDED_TAGS, ...(shareExclusions.tags || [])]);
   const excludedIds = $derived([...DEFAULT_EXCLUDED_IDS, ...(shareExclusions.ids || [])]);
-  
+
   // --- Initialization ---
 
   onMount(() => {
     initTheme();
     router.init();
-    
+
     return () => router.destroy();
   });
 
@@ -82,9 +85,9 @@
     isResetting = true;
     controller.resetToDefault();
     settingsIcon?.resetPosition();
-    
+
     showToast('Settings reset to default');
-    
+
     setTimeout(() => {
       isResetting = false;
       settingsIcon?.resetPosition();
@@ -101,24 +104,20 @@
 
   // --- Settings Visibility ---
   const shouldRenderSettings = $derived(
-    settingsEnabled && (
-      store.hasMenuOptions || 
-      options.panel.showTabGroups || 
-      isModalOpen
-    )
+    settingsEnabled && (store.hasMenuOptions || options.panel.showTabGroups || isModalOpen),
   );
 </script>
 
 <div class="cv-widget-root" data-theme={themeStore.currentTheme}>
   <!-- Intro Callout -->
   {#if introManager.showCallout && settingsEnabled}
-    <IntroCallout 
-      position={options.icon.position} 
+    <IntroCallout
+      position={options.icon.position}
       message={options.callout?.message}
       enablePulse={options.callout?.enablePulse}
       backgroundColor={options.callout?.backgroundColor}
       textColor={options.callout?.textColor}
-      onclose={() => introManager.dismiss()} 
+      onclose={() => introManager.dismiss()}
     />
   {/if}
 
@@ -133,11 +132,11 @@
 
   <!-- Widget Icon: Only specific to Settings -->
   {#if shouldRenderSettings && options.icon.show}
-    <SettingsIcon 
+    <SettingsIcon
       bind:this={settingsIcon}
-      position={options.icon.position} 
-      title={options.panel.title} 
-      pulse={introManager.showPulse} 
+      position={options.icon.position}
+      title={options.panel.title}
+      pulse={introManager.showPulse}
       onclick={openModal}
       iconColor={options.icon?.color}
       backgroundColor={options.icon?.backgroundColor}
@@ -149,13 +148,13 @@
 
   <!-- Modal: Only specific to Settings -->
   {#if settingsEnabled && isModalOpen}
-    <Modal 
+    <Modal
       {controller}
       title={options.panel.title}
       description={options.panel.description}
       showReset={options.panel.showReset}
       showTabGroups={options.panel.showTabGroups}
-      isResetting={isResetting}
+      {isResetting}
       onclose={closeModal}
       onreset={handleReset}
       onstartShare={handleStartShare}
@@ -180,26 +179,26 @@
     --cv-text-secondary: rgba(0, 0, 0, 0.6);
     --cv-border: rgba(0, 0, 0, 0.1);
     --cv-bg-hover: rgba(0, 0, 0, 0.05);
-    
+
     --cv-primary: #3e84f4;
     --cv-primary-hover: #2563eb;
-    
+
     --cv-danger: #dc2626;
     --cv-danger-bg: rgba(220, 38, 38, 0.1);
-    
+
     --cv-shadow: rgba(0, 0, 0, 0.25);
-    
+
     --cv-input-bg: white;
     --cv-input-border: rgba(0, 0, 0, 0.15);
     --cv-switch-bg: rgba(0, 0, 0, 0.1);
     --cv-switch-knob: white;
-    
+
     --cv-modal-icon-bg: rgba(0, 0, 0, 0.08);
     --cv-icon-bg: rgba(255, 255, 255, 0.92);
     --cv-icon-color: rgba(0, 0, 0, 0.9);
-    
+
     --cv-focus-ring: rgba(62, 132, 244, 0.2);
-    
+
     --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
 
     font-family: inherit; /* Inherit font from host */
@@ -215,7 +214,7 @@
     pointer-events: none; /* Overlay often passes clicks until specialized handles active */
   }
 
-  :global(.cv-widget-root[data-theme="dark"]) {
+  :global(.cv-widget-root[data-theme='dark']) {
     /* Dark Theme Overrides */
     --cv-bg: #101722;
     --cv-text: #e2e8f0;
@@ -235,13 +234,13 @@
     --cv-input-border: rgba(255, 255, 255, 0.1);
     --cv-switch-bg: rgba(255, 255, 255, 0.1);
     --cv-switch-knob: #e2e8f0;
-    
+
     --cv-modal-icon-bg: rgba(255, 255, 255, 0.08);
     --cv-icon-bg: #1e293b;
     --cv-icon-color: #e2e8f0;
-    
+
     --cv-focus-ring: rgba(62, 132, 244, 0.5);
-    
+
     --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 </style>

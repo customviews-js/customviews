@@ -23,39 +23,39 @@ export class PlaceholderRegistryStore {
 
   register(def: PlaceholderDefinition) {
     if (this._definitions.has(def.name)) {
-        this.updateExisting(def);
+      this.updateExisting(def);
     } else {
-        this.addNew(def);
+      this.addNew(def);
     }
   }
 
   get(name: string): PlaceholderDefinition | undefined {
-      return this._definitions.get(name);
+    return this._definitions.get(name);
   }
 
   has(name: string): boolean {
-      return this._definitions.has(name);
+    return this._definitions.has(name);
   }
 
   private updateExisting(newDef: PlaceholderDefinition) {
-      const existing = this._definitions.get(newDef.name);
-      if (existing && this.hasChanged(existing, newDef)) {
-          this._definitions.set(newDef.name, newDef);
-      }
+    const existing = this._definitions.get(newDef.name);
+    if (existing && this.hasChanged(existing, newDef)) {
+      this._definitions.set(newDef.name, newDef);
+    }
   }
 
   private addNew(def: PlaceholderDefinition) {
-      this._definitions.set(def.name, def);
+    this._definitions.set(def.name, def);
   }
 
   private hasChanged(existing: PlaceholderDefinition, newDef: PlaceholderDefinition): boolean {
-      return (
-          existing.settingsLabel !== newDef.settingsLabel ||
-          existing.settingsHint !== newDef.settingsHint ||
-          existing.defaultValue !== newDef.defaultValue ||
-          existing.hiddenFromSettings !== newDef.hiddenFromSettings ||
-          existing.isLocal !== newDef.isLocal
-      );
+    return (
+      existing.settingsLabel !== newDef.settingsLabel ||
+      existing.settingsHint !== newDef.settingsHint ||
+      existing.defaultValue !== newDef.defaultValue ||
+      existing.hiddenFromSettings !== newDef.hiddenFromSettings ||
+      existing.isLocal !== newDef.isLocal
+    );
   }
 }
 

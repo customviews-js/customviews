@@ -25,36 +25,29 @@ Then, add a file named **`customviews.js`** inside it with the following content
  * Add data-base-url="/website-baseurl"
  */
 function getScripts() {
-  return [
-    '<script src="https://unpkg.com/@customviews-js/customviews"></script>'
-  ];
-};
+  return ['<script src="https://unpkg.com/@customviews-js/customviews"></script>'];
+}
 
 module.exports = { getScripts };
 ```
 
 <box type="info">
 
-
 Note: Depending on your MarkBind JS environment, if you are operating in an ESM environment (e.g. there is a parent ESM `package.json` file), the plugin needs to be written in ESM format. If that is the case, try this the ESM format instead:
 
 ```js
 function getScripts() {
-  return [
-    '<script src="../../../dist/custom-views.min.js"></script>'
-  ];
+  return ['<script src="../../../dist/custom-views.min.js"></script>'];
 }
 
 export { getScripts };
 ```
 
-This is a current limitation of MarkBind which only operates in CJS formats, which may cause compatibility issues when operating in cross CJS and ESM environments. 
+This is a current limitation of MarkBind which only operates in CJS formats, which may cause compatibility issues when operating in cross CJS and ESM environments.
 
 </box>
 
-
 This plugin automatically injects the CustomViews runtime into every generated page during the build process.
-
 
 ## 2. Register the Plugin in site.json
 
@@ -62,9 +55,7 @@ In your project’s root `site.json`, register the plugin by adding `"customview
 
 ```json
 {
-  "plugins": [
-    "customviews"
-  ]
+  "plugins": ["customviews"]
 }
 ```
 
@@ -78,9 +69,14 @@ At your project root, create a `customviews.config.json` file to define your tog
 {
   "config": {
     "toggles": [
-      {"toggleId": "mac","label": "MacOS", "description": "Show content for macOS users", "default": "peek"},
-      {"toggleId": "linux","label": "Linux", "description": "Show content for Linux users"},
-      {"toggleId": "windows","label": "Windows", "default": "show"}
+      {
+        "toggleId": "mac",
+        "label": "MacOS",
+        "description": "Show content for macOS users",
+        "default": "peek"
+      },
+      { "toggleId": "linux", "label": "Linux", "description": "Show content for Linux users" },
+      { "toggleId": "windows", "label": "Windows", "default": "show" }
     ],
     "tabGroups": [
       {
@@ -91,14 +87,19 @@ At your project root, create a `customviews.config.json` file to define your tog
         "default": "pear",
         "placeholderId": "fruit",
         "tabs": [
-          {"tabId": "apple","label": "Apple", "placeholderValue": "apple"},
-          {"tabId": "orange","label": "Orange", "placeholderValue": "orange"},
-          {"tabId": "pear","label": "Pear", "placeholderValue": "pear"}
+          { "tabId": "apple", "label": "Apple", "placeholderValue": "apple" },
+          { "tabId": "orange", "label": "Orange", "placeholderValue": "orange" },
+          { "tabId": "pear", "label": "Pear", "placeholderValue": "pear" }
         ]
       }
     ],
     "placeholders": [
-       { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username", "defaultValue": "Guest" },
+      {
+        "name": "username",
+        "settingsLabel": "Your Username",
+        "settingsHint": "Enter username",
+        "defaultValue": "Guest"
+      }
     ]
   },
   "baseUrl": "/customviews",
@@ -125,7 +126,6 @@ At your project root, create a `customviews.config.json` file to define your tog
   }
 }
 ```
-
 
 After saving, run your MarkBind site locally:
 

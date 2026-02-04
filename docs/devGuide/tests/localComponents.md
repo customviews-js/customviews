@@ -19,11 +19,11 @@ Open the widget to toggle this local toggle:
 
 <box data-cv-toggle="lt">
 
-Local Toggle content 
+Local Toggle content
 
 </box>
 
-### Local Tab Groups 
+### Local Tab Groups
 
 <cv-tabgroup group-id="ltabs">
 <cv-tab tab-id="lt1">
@@ -36,8 +36,6 @@ Local Toggle content
   Tab 3
 </cv-tab>
 </cv-tabgroup>
-
-
 
 ### Further Testing
 
