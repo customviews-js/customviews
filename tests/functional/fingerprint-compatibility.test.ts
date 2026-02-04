@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import * as DomElementLocator from '../../src/core/utils/dom-element-locator';
+import * as DomElementLocator from '../../src/lib/utils/dom-element-locator';
 
 /**
  * Fingerprint Regression Test

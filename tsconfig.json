@@ -29,6 +29,14 @@
 
     // Types (empty unless you want to include global types)
     "types": ["svelte"],
+
+    // Paths
+    "baseUrl": ".",
+    "paths": {
+      "$lib/*": ["src/lib/*"],
+      "$features/*": ["src/lib/features/*"],
+      "$ui/*": ["src/lib/components/ui/*"]
+    }
   },
   "include": ["src", "svelte.config.js"],                 
   "exclude": ["node_modules", "dist", "test", "docs"] 
