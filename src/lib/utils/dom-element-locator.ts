@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Descriptor for an anchor that represents a DOM element.
  */
@@ -148,7 +149,7 @@ export function deserialize(encoded: string): AnchorDescriptor[] {
         elementId: m.id,
       };
     });
-  } catch (e) {
+  } catch {
     // This handles cases where an ID string happens to look like Base64 but does not match the expected schema
     return parseIds(encoded);
   }

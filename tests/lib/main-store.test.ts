@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // Polyfill Svelte Runes BEFORE import
-// @ts-ignore
+// @ts-expect-error - Polyfill for testing
 globalThis.$state = (initial) => initial;
-// @ts-ignore
+// @ts-expect-error - Polyfill for testing
 globalThis.$derived = (fn) => (typeof fn === 'function' ? fn() : fn);
-// @ts-ignore
 globalThis.$derived.by = (fn) => fn();
 
 // Mock svelte/reactivity
@@ -35,7 +35,6 @@ import { placeholderValueStore } from '../../src/lib/stores/placeholder-value-st
 import { placeholderRegistryStore } from '../../src/lib/stores/placeholder-registry-store.svelte';
 
 describe('DataStore', () => {
-  let DataStore: any;
   let initStore: any;
   let store: any;
 
@@ -45,7 +44,6 @@ describe('DataStore', () => {
 
     // Dynamic import to ensure globals are set
     const module = await import('../../src/lib/stores/main-store.svelte');
-    DataStore = module.DataStore;
     initStore = module.initStore;
     store = module.store;
 

@@ -1,6 +1,7 @@
 /**
  * Represents an individual asset that can be rendered in a custom view.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface CustomViewAsset {
   /** Optional type. If not provided, auto-detected from src/content. */
   type?: 'image' | 'text' | 'html' | string;

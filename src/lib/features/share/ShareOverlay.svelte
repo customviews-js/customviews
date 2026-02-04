@@ -134,7 +134,7 @@
     }
   }
 
-  function handleMouseUp(_: MouseEvent) {
+  function handleMouseUp() {
     if (isDragging && dragStart && dragCurrent) {
       // Perform selection logic
       const width = Math.abs(dragCurrent.x - dragStart.x);

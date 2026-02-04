@@ -161,6 +161,7 @@
       const splitIds = splitTabIds(tab.rawId);
       const isActive = splitIds.includes(localActiveTabId);
       // Set property directly to trigger Svelte component reactivity
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (tab.element as any).active = isActive;
     });
   }
@@ -199,7 +200,7 @@
   <!-- Nav -->
   {#if tabs.length > 0 && navHeadingVisible}
     <ul class="cv-tabs-nav nav-tabs" role="tablist">
-      {#each tabs as tab}
+      {#each tabs as tab (tab.id)}
         {@const splitIds = splitTabIds(tab.rawId)}
         {@const isActive = splitIds.includes(localActiveTabId)}
         {@const isPinned = pinnedTab && splitIds.includes(pinnedTab)}
@@ -218,9 +219,13 @@
             data-group-id={groupId}
           >
             <span class="cv-tab-header-container">
-              <span class="cv-tab-header-text">{@html tab.header}</span>
+              <span class="cv-tab-header-text"
+                ><!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                {@html tab.header}</span
+              >
               <span class="cv-tab-pin-icon" style:display={isPinned ? 'inline-flex' : 'none'}
-                >{@html pinIconHtml}</span
+                ><!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                {@html pinIconHtml}</span
               >
             </span>
           </a>
@@ -230,7 +235,7 @@
   {/if}
 
   <!-- Inject global stylesheets to support icons (FontAwesome, etc.) inside Shadow DOM -->
-  {#each Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as link}
+  {#each Array.from(document.querySelectorAll('link[rel="stylesheet"]')) as link ((link as HTMLLinkElement).href)}
     <link rel="stylesheet" href={(link as HTMLLinkElement).href} />
   {/each}
 

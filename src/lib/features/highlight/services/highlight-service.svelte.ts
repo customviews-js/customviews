@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mount, unmount } from 'svelte';
+import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import { showToast } from '$lib/stores/toast-store.svelte';
 import { focusStore } from '$features/focus/stores/focus-store.svelte';
 import * as DomElementLocator from '$lib/utils/dom-element-locator';
@@ -124,7 +126,7 @@ export class HighlightService {
     }
 
     // 1. Group by Parent (Siblings)
-    const groups = new Map<HTMLElement, HTMLElement[]>();
+    const groups = new SvelteMap<HTMLElement, HTMLElement[]>();
 
     this.activeTargets.forEach((t) => {
       const parent = t.parentElement || document.body;
@@ -148,7 +150,7 @@ export class HighlightService {
       }
 
       // O(1) lookup
-      const siblingsSet = new Set(siblingsInGroup);
+      const siblingsSet = new SvelteSet(siblingsInGroup);
       let currentBatch: HTMLElement[] = [];
 
       // Scan parent children to respect DOM order and interruptions

@@ -1,4 +1,5 @@
 <script lang="ts">
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   import { fade, scale } from 'svelte/transition';
   import {
     getNavHeadingOnIcon,
@@ -187,8 +188,6 @@
   }
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
   class="modal-overlay"
   onclick={(e) => {
@@ -207,12 +206,14 @@
       <div class="header-content">
         <div class="modal-icon">
           <!-- Gear Icon -->
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
           {@html getGearIcon()}
         </div>
         <div class="title">{title}</div>
       </div>
       <button class="close-btn" aria-label="Close modal" onclick={onclose}>
         <!-- Close icon svg -->
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html getCloseIcon()}
       </button>
     </header>
@@ -243,7 +244,7 @@
             <p class="description">{description}</p>
           {/if}
 
-          {#each sectionOrder as section}
+          {#each sectionOrder as section (section)}
             <!-- Toggles Section -->
             {#if section === 'toggles' && toggles.length > 0}
               <div class="section">
@@ -290,7 +291,10 @@
                   >
                     <div class="tabgroup-row">
                       <div class="logo-box" id="cv-nav-icon-box">
-                        <div class="nav-icon">{@html navIconHtml}</div>
+                        <div class="nav-icon">
+                          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                          {@html navIconHtml}
+                        </div>
                       </div>
                       <div class="tabgroup-info">
                         <div class="tabgroup-title-container">
@@ -337,6 +341,7 @@
                   onclick={() => themeStore.setMode('light')}
                   title="Light Mode"
                 >
+                  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                   {@html getSunIcon()}
                   <span>Light</span>
                 </button>
@@ -345,6 +350,7 @@
                   onclick={() => themeStore.setMode('dark')}
                   title="Dark Mode"
                 >
+                  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                   {@html getMoonIcon()}
                   <span>Dark</span>
                 </button>
@@ -372,7 +378,10 @@
             </div>
 
             <button class="share-action-btn primary start-share-btn" onclick={onstartShare}>
-              <span class="btn-icon">{@html getShareIcon()}</span>
+              <span class="btn-icon"
+                ><!-- eslint-disable-next-line svelte/no-at-html-tags -->
+                {@html getShareIcon()}</span
+              >
               <span>Select elements to share</span>
             </button>
 
@@ -380,8 +389,10 @@
               <button class="share-action-btn copy-url-btn" onclick={copyShareUrl}>
                 <span class="btn-icon">
                   {#if copySuccess}
+                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                     {@html getTickIcon()}
                   {:else}
+                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                     {@html getCopyIcon()}
                   {/if}
                 </span>
@@ -403,6 +414,7 @@
       {#if showReset}
         <button class="reset-btn" title="Reset to Default" onclick={onreset}>
           <span class="reset-btn-icon {isResetting ? 'spinning' : ''}">
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
             {@html getResetIcon()}
           </span>
           <span>Reset</span>
@@ -412,6 +424,7 @@
       {/if}
 
       <a href="https://github.com/customviews-js/customviews" target="_blank" class="footer-link">
+        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
         {@html getGitHubIcon()}
         <span>View on GitHub</span>
       </a>
