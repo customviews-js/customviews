@@ -1,10 +1,10 @@
-import { getScriptAttributes, fetchConfig } from "./utils/init-utils";
-import { initUIManager } from "./core/ui-manager";
-import { CustomViewsController, type ControllerOptions } from "./core/controller.svelte";
-import { AssetsManager } from "./core/assets";
-import type { CustomViewAsset } from "./types/index";
-import { prependBaseUrl } from "./utils/url-utils";
-import './registry';
+import { getScriptAttributes, fetchConfig } from "$lib/utils/init-utils";
+import { initUIManager } from "$lib/ui-manager";
+import { CustomViewsController, type ControllerOptions } from "$lib/controller.svelte";
+import { AssetsManager } from "$lib/assets";
+import type { CustomViewAsset } from "$lib/types/index";
+import { prependBaseUrl } from "$lib/utils/url-utils";
+import '$lib/registry';
 
 
 // --- No Public API Exports ---

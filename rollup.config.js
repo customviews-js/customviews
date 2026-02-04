@@ -3,6 +3,9 @@ import typescript from '@rollup/plugin-typescript';
 import svelte from 'rollup-plugin-svelte';
 import svelteConfig from './svelte.config.js';
 
+import alias from '@rollup/plugin-alias';
+import path from 'path';
+
 import resolve from '@rollup/plugin-node-resolve';
 import { readFileSync } from 'fs';
 // terser is minifier, ts and sv for rollup to compile ts and svelte files
@@ -21,7 +24,7 @@ const banner = `/*!
 // Custom Web Component Elements (only files in components/elements)
 const sveltePluginCustomElements = svelte({
   ...svelteConfig,
-  include: 'src/components/elements/**/*.svelte',
+  include: 'src/lib/components/ui/**/*.svelte',
 });
 
 // Regular Svelte components and Svelte 5 modules (e.g. .svelte.ts)
@@ -29,16 +32,24 @@ const sveltePluginRegular = svelte({
   ...svelteConfig,
   extensions: ['.svelte', '.svelte.ts', '.svelte.js'],
   include: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
-  exclude: 'src/components/elements/**/*.svelte',
+  exclude: 'src/lib/components/ui/**/*.svelte',
   // Regular non-custom components
   compilerOptions: {
     ...svelteConfig.compilerOptions,
     customElement: false
-  }
+  },
+  emitCss: false
 });
 
 // Plugin tools pipeline, build is for browser, dedupe prevents bundling Svelte multiple times
 const plugins = [
+  alias({
+    entries: [
+      { find: '$lib', replacement: path.resolve('src/lib') },
+      { find: '$features', replacement: path.resolve('src/lib/features') },
+      { find: '$ui', replacement: path.resolve('src/lib/components/ui') }
+    ]
+  }),
   resolve({
     browser: true,      // Build is for browser
     dedupe: ['svelte']  // Prevents bundling Svelte multiple times

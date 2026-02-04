@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { UrlActionHandler } from '../src/core/state/url-action-handler';
+import { UrlActionHandler } from '../src/lib/state/url-action-handler';
 
 describe('UrlActionHandler', () => {
     
