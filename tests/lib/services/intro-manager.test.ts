@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Polyfill Svelte Runes BEFORE import
-// @ts-ignore
+// @ts-expect-error - Polyfill for testing
 globalThis.$state = (initial) => initial;
 
 import { IntroManager } from '../../../src/lib/services/intro-manager.svelte';

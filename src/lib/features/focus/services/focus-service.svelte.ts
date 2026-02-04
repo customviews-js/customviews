@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mount, unmount, untrack } from 'svelte';
 import { focusStore } from '$features/focus/stores/focus-store.svelte';
 import { showToast } from '$lib/stores/toast-store.svelte';
 import * as DomElementLocator from '$lib/utils/dom-element-locator';
 import FocusDivider from '$features/focus/FocusDivider.svelte';
-import { SvelteURL } from 'svelte/reactivity';
+import { SvelteSet, SvelteURL } from 'svelte/reactivity';
 
 const FOCUS_PARAM = 'cv-focus';
 const HIDE_PARAM = 'cv-hide';
@@ -25,8 +26,8 @@ export interface FocusServiceOptions {
 }
 
 export class FocusService {
-  private hiddenElements = new Set<HTMLElement>();
-  private dividers = new Set<any>(); // Store Svelte App instances
+  private hiddenElements = new SvelteSet<HTMLElement>();
+  private dividers = new SvelteSet<any>(); // Store Svelte App instances
   private excludedTags: Set<string>;
   private excludedIds: Set<string>;
   // Call unsubscribe in destroy to stop svelte effects
@@ -41,10 +42,10 @@ export class FocusService {
     const userTags = options.shareExclusions?.tags || [];
     const userIds = options.shareExclusions?.ids || [];
 
-    this.excludedTags = new Set(
+    this.excludedTags = new SvelteSet(
       [...DEFAULT_EXCLUDED_TAGS, ...userTags].map((t) => t.toUpperCase()),
     );
-    this.excludedIds = new Set([...DEFAULT_EXCLUDED_IDS, ...userIds]);
+    this.excludedIds = new SvelteSet([...DEFAULT_EXCLUDED_IDS, ...userIds]);
 
     this.highlightService = new HighlightService(this.rootEl);
 
@@ -207,7 +208,7 @@ export class FocusService {
     });
 
     // 2. Insert Dividers
-    const processedContainers = new Set<HTMLElement>();
+    const processedContainers = new SvelteSet<HTMLElement>();
     targets.forEach((el) => {
       const parent = el.parentElement;
       if (parent && !processedContainers.has(parent)) {
@@ -222,7 +223,7 @@ export class FocusService {
     targets.forEach((t) => t.classList.add(FOCUSED_CLASS));
 
     // 2. Identify Elements to Keep Visible (Targets + Ancestors)
-    const keepVisible = new Set<HTMLElement>();
+    const keepVisible = new SvelteSet<HTMLElement>();
     targets.forEach((t) => {
       let curr: HTMLElement | null = t;
       while (curr && curr !== document.body && curr !== document.documentElement) {
@@ -251,7 +252,7 @@ export class FocusService {
     });
 
     // 4. Insert Dividers
-    const processedContainers = new Set<HTMLElement>();
+    const processedContainers = new SvelteSet<HTMLElement>();
     keepVisible.forEach((el) => {
       const parent = el.parentElement;
       if (parent && !processedContainers.has(parent)) {

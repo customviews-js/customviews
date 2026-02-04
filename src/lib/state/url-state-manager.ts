@@ -84,6 +84,8 @@ export class URLStateManager {
   private static encodeState(state: State): string | null {
     try {
       // Create a compact representation
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const compact: any = {};
 
       // Add toggles if present and non-empty
@@ -113,7 +115,7 @@ export class URLStateManager {
         encoded = btoa(json);
       } else {
         // Node/test fallback
-        // @ts-ignore
+        // @ts-expect-error - Node polyfill not typed in browser context
         encoded = Buffer.from(json, 'utf-8').toString('base64');
       }
 
@@ -147,7 +149,7 @@ export class URLStateManager {
         json = atob(base64);
       } else {
         // Node/test fallback
-        // @ts-ignore
+        // @ts-expect-error - Node polyfill not typed in browser context
         json = Buffer.from(base64, 'base64').toString('utf-8');
       }
       const compact = JSON.parse(json);

@@ -28,7 +28,7 @@
     {/if}
   </div>
   <select id="tab-group-{group.groupId}" class="select" value={activeTabId} onchange={onChange}>
-    {#each group.tabs as tab}
+    {#each group.tabs as tab (tab.tabId)}
       <option value={tab.tabId}>{tab.label || tab.tabId}</option>
     {/each}
   </select>

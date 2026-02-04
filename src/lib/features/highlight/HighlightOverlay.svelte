@@ -49,7 +49,7 @@
 </script>
 
 <div class="cv-highlight-overlay">
-  {#each rects as rect}
+  {#each rects as rect (`${rect.top}-${rect.left}-${rect.width}-${rect.height}`)}
     <div
       class="cv-highlight-box"
       style="top: {rect.top}px; left: {rect.left}px; width: {rect.width}px; height: {rect.height}px;"

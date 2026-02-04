@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { URLStateManager } from '../../src/lib/state/url-state-manager';
-import type { State } from '../../src/types/index';
+import type { State } from '../../src/lib/types/index';
 
 describe('URLStateManager', () => {
   describe('State Encoding/Decoding', () => {

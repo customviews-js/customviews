@@ -1,3 +1,5 @@
+import { SvelteMap } from 'svelte/reactivity';
+
 export interface PlaceholderDefinition {
   name: string;
   settingsLabel?: string | undefined;
@@ -14,7 +16,7 @@ export interface PlaceholderDefinition {
 
 export class PlaceholderRegistryStore {
   // Reactivity: Map is deeply reactive in Svelte 5 with $state
-  private _definitions = $state(new Map<string, PlaceholderDefinition>());
+  private _definitions = new SvelteMap<string, PlaceholderDefinition>();
 
   // Public getter for array access
   get definitions(): PlaceholderDefinition[] {

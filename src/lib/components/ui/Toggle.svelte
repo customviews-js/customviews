@@ -179,6 +179,7 @@
       aria-label={localExpanded ? 'Collapse content' : 'Expand content'}
       onclick={toggleExpand}
     >
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
       {@html localExpanded ? getChevronUpIcon() : getChevronDownIcon()}
     </button>
   {/if}
