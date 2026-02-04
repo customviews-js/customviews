@@ -89,11 +89,11 @@ While the Share Mode UI generates robust, encoded links automatically, you may s
 
 CustomViews supports a human-readable format using HTML element IDs:
 
-| Parameter      | format    | Description                                                                                |
-| :------------- | :-------- | :----------------------------------------------------------------------------------------- |
-| `cv-show`      | `id1,id2` | **Shows** only the specified elements. All others are hidden. (Replaces legacy `cv-focus`) |
-| `cv-hide`      | `id1,id2` | **Hides** the specified elements. All others are shown.                                    |
-| `cv-highlight` | `id1,id2` | **Highlights** the specified elements. Full page remains visible.                          |
+| Parameter      | format    | Description                                                       |
+| :------------- | :-------- | :---------------------------------------------------------------- |
+| `cv-show`      | `id1,id2` | **Shows** only the specified elements. All others are hidden.     |
+| `cv-hide`      | `id1,id2` | **Hides** the specified elements. All others are shown.           |
+| `cv-highlight` | `id1,id2` | **Highlights** the specified elements. Full page remains visible. |
 
 **Example:**
 To show only the `#setup` and `#config` sections:
