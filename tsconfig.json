@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     // Project structure
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "module": "esnext",
     "target": "esnext",
@@ -19,6 +19,7 @@
     // Interop & module resolution
     "esModuleInterop": true, // Allow default imports from CommonJS
     "verbatimModuleSyntax": true, // Use import/export syntax as written
+    "moduleResolution": "bundler",
     "moduleDetection": "force", // Only treat files with import/export as modules
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
@@ -33,11 +34,11 @@
     // Paths
     "baseUrl": ".",
     "paths": {
-      "$lib/*": ["src/lib/*"],
-      "$features/*": ["src/lib/features/*"],
-      "$ui/*": ["src/lib/components/ui/*"]
+      "$lib/*": ["./src/lib/*"],
+      "$features/*": ["./src/lib/features/*"],
+      "$ui/*": ["./src/lib/components/ui/*"]
     }
   },
-  "include": ["src", "svelte.config.js"],
-  "exclude": ["node_modules", "dist", "test", "docs"]
+  "include": ["src", "svelte.config.js", "tests"],
+  "exclude": ["node_modules", "dist", "docs"]
 }
