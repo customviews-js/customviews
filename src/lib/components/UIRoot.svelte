@@ -15,7 +15,7 @@
   import FocusBanner from '$features/focus/FocusBanner.svelte';
 
   import { UrlActionRouter } from '$features/url/url-action-router.svelte';
-  import { IntroManager } from '$lib/services/intro-manager.svelte';
+  import { IntroManager } from '$features/settings/intro-manager.svelte';
 
   let { controller, options } = $props<{
     controller: CustomViewsController;

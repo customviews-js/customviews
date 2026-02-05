@@ -1,5 +1,5 @@
-import type { PersistenceManager } from '../state/persistence';
-import type { UIManagerOptions } from '../ui-manager';
+import type { PersistenceManager } from '../../state/persistence';
+import type { UIManagerOptions } from '../../ui-manager';
 
 const STORAGE_KEY_INTRO_SHOWN = 'cv-intro-shown';
 

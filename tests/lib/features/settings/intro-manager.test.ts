@@ -6,8 +6,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 // @ts-expect-error - Polyfill for testing
 globalThis.$state = (initial) => initial;
 
-import { IntroManager } from '../../../src/lib/services/intro-manager.svelte';
-import { PersistenceManager } from '../../../src/lib/state/persistence';
+import { IntroManager } from '../../../../src/lib/features/settings/intro-manager.svelte';
+import { PersistenceManager } from '../../../../src/lib/state/persistence';
 
 describe('IntroManager', () => {
   let introManager: IntroManager;
