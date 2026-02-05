@@ -7,13 +7,13 @@
 
 ## Simple Placeholders (Variable Interpolation)
 
-`\[[ variable_name ]]`
+`\[[ variable_name ]]`, `<cv-placeholder/>`, `<cv-placeholder-input/>`
 
 Placeholders allow you to create dynamic "Mad Libs" style documentation. Authors can define variable placeholders that readers can customize via the Settings Widget. The values entered by the reader are persisted and automatically update text, code blocks, and other content across the site.
 
 ## Usage
 
-### Define the Placeholder
+### Add the Placeholder Configuration
 
 Placeholders are defined in your `customviews.config.json` under the `placeholders` key.
 
@@ -42,7 +42,7 @@ Hello, [[username]]!
 
 The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.
 
-### Inline Fallback
+## Inline Fallback
 
 You can provide a fallback value directly in the usage syntax. This is useful if you haven't defined a formal placeholder or want a specific default for one instance.
 
@@ -58,7 +58,7 @@ If the user has not set a value for `email`, "support@example.com" will be displ
 
 > Empty strings (`""`) are treated as "not set" and will fall through to the next resolution level. This means clearing a placeholder value in the settings will cause it to display the registry default or inline fallback instead of showing nothing.
 
-### Manual Component Usage
+## Manual Component Usage
 
 For more control, you can use the internal custom element directly:
 
@@ -68,7 +68,7 @@ For more control, you can use the internal custom element directly:
 
 This is functionally equivalent to `[[ email : support@example.com ]]` but can be useful when you need to ensure the element exists in the DOM structurally or when working within other HTML constructs that might interfere with text scanning.
 
-## Attribute Interpolation
+## HTML Attribute Interpolation
 
 In addition to text, you can interpolate variables into HTML attributes, such as `href` or `src`. This is useful for creating dynamic links or loading images based on user preferences.
 
@@ -108,25 +108,61 @@ If the user sets `searchQuery` to `hello world`, the link becomes `https://www.g
 <img src="https://example.com/assets/[[theme]].png" class="cv-bind" alt="Theme Preview" />
 ```
 
-## Inline Editing
+## Escaping Syntax
 
-You can allow users to edit placeholders directly on the page (without opening the settings menu) using the `<cv-placeholder-input>` component.
+You can "escape" the placeholder syntax if you want to display the literal brackets instead of a variable.
 
-```html
-<cv-placeholder-input name="username" label="Enter your username"></cv-placeholder-input>
-```
+- **In Markdown Text**: Use two backslashes: `\\\[[ variable ]]`.
+- **In Code Blocks**: Use one backslash: `\\[[ variable ]]`.
 
-This component is fully two-way bound. Typing in it will instantly update all `[[username]]` occurrences on the page, and changing the value in the settings menu will update this input.
+## Inline Editing of Placeholders
+ 
+You can allow users to edit placeholders directly on the page using the `<cv-placeholder-input>` component. By default, the component renders inline with text. For example, you can update your username placeholder here: <cv-placeholder-input name="username" width="150px" hint="Your Name" appearance="underline"></cv-placeholder-input>, which updates your username: [[username]].
 
-**Example:**
+Several attributes control the appearance and behavior of the component:
+* `layout`: The layout to use (inline, stacked, or horizontal).
+  * `inline` (Default): Component sits in the text flow, and the label is hidden visually.
+  * `stacked`: Label sits on top of the input. Input takes full width.
+  * `horizontal`: Label sits to the left of the input. Input takes remaining space.
+* `appearance`: The appearance to use (outline, underline, or ghost).
+  * `outline` (Default): Standard input box with border.
+  * `underline`: Only a bottom border. Great for inline text.
+  * `ghost`: No border until focused. Seamless blending for inline text that can be edited.
+* `label`: The label to use (for stacked or horizontal layouts).
+* `hint`: The hint to use (for inline layouts).
+* `width`: The width of the component.
 
-<cv-placeholder-input name="username" label="Who are you?" hint="Type here..."></cv-placeholder-input>
 
-Hello, [[username : Guest]]!
+<include src="codeAndOutput.md" boilerplate >
+<variable name="highlightStyle">html</variable>
+<variable name="code">
 
-Google search for <a href="https://www.google.com/search?q=[[username]]" class="cv-bind"> [[username]] </a>
+<!-- Inline layout -->
+My username is <cv-placeholder-input name="username" layout="inline" appearance="underline" hint="Your Name"></cv-placeholder-input> and it is <cv-placeholder-input name="username" layout="inline" appearance="ghost" width="auto-grow" hint="this auto-grows"></cv-placeholder-input>.
 
-## Configuration
+<!-- Stacked layout -->
+<cv-placeholder-input name="username" layout="stacked"></cv-placeholder-input>
+ 
+<!-- Horizontal layout -->
+<cv-placeholder-input name="username" layout="horizontal" label="Username:"></cv-placeholder-input>
+
+</variable>
+</include>
+
+
+
+### Placeholder-Input Attributes
+ 
+| Attribute | Type | Default | Description |
+| :--- | :--- | :--- | :--- |
+| name | `string` | - | **Required**. The placeholder name to bind to. |
+| layout | `string` | `inline` | `inline`, `stacked`, `horizontal`. |
+| appearance | `string` | `outline` | `outline`, `underline`, `ghost`. |
+| label | `string` | value defined in config | Visual label text (for stacked/horizontal) or `aria-label` (for inline). |
+| hint | `string` | value defined in config | Overrides the placeholder hint/placeholder text. |
+| width | `string` | Varies | `100%` for stacked, `flex-fill` for horizontal, and browser default for inline. Set `auto-grow` to resize based on content (inline only). |
+
+## Placeholder Configuration
 
 | Field         | Type      | Description                                                                                                    |
 | ------------- | --------- | -------------------------------------------------------------------------------------------------------------- |
@@ -136,12 +172,18 @@ Google search for <a href="https://www.google.com/search?q=[[username]]" class="
 | defaultValue  | `string`  | Initial value if unset.                                                                                        |
 | isLocal       | `boolean` | If `true`, the input field only appears in Settings when the placeholder is actually used on the current page. |
 
-## Escaping Syntax
+Example:
 
-You can "escape" the placeholder syntax if you want to display the literal brackets instead of a variable.
-
-- **In Markdown Text**: Use two backslashes: `\\\[[ variable ]]`.
-- **In Code Blocks**: Use one backslash: `\\[[ variable ]]`.
+```json
+{
+  "config": {
+    "placeholders": [
+      { "name": "username", "settingsLabel": "Your Username", "settingsHint": "Enter username" },
+      { "name": "searchQuery", "settingsLabel": "Search Query", "settingsHint": "Enter search query", "isLocal": true }
+    ]
+  }
+}
+```
 
 ## Tab Group Binding & Integration
 
@@ -166,8 +208,26 @@ You can bind a **Tab Group** directly to a placeholder variable in your `customv
 ```
 
 <box>
-    
-#### Live Demo
+
+
+<include src="codeAndOutputSeparate.md" boilerplate >
+<variable name="highlightStyle">html</variable>
+<variable name="code">
+
+Double click a tab below to update the variable.
+
+<cv-tabgroup group-id="fruit">
+    <cv-tab tab-id="apple"> I love apples. </cv-tab>
+    <cv-tab tab-id="orange"> I love oranges. </cv-tab>
+    <cv-tab tab-id="pear"> I love pears. </cv-tab>
+</cv-tabgroup>
+
+\[[fruit]]
+
+My favourite fruit is `\[[fruit]]`, and it updates automatically!
+
+</variable>
+<variable name="output">
 
 Double click a tab below to update the variable.
 
@@ -180,6 +240,9 @@ Double click a tab below to update the variable.
 [[fruit]]
 
 My favourite fruit is `[[fruit]]`, and it updates automatically!
+
+</variable>
+</include>
 
 </box>
 
