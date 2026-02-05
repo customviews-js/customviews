@@ -13,7 +13,7 @@ export const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_-]+)(?:\s*:\s*(.*?))?\s*\]\]/g
 // Non-global version for stateless testing
 const VAR_TESTER = /(\\)?\[\[\s*([a-zA-Z0-9_-]+)(?:\s*:\s*(.*?))?\s*\]\]/;
 
-import { placeholderRegistryStore } from '$lib/stores/placeholder-registry-store.svelte';
+import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 import { store } from '$lib/stores/main-store.svelte';
 
 export class PlaceholderBinder {

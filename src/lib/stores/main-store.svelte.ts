@@ -3,8 +3,8 @@ import type { Config, State, TabGroupConfig } from '$lib/types/index';
 import type { ConfigSectionKey } from '$lib/types/index';
 import { isValidConfigSection } from '$lib/types/index';
 import type { AssetsManager } from '../assets';
-import { placeholderValueStore } from './placeholder-value-store.svelte';
-import { placeholderRegistryStore } from './placeholder-registry-store.svelte';
+import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
+import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 
 /**
  * Reactive Data Store for CustomViews application state.

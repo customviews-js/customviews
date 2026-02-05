@@ -1,8 +1,8 @@
 <svelte:options customElement="cv-placeholder-input" />
 
 <script lang="ts">
-  import { placeholderValueStore } from '$lib/stores/placeholder-value-store.svelte';
-  import { placeholderRegistryStore } from '$lib/stores/placeholder-registry-store.svelte';
+  import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
+  import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 
   let { name, label, hint } = $props<{ name: string; label?: string; hint?: string }>();
 

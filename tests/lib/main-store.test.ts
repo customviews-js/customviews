@@ -15,14 +15,14 @@ vi.mock('svelte/reactivity', () => ({
 }));
 
 // Mock dependencies
-vi.mock('../../src/lib/stores/placeholder-value-store.svelte', () => ({
+vi.mock('../../src/lib/features/placeholder/stores/placeholder-value-store.svelte', () => ({
   placeholderValueStore: {
     set: vi.fn(),
     values: {},
   },
 }));
 
-vi.mock('../../src/lib/stores/placeholder-registry-store.svelte', () => ({
+vi.mock('../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => ({
   placeholderRegistryStore: {
     has: vi.fn(),
     register: vi.fn(),
@@ -31,8 +31,8 @@ vi.mock('../../src/lib/stores/placeholder-registry-store.svelte', () => ({
   },
 }));
 
-import { placeholderValueStore } from '../../src/lib/stores/placeholder-value-store.svelte';
-import { placeholderRegistryStore } from '../../src/lib/stores/placeholder-registry-store.svelte';
+import { placeholderValueStore } from '../../src/lib/features/placeholder/stores/placeholder-value-store.svelte';
+import { placeholderRegistryStore } from '../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
 
 describe('DataStore', () => {
   let initStore: any;

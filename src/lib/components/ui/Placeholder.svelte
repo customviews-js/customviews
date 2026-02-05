@@ -1,8 +1,8 @@
 <svelte:options customElement="cv-placeholder" />
 
 <script lang="ts">
-  import { placeholderValueStore } from '$lib/stores/placeholder-value-store.svelte';
-  import { placeholderRegistryStore } from '$lib/stores/placeholder-registry-store.svelte';
+  import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
+  import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 
   let { name, fallback } = $props<{ name: string; fallback?: string }>();
 

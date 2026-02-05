@@ -6,8 +6,8 @@ import { URLStateManager } from './state/url-state-manager';
 
 import { FocusService } from '$features/focus/services/focus-service.svelte';
 import { DataStore, initStore } from './stores/main-store.svelte';
-import { placeholderValueStore } from './stores/placeholder-value-store.svelte';
-import { PlaceholderBinder } from './services/placeholder-binder';
+import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
+import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
 export interface ControllerOptions {
   assetsManager: AssetsManager;

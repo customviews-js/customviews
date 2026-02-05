@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { PlaceholderBinder } from '../../src/lib/services/placeholder-binder';
+import { PlaceholderBinder } from '../../src/lib/features/placeholder/placeholder-binder';
 import { store } from '../../src/lib/stores/main-store.svelte';
 
 // Mock main store
@@ -13,7 +13,7 @@ vi.mock('../../src/lib/stores/main-store.svelte', () => {
 });
 
 // Mock the store BEFORE importing the subject under test
-vi.mock('../../src/lib/stores/placeholder-registry-store.svelte', () => {
+vi.mock('../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => {
   return {
     placeholderRegistryStore: {
       definitions: [],

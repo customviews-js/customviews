@@ -1,4 +1,4 @@
-import type { PlaceholderDefinition } from '$lib/stores/placeholder-registry-store.svelte';
+import type { PlaceholderDefinition } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 
 /**
  * Configuration for a single tab within a tab group
