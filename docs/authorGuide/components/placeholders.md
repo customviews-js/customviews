@@ -42,6 +42,16 @@ Hello, [[username]]!
 
 The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.
 
+#### Manual Component Usage
+
+You could also use the internal custom element directly:
+
+```html
+<cv-placeholder name="email" fallback="support@example.com"></cv-placeholder>
+```
+
+This is functionally equivalent to `\[[ email : support@example.com ]]` but may be useful for debugging or etc. Hopefully you won't have to use it.
+
 ## Inline Fallback
 
 You can provide a fallback value directly in the usage syntax. This is useful if you haven't defined a formal placeholder or want a specific default for one instance.
@@ -52,21 +62,8 @@ Contact us at \[[ email : support@example.com ]]
 Contact us at [[email : support@example.com]]
 ```
 
-If the user has not set a value for `email`, "support@example.com" will be displayed.
+If the user has not set a value for `email`, "support@example.com" will be displayed. Placeholders first use user-set values if available, inline fallbacks, registry defaults and lastly raw placeholder names, i.e. `\[[name]]`. User set empty strings (`""`) are treated as "not set" and show inline fallbacks, instead of showing nothing.
 
-**Note**: Placeholders resolve their displayed value by first using user-set values if available, registered defaults, inline feedback and lastly raw placeholder names, i.e. `\[[name]]`.
-
-> Empty strings (`""`) are treated as "not set" and will fall through to the next resolution level. This means clearing a placeholder value in the settings will cause it to display the registry default or inline fallback instead of showing nothing.
-
-## Manual Component Usage
-
-For more control, you can use the internal custom element directly:
-
-```html
-<cv-placeholder name="email" fallback="support@example.com"></cv-placeholder>
-```
-
-This is functionally equivalent to `[[ email : support@example.com ]]` but can be useful when you need to ensure the element exists in the DOM structurally or when working within other HTML constructs that might interfere with text scanning.
 
 ## HTML Attribute Interpolation
 
@@ -77,27 +74,29 @@ In addition to text, you can interpolate variables into HTML attributes, such as
 1. You must use standard HTML syntax (e.g., `<a href="...">`) rather than Markdown links.
 2. You must add the `class="cv-bind"` (or `data-cv-bind`) attribute to the element. This signals the system to scan the element's attributes.
 
-### Examples
 
-**Dynamic Query Parameter:**
+
+**Example: Dynamic Query Parameter:**
 
 ```html
 <!-- Use it in a link -->
-<a href="https://www.google.com/search?q=[[searchQuery]]" class="cv-bind">
+<a href="https://www.google.com/search?q=\[[searchQuery]]" class="cv-bind">
   Search Google for '\[[searchQuery]]'
 </a>
 ```
+
+Update the placeholder value here: <cv-placeholder-input name="searchQuery" />.
 
 This renders into:
 <a href="https://www.google.com/search?q=[[searchQuery]]" class="cv-bind">
 Search Google for '[[searchQuery]]'
 </a>
 
-If the user sets `searchQuery` to `hello world`, the link becomes `https://www.google.com/search?q=hello%20world`.
+If the user sets `searchQuery` to `hello/world`, the link becomes `https://www.google.com/search?q=hello%2Fworld`.
 
-<br>
 
-> **Automatic Encoding**: Placeholders used in `href` and `src` attributes (e.g. `https://example.com/[[searchQuery]]`) are URL-encoded using `encodeURIComponent` to ensure valid URLs. Else, if the placeholder value is a full URL (e.g. `https://example.com`), a relative path (e.g. `/assets/logo.png`) or a special protocol (e.g. `mailto:email@example.com`), it will not be encoded.
+
+> **Automatic Encoding**: Placeholders used in `href` and `src` attributes are URL-encoded to ensure valid URLs (e.g. `/` becomes `%2F`). Else, if the placeholder value is a full URL (e.g. `https://example.com`), a relative path (e.g. `/assets/logo.png`) or a special protocol (e.g. `mailto:email@example.com`), it will not be encoded.
 
 > **Note**: The `class` attribute is **excluded** from placeholder binding to prevent conflicts with dynamic class manipulation by JavaScript or CSS frameworks. If you need dynamic classes, use JavaScript or CSS to add/remove classes instead.
 > Or raise an issue to explore the use case!

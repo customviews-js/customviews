@@ -83,7 +83,7 @@
   :host {
     display: inline-block;
     width: auto;
-    margin: 0;
+    margin: 0 0.25rem; /* Add breathing room for inline text */
   }
 
   /* Host display overrides based on layout */
@@ -91,7 +91,7 @@
   :host([layout='horizontal']) {
     display: block;
     width: 100%;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.5rem 0; /* Reset margins for block layouts */
   }
   
   /* Wrapper Grid/Flex Layouts */
