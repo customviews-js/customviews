@@ -1,34 +1,15 @@
 import { SvelteSet } from 'svelte/reactivity';
 import { showToast } from '$lib/stores/toast-store.svelte';
 import * as DomElementLocator from '$lib/utils/dom-element-locator';
-
-export const SELECTED_CLASS = 'cv-share-selected';
-export const HIGHLIGHT_TARGET_CLASS = 'cv-highlight-target';
-export const HIDE_SELECTED_CLASS = 'cv-share-selected-hide';
-export const HIDE_HIGHLIGHT_TARGET_CLASS = 'cv-highlight-target-hide';
-export const HIGHLIGHT_SELECTED_CLASS = 'cv-share-selected-highlight';
-export const HIGHLIGHT_TARGET_MODE_CLASS = 'cv-highlight-target-mode';
-export const CV_CUSTOM_ELEMENTS = 'cv-tabgroup, cv-toggle';
-export const SHAREABLE_SELECTOR =
-  'div, p, blockquote, pre, li, h1, h2, h3, h4, h5, h6, table, ' + CV_CUSTOM_ELEMENTS;
-// IDs that should be treated as generic wrappers even if they are unique
-export const GENERIC_WRAPPER_IDS = ['flex-body', 'content-wrapper', 'app'];
-
-export function isGenericWrapper(el: HTMLElement): boolean {
-  // Check for explicit generic IDs (layout wrappers)
-  if (el.id && GENERIC_WRAPPER_IDS.includes(el.id)) return true;
-
-  if (el.tagName !== 'DIV') return false;
-  if (el.id) return false;
-
-  const style = window.getComputedStyle(el);
-  const hasBackground =
-    style.backgroundColor !== 'rgba(0, 0, 0, 0)' && style.backgroundColor !== 'transparent';
-  const hasBorder = style.borderStyle !== 'none' && parseFloat(style.borderWidth) > 0;
-  const hasShadow = style.boxShadow !== 'none';
-
-  return !hasBackground && !hasBorder && !hasShadow;
-}
+import {
+  calculateNewSelection,
+  SELECTED_CLASS,
+  HIGHLIGHT_TARGET_CLASS,
+  HIDE_SELECTED_CLASS,
+  HIDE_HIGHLIGHT_TARGET_CLASS,
+  HIGHLIGHT_SELECTED_CLASS,
+  HIGHLIGHT_TARGET_MODE_CLASS,
+} from '../share-logic';
 
 export type SelectionMode = 'show' | 'hide' | 'highlight';
 
@@ -103,53 +84,33 @@ export class ShareStore {
   }
 
   toggleElementSelection(el: HTMLElement) {
-    if (this.selectedElements.has(el)) {
-      this.selectedElements.delete(el);
-      this._removeSelectionClass(el);
-    } else {
-      this.selectElement(el);
+    const { updatedSelection, changesMade } = calculateNewSelection(this.selectedElements, el);
+
+    if (changesMade) {
+      // We need to sync the classes on the DOM elements
+      // 1. Remove classes from elements that are no longer selected
+      this.selectedElements.forEach((oldEl) => {
+        if (!updatedSelection.has(oldEl)) {
+          this._removeSelectionClass(oldEl);
+        }
+      });
+
+      // 2. Add classes to elements that are newly selected
+      updatedSelection.forEach((newEl) => {
+        if (!this.selectedElements.has(newEl)) {
+          this._addSelectionClass(newEl);
+        }
+      });
+
+      // 3. Update the state
+      this.selectedElements = updatedSelection;
     }
   }
 
-  selectElement(el: HTMLElement) {
-    if (this.selectedElements.has(el)) return;
-
-    // 1. Check if ancestor is selected (Scenario B)
-    let parent = el.parentElement;
-    let ancestorSelected = false;
-    while (parent) {
-      if (this.selectedElements.has(parent)) {
-        ancestorSelected = true;
-        break;
-      }
-      parent = parent.parentElement;
-    }
-
-    if (ancestorSelected) {
-      return; // Ignore
-    }
-
-    // 2. Remove children if selected (Scenario A)
-    const toRemove: HTMLElement[] = [];
-    this.selectedElements.forEach((selected) => {
-      if (el.contains(selected) && el !== selected) {
-        toRemove.push(selected);
-      }
-    });
-
-    toRemove.forEach((child) => {
-      this.selectedElements.delete(child);
-      this._removeSelectionClass(child);
-    });
-
-    // Add
-    this.selectedElements.add(el);
-    this._addSelectionClass(el);
-  }
-
-  addMultipleElements(elements: HTMLElement[]) {
+  toggleMultipleElements(elements: HTMLElement[]) {
+    // TODO: Optimization: we could batch this in logic if needed, but simple iteration works for now
     for (const el of elements) {
-      this.selectElement(el);
+      this.toggleElementSelection(el);
     }
   }
 

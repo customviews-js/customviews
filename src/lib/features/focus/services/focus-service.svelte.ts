@@ -4,12 +4,13 @@ import { focusStore } from '$features/focus/stores/focus-store.svelte';
 import { showToast } from '$lib/stores/toast-store.svelte';
 import * as DomElementLocator from '$lib/utils/dom-element-locator';
 import FocusDivider from '$features/focus/FocusDivider.svelte';
+import { determineHiddenElements, isElementExcluded, calculateDividerGroups } from '../focus-logic';
 import { SvelteSet, SvelteURL } from 'svelte/reactivity';
 
 const SHOW_PARAM = 'cv-show';
 const HIDE_PARAM = 'cv-hide';
 const BODY_SHOW_CLASS = 'cv-show-mode';
-const HIDDEN_CLASS = 'cv-show-hidden';
+const HIDDEN_CLASS = 'cv-hidden';
 const SHOW_ELEMENT_CLASS = 'cv-show-element';
 
 import {
@@ -48,7 +49,6 @@ export class FocusService {
     this.excludedIds = new SvelteSet([...DEFAULT_EXCLUDED_IDS, ...userIds]);
 
     this.highlightService = new HighlightService(this.rootEl);
-    this.injectStyles();
 
     // Subscribe to store for exit signal
     this.unsubscribe = $effect.root(() => {
@@ -110,27 +110,6 @@ export class FocusService {
   private handlePopState = () => {
     this.url.href = window.location.href;
   };
-
-  /**
-   * Inject global styles for focus/show mode.
-   * This ensures a single source of truth for class names.
-   */
-  private injectStyles() {
-    if (document.getElementById('cv-focus-service-styles')) return;
-
-    const style = document.createElement('style');
-    style.id = 'cv-focus-service-styles';
-    style.textContent = `
-      :global(.${HIDDEN_CLASS}) {
-        display: none !important;
-      }
-      :global(body.${BODY_SHOW_CLASS}),
-      :global(body.${BODY_HIGHLIGHT_CLASS}) {
-        margin-top: 50px !important;
-      }
-    `;
-    document.head.appendChild(style);
-  }
 
   /**
    * Applies focus mode to the specified descriptors.
@@ -244,7 +223,24 @@ export class FocusService {
     // 1. Mark targets
     targets.forEach((t) => t.classList.add(SHOW_ELEMENT_CLASS));
 
-    // 2. Identify Elements to Keep Visible (Targets + Ancestors)
+    // 2. Determine what to hide
+    const elementsToHide = determineHiddenElements(targets, document.body, (el) =>
+      isElementExcluded(el, {
+        hiddenElements: this.hiddenElements,
+        excludedTags: this.excludedTags,
+        excludedIds: this.excludedIds,
+      }),
+    );
+
+    // 3. Apply changes (Hide & Track)
+    elementsToHide.forEach((el) => {
+      el.classList.add(HIDDEN_CLASS);
+      this.hiddenElements.add(el);
+    });
+
+    // 4. Identify Elements to Keep Visible (Targets + Ancestors)
+    // We still need this for divider insertion optimization?
+    // Actually insertDividersForContainer uses processedContainers logic.
     const keepVisible = new SvelteSet<HTMLElement>();
     targets.forEach((t) => {
       let curr: HTMLElement | null = t;
@@ -254,26 +250,7 @@ export class FocusService {
       }
     });
 
-    // 3. Hide Siblings
-    keepVisible.forEach((el) => {
-      if (el === document.body) return;
-
-      const parent = el.parentElement;
-      if (!parent) return;
-
-      // Parent Dominance: If parent is focused, don't hide its children
-      if (parent.classList.contains(SHOW_ELEMENT_CLASS)) {
-        return;
-      }
-
-      Array.from(parent.children).forEach((child) => {
-        if (child instanceof HTMLElement && !keepVisible.has(child)) {
-          this.hideElement(child);
-        }
-      });
-    });
-
-    // 4. Insert Dividers
+    // 5. Insert Dividers
     const processedContainers = new SvelteSet<HTMLElement>();
     keepVisible.forEach((el) => {
       const parent = el.parentElement;
@@ -284,48 +261,16 @@ export class FocusService {
     });
   }
 
-  private hideElement(el: HTMLElement): void {
-    if (this.hiddenElements.has(el)) return;
-    if (this.excludedTags.has(el.tagName.toUpperCase())) return;
-    if (el.id && this.excludedIds.has(el.id)) return;
-    if (el.getAttribute('aria-hidden') === 'true') return;
-
-    // Exclude Toast/Banner/Overlay/SettingsIcon/UIRoot
-    if (
-      el.closest('.toast-container') ||
-      el.id === 'cv-exit-focus-banner' ||
-      el.classList.contains('cv-settings-icon') ||
-      el.classList.contains('cv-widget-root')
-    )
-      return;
-
-    if (el.querySelector('header, footer, nav') !== null) return;
-
-    el.classList.add(HIDDEN_CLASS);
-    this.hiddenElements.add(el);
-  }
-
   private insertDividersForContainer(container: HTMLElement): void {
     const children = Array.from(container.children) as HTMLElement[];
-    let hiddenCount = 0;
-    let hiddenGroupStart: HTMLElement | null = null;
+    const isHidden = (el: HTMLElement) => el.classList.contains(HIDDEN_CLASS);
 
-    children.forEach((child) => {
-      if (child.classList.contains(HIDDEN_CLASS)) {
-        if (hiddenCount === 0) hiddenGroupStart = child;
-        hiddenCount++;
-      } else {
-        if (hiddenCount > 0 && hiddenGroupStart) {
-          this.createDivider(container, hiddenGroupStart, hiddenCount);
-          hiddenCount = 0;
-          hiddenGroupStart = null;
-        }
-      }
+    const groups = calculateDividerGroups(children, isHidden);
+
+    groups.forEach((group) => {
+      // Insert the divider before first hidden element of the group.
+      this.createDivider(container, group.startNode, group.count);
     });
-
-    if (hiddenCount > 0 && hiddenGroupStart) {
-      this.createDivider(container, hiddenGroupStart, hiddenCount);
-    }
   }
 
   private createDivider(container: HTMLElement, insertBeforeEl: HTMLElement, count: number): void {

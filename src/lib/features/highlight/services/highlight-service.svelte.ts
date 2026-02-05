@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { mount, unmount } from 'svelte';
-import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 import { showToast } from '$lib/stores/toast-store.svelte';
 import { focusStore } from '$features/focus/stores/focus-store.svelte';
 import * as DomElementLocator from '$lib/utils/dom-element-locator';
 import { scrollToElement } from '$lib/utils/scroll-utils';
 import HighlightOverlay from '$features/highlight/HighlightOverlay.svelte';
+import { groupSiblings, calculateMergedRects } from '../highlight-logic';
 
 export const HIGHLIGHT_PARAM = 'cv-highlight';
 
@@ -125,92 +125,17 @@ export class HighlightService {
       return;
     }
 
-    // 1. Group by Parent (Siblings)
-    const groups = new SvelteMap<HTMLElement, HTMLElement[]>();
+    // Group by Parent (Siblings)
+    const groups = groupSiblings(this.activeTargets);
 
-    this.activeTargets.forEach((t) => {
-      const parent = t.parentElement || document.body;
-      if (!groups.has(parent)) {
-        groups.set(parent, []);
-      }
-      groups.get(parent)!.push(t);
-    });
-
-    // 2. Calculate Union Rect for each group
-    const mergedRects: RectData[] = [];
-
-    // Iterate groups to ensure strict adjacency
-    for (const [parent, siblingsInGroup] of groups) {
-      if (siblingsInGroup.length === 0) continue;
-
-      // Optimization if only 1 child, no need to scan parent
-      if (siblingsInGroup.length === 1) {
-        this.addMergedRect(mergedRects, siblingsInGroup);
-        continue;
-      }
-
-      // O(1) lookup
-      const siblingsSet = new SvelteSet(siblingsInGroup);
-      let currentBatch: HTMLElement[] = [];
-
-      // Scan parent children to respect DOM order and interruptions
-      // Use parent.children to get Elements only (skip text nodes)
-      const children = Array.from(parent.children);
-
-      for (const child of children) {
-        if (child instanceof HTMLElement && siblingsSet.has(child)) {
-          currentBatch.push(child);
-        } else {
-          // Break in continuity
-          if (currentBatch.length > 0) {
-            this.addMergedRect(mergedRects, currentBatch);
-            currentBatch = [];
-          }
-        }
-      }
-      // Finalize last batch
-      if (currentBatch.length > 0) {
-        this.addMergedRect(mergedRects, currentBatch);
-      }
-    }
-
-    this.state.rects = mergedRects;
-  }
-
-  private addMergedRect(resultList: any[], elements: HTMLElement[]) {
-    if (elements.length === 0) return;
-
-    let minTop = Infinity;
-    let minLeft = Infinity;
-    let maxRight = -Infinity;
-    let maxBottom = -Infinity;
-
-    elements.forEach((t) => {
-      const r = t.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-
-      const top = r.top + scrollTop;
-      const left = r.left + scrollLeft;
-      const right = left + r.width;
-      const bottom = top + r.height;
-
-      if (top < minTop) minTop = top;
-      if (left < minLeft) minLeft = left;
-      if (right > maxRight) maxRight = right;
-      if (bottom > maxBottom) maxBottom = bottom;
-    });
-
-    const PADDING = 10;
-
-    resultList.push({
-      top: minTop - PADDING,
-      left: minLeft - PADDING,
-      width: maxRight - minLeft + PADDING * 2,
-      height: maxBottom - minTop + PADDING * 2,
-      right: maxRight + PADDING,
-      bottom: maxBottom + PADDING,
-      element: elements[0],
-    });
+    // Calculate Union Rect for each group
+    this.state.rects = calculateMergedRects(
+      groups,
+      (el) => el.getBoundingClientRect(),
+      () => ({
+        scrollTop: window.pageYOffset || document.documentElement.scrollTop,
+        scrollLeft: window.pageXOffset || document.documentElement.scrollLeft,
+      }),
+    );
   }
 }

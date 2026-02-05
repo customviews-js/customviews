@@ -92,6 +92,7 @@ describe('URLStateManager', () => {
 
       expect(window.history.replaceState).toHaveBeenCalled();
       const call = vi.mocked(window.history.replaceState).mock.calls[0];
+      if (!call) throw new Error('Call 1 failed');
       const url = call[2] as string; // 3rd arg is URL
 
       expect(url).toContain('view=');
@@ -105,6 +106,7 @@ describe('URLStateManager', () => {
 
       expect(window.history.replaceState).toHaveBeenCalled();
       const call = vi.mocked(window.history.replaceState).mock.calls[0];
+      if (!call) throw new Error('Call 2 failed');
       const url = call[2] as string;
 
       expect(url).not.toContain('view=');

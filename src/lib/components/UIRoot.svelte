@@ -94,11 +94,9 @@
     }, 600);
   }
 
-  function handleStartShare(mode?: SelectionMode) {
+  function handleStartShare(mode: SelectionMode = 'show') {
     closeModal();
-    if (mode) {
-      shareStore.setSelectionMode(mode);
-    }
+    shareStore.setSelectionMode(mode);
     shareStore.toggleActive(true);
   }
 
@@ -240,7 +238,16 @@
     --cv-icon-color: #e2e8f0;
 
     --cv-focus-ring: rgba(62, 132, 244, 0.5);
-
     --cv-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Global Focus Service Styles */
+  :global(.cv-show-mode),
+  :global(.cv-highlight-mode) {
+    margin-top: 50px !important;
+  }
+
+  :global(.cv-hidden) {
+    display: none !important;
   }
 </style>
