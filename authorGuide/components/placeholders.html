@@ -108,7 +108,49 @@ For the latest stable release, visit <a href="https://customviews-js.github.io">
 
     </div>
     </div>
-    </button></div></pre><p>The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.</p> <h2 id="inline-fallback">Inline Fallback<a class="fa fa-anchor" href="#inline-fallback" onclick="event.stopPropagation()"></a></h2> <p>You can provide a fallback value directly in the usage syntax. This is useful if you haven&#39;t defined a formal placeholder or want a specific default for one instance.</p> <pre><code class="hljs markdown"><span>Contact us at \[[ email : support@example.com ]]
+    </button></div></pre><p>The system scans the page and replaces these tokens with the current value. When the user updates the value in the settings, all instances on the page update immediately.</p> <h4 id="manual-component-usage">Manual Component Usage<a class="fa fa-anchor" href="#manual-component-usage" onclick="event.stopPropagation()"></a></h4> <p>You could also use the internal custom element directly:</p> <pre><code class="hljs html"><span><span class="hljs-tag">&lt;<span class="hljs-name">cv-placeholder</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;email&quot;</span> <span class="hljs-attr">fallback</span>=<span class="hljs-string">&quot;support@example.com&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">cv-placeholder</span>&gt;</span>
+</span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Copy</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path d="M 11.273438 0 L 2.546875 0 C 1.746094 0 1.089844 0.613281 1.089844
+      1.363281 L 1.089844 10.910156 L 2.546875 10.910156 L 2.546875 1.363281 L 11.273438
+      1.363281 Z M 13.453125 2.726562 L 5.453125 2.726562 C 4.65625 2.726562 4 3.339844 4
+      4.089844 L 4 13.636719 C 4 14.386719 4.65625 15 5.453125 15 L 13.453125 15 C 14.253906
+      15 14.910156 14.386719 14.910156 13.636719 L 14.910156 4.089844 C 14.910156 3.339844
+      14.253906 2.726562 13.453125 2.726562 Z M 13.453125 13.636719 L 5.453125 13.636719 L
+      5.453125 4.089844 L 13.453125 4.089844 Z M 13.453125 13.636719 "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button><button onclick="toggleCodeBlockWrap(this)" class="function-btn d-print-none wrap-button">
+    <div class="tooltip-container">
+    <span class="tooltiptext">Wrap Text</span>
+    <div class="function-btn-body">
+    
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
+    <g id="surface1">
+      <path id="path17964" d="M 1.109375 0 L 1.109375 2.5351562 L 2.0410156 2.5351562 L
+      2.0410156 0.93164062 L 4.8203125 0.93164062 L 4.8203125 9.3222656 L 3.4746094
+      9.3222656 L 3.4746094 10.144531 L 8.8027344 10.144531 L 8.8027344 9.3222656 L
+      7.4492188 9.3222656 L 7.4492188 0.93164062 L 10.25 0.93164062 L 10.25 2.5351562 L
+      11.166016 2.5351562 L 11.166016 0 L 1.109375 0 z M 10.84375 5.1054688 L 10.84375
+      6.6074219 C 12.268027 6.6074219 13.40625 7.7456444 13.40625 9.1699219 C 13.40625
+      10.185673 12.827237 11.055036 11.978516 11.470703 L 11.978516 9.5175781 L 7.1386719
+      12.3125 L 11.978516 15.105469 L 11.978516 13.072266 C 13.66701 12.577757 14.910156
+      11.012746 14.910156 9.1699219 C 14.910156 6.9333638 13.080308 5.1054688 10.84375
+      5.1054688 z "></path>
+    </g>
+</svg>
+
+    </div>
+    </div>
+    </button></div></pre><p>This is functionally equivalent to <code class="hljs inline no-lang">\[[ email : support@example.com ]]</code> but may be useful for debugging or etc. Hopefully you won&#39;t have to use it.</p> <h2 id="inline-fallback">Inline Fallback<a class="fa fa-anchor" href="#inline-fallback" onclick="event.stopPropagation()"></a></h2> <p>You can provide a fallback value directly in the usage syntax. This is useful if you haven&#39;t defined a formal placeholder or want a specific default for one instance.</p> <pre><code class="hljs markdown"><span>Contact us at \[[ email : support@example.com ]]
 </span><span>↓
 </span><span>Contact us at [[email : support@example.com]]
 </span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
@@ -152,50 +194,8 @@ For the latest stable release, visit <a href="https://customviews-js.github.io">
 
     </div>
     </div>
-    </button></div></pre><p>If the user has not set a value for <code class="hljs inline no-lang">email</code>, &quot;<a href="mailto:support@example.com">support@example.com</a>&quot; will be displayed.</p> <p><strong>Note</strong>: Placeholders resolve their displayed value by first using user-set values if available, registered defaults, inline feedback and lastly raw placeholder names, i.e. <code class="hljs inline no-lang">\[[name]]</code>.</p> <blockquote><p>Empty strings (<code class="hljs inline no-lang">&quot;&quot;</code>) are treated as &quot;not set&quot; and will fall through to the next resolution level. This means clearing a placeholder value in the settings will cause it to display the registry default or inline fallback instead of showing nothing.</p></blockquote> <h2 id="manual-component-usage">Manual Component Usage<a class="fa fa-anchor" href="#manual-component-usage" onclick="event.stopPropagation()"></a></h2> <p>For more control, you can use the internal custom element directly:</p> <pre><code class="hljs html"><span><span class="hljs-tag">&lt;<span class="hljs-name">cv-placeholder</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;email&quot;</span> <span class="hljs-attr">fallback</span>=<span class="hljs-string">&quot;support@example.com&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">cv-placeholder</span>&gt;</span>
-</span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
-    <div class="tooltip-container">
-    <span class="tooltiptext">Copy</span>
-    <div class="function-btn-body">
-    
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
-    <g id="surface1">
-      <path d="M 11.273438 0 L 2.546875 0 C 1.746094 0 1.089844 0.613281 1.089844
-      1.363281 L 1.089844 10.910156 L 2.546875 10.910156 L 2.546875 1.363281 L 11.273438
-      1.363281 Z M 13.453125 2.726562 L 5.453125 2.726562 C 4.65625 2.726562 4 3.339844 4
-      4.089844 L 4 13.636719 C 4 14.386719 4.65625 15 5.453125 15 L 13.453125 15 C 14.253906
-      15 14.910156 14.386719 14.910156 13.636719 L 14.910156 4.089844 C 14.910156 3.339844
-      14.253906 2.726562 13.453125 2.726562 Z M 13.453125 13.636719 L 5.453125 13.636719 L
-      5.453125 4.089844 L 13.453125 4.089844 Z M 13.453125 13.636719 "></path>
-    </g>
-</svg>
-
-    </div>
-    </div>
-    </button><button onclick="toggleCodeBlockWrap(this)" class="function-btn d-print-none wrap-button">
-    <div class="tooltip-container">
-    <span class="tooltiptext">Wrap Text</span>
-    <div class="function-btn-body">
-    
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18" version="1.1">
-    <g id="surface1">
-      <path id="path17964" d="M 1.109375 0 L 1.109375 2.5351562 L 2.0410156 2.5351562 L
-      2.0410156 0.93164062 L 4.8203125 0.93164062 L 4.8203125 9.3222656 L 3.4746094
-      9.3222656 L 3.4746094 10.144531 L 8.8027344 10.144531 L 8.8027344 9.3222656 L
-      7.4492188 9.3222656 L 7.4492188 0.93164062 L 10.25 0.93164062 L 10.25 2.5351562 L
-      11.166016 2.5351562 L 11.166016 0 L 1.109375 0 z M 10.84375 5.1054688 L 10.84375
-      6.6074219 C 12.268027 6.6074219 13.40625 7.7456444 13.40625 9.1699219 C 13.40625
-      10.185673 12.827237 11.055036 11.978516 11.470703 L 11.978516 9.5175781 L 7.1386719
-      12.3125 L 11.978516 15.105469 L 11.978516 13.072266 C 13.66701 12.577757 14.910156
-      11.012746 14.910156 9.1699219 C 14.910156 6.9333638 13.080308 5.1054688 10.84375
-      5.1054688 z "></path>
-    </g>
-</svg>
-
-    </div>
-    </div>
-    </button></div></pre><p>This is functionally equivalent to <code class="hljs inline no-lang">[[ email : support@example.com ]]</code> but can be useful when you need to ensure the element exists in the DOM structurally or when working within other HTML constructs that might interfere with text scanning.</p> <h2 id="html-attribute-interpolation">HTML Attribute Interpolation<a class="fa fa-anchor" href="#html-attribute-interpolation" onclick="event.stopPropagation()"></a></h2> <p>In addition to text, you can interpolate variables into HTML attributes, such as <code class="hljs inline no-lang">href</code> or <code class="hljs inline no-lang">src</code>. This is useful for creating dynamic links or loading images based on user preferences.</p> <p><strong>Requirements:</strong></p> <ol><li>You must use standard HTML syntax (e.g., <code class="hljs inline no-lang">&lt;a href=&quot;...&quot;&gt;</code>) rather than Markdown links.</li> <li>You must add the <code class="hljs inline no-lang">class=&quot;cv-bind&quot;</code> (or <code class="hljs inline no-lang">data-cv-bind</code>) attribute to the element. This signals the system to scan the element&#39;s attributes.</li></ol> <h3 id="examples">Examples<a class="fa fa-anchor" href="#examples" onclick="event.stopPropagation()"></a></h3> <p><strong>Dynamic Query Parameter:</strong></p> <pre><code class="hljs html"><span><span class="hljs-comment">&lt;!-- Use it in a link --&gt;</span>
-</span><span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;https://www.google.com/search?q=[[searchQuery]]&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;cv-bind&quot;</span>&gt;</span>
+    </button></div></pre><p>If the user has not set a value for <code class="hljs inline no-lang">email</code>, &quot;<a href="mailto:support@example.com">support@example.com</a>&quot; will be displayed. Placeholders first use user-set values if available, inline fallbacks, registry defaults and lastly raw placeholder names, i.e. <code class="hljs inline no-lang">\[[name]]</code>. User set empty strings (<code class="hljs inline no-lang">&quot;&quot;</code>) are treated as &quot;not set&quot; and show inline fallbacks, instead of showing nothing.</p> <h2 id="html-attribute-interpolation">HTML Attribute Interpolation<a class="fa fa-anchor" href="#html-attribute-interpolation" onclick="event.stopPropagation()"></a></h2> <p>In addition to text, you can interpolate variables into HTML attributes, such as <code class="hljs inline no-lang">href</code> or <code class="hljs inline no-lang">src</code>. This is useful for creating dynamic links or loading images based on user preferences.</p> <p><strong>Requirements:</strong></p> <ol><li>You must use standard HTML syntax (e.g., <code class="hljs inline no-lang">&lt;a href=&quot;...&quot;&gt;</code>) rather than Markdown links.</li> <li>You must add the <code class="hljs inline no-lang">class=&quot;cv-bind&quot;</code> (or <code class="hljs inline no-lang">data-cv-bind</code>) attribute to the element. This signals the system to scan the element&#39;s attributes.</li></ol> <p><strong>Example: Dynamic Query Parameter:</strong></p> <pre><code class="hljs html"><span><span class="hljs-comment">&lt;!-- Use it in a link --&gt;</span>
+</span><span><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;https://www.google.com/search?q=\[[searchQuery]]&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;cv-bind&quot;</span>&gt;</span>
 </span><span>  Search Google for &#39;\[[searchQuery]]&#39;
 </span><span><span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
 </span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
@@ -239,10 +239,10 @@ For the latest stable release, visit <a href="https://customviews-js.github.io">
 
     </div>
     </div>
-    </button></div></pre><p>This renders into:
+    </button></div></pre><p>Update the placeholder value here: <cv-placeholder-input name="searchQuery"></cv-placeholder-input>.</p> <p>This renders into:
 <a href="https://www.google.com/search?q=[[searchQuery]]" class="cv-bind">
 Search Google for &#39;[[searchQuery]]&#39;
-</a></p> <p>If the user sets <code class="hljs inline no-lang">searchQuery</code> to <code class="hljs inline no-lang">hello world</code>, the link becomes <code class="hljs inline no-lang">https://www.google.com/search?q=hello%20world</code>.</p> <br> <blockquote><p><strong>Automatic Encoding</strong>: Placeholders used in <code class="hljs inline no-lang">href</code> and <code class="hljs inline no-lang">src</code> attributes (e.g. <code class="hljs inline no-lang">https://example.com/[[searchQuery]]</code>) are URL-encoded using <code class="hljs inline no-lang">encodeURIComponent</code> to ensure valid URLs. Else, if the placeholder value is a full URL (e.g. <code class="hljs inline no-lang">https://example.com</code>), a relative path (e.g. <code class="hljs inline no-lang">/assets/logo.png</code>) or a special protocol (e.g. <code class="hljs inline no-lang">mailto:email@example.com</code>), it will not be encoded.</p></blockquote> <blockquote><p><strong>Note</strong>: The <code class="hljs inline no-lang">class</code> attribute is <strong>excluded</strong> from placeholder binding to prevent conflicts with dynamic class manipulation by JavaScript or CSS frameworks. If you need dynamic classes, use JavaScript or CSS to add/remove classes instead.
+</a></p> <p>If the user sets <code class="hljs inline no-lang">searchQuery</code> to <code class="hljs inline no-lang">hello/world</code>, the link becomes <code class="hljs inline no-lang">https://www.google.com/search?q=hello%2Fworld</code>.</p> <blockquote><p><strong>Automatic Encoding</strong>: Placeholders used in <code class="hljs inline no-lang">href</code> and <code class="hljs inline no-lang">src</code> attributes are URL-encoded to ensure valid URLs (e.g. <code class="hljs inline no-lang">/</code> becomes <code class="hljs inline no-lang">%2F</code>). Else, if the placeholder value is a full URL (e.g. <code class="hljs inline no-lang">https://example.com</code>), a relative path (e.g. <code class="hljs inline no-lang">/assets/logo.png</code>) or a special protocol (e.g. <code class="hljs inline no-lang">mailto:email@example.com</code>), it will not be encoded.</p></blockquote> <blockquote><p><strong>Note</strong>: The <code class="hljs inline no-lang">class</code> attribute is <strong>excluded</strong> from placeholder binding to prevent conflicts with dynamic class manipulation by JavaScript or CSS frameworks. If you need dynamic classes, use JavaScript or CSS to add/remove classes instead.
 Or raise an issue to explore the use case!</p></blockquote> <p><strong>Dynamic Image Source:</strong></p> <pre><code class="hljs html"><span><span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;https://example.com/assets/[[theme]].png&quot;</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;cv-bind&quot;</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">&quot;Theme Preview&quot;</span> /&gt;</span>
 </span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
     <div class="tooltip-container">
@@ -493,7 +493,7 @@ Or raise an issue to explore the use case!</p></blockquote> <p><strong>Dynamic I
 
     </div>
     </div>
-    </button></div></pre></div> <p><span class="dimmed">OUTPUT:</span></p> <div class="indented"><div class="alert box-container alert-default" style="background-color:white;border-color:white;border-left:5px solid grey;" data-v-19514615><!--Icon and vertical divider for seamless header box--><!----><div class="header-and-body" data-v-19514615><!-- Header wrapper, not rendered if there is no header attribute --><!----><!-- Body wrapper --><div class="box-body-wrapper" data-v-19514615><!-- icon on the left, not shown if there is a header --><!----><!-- Icon -- content divider for seamless boxes without the header attribute --><!----><!-- Content wrapper --><div class="contents" style="" data-v-19514615><!--[--><p>Double click a tab below to update the variable.</p> <cv-tabgroup group-id="fruit"><cv-tab tab-id="apple"> I love apples. </cv-tab> <cv-tab tab-id="orange"> I love oranges. </cv-tab> <cv-tab tab-id="pear"> I love pears. </cv-tab></cv-tabgroup> <p>[[fruit]]</p> <p>My favourite fruit is <code class="hljs inline no-lang">[[fruit]]</code>, and it updates automatically!</p><!--]--></div><!-- dismiss button on the right, not shown if there is a header --><!----></div></div></div></div></div><!--]--></div><!-- dismiss button on the right, not shown if there is a header --><!----></div></div></div> <h2 id="persistence">Persistence<a class="fa fa-anchor" href="#persistence" onclick="event.stopPropagation()"></a></h2> <p>Values entered by the user are saved in the browser&#39;s <code class="hljs inline no-lang">localStorage</code> (key: <code class="hljs inline no-lang">cv-user-variables</code>). This means:</p> <ol><li>Values persist across page reloads.</li> <li>Values persist when navigating between different pages of the documentation.</li></ol></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><a class="navbar-brand page-nav-title" href="#">Topics</a> <nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#simple-placeholders-variable-interpolation">Simple Placeholders (Variable Interpolation)‎</a> <a class="nav-link py-1" href="#usage">Usage‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#add-the-placeholder-configuration">Add the Placeholder Configuration‎</a> <a class="nav-link py-1" href="#use-the-placeholder">Use the placeholder‎</a></nav> <a class="nav-link py-1" href="#inline-fallback">Inline Fallback‎</a> <a class="nav-link py-1" href="#manual-component-usage">Manual Component Usage‎</a> <a class="nav-link py-1" href="#html-attribute-interpolation">HTML Attribute Interpolation‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#examples">Examples‎</a></nav> <a class="nav-link py-1" href="#escaping-syntax">Escaping Syntax‎</a> <a class="nav-link py-1" href="#inline-editing-of-placeholders">Inline Editing of Placeholders‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#placeholder-input-attributes">Placeholder-Input Attributes‎</a></nav> <a class="nav-link py-1" href="#placeholder-configuration">Placeholder Configuration‎</a> <a class="nav-link py-1" href="#tab-group-binding-and-amp-integration">Tab Group Binding &amp; Integration‎</a> <a class="nav-link py-1" href="#persistence">Persistence‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.2.0</a> on Fri, 6 Feb 2026, 3:47:47 GMT+8]</small><br></div></footer></div><!--]--></div>
+    </button></div></pre></div> <p><span class="dimmed">OUTPUT:</span></p> <div class="indented"><div class="alert box-container alert-default" style="background-color:white;border-color:white;border-left:5px solid grey;" data-v-19514615><!--Icon and vertical divider for seamless header box--><!----><div class="header-and-body" data-v-19514615><!-- Header wrapper, not rendered if there is no header attribute --><!----><!-- Body wrapper --><div class="box-body-wrapper" data-v-19514615><!-- icon on the left, not shown if there is a header --><!----><!-- Icon -- content divider for seamless boxes without the header attribute --><!----><!-- Content wrapper --><div class="contents" style="" data-v-19514615><!--[--><p>Double click a tab below to update the variable.</p> <cv-tabgroup group-id="fruit"><cv-tab tab-id="apple"> I love apples. </cv-tab> <cv-tab tab-id="orange"> I love oranges. </cv-tab> <cv-tab tab-id="pear"> I love pears. </cv-tab></cv-tabgroup> <p>[[fruit]]</p> <p>My favourite fruit is <code class="hljs inline no-lang">[[fruit]]</code>, and it updates automatically!</p><!--]--></div><!-- dismiss button on the right, not shown if there is a header --><!----></div></div></div></div></div><!--]--></div><!-- dismiss button on the right, not shown if there is a header --><!----></div></div></div> <h2 id="persistence">Persistence<a class="fa fa-anchor" href="#persistence" onclick="event.stopPropagation()"></a></h2> <p>Values entered by the user are saved in the browser&#39;s <code class="hljs inline no-lang">localStorage</code> (key: <code class="hljs inline no-lang">cv-user-variables</code>). This means:</p> <ol><li>Values persist across page reloads.</li> <li>Values persist when navigating between different pages of the documentation.</li></ol></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><a class="navbar-brand page-nav-title" href="#">Topics</a> <nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#simple-placeholders-variable-interpolation">Simple Placeholders (Variable Interpolation)‎</a> <a class="nav-link py-1" href="#usage">Usage‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#add-the-placeholder-configuration">Add the Placeholder Configuration‎</a> <a class="nav-link py-1" href="#use-the-placeholder">Use the placeholder‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#manual-component-usage">Manual Component Usage‎</a></nav></nav> <a class="nav-link py-1" href="#inline-fallback">Inline Fallback‎</a> <a class="nav-link py-1" href="#html-attribute-interpolation">HTML Attribute Interpolation‎</a> <a class="nav-link py-1" href="#escaping-syntax">Escaping Syntax‎</a> <a class="nav-link py-1" href="#inline-editing-of-placeholders">Inline Editing of Placeholders‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#placeholder-input-attributes">Placeholder-Input Attributes‎</a></nav> <a class="nav-link py-1" href="#placeholder-configuration">Placeholder Configuration‎</a> <a class="nav-link py-1" href="#tab-group-binding-and-amp-integration">Tab Group Binding &amp; Integration‎</a> <a class="nav-link py-1" href="#persistence">Persistence‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.2.0</a> on Fri, 6 Feb 2026, 4:11:48 GMT+8]</small><br></div></footer></div><!--]--></div>
 </body><script src="/customviews/markbind/js/bootstrap-utility.min.js"></script>
 <script src="/customviews/markbind/js/polyfill.min.js"></script>
 <script src="/customviews/markbind/js/vue.global.prod.min.js"></script>
@@ -502,7 +502,7 @@ Or raise an issue to explore the use case!</p></blockquote> <p><strong>Dynamic I
 <script>
   MarkBind.setupWithSearch()
 </script>
-    <script src="/customviews/plugins/customviews/custom-views.js" data-base-url="/customviews"></script>
+    <script src="https://unpkg.com/@customviews-js/customviews@beta" data-base-url="/customviews"></script>
     <script>
     function copyCodeBlock(element) {
         const pre = element.parentElement.parentElement;
