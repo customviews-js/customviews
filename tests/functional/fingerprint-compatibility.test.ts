@@ -135,7 +135,7 @@ describe('Fingerprint Regression', () => {
     const resolved = DomElementLocator.resolve(container, desc as any);
 
     expect(resolved).toHaveLength(1);
-    expect(resolved[0].textContent).toBe(expectedText);
+    expect(resolved[0]!.textContent).toBe(expectedText);
   });
 
   it('should resolve Feature C (Unicode) from legacy descriptor', () => {
@@ -143,7 +143,7 @@ describe('Fingerprint Regression', () => {
     const resolved = DomElementLocator.resolve(container, desc as any);
 
     expect(resolved).toHaveLength(1);
-    expect(resolved[0].textContent).toBe(expectedText);
+    expect(resolved[0]!.textContent).toBe(expectedText);
   });
 
   it('should resolve Sidebar Paragraph from legacy descriptor', () => {
@@ -151,7 +151,7 @@ describe('Fingerprint Regression', () => {
     const resolved = DomElementLocator.resolve(container, desc as any);
 
     expect(resolved).toHaveLength(1);
-    expect(resolved[0].textContent).toBe(expectedText);
+    expect(resolved[0]!.textContent).toBe(expectedText);
   });
 
   it('should fail gracefully if content changes significantly', () => {
@@ -181,6 +181,6 @@ describe('Fingerprint Regression', () => {
 
     // Should succeed based on High Score from Hash Match (50) + Snippet (30) = 80 > 60 (Perfect)
     expect(resolved).toHaveLength(1);
-    expect(resolved[0].textContent).toBe(expectedText);
+    expect(resolved[0]!.textContent).toBe(expectedText);
   });
 });

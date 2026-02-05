@@ -89,7 +89,7 @@ describe('DomElementLocator', () => {
       const serialized = DomElementLocator.serialize([original]);
       const deserializedList = DomElementLocator.deserialize(serialized);
 
-      expect(deserializedList[0].textSnippet).toBe('Hello 🌍');
+      expect(deserializedList[0]!.textSnippet).toBe('Hello 🌍');
     });
   });
 
