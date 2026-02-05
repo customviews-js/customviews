@@ -170,21 +170,9 @@ However, if a tabgroup element does not have an `id` attribute, the tabgroup and
 
 For example:
 
-<include src="codeAndOutputSeparate.md" boilerplate >
+<include src="codeAndOutput.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup>
-<cv-tab>
-
-Tab 1 Content
-</cv-tab>
-<cv-tab>
-
-Tab 2 Content
-</cv-tab>
-</cv-tabgroup>
-</variable>
-<variable name="output">
 <cv-tabgroup>
 <cv-tab>
 
@@ -211,41 +199,9 @@ You can create a single tab that represents multiple alternative IDs by specifyi
 
 **Example:**
 
-<include src="codeAndOutputSeparate.md" boilerplate >
+<include src="codeAndOutput.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup group-id="lang" >
-  <cv-tab tab-id="python" header="Python">
-
-Python is a high-level, interpreted programming language known for its simplicity and readability.
-
-  </cv-tab>
-  <cv-tab tab-id="java" header="Java">
-
-Java is a statically-typed, compiled language known for its robustness and platform independence.
-
-  </cv-tab>
-  <cv-tab tab-id="javascript" header="JavaScript">
-
-JavaScript is a dynamic language primarily used for web development.
-
-  </cv-tab>
-</cv-tabgroup>
-
-<cv-tabgroup group-id="lang" >
-  <cv-tab tab-id="python java" header="Python/Java Installation">
-
-Both Python and Java are easy to install. Download from their official websites.
-
-  </cv-tab>
-  <cv-tab tab-id="javascript" header="JS Installation">
-
-Install JavaScript by downloading Node.js from nodejs.org.
-
-  </cv-tab>
-</cv-tabgroup>
-</variable>
-<variable name="output">
 <cv-tabgroup group-id="lang" >
   <cv-tab tab-id="python" header="Python">
 
@@ -344,36 +300,22 @@ This is useful when you need:
 
 <panel header="### Basic Example">
 
-<include src="codeAndOutputSeparate.md" boilerplate >
+<include src="codeAndOutput.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 <cv-tabgroup group-id="docs" >
-  <cv-tab tab-id="overview">
-    <cv-tab-header><strong>Overview</strong></cv-tab-header>
+  <cv-tab tab-id="overview" header="My Overview">
+    <!-- <cv-tab-header><strong>Overview</strong></cv-tab-header> -->
     <cv-tab-body>
       Start here to learn the basics.
     </cv-tab-body>
   </cv-tab>
   
   <cv-tab tab-id="advanced">
-    <cv-tab-header><em>Advanced Topics</em></cv-tab-header>
-    <cv-tab-body>
-      Dive deeper into powerful features.
-    </cv-tab-body>
-  </cv-tab>
-</cv-tabgroup>
-</variable>
-<variable name="output">
-<cv-tabgroup group-id="docs" >
-  <cv-tab tab-id="overview">
-    <cv-tab-header><strong>Overview</strong></cv-tab-header>
-    <cv-tab-body>
-      Start here to learn the basics.
-    </cv-tab-body>
-  </cv-tab>
-  
-  <cv-tab tab-id="advanced">
-    <cv-tab-header><em>Advanced Topics</em></cv-tab-header>
+    <cv-tab-header>
+      
+***Advanced Topics***
+    </cv-tab-header>
     <cv-tab-body>
       Dive deeper into powerful features.
     </cv-tab-body>
@@ -386,32 +328,9 @@ This is useful when you need:
 
 <panel header="### Advanced Example with Badges">
 
-<include src="codeAndOutputSeparate.md" boilerplate >
+<include src="codeAndOutput.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
-<cv-tabgroup>
-  <cv-tab header="active">
-    <cv-tab-header>
-      <strong>Active</strong> 
-      <span style="color: green; margin-left: 0.5rem;">●</span>
-    </cv-tab-header>
-    <cv-tab-body>
-      Currently active items are displayed here.
-    </cv-tab-body>
-  </cv-tab>
-  
-  <cv-tab header="archived">
-    <cv-tab-header>
-      <i>Archived</i> 
-      <span style="color: gray; margin-left: 0.5rem;">●</span>
-    </cv-tab-header>
-    <cv-tab-body>
-      Archived items are stored here for reference.
-    </cv-tab-body>
-  </cv-tab>
-</cv-tabgroup>
-</variable>
-<variable name="output">
 <cv-tabgroup>
   <cv-tab header="active">
     <cv-tab-header>
@@ -445,7 +364,7 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
 1. **Via MarkBind shortcodes** (when using MarkBind) — MarkBind pre-processes `:fa-solid-icon:` into `<i>` elements
 2. **Via direct HTML** — Include Font Awesome `<i>` tags directly
 
-<include src="codeAndOutputSeparate.md" boilerplate >
+<include src="codeAndOutput.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 <cv-tabgroup group-id="status">
@@ -478,43 +397,6 @@ Since `<cv-tab-header>` accepts HTML elements, you can include icons in multiple
     This feature is pending review.
   </cv-tab-body>
   </cv-tab>
-</cv-tabgroup>
-</variable>
-<variable name="output">
-
-<cv-tabgroup group-id="status">
-<cv-tab tab-id="enabled">
-<cv-tab-header>
-
-:fa-solid-virus: Enabled
-</cv-tab-header>
-<cv-tab-body>
-
-This feature is currently enabled and active.
-</cv-tab-body>
-</cv-tab>
-
-<cv-tab tab-id="disabled">
-<cv-tab-header>
-
-:fa-solid-virus-slash: Disabled
-</cv-tab-header>
-<cv-tab-body>
-
-This feature is currently disabled.
-</cv-tab-body>
-</cv-tab>
-
-<cv-tab tab-id="pending">
-<cv-tab-header>
-
-:fa-solid-hourglass-end: Pending
-</cv-tab-header>
-<cv-tab-body>
-
-This feature is pending review.
-</cv-tab-body>
-</cv-tab>
 </cv-tabgroup>
 </variable>
 </include>

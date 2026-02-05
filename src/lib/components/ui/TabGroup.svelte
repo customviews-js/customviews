@@ -120,7 +120,8 @@
         header = headerEl.innerHTML.trim();
       } else {
         // Attribute syntax
-        header = element.getAttribute('header') || '';
+        header = (element as any).header || element.getAttribute('header') || '';
+        
         if (!header) {
           // Fallback to tab-id or default
           header = element.getAttribute('tab-id') ? primaryId : `Tab ${index + 1}`;
