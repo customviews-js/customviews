@@ -21,10 +21,10 @@ const banner = `/*!
  * Released under the ${pkg.license} License.
  */`;
 
-// Custom Web Component Elements (only files in components/elements)
+// Custom Web Component Elements 
 const sveltePluginCustomElements = svelte({
   ...svelteConfig,
-  include: 'src/lib/components/ui/**/*.svelte',
+  include: ['src/lib/components/ui/**/*.svelte', 'src/lib/features/placeholder/**/*.svelte'],
 });
 
 // Regular Svelte components and Svelte 5 modules (e.g. .svelte.ts)
@@ -32,7 +32,7 @@ const sveltePluginRegular = svelte({
   ...svelteConfig,
   extensions: ['.svelte', '.svelte.ts', '.svelte.js'],
   include: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
-  exclude: 'src/lib/components/ui/**/*.svelte',
+  exclude: ['src/lib/components/ui/**/*.svelte', 'src/lib/features/placeholder/**/*.svelte'],
   // Regular non-custom components
   compilerOptions: {
     ...svelteConfig.compilerOptions,
@@ -58,17 +58,6 @@ const plugins = [
   sveltePluginCustomElements,
   typescript({ sourceMap: true, inlineSources: true }),
 ];
-
-const onwarn = (warning, warn) => {
-  // According to Svelte GitHub Issue #10140
-  // Circular Dependency Warnings during compilation (Cause TBD)
-  // Warnings clutter compilation logs, but are otherwise harmless.
-  // Hide Svelte circular dependency warnings from node_modules
-  if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('node_modules')) {
-    return;
-  }
-  warn(warning);
-};
 
 const builds = [
   // Node/Bundler builds (ESM/CJS) disabled for now as public API is not exposed.
@@ -99,5 +88,16 @@ const builds = [
     plugins: [...plugins, terser()],
   },
 ];
+
+const onwarn = (warning, warn) => {
+  // According to Svelte GitHub Issue #10140
+  // Circular Dependency Warnings during compilation (Cause TBD)
+  // Warnings clutter compilation logs, but are otherwise harmless.
+  // Hide Svelte circular dependency warnings from node_modules
+  if (warning.code === 'CIRCULAR_DEPENDENCY' && warning.message.includes('node_modules')) {
+    return;
+  }
+  warn(warning);
+};
 
 export default builds.map((config) => ({ ...config, onwarn }));
