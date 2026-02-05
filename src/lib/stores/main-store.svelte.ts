@@ -151,12 +151,6 @@ export class DataStore {
    */
   registerTabGroup(id: string) {
     this.detectedTabGroups.add(id);
-
-    // Register corresponding placeholder if defined
-    const groupConfig = this.config.tabGroups?.find((g) => g.groupId === id);
-    if (!groupConfig) return;
-
-    this.registerPlaceholderFromTabGroup(groupConfig);
   }
 
   /**
@@ -190,7 +184,7 @@ export class DataStore {
 
   // --- Helpers ---
 
-  private registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig) {
+  public registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig) {
     if (!groupConfig.placeholderId) return;
 
     const id = groupConfig.placeholderId;
@@ -327,6 +321,14 @@ export function initStore(config: Config): DataStore {
 
   // Compute Section Order from raw config keys
   store.configSectionOrder = Object.keys(config).filter(isValidConfigSection);
+
+  // Process TabGroup-linked Placeholders from Config
+  // This ensures they are registered immediately, even if the TabGroup component isn't on the page yet.
+  if (config.tabGroups) {
+    config.tabGroups.forEach((group) => {
+      store.registerPlaceholderFromTabGroup(group);
+    });
+  }
 
   return store;
 }

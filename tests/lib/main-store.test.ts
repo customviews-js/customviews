@@ -110,6 +110,9 @@ describe('DataStore', () => {
 
       const testStore = initStore(config);
 
+      // Clear calls from initStore
+      vi.mocked(placeholderValueStore.set).mockClear();
+
       // Mock Registry to say placeholder does NOT exist
       vi.mocked(placeholderRegistryStore.has).mockReturnValue(false);
 
@@ -154,6 +157,28 @@ describe('DataStore', () => {
         expect.objectContaining({
           name: 'p1',
           source: 'config',
+        }),
+      );
+    });
+
+    it('should register placeholders from tabGroups', () => {
+      const config = {
+        tabGroups: [
+          {
+            groupId: 'group1',
+            placeholderId: 'p1',
+            tabs: [{ tabId: 't1', placeholderValue: 'val1' }],
+          },
+        ],
+      };
+
+      initStore(config);
+
+      expect(placeholderRegistryStore.register).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'p1',
+          source: 'tabgroup',
+          ownerTabGroupId: 'group1',
         }),
       );
     });
