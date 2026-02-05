@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="generator" content="MarkBind 6.1.0">
+    <meta name="generator" content="MarkBind 6.2.0">
     <meta name="viewport" content="width=device-width, initial-scale=1"><title>Developer Guide - Project Git Workflow</title> <link rel="stylesheet" href="/customviews/markbind/css/bootstrap.min.css"> <link rel="stylesheet" href="/customviews/markbind/fontawesome/css/all.min.css"> <link rel="stylesheet" href="/customviews/markbind/glyphicons/css/bootstrap-glyphicons.min.css"><link rel="stylesheet" href="/customviews/markbind/css/codeblock-light.min.css"><link rel="stylesheet" href="/customviews/markbind/css/markbind.min.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockCopyButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockWrapButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-anchors/markbind-plugin-anchors.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-tree/markbind-plugin-tree.css">
     
   <link rel="stylesheet" href="/customviews/stylesheets/main.css">
@@ -11,7 +11,7 @@
 <script>
   const baseUrl = '/customviews'
 </script>
-<body  data-bs-spy="scroll" data-bs-target="#mb-page-nav" data-bs-offset="100" >
+<body  data-bs-spy="scroll" data-bs-target="#mb-page-nav" data-bs-offset="100"  data-code-theme="light">
 <div id="app"><!--[--><div tags="beta-release" class="w-100 p-1 bg-warning text-center d-print-none"><span><strong>This site documents the features of CustomViews in development and possible beta breaking changes.
 For the latest stable release, visit <a href="https://customviews-js.github.io">here</a>.</strong></span></div> <header sticky><div data-v-26aac3dc><nav class="navbar navbar-expand-md d-print-none navbar-dark bg-dark" data-v-26aac3dc><div class="container-fluid" data-v-26aac3dc><div class="navbar-left" data-v-26aac3dc><!--[--><a href="/customviews/index.html" title="Home" class="navbar-brand">CustomViews</a><!--]--></div><div class="navbar-default" data-v-26aac3dc><ul class="navbar-nav me-auto mt-2 mt-lg-0" data-v-26aac3dc><!--[--> <li><a highlight-on="exact" href="/customviews/index.html" class="nav-link">HOME</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/readerGuide/index.html" class="nav-link">READER GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/authorGuide/index.html" class="nav-link">AUTHOR GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/devGuide/index.html" class="nav-link">DEVELOPER GUIDE</a></li> <li><a highlight-on="exact" href="/customviews/about.html" class="nav-link">ABOUT</a></li> <li><a href="https://github.com/customviews-js/customviews" target="_blank" class="nav-link"><span><span aria-hidden="true" class="fab fa-github"></span></span></a></li> <li><a href="#cv-open" class="nav-link">OPEN DIALOG</a></li> <!--]--></ul></div><ul class="navbar-nav navbar-right" data-v-26aac3dc><!--[--><li><form class="navbar-form"><div style="position:relative;" class="dropdown" data-v-00e26d0a><!--[--><input value="" data-bs-toggle="dropdown" type="text" class="form-control" placeholder="Search" autocomplete="off" data-v-00e26d0a><div class="form-control placeholder-div-hidden" data-v-00e26d0a>Search</div><!--]--><ul class="dropdown-menu search-dropdown-menu dropdown-menu-hidden dropdown-menu-end" data-v-00e26d0a><!--[--><!--]--></ul></div></form></li><!--]--></ul></div></nav><div style="display:none;" class="lower-navbar-container" data-v-26aac3dc><!--[--><!----><!----><!--]--></div></div></header> <div id="flex-body"><nav id="site-nav" data-v-6b1b63d2><!--[--><div class="site-nav-top"><div class="fw-bold mb-2" style="font-size:1.25rem;">Developer Guide</div></div> <div class="nav-component slim-scroll"><div class="site-nav-root"><!--[--><ul class="site-nav-list site-nav-list-root" data-v-6b1b63d2><!--[--><li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/devGuide.html">Contributing</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/framework.html">Framework</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/gitWorkflow.html">Git Workflow</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/releases.html">Making Releases</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/devGuide/componentWorkings.html">How Components Work</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)">Tests
 
@@ -22,70 +22,70 @@ For the latest stable release, visit <a href="https://customviews-js.github.io">
    checkout develop
    commit id: &quot;Project setup&quot;
 
-   %% 1. FEATURE WORKFLOW
-   branch feature/new-login
-   checkout feature/new-login
-   commit id: &quot;Code login&quot;
-   checkout develop
-   merge feature/new-login id: &quot;Merge Feature&quot;
+%% 1. FEATURE WORKFLOW
+branch feature/new-login
+checkout feature/new-login
+commit id: &quot;Code login&quot;
+checkout develop
+merge feature/new-login id: &quot;Merge Feature&quot;
 
-   %% 2. RELEASE WORKFLOW
-   branch release/v1.0
-   checkout release/v1.0
-   commit id: &quot;Bump Version&quot;
-   commit id: &quot;Last Cleanup&quot;
-   
-   %% Release goes to Main
-   checkout main
-   merge release/v1.0 id: &quot;Deploy&quot; tag: &quot;v1.0&quot;
-   
-   %% Release MUST go back to Develop (crucial step)
-   checkout develop
-   merge release/v1.0 id: &quot;Sync Release&quot;
+%% 2. RELEASE WORKFLOW
+branch release/v1.0
+checkout release/v1.0
+commit id: &quot;Bump Version&quot;
+commit id: &quot;Last Cleanup&quot;
 
-   %% 3. HOTFIX WORKFLOW (Emergency)
-   checkout main
-   branch hotfix/critical-bug
-   checkout hotfix/critical-bug
-   commit id: &quot;Fix Bug&quot;
-   
-   %% Hotfix goes to Main immediately
-   checkout main
-   merge hotfix/critical-bug id: &quot;Deploy Fix&quot; tag: &quot;v1.0.1&quot;
-   
-   %% Hotfix MUST go back to Develop
-   checkout develop
-   merge hotfix/critical-bug id: &quot;Sync Fix&quot;
-   
-   %% Continue work on Develop
-   commit id: &quot;Next Feature...&quot;
+%% Release goes to Main
+checkout main
+merge release/v1.0 id: &quot;Deploy&quot; tag: &quot;v1.0&quot;
+
+%% Release MUST go back to Develop (crucial step)
+checkout develop
+merge release/v1.0 id: &quot;Sync Release&quot;
+
+%% 3. HOTFIX WORKFLOW (Emergency)
+checkout main
+branch hotfix/critical-bug
+checkout hotfix/critical-bug
+commit id: &quot;Fix Bug&quot;
+
+%% Hotfix goes to Main immediately
+checkout main
+merge hotfix/critical-bug id: &quot;Deploy Fix&quot; tag: &quot;v1.0.1&quot;
+
+%% Hotfix MUST go back to Develop
+checkout develop
+merge hotfix/critical-bug id: &quot;Sync Fix&quot;
+
+%% Continue work on Develop
+commit id: &quot;Next Feature...&quot;
 </pre> <p><strong>Key Notes:</strong></p> <ul><li><strong>The Safety Net:</strong> Notice how feature/new-login never touches main. It isolates the messiness of coding.</li> <li><strong>Double Merge:</strong> Look at the Release and Hotfix sections. You will see lines going to both main and develop. This ensures that your future work (on develop) includes the bug fixes you just put into production.</li> <li><strong>Tags:</strong> The tags (v1.0, v1.0.1) only exist on the main line. This is the &quot;shelf&quot; where the finished product sits.</li></ul> <h2 id="branches-in-gitflow">Branches in GitFlow<a class="fa fa-anchor" href="#branches-in-gitflow" onclick="event.stopPropagation()"></a></h2> <h3 id="main-branch">Main Branch<a class="fa fa-anchor" href="#main-branch" onclick="event.stopPropagation()"></a></h3> <p>The Main branch represents production-ready code, and holds the official (release) history of your live product.</p> <ul><li>The <code class="hljs inline no-lang">main</code> branch stores the official release history. This means that each commit and associated tag (e.g., v1.0, v1.1) is a release version.</li> <li>Tagging: Naturally, this means that every time you merge something here, you usually tag it with a version number (e.g., v1.0, v1.1).</li> <li>Rule: Never commit directly to main. You only merge into it when you have a finished release.</li></ul> <h3 id="develop-branch">Develop Branch<a class="fa fa-anchor" href="#develop-branch" onclick="event.stopPropagation()"></a></h3> <p>The Develop branch is the integration branch for the next release. It holds the complete (developmental) history of the project, whereas <code class="hljs inline no-lang">main</code> will contain an abridged version.</p> <ul><li>The <code class="hljs inline no-lang">develop</code> branch serves as an integration branch for features.</li> <li>Rule: This is the &quot;beta&quot; version of your code. It works, but it might not be polished enough for the public yet.</li></ul> <h3 id="feature-branches">Feature Branches<a class="fa fa-anchor" href="#feature-branches" onclick="event.stopPropagation()"></a></h3> <p>Each new feature should reside in its own branch, which can be pushed to the central repository for backup/collaboration. But, instead of branching off of <code class="hljs inline no-lang">main</code>, feature branches use <code class="hljs inline no-lang">develop</code> as their parent branch. When a feature is complete, it gets merged back into <code class="hljs inline no-lang">develop</code>. Features should never interact directly with <code class="hljs inline no-lang">main</code>.</p> <p>Feature branches are generally created off to the latest <code class="hljs inline no-lang">develop</code> branch.</p> <p><strong>Relevance</strong></p> <p>Feature branches allow developers to work on new features in isolation.</p> <ul><li>This ensures that the <code class="hljs inline no-lang">main</code> and <code class="hljs inline no-lang">develop</code> branches remain stable while new code is being written and tested.</li> <li>If a feature is abandoned, the branch can simply be deleted without unnecessary reverts.</li></ul> <h3 id="release-branches">Release Branches<a class="fa fa-anchor" href="#release-branches" onclick="event.stopPropagation()"></a></h3> <p>Once <code class="hljs inline no-lang">develop</code> has acquired enough features for a release (or a predetermined release date is approaching), you fork a release branch off of <code class="hljs inline no-lang">develop</code>.</p> <ul><li>Creating this branch starts the next release cycle, so no new features can be added after this point—only bug fixes, documentation generation, and other release-oriented tasks should go in this branch.</li> <li>Once it&#39;s ready to ship, the release branch gets merged into <code class="hljs inline no-lang">main</code> and tagged with a version number. In addition, it should be merged back into <code class="hljs inline no-lang">develop</code>, which may have progressed since the release was initiated.</li></ul> <p>Using a dedicated branch to prepare releases makes it possible for one team to polish the current release while another team continues working on features for the next release. It also creates well-defined phases of development.</p> <p><strong>Relevance</strong></p> <p>Release branches support preparation of a new production release.</p> <ul><li>They allow for minor bug fixing and preparing meta-data for a release (version number, build dates, etc.).
 By doing this on a release branch, the <code class="hljs inline no-lang">develop</code> branch is cleared to receive features for the <em>next</em> big release.</li></ul> <p>Once the release is ready to ship, it will get merged into <code class="hljs inline no-lang">main</code> and <code class="hljs inline no-lang">develop</code>, then the release branch will be deleted. It’s important to merge back into <code class="hljs inline no-lang">develop</code> because critical updates (bug fixes) may have been added to the release branch.</p> <h3 id="hotfix-branches">Hotfix branches<a class="fa fa-anchor" href="#hotfix-branches" onclick="event.stopPropagation()"></a></h3> <p>Maintenance or “hotfix” branches are used to quickly patch production releases. Hotfix branches are a lot like release branches and feature branches except they&#39;re based on <code class="hljs inline no-lang">main</code> instead of <code class="hljs inline no-lang">develop</code>.</p> <ul><li>This is the only branch that should fork directly off of <code class="hljs inline no-lang">main</code>.</li> <li>As soon as the fix is complete, it should be merged into both <code class="hljs inline no-lang">main</code> and <code class="hljs inline no-lang">develop</code> (or the current release branch), and <code class="hljs inline no-lang">main</code> should be tagged with an updated version number.</li></ul> <p><strong>An Example of a Hotfix Branch Workflow:</strong></p> <pre class="mermaid">gitGraph
-   %% 1. Initial State
-   commit id: &quot;Stable Release&quot; tag: &quot;v1.0&quot;
-   branch develop
-   checkout develop
-   commit id: &quot;Start Feature A&quot;
+%% 1. Initial State
+commit id: &quot;Stable Release&quot; tag: &quot;v1.0&quot;
+branch develop
+checkout develop
+commit id: &quot;Start Feature A&quot;
 
-   %% 2. The Emergency (Bug found in v1.0)
-   checkout main
-   branch hotfix/v1.0.1
-   checkout hotfix/v1.0.1
-   commit id: &quot;Fix Critical Bug&quot;
+%% 2. The Emergency (Bug found in v1.0)
+checkout main
+branch hotfix/v1.0.1
+checkout hotfix/v1.0.1
+commit id: &quot;Fix Critical Bug&quot;
 
-   %% 3. Life goes on (Work continues on Develop meanwhile)
-   checkout develop
-   commit id: &quot;Finish Feature A&quot;
+%% 3. Life goes on (Work continues on Develop meanwhile)
+checkout develop
+commit id: &quot;Finish Feature A&quot;
 
-   %% 4. The Resolution (Merge to Main FIRST)
-   checkout main
-   merge hotfix/v1.0.1 id: &quot;Deploy Fix&quot; tag: &quot;v1.0.1&quot;
+%% 4. The Resolution (Merge to Main FIRST)
+checkout main
+merge hotfix/v1.0.1 id: &quot;Deploy Fix&quot; tag: &quot;v1.0.1&quot;
 
-   %% 5. The Sync (Merge to Develop SECOND)
-   %% This ensures the bug doesn&#39;t reappear in v1.1
-   checkout develop
-   merge hotfix/v1.0.1 id: &quot;Sync Fix to Dev&quot;
-</pre> <ul><li>Hotfix branches are very much like release branches in that they are also meant to prepare for a new production release, albeit unplanned. They arise from the necessity to act immediately upon an undesired state of a live production version. The critical essence is that work on <code class="hljs inline no-lang">develop</code> can continue while issues in production are being resolved.</li> <li>This is a key benefit of gitflow, as it allows for immediate fixes that do not push developmental features into the release.</li></ul> <h2 id="feature-release-workflow">Feature Release Workflow<a class="fa fa-anchor" href="#feature-release-workflow" onclick="event.stopPropagation()"></a></h2> <ol><li><strong>Specification &amp; Design</strong>: Discussion and posting issues on GitHub repository tracker to define what to build and its fit.</li> <li><strong>Development</strong>: Implement logic in a new <code class="hljs inline no-lang">feature/</code> branch created from <code class="hljs inline no-lang">develop</code>. Verify changes locally.</li> <li><strong>Beta Release</strong>: Merge the finished <code class="hljs inline no-lang">feature/</code> branch into <code class="hljs inline no-lang">develop</code>. This triggers the beta release, allowing integration testing of the new feature within the beta package context to catch any breaking changes.</li> <li><strong>Production Release</strong>: When ready for the public, ship the feature as a production release by following the Release Branch workflow: fork a <code class="hljs inline no-lang">release/</code> branch from <code class="hljs inline no-lang">develop</code>, finalize it, and merge into <code class="hljs inline no-lang">main</code> (the production source).</li></ol> <h2 id="summary">Summary<a class="fa fa-anchor" href="#summary" onclick="event.stopPropagation()"></a></h2> <p>Here we discussed the <strong>Gitflow Workflow</strong>. Gitflow is one of many styles of Git workflows you and your team can utilize.</p> <p>Some key takeaways to know about Gitflow are:</p> <ul><li>The workflow is great for a release-based software workflow.</li> <li>Gitflow offers a dedicated channel for hotfixes to production.</li></ul> <p>The overall flow of Gitflow is:</p> <ol><li>A <code class="hljs inline no-lang">develop</code> branch is created from <code class="hljs inline no-lang">main</code></li> <li>A release branch is created from <code class="hljs inline no-lang">develop</code></li> <li>Feature branches are created from <code class="hljs inline no-lang">develop</code></li> <li>When a feature is complete it is merged into the <code class="hljs inline no-lang">develop</code> branch</li> <li>When the release branch is done it is merged into <code class="hljs inline no-lang">develop</code> and <code class="hljs inline no-lang">main</code></li> <li>If an issue in <code class="hljs inline no-lang">main</code> is detected a hotfix branch is created from <code class="hljs inline no-lang">main</code></li> <li>Once the hotfix is complete it is merged to both <code class="hljs inline no-lang">develop</code> and <code class="hljs inline no-lang">main</code></li></ol></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#gitflow-workflow">Gitflow Workflow‎</a> <a class="nav-link py-1" href="#example-of-a-gitflow-workflow">Example of a Gitflow Workflow‎</a> <a class="nav-link py-1" href="#branches-in-gitflow">Branches in GitFlow‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#main-branch">Main Branch‎</a> <a class="nav-link py-1" href="#develop-branch">Develop Branch‎</a> <a class="nav-link py-1" href="#feature-branches">Feature Branches‎</a> <a class="nav-link py-1" href="#release-branches">Release Branches‎</a> <a class="nav-link py-1" href="#hotfix-branches">Hotfix branches‎</a></nav> <a class="nav-link py-1" href="#feature-release-workflow">Feature Release Workflow‎</a> <a class="nav-link py-1" href="#summary">Summary‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.1.0</a> on Mon, 2 Feb 2026, 14:51:59 GMT+8]</small><br></div></footer></div><!--]--></div>
+%% 5. The Sync (Merge to Develop SECOND)
+%% This ensures the bug doesn&#39;t reappear in v1.1
+checkout develop
+merge hotfix/v1.0.1 id: &quot;Sync Fix to Dev&quot;
+</pre> <ul><li>Hotfix branches are very much like release branches in that they are also meant to prepare for a new production release, albeit unplanned. They arise from the necessity to act immediately upon an undesired state of a live production version. The critical essence is that work on <code class="hljs inline no-lang">develop</code> can continue while issues in production are being resolved.</li> <li>This is a key benefit of gitflow, as it allows for immediate fixes that do not push developmental features into the release.</li></ul> <h2 id="feature-release-workflow">Feature Release Workflow<a class="fa fa-anchor" href="#feature-release-workflow" onclick="event.stopPropagation()"></a></h2> <ol><li><strong>Specification &amp; Design</strong>: Discussion and posting issues on GitHub repository tracker to define what to build and its fit.</li> <li><strong>Development</strong>: Implement logic in a new <code class="hljs inline no-lang">feature/</code> branch created from <code class="hljs inline no-lang">develop</code>. Verify changes locally.</li> <li><strong>Beta Release</strong>: Merge the finished <code class="hljs inline no-lang">feature/</code> branch into <code class="hljs inline no-lang">develop</code>. This triggers the beta release, allowing integration testing of the new feature within the beta package context to catch any breaking changes.</li> <li><strong>Production Release</strong>: When ready for the public, ship the feature as a production release by following the Release Branch workflow: fork a <code class="hljs inline no-lang">release/</code> branch from <code class="hljs inline no-lang">develop</code>, finalize it, and merge into <code class="hljs inline no-lang">main</code> (the production source).</li></ol> <h2 id="summary">Summary<a class="fa fa-anchor" href="#summary" onclick="event.stopPropagation()"></a></h2> <p>Here we discussed the <strong>Gitflow Workflow</strong>. Gitflow is one of many styles of Git workflows you and your team can utilize.</p> <p>Some key takeaways to know about Gitflow are:</p> <ul><li>The workflow is great for a release-based software workflow.</li> <li>Gitflow offers a dedicated channel for hotfixes to production.</li></ul> <p>The overall flow of Gitflow is:</p> <ol><li>A <code class="hljs inline no-lang">develop</code> branch is created from <code class="hljs inline no-lang">main</code></li> <li>A release branch is created from <code class="hljs inline no-lang">develop</code></li> <li>Feature branches are created from <code class="hljs inline no-lang">develop</code></li> <li>When a feature is complete it is merged into the <code class="hljs inline no-lang">develop</code> branch</li> <li>When the release branch is done it is merged into <code class="hljs inline no-lang">develop</code> and <code class="hljs inline no-lang">main</code></li> <li>If an issue in <code class="hljs inline no-lang">main</code> is detected a hotfix branch is created from <code class="hljs inline no-lang">main</code></li> <li>Once the hotfix is complete it is merged to both <code class="hljs inline no-lang">develop</code> and <code class="hljs inline no-lang">main</code></li></ol></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#gitflow-workflow">Gitflow Workflow‎</a> <a class="nav-link py-1" href="#example-of-a-gitflow-workflow">Example of a Gitflow Workflow‎</a> <a class="nav-link py-1" href="#branches-in-gitflow">Branches in GitFlow‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#main-branch">Main Branch‎</a> <a class="nav-link py-1" href="#develop-branch">Develop Branch‎</a> <a class="nav-link py-1" href="#feature-branches">Feature Branches‎</a> <a class="nav-link py-1" href="#release-branches">Release Branches‎</a> <a class="nav-link py-1" href="#hotfix-branches">Hotfix branches‎</a></nav> <a class="nav-link py-1" href="#feature-release-workflow">Feature Release Workflow‎</a> <a class="nav-link py-1" href="#summary">Summary‎</a><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.2.0</a> on Fri, 6 Feb 2026, 0:38:49 GMT+8]</small><br></div></footer></div><!--]--></div>
 </body><script src="/customviews/markbind/js/bootstrap-utility.min.js"></script>
 <script src="/customviews/markbind/js/polyfill.min.js"></script>
 <script src="/customviews/markbind/js/vue.global.prod.min.js"></script>

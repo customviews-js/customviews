@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="generator" content="MarkBind 6.1.0">
+    <meta name="generator" content="MarkBind 6.2.0">
     <meta name="viewport" content="width=device-width, initial-scale=1"><title>Installation (MarkBind Setup)</title> <link rel="stylesheet" href="/customviews/markbind/css/bootstrap.min.css"> <link rel="stylesheet" href="/customviews/markbind/fontawesome/css/all.min.css"> <link rel="stylesheet" href="/customviews/markbind/glyphicons/css/bootstrap-glyphicons.min.css"><link rel="stylesheet" href="/customviews/markbind/css/codeblock-light.min.css"><link rel="stylesheet" href="/customviews/markbind/css/markbind.min.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockCopyButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/codeBlockWrapButtons/codeBlockButtons.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-anchors/markbind-plugin-anchors.css"><link rel="stylesheet" href="/customviews/plugins/markbind-plugin-tree/markbind-plugin-tree.css">
     
   <link rel="stylesheet" href="/customviews/stylesheets/main.css">
@@ -11,7 +11,7 @@
 <script>
   const baseUrl = '/customviews'
 </script>
-<body  data-bs-spy="scroll" data-bs-target="#mb-page-nav" data-bs-offset="100" >
+<body  data-bs-spy="scroll" data-bs-target="#mb-page-nav" data-bs-offset="100"  data-code-theme="light">
 <div id="app"><!--[--><div tags="beta-release" class="w-100 p-1 bg-warning text-center d-print-none"><span><strong>This site documents the features of CustomViews in development and possible beta breaking changes.
 For the latest stable release, visit <a href="https://customviews-js.github.io">here</a>.</strong></span></div> <header sticky><div data-v-26aac3dc><nav class="navbar navbar-expand-md d-print-none navbar-dark bg-dark" data-v-26aac3dc><div class="container-fluid" data-v-26aac3dc><div class="navbar-left" data-v-26aac3dc><!--[--><a href="/customviews/index.html" title="Home" class="navbar-brand">CustomViews</a><!--]--></div><div class="navbar-default" data-v-26aac3dc><ul class="navbar-nav me-auto mt-2 mt-lg-0" data-v-26aac3dc><!--[--> <li><a highlight-on="exact" href="/customviews/index.html" class="nav-link">HOME</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/readerGuide/index.html" class="nav-link">READER GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/authorGuide/index.html" class="nav-link">AUTHOR GUIDE</a></li> <li><a highlight-on="sibling-or-child" href="/customviews/devGuide/index.html" class="nav-link">DEVELOPER GUIDE</a></li> <li><a highlight-on="exact" href="/customviews/about.html" class="nav-link">ABOUT</a></li> <li><a href="https://github.com/customviews-js/customviews" target="_blank" class="nav-link"><span><span aria-hidden="true" class="fab fa-github"></span></span></a></li> <li><a href="#cv-open" class="nav-link">OPEN DIALOG</a></li> <!--]--></ul></div><ul class="navbar-nav navbar-right" data-v-26aac3dc><!--[--><li><form class="navbar-form"><div style="position:relative;" class="dropdown" data-v-00e26d0a><!--[--><input value="" data-bs-toggle="dropdown" type="text" class="form-control" placeholder="Search" autocomplete="off" data-v-00e26d0a><div class="form-control placeholder-div-hidden" data-v-00e26d0a>Search</div><!--]--><ul class="dropdown-menu search-dropdown-menu dropdown-menu-hidden dropdown-menu-end" data-v-00e26d0a><!--[--><!--]--></ul></div></form></li><!--]--></ul></div></nav><div style="display:none;" class="lower-navbar-container" data-v-26aac3dc><!--[--><!----><!----><!--]--></div></div></header> <div id="flex-body"><nav id="site-nav" data-v-6b1b63d2><!--[--><div class="site-nav-top"><div class="fw-bold mb-2" style="font-size:1.25rem;">Author Guide</div></div> <div class="nav-component slim-scroll"><div class="site-nav-root"><!--[--><ul class="site-nav-list site-nav-list-root" data-v-6b1b63d2><!--[--><li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)"><a href="/customviews/authorGuide/gettingStarted.html">Getting Started</a></div></li> <li><div class="site-nav-default-list-item site-nav-list-item-0" onclick="handleSiteNavClick(this)">Site Integrations
 
@@ -20,16 +20,23 @@ This allows you to declaratively toggle content visibility, manage tab groups, a
 Then, add a file named <strong><code class="hljs inline no-lang">customviews.js</code></strong> inside it with the following content:</p> <pre><code class="hljs js"><span><span class="hljs-comment">/**</span>
 </span><span><span class="hljs-comment"> * CustomViews Plugin for MarkBind</span>
 </span><span><span class="hljs-comment"> * Injects the CustomViews auto-init script into every page.</span>
-</span><span><span class="hljs-comment"> * Configuration is loaded from /customviews.config.json</span>
-</span><span><span class="hljs-comment"> * Add data-base-url=&quot;/website-baseurl&quot;</span>
+</span><span><span class="hljs-comment"> * Configuration is loaded from websiteUrl/BaseUrl/customviews.config.json</span>
 </span><span><span class="hljs-comment"> */</span>
 </span><span><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getScripts</span>(<span class="hljs-params"></span>) </span>{
-</span><span>  <span class="hljs-keyword">return</span> [
-</span><span>    <span class="hljs-string">&#39;&lt;script src=&quot;https://unpkg.com/@customviews-js/customviews&quot;&gt;&lt;/script&gt;&#39;</span>
-</span><span>  ];
+</span><span>  <span class="hljs-keyword">return</span> [<span class="hljs-string">&#39;&lt;script src=&quot;https://unpkg.com/@customviews-js/customviews&quot; data-base-url=&quot;/&quot;&gt;&lt;/script&gt;&#39;</span>];
+</span><span>}
+</span><span>
+</span><span><span class="hljs-keyword">const</span> tagConfig = {
+</span><span>  <span class="hljs-string">&#39;cv-toggle&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tabgroup&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tab&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tab-body&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tab-header&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-define-placeholder&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-placeholder-input&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> }
 </span><span>};
 </span><span>
-</span><span><span class="hljs-built_in">module</span>.exports = { getScripts };
+</span><span><span class="hljs-built_in">module</span>.exports = { getScripts, tagConfig };
 </span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
     <div class="tooltip-container">
     <span class="tooltiptext">Copy</span>
@@ -72,12 +79,20 @@ Then, add a file named <strong><code class="hljs inline no-lang">customviews.js<
     </div>
     </div>
     </button></div></pre><div class="alert box-container alert-info" style="" data-v-19514615><!--Icon and vertical divider for seamless header box--><!----><div class="header-and-body" data-v-19514615><!-- Header wrapper, not rendered if there is no header attribute --><!----><!-- Body wrapper --><div class="box-body-wrapper" data-v-19514615><!-- icon on the left, not shown if there is a header --><div class="icon-wrapper" style="" data-v-19514615><!--[--><i class="fas fa-info" data-v-19514615></i><!--]--></div><!-- Icon -- content divider for seamless boxes without the header attribute --><!----><!-- Content wrapper --><div class="contents" style="" data-v-19514615><!--[--><p>Note: Depending on your MarkBind JS environment, if you are operating in an ESM environment (e.g. there is a parent ESM <code class="hljs inline no-lang">package.json</code> file), the plugin needs to be written in ESM format. If that is the case, try this the ESM format instead:</p> <pre><code class="hljs js"><span><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getScripts</span>(<span class="hljs-params"></span>) </span>{
-</span><span>  <span class="hljs-keyword">return</span> [
-</span><span>    <span class="hljs-string">&#39;&lt;script src=&quot;../../../dist/custom-views.min.js&quot;&gt;&lt;/script&gt;&#39;</span>
-</span><span>  ];
+</span><span>  <span class="hljs-keyword">return</span> [<span class="hljs-string">&#39;&lt;script src=&quot;https://unpkg.com/@customviews-js/customviews@v1&quot; data-base-url=&quot;/&quot;&gt;&lt;/script&gt;&#39;</span>];
 </span><span>}
 </span><span>
-</span><span><span class="hljs-keyword">export</span> { getScripts };
+</span><span><span class="hljs-keyword">const</span> tagConfig = {
+</span><span>  <span class="hljs-string">&#39;cv-toggle&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tabgroup&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tab&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tab-body&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-tab-header&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-define-placeholder&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> },
+</span><span>  <span class="hljs-string">&#39;cv-placeholder-input&#39;</span>: { <span class="hljs-attr">isCustomElement</span>: <span class="hljs-literal">true</span> }
+</span><span>};
+</span><span>
+</span><span><span class="hljs-keyword">export</span> { getScripts, tagConfig };
 </span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
     <div class="tooltip-container">
     <span class="tooltiptext">Copy</span>
@@ -120,9 +135,7 @@ Then, add a file named <strong><code class="hljs inline no-lang">customviews.js<
     </div>
     </div>
     </button></div></pre><p>This is a current limitation of MarkBind which only operates in CJS formats, which may cause compatibility issues when operating in cross CJS and ESM environments.</p><!--]--></div><!-- dismiss button on the right, not shown if there is a header --><!----></div></div></div> <p>This plugin automatically injects the CustomViews runtime into every generated page during the build process.</p> <h2 id="2-register-the-plugin-in-site-json">2. Register the Plugin in site.json<a class="fa fa-anchor" href="#2-register-the-plugin-in-site-json" onclick="event.stopPropagation()"></a></h2> <p>In your project’s root <code class="hljs inline no-lang">site.json</code>, register the plugin by adding <code class="hljs inline no-lang">&quot;customviews&quot;</code> to the plugins list.</p> <pre><code class="hljs json"><span>{
-</span><span>  <span class="hljs-attr">&quot;plugins&quot;</span>: [
-</span><span>    <span class="hljs-string">&quot;customviews&quot;</span>
-</span><span>  ]
+</span><span>  <span class="hljs-attr">&quot;plugins&quot;</span>: [<span class="hljs-string">&quot;customviews&quot;</span>]
 </span><span>}
 </span></code><div class="function-btn-container"><button onclick="copyCodeBlock(this)" class="function-btn d-print-none">
     <div class="tooltip-container">
@@ -168,9 +181,14 @@ Then, add a file named <strong><code class="hljs inline no-lang">customviews.js<
     </button></div></pre><blockquote><p>Make sure the file name (customviews.js) exactly matches the plugin name (customviews) declared in site.json.</p></blockquote> <h2 id="3-create-customviews-config-json">3. Create customviews.config.json<a class="fa fa-anchor" href="#3-create-customviews-config-json" onclick="event.stopPropagation()"></a></h2> <p>At your project root, create a <code class="hljs inline no-lang">customviews.config.json</code> file to define your toggles, tab groups, and widget options.</p> <pre><code class="hljs json"><span>{
 </span><span>  <span class="hljs-attr">&quot;config&quot;</span>: {
 </span><span>    <span class="hljs-attr">&quot;toggles&quot;</span>: [
-</span><span>      {<span class="hljs-attr">&quot;toggleId&quot;</span>: <span class="hljs-string">&quot;mac&quot;</span>,<span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;MacOS&quot;</span>, <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Show content for macOS users&quot;</span>, <span class="hljs-attr">&quot;default&quot;</span>: <span class="hljs-string">&quot;peek&quot;</span>},
-</span><span>      {<span class="hljs-attr">&quot;toggleId&quot;</span>: <span class="hljs-string">&quot;linux&quot;</span>,<span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Linux&quot;</span>, <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Show content for Linux users&quot;</span>},
-</span><span>      {<span class="hljs-attr">&quot;toggleId&quot;</span>: <span class="hljs-string">&quot;windows&quot;</span>,<span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Windows&quot;</span>, <span class="hljs-attr">&quot;default&quot;</span>: <span class="hljs-string">&quot;show&quot;</span>}
+</span><span>      {
+</span><span>        <span class="hljs-attr">&quot;toggleId&quot;</span>: <span class="hljs-string">&quot;mac&quot;</span>,
+</span><span>        <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;MacOS&quot;</span>,
+</span><span>        <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Show content for macOS users&quot;</span>,
+</span><span>        <span class="hljs-attr">&quot;default&quot;</span>: <span class="hljs-string">&quot;peek&quot;</span>
+</span><span>      },
+</span><span>      { <span class="hljs-attr">&quot;toggleId&quot;</span>: <span class="hljs-string">&quot;linux&quot;</span>, <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Linux&quot;</span>, <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Show content for Linux users&quot;</span> },
+</span><span>      { <span class="hljs-attr">&quot;toggleId&quot;</span>: <span class="hljs-string">&quot;windows&quot;</span>, <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Windows&quot;</span>, <span class="hljs-attr">&quot;default&quot;</span>: <span class="hljs-string">&quot;show&quot;</span> }
 </span><span>    ],
 </span><span>    <span class="hljs-attr">&quot;tabGroups&quot;</span>: [
 </span><span>      {
@@ -181,19 +199,25 @@ Then, add a file named <strong><code class="hljs inline no-lang">customviews.js<
 </span><span>        <span class="hljs-attr">&quot;default&quot;</span>: <span class="hljs-string">&quot;pear&quot;</span>,
 </span><span>        <span class="hljs-attr">&quot;placeholderId&quot;</span>: <span class="hljs-string">&quot;fruit&quot;</span>,
 </span><span>        <span class="hljs-attr">&quot;tabs&quot;</span>: [
-</span><span>          {<span class="hljs-attr">&quot;tabId&quot;</span>: <span class="hljs-string">&quot;apple&quot;</span>,<span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Apple&quot;</span>, <span class="hljs-attr">&quot;placeholderValue&quot;</span>: <span class="hljs-string">&quot;apple&quot;</span>},
-</span><span>          {<span class="hljs-attr">&quot;tabId&quot;</span>: <span class="hljs-string">&quot;orange&quot;</span>,<span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Orange&quot;</span>, <span class="hljs-attr">&quot;placeholderValue&quot;</span>: <span class="hljs-string">&quot;orange&quot;</span>},
-</span><span>          {<span class="hljs-attr">&quot;tabId&quot;</span>: <span class="hljs-string">&quot;pear&quot;</span>,<span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Pear&quot;</span>, <span class="hljs-attr">&quot;placeholderValue&quot;</span>: <span class="hljs-string">&quot;pear&quot;</span>}
+</span><span>          { <span class="hljs-attr">&quot;tabId&quot;</span>: <span class="hljs-string">&quot;apple&quot;</span>, <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Apple&quot;</span>, <span class="hljs-attr">&quot;placeholderValue&quot;</span>: <span class="hljs-string">&quot;apple&quot;</span> },
+</span><span>          { <span class="hljs-attr">&quot;tabId&quot;</span>: <span class="hljs-string">&quot;orange&quot;</span>, <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Orange&quot;</span>, <span class="hljs-attr">&quot;placeholderValue&quot;</span>: <span class="hljs-string">&quot;orange&quot;</span> },
+</span><span>          { <span class="hljs-attr">&quot;tabId&quot;</span>: <span class="hljs-string">&quot;pear&quot;</span>, <span class="hljs-attr">&quot;label&quot;</span>: <span class="hljs-string">&quot;Pear&quot;</span>, <span class="hljs-attr">&quot;placeholderValue&quot;</span>: <span class="hljs-string">&quot;pear&quot;</span> }
 </span><span>        ]
 </span><span>      }
 </span><span>    ],
 </span><span>    <span class="hljs-attr">&quot;placeholders&quot;</span>: [
-</span><span>       { <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;username&quot;</span>, <span class="hljs-attr">&quot;settingsLabel&quot;</span>: <span class="hljs-string">&quot;Your Username&quot;</span>, <span class="hljs-attr">&quot;settingsHint&quot;</span>: <span class="hljs-string">&quot;Enter username&quot;</span>, <span class="hljs-attr">&quot;defaultValue&quot;</span>: <span class="hljs-string">&quot;Guest&quot;</span> },
+</span><span>      {
+</span><span>        <span class="hljs-attr">&quot;name&quot;</span>: <span class="hljs-string">&quot;username&quot;</span>,
+</span><span>        <span class="hljs-attr">&quot;settingsLabel&quot;</span>: <span class="hljs-string">&quot;Your Username&quot;</span>,
+</span><span>        <span class="hljs-attr">&quot;settingsHint&quot;</span>: <span class="hljs-string">&quot;Enter username&quot;</span>,
+</span><span>        <span class="hljs-attr">&quot;defaultValue&quot;</span>: <span class="hljs-string">&quot;Guest&quot;</span>
+</span><span>      }
 </span><span>    ]
 </span><span>  },
 </span><span>  <span class="hljs-attr">&quot;baseUrl&quot;</span>: <span class="hljs-string">&quot;/customviews&quot;</span>,
 </span><span>  <span class="hljs-attr">&quot;storageKey&quot;</span>: <span class="hljs-string">&quot;cv-docs-beta&quot;</span>,
 </span><span>  <span class="hljs-attr">&quot;settings&quot;</span>: {
+</span><span>    <span class="hljs-attr">&quot;enabled&quot;</span>: <span class="hljs-literal">true</span>,
 </span><span>    <span class="hljs-attr">&quot;panel&quot;</span>: {
 </span><span>      <span class="hljs-attr">&quot;title&quot;</span>: <span class="hljs-string">&quot;Custom Views Settings Dialog&quot;</span>,
 </span><span>      <span class="hljs-attr">&quot;description&quot;</span>: <span class="hljs-string">&quot;Toggle different content sections to customize your view.&quot;</span>
@@ -297,7 +321,7 @@ Then, add a file named <strong><code class="hljs inline no-lang">customviews.js<
 
     </div>
     </div>
-    </button></div></pre><p>If everything is configured correctly, you should see the CustomViews widget floating on your site. Try toggling between views or switching tabs to confirm your setup is working. CustomViews will automatically handle visibility, persistence, and synchronization across all tabs and toggles.</p></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><a class="navbar-brand page-nav-title" href="#">Topics</a> <nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#setting-up-customviews-in-a-markbind-site">Setting up CustomViews in a MarkBind Site‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#create-the-plugin-file">Create the Plugin File‎</a> <a class="nav-link py-1" href="#2-register-the-plugin-in-site-json">2. Register the Plugin in site.json‎</a> <a class="nav-link py-1" href="#3-create-customviews-config-json">3. Create customviews.config.json‎</a></nav><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.1.0</a> on Mon, 2 Feb 2026, 14:51:59 GMT+8]</small><br></div></footer></div><!--]--></div>
+    </button></div></pre><p>If everything is configured correctly, you should see the CustomViews widget floating on your site. Try toggling between views or switching tabs to confirm your setup is working. CustomViews will automatically handle visibility, persistence, and synchronization across all tabs and toggles.</p></div> <nav id="page-nav" data-v-6b1b63d2><!--[--><div class="nav-component slim-scroll"><a class="navbar-brand page-nav-title" href="#">Topics</a> <nav id="mb-page-nav" class="nav nav-pills flex-column my-0 small no-flex-wrap" data-v-6b1b63d2><!--[--><a class="nav-link py-1" href="#setting-up-customviews-in-a-markbind-site">Setting up CustomViews in a MarkBind Site‎</a> <nav class="nav nav-pills flex-column my-0 nested no-flex-wrap"><a class="nav-link py-1" href="#create-the-plugin-file">Create the Plugin File‎</a> <a class="nav-link py-1" href="#2-register-the-plugin-in-site-json">2. Register the Plugin in site.json‎</a> <a class="nav-link py-1" href="#3-create-customviews-config-json">3. Create customviews.config.json‎</a></nav><!--]--><!--v-if--></nav></div><!--]--><!--v-if--></nav> <div class="scroll-top-button fa-lg d-print-none" style="display:none;bottom:2%;right:2%;position:fixed;" aria-hidden="true"><!--[--><i class="fas fa-arrow-circle-up"></i><!--]--></div></div> <div><footer><div class="text-center"><small>[Generated by <a href="https://markbind.org/">MarkBind 6.2.0</a> on Fri, 6 Feb 2026, 0:38:49 GMT+8]</small><br></div></footer></div><!--]--></div>
 </body><script src="/customviews/markbind/js/bootstrap-utility.min.js"></script>
 <script src="/customviews/markbind/js/polyfill.min.js"></script>
 <script src="/customviews/markbind/js/vue.global.prod.min.js"></script>
