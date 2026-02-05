@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect } from 'vitest';
-import { UrlActionHandler } from '../src/lib/state/url-action-handler';
+import { UrlActionHandler } from '../src/lib/features/url/url-action-handler';
 
 describe('UrlActionHandler', () => {
   // Helper to create a location-like object

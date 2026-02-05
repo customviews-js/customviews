@@ -3,8 +3,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   UrlActionRouter,
   type RouterOptions,
-} from '../../../src/lib/services/url-action-router.svelte';
-import { UrlActionHandler } from '../../../src/lib/state/url-action-handler';
+} from '../../../src/lib/features/url/url-action-router.svelte';
+import { UrlActionHandler } from '../../../src/lib/features/url/url-action-handler';
 
 describe('UrlActionRouter', () => {
   let router: UrlActionRouter;

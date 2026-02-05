@@ -14,7 +14,7 @@
   import ShareOverlay from '$features/share/ShareOverlay.svelte';
   import FocusBanner from '$features/focus/FocusBanner.svelte';
 
-  import { UrlActionRouter } from '$lib/services/url-action-router.svelte';
+  import { UrlActionRouter } from '$features/url/url-action-router.svelte';
   import { IntroManager } from '$lib/services/intro-manager.svelte';
 
   let { controller, options } = $props<{

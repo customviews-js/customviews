@@ -2,7 +2,7 @@ import type { Config } from '$lib/types/index';
 import type { AssetsManager } from './assets';
 
 import { PersistenceManager } from './state/persistence';
-import { URLStateManager } from './state/url-state-manager';
+import { URLStateManager } from '$features/url/url-state-manager';
 
 import { FocusService } from '$features/focus/services/focus-service.svelte';
 import { DataStore, initStore } from './stores/main-store.svelte';

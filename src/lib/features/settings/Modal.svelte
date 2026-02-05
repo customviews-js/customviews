@@ -17,7 +17,7 @@
   } from '$lib/utils/icons';
   import { themeStore } from '$lib/stores/theme-store.svelte';
   import type { CustomViewsController } from '$lib/controller.svelte';
-  import { URLStateManager } from '$lib/state/url-state-manager';
+  import { URLStateManager } from '$features/url/url-state-manager';
   import { showToast } from '$lib/stores/toast-store.svelte';
   import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
   import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';

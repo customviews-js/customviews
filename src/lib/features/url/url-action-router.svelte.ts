@@ -1,4 +1,4 @@
-import { UrlActionHandler } from '../state/url-action-handler';
+import { UrlActionHandler } from './url-action-handler';
 import type { SelectionMode } from '$features/share/stores/share-store.svelte';
 
 export interface RouterOptions {
