@@ -16,7 +16,7 @@
   * [Local Components]({{baseUrl}}/devGuide/tests/localComponents.html)
   * [Test Tabs]({{baseUrl}}/devGuide/tests/tabs.html)
   * [Focus and Sharing]({{baseUrl}}/devGuide/tests/focus-test.html)
-  * [CV Test]({{baseUrl}}/devGuide/tests/cvtest.html)
+  * [Placeholders]({{baseUrl}}/devGuide/tests/placeholders.html)
       </site-nav>
     </div>
   </nav>

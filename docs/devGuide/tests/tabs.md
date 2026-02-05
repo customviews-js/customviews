@@ -9,12 +9,6 @@
 
 # {{ title }}
 
-<panel header="Fetches Panel Content from with src" src="./cvtest.md">
-
-Test Content goes here:
-
-</panel>
-
 <panel header="Not preloaded option (Default Panel Behavior)">
 
 Non preload.
