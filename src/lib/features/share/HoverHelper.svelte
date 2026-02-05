@@ -1,9 +1,6 @@
 <script lang="ts">
-  import {
-    shareStore,
-    SHAREABLE_SELECTOR,
-    isGenericWrapper,
-  } from '$features/share/stores/share-store.svelte';
+  import { shareStore } from '$features/share/stores/share-store.svelte';
+  import { isGenericWrapper, SHAREABLE_SELECTOR } from '$features/share/share-logic';
   import { fade } from 'svelte/transition';
   import { untrack } from 'svelte';
 
