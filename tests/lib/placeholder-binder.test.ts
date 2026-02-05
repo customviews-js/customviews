@@ -2,6 +2,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { PlaceholderBinder } from '../../src/lib/features/placeholder/placeholder-binder';
 import { store } from '../../src/lib/stores/main-store.svelte';
+import { placeholderRegistryStore } from '../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
 
 // Mock main store
 vi.mock('../../src/lib/stores/main-store.svelte', () => {
@@ -232,6 +233,20 @@ describe('PlaceholderBinder', () => {
 
       const a = container.querySelector('a')!;
       expect(a.getAttribute('href')).toBe('mailto:support@example.com');
+    });
+    it('should prioritize inline fallback over registry default', () => {
+      // Setup registry with a default value
+      // @ts-expect-error - mock types
+      vi.mocked(placeholderRegistryStore.get).mockReturnValue({
+        defaultValue: 'REGISTRY_DEFAULT',
+      });
+
+      container.innerHTML = '<div data-value="[[key : INLINE_FALLBACK]]" class="cv-bind"></div>';
+      PlaceholderBinder.scanAndHydrate(container);
+      PlaceholderBinder.updateAll({});
+
+      const div = container.querySelector('div')!;
+      expect(div.getAttribute('data-value')).toBe('INLINE_FALLBACK');
     });
   });
 });

@@ -231,10 +231,10 @@ export class PlaceholderBinder {
 
     if (userVal !== undefined && userVal !== '') {
       return userVal;
-    } else if (registryDefault !== undefined && registryDefault !== '') {
-      return registryDefault;
     } else if (fallback) {
       return fallback;
+    } else if (registryDefault !== undefined && registryDefault !== '') {
+      return registryDefault;
     }
     return undefined;
   }
