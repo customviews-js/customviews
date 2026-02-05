@@ -377,7 +377,7 @@
               the page to share.
             </div>
 
-            <button class="share-action-btn primary start-share-btn" onclick={onstartShare}>
+            <button class="share-action-btn primary start-share-btn" onclick={() => onstartShare()}>
               <span class="btn-icon"
                 ><!-- eslint-disable-next-line svelte/no-at-html-tags -->
                 {@html getShareIcon()}</span
