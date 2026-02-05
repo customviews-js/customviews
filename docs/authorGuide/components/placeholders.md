@@ -140,8 +140,8 @@ Google search for <a href="https://www.google.com/search?q=[[username]]" class="
 
 You can "escape" the placeholder syntax if you want to display the literal brackets instead of a variable.
 
-- **In Markdown Text**: Use two backslashes `\\[[ variable ]]`.
-- **In Code Blocks**: Use one backslash `\[[ variable ]]`.
+- **In Markdown Text**: Use two backslashes: `\\\[[ variable ]]`.
+- **In Code Blocks**: Use one backslash: `\\[[ variable ]]`.
 
 ## Tab Group Binding & Integration
 
