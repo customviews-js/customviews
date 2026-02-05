@@ -11,55 +11,24 @@
 
 Toggles let you show or hide sections of a page based on a category (for example: `mac`, `linux`, `windows`). They are ideal for platform-specific content, progressive disclosure, or audience-targeted sections.
 
-<include src="codeAndOutputSeparate.md" boilerplate >
+<include src="codeAndOutput.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 <cv-toggle toggle-id="mac">
 
-**macOS**
-macOS-specific install steps...
-
+**macOS**: macOS-specific install steps...
 </cv-toggle>
 
 <cv-toggle toggle-id="linux">
 
-**Linux**
-Linux-specific install steps...
-
+**Linux**: Linux-specific install steps...
 </cv-toggle>
 
 <cv-toggle toggle-id="windows">
 
-**Windows**
-Windows-specific install steps...
-
+**Windows**: Windows-specific install steps...
 </cv-toggle>
 
-</variable>
-<variable name="output">
-<cv-toggle toggle-id="mac">
-
-**macOS**
-
-macOS-specific install steps...
-
-</cv-toggle>
-
-<cv-toggle toggle-id="linux">
-
-**Linux**
-
-Linux-specific install steps...
-
-</cv-toggle>
-
-<cv-toggle toggle-id="windows">
-
-**Windows**
-
-Windows-specific install steps...
-
-</cv-toggle>
 </variable>
 </include>
 

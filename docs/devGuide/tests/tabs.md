@@ -51,7 +51,7 @@ Pear types include other pears.
 <panel header="Example Usage - Preloaded" preload="true">
 <!-- ------------------------ CODE OUTPUT ---------------------------- -->
 
-<include src="codeAndOutputSeparate.md" boilerplate >
+<include src="codeAndOutput.md" boilerplate >
 <variable name="highlightStyle">html</variable>
 <variable name="code">
 
@@ -118,78 +118,6 @@ Orange types include the **Blood orange** and **Valencia orange**.
 :fa-solid-leaf: Pear Types
 </cv-tab-header>
 <cv-tab-body>
-</cv-tabgroup>
-
-</variable>
-<variable name="output">
-
-<cv-tabgroup group-id="fruit" >
-  
-  <cv-tab tab-id="apple" header="Apple">
-  
-  **Apple Information**
-
-Apples are crisp, sweet fruits that come in many varieties. They are rich in fiber and vitamin C.
-
-  <box type="important" icon=":apple:">
-      An apple a day keeps the doctor away!
-  </box>
-
-  </cv-tab>
-  <cv-tab tab-id="orange" header="Orange">
-  
-  **Orange Information**
-
-Oranges are citrus fruits known for their high vitamin C content and refreshing juice.
-
-  <box type="warning" icon=":orange:">
-      The color orange was named after the fruit, not the other way around
-  </box>
-
-  </cv-tab>
-  <cv-tab tab-id="pear" header="Pear">
-  
-  **Pear Information**
-
-Pears are sweet, bell-shaped fruits with a soft texture when ripe. They're high in fiber and antioxidants.
-
-  <box type="success" icon=":pear:">
-    Pears do not ripen on the tree; they ripen from the inside out after being picked. 
-  </box>
-  </cv-tab>
-</cv-tabgroup>
-
-<cv-tabgroup group-id="fruit">
-  <cv-tab tab-id="apple">
-  <cv-tab-header>
-
-:fa-solid-heart: Apple Types
-</cv-tab-header>
-<cv-tab-body>
-
-Apple types include **Granny Smith** and the **Cosmic Crisp**.
-</cv-tab-body>
-</cv-tab>
-<cv-tab tab-id="orange">
-<cv-tab-header>
-
-:fa-solid-circle: Orange Types
-</cv-tab-header>
-<cv-tab-body>
-
-Orange types include the **Blood orange** and **Valencia orange**.
-</cv-tab-body>
-</cv-tab>
-<cv-tab tab-id="pear">
-<cv-tab-header>
-
-:fa-solid-leaf: Pear Types
-</cv-tab-header>
-<cv-tab-body>
-
-Pear types include the **Asian pear** and the **European pear**
-</cv-tab-body>
-</cv-tab>
 </cv-tabgroup>
 
 </variable>
