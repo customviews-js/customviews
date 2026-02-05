@@ -41,15 +41,16 @@
       "headings": {
         "simple-placeholders-variable-interpolation": "Simple Placeholders (Variable Interpolation)",
         "usage": "Usage",
-        "define-the-placeholder": "Define the Placeholder",
+        "add-the-placeholder-configuration": "Add the Placeholder Configuration",
         "use-the-placeholder": "Use the placeholder",
         "inline-fallback": "Inline Fallback",
         "manual-component-usage": "Manual Component Usage",
-        "attribute-interpolation": "Attribute Interpolation",
+        "html-attribute-interpolation": "HTML Attribute Interpolation",
         "examples": "Examples",
-        "inline-editing": "Inline Editing",
-        "configuration": "Configuration",
         "escaping-syntax": "Escaping Syntax",
+        "inline-editing-of-placeholders": "Inline Editing of Placeholders",
+        "placeholder-input-attributes": "Placeholder-Input Attributes",
+        "placeholder-configuration": "Placeholder Configuration",
         "tab-group-binding-and-amp-integration": "Tab Group Binding &amp; Integration",
         "persistence": "Persistence"
       },
@@ -252,14 +253,6 @@
       "headingKeywords": {}
     },
     {
-      "src": "devGuide/tests/cvtest.md",
-      "title": "Developer Guide - Tests",
-      "headings": {
-        "tests": "Tests"
-      },
-      "headingKeywords": {}
-    },
-    {
       "src": "devGuide/tests/focus-test.md",
       "title": "Developer Guide - Focus and Sharing Tests",
       "headings": {
@@ -282,6 +275,15 @@
         "local-toggle": "Local Toggle",
         "local-tab-groups": "Local Tab Groups",
         "further-testing": "Further Testing"
+      },
+      "headingKeywords": {}
+    },
+    {
+      "src": "devGuide/tests/placeholders.md",
+      "title": "Developer Guide - Placeholder Tests",
+      "headings": {
+        "placeholder-tests": "Placeholder Tests",
+        "placeholders-from-config-work-with-tabgroup-on-page": "Placeholders from Config work with tabgroup on page:"
       },
       "headingKeywords": {}
     },
