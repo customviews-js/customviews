@@ -94,3 +94,40 @@ export function calculateNewSelection(
 
   return { updatedSelection: nextSelection, changesMade: true };
 }
+
+import { CV_SHARE_IGNORE_ATTRIBUTE } from '$lib/exclusion-defaults';
+
+/**
+ * Checks if an element or any of its ancestors should be excluded from sharing.
+ * @param element The element to check
+ * @param excludedTags Set of tag names to exclude
+ * @param excludedIds Set of IDs to exclude
+ */
+export function isExcluded(
+  element: HTMLElement | null,
+  excludedTags?: Set<string>,
+  excludedIds?: Set<string>,
+): boolean {
+  let current: HTMLElement | null = element;
+
+  while (current) {
+    // 1. Check for the standardized ignore attribute
+    if (current.hasAttribute(CV_SHARE_IGNORE_ATTRIBUTE)) {
+      return true;
+    }
+
+    // 2. Check for excluded tags
+    if (excludedTags && excludedTags.has(current.tagName.toUpperCase())) {
+      return true;
+    }
+
+    // 3. Check for excluded IDs
+    if (excludedIds && current.id && excludedIds.has(current.id)) {
+      return true;
+    }
+
+    current = current.parentElement;
+  }
+
+  return false;
+}

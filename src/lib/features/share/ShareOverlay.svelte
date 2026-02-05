@@ -1,12 +1,12 @@
 <script lang="ts">
   import { shareStore } from '$features/share/stores/share-store.svelte';
-  import { isGenericWrapper, SHAREABLE_SELECTOR } from '$features/share/share-logic';
+  import { isGenericWrapper, SHAREABLE_SELECTOR, isExcluded } from '$features/share/share-logic';
   import ShareToolbar from './ShareToolbar.svelte';
   import HoverHelper from './HoverHelper.svelte';
 
   let {
     excludedTags = ['HEADER', 'NAV', 'FOOTER'],
-    excludedIds = ['cv-floating-action-bar', 'cv-hover-helper'],
+    excludedIds = [],
   }: { excludedTags?: string[]; excludedIds?: string[] } = $props();
 
   let excludedTagSet = $derived(new Set(excludedTags.map((t: string) => t.toUpperCase())));
@@ -220,31 +220,7 @@
   }
 
   function isOrHasExcludedParentElement(el: HTMLElement): boolean {
-    // Exclude our own UI
-    if (
-      el.closest('.share-overlay-ui') ||
-      el.closest('.hover-helper') ||
-      el.closest('.floating-bar')
-    ) {
-      return true;
-    }
-
-    // Check self
-    if (excludedTagSet.has(el.tagName.toUpperCase()) || (el.id && excludedIdSet.has(el.id))) {
-      return true;
-    }
-    // Check  all the way up
-    let ancestor = el.parentElement;
-    while (ancestor) {
-      if (
-        excludedTagSet.has(ancestor.tagName.toUpperCase()) ||
-        (ancestor.id && excludedIdSet.has(ancestor.id))
-      ) {
-        return true;
-      }
-      ancestor = ancestor.parentElement;
-    }
-    return false;
+    return isExcluded(el, excludedTagSet, excludedIdSet);
   }
 </script>
 

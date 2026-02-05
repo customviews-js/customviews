@@ -1,4 +1,5 @@
 import { SvelteSet } from 'svelte/reactivity';
+import { CV_SHARE_IGNORE_ATTRIBUTE } from '$lib/exclusion-defaults';
 
 /**
  * Determines which siblings of the target path elements should be hidden.
@@ -77,6 +78,8 @@ export interface ExclusionOptions {
 
 /**
  * Checks if an element should be excluded from hiding logic.
+ * 
+ * TODO: Check how to commonize this between focus and share
  */
 export function isElementExcluded(el: HTMLElement, options: ExclusionOptions): boolean {
   if (options.hiddenElements.has(el)) return true;
@@ -89,7 +92,8 @@ export function isElementExcluded(el: HTMLElement, options: ExclusionOptions): b
     el.closest('.toast-container') ||
     el.id === 'cv-exit-focus-banner' ||
     el.classList.contains('cv-settings-icon') ||
-    el.classList.contains('cv-widget-root')
+    el.classList.contains('cv-widget-root') ||
+    el.closest(`[${CV_SHARE_IGNORE_ATTRIBUTE}]`)
   )
     return true;
 

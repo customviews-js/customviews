@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
-import { calculateNewSelection, isGenericWrapper } from '$features/share/share-logic';
+import { calculateNewSelection, isGenericWrapper, isExcluded } from '$features/share/share-logic';
+import { CV_SHARE_IGNORE_ATTRIBUTE } from '$lib/exclusion-defaults';
 import { SvelteSet } from 'svelte/reactivity';
 
 describe('share-logic', () => {
@@ -96,6 +97,41 @@ describe('share-logic', () => {
       expect(updatedSelection.size).toBe(2);
       expect(updatedSelection.has(child1)).toBe(true);
       expect(updatedSelection.has(independent)).toBe(true);
+    });
+  });
+
+  describe('isExcluded', () => {
+
+    it('should exclude elements with data share ignore attribute', () => {
+      const el = document.createElement('div');
+      el.setAttribute(CV_SHARE_IGNORE_ATTRIBUTE, '');
+      expect(isExcluded(el)).toBe(true);
+    });
+
+    it('should exclude children of elements with data share ignore attribute', () => {
+      const parent = document.createElement('div');
+      parent.setAttribute(CV_SHARE_IGNORE_ATTRIBUTE, '');
+      const child = document.createElement('div');
+      parent.appendChild(child);
+      expect(isExcluded(child)).toBe(true);
+    });
+
+    it('should NOT exclude normal elements', () => {
+      const el = document.createElement('div');
+      expect(isExcluded(el)).toBe(false);
+    });
+
+    it('should exclude matched tags', () => {
+      const el = document.createElement('nav');
+      const excludedTags = new Set(['NAV']);
+      expect(isExcluded(el, excludedTags)).toBe(true);
+    });
+
+    it('should exclude matched IDs', () => {
+      const el = document.createElement('div');
+      el.id = 'my-id';
+      const excludedIds = new Set(['my-id']);
+      expect(isExcluded(el, undefined, excludedIds)).toBe(true);
     });
   });
 });

@@ -19,7 +19,7 @@ import {
   HIGHLIGHT_PARAM,
 } from '$features/highlight/services/highlight-service.svelte';
 
-import { DEFAULT_EXCLUDED_IDS, DEFAULT_EXCLUDED_TAGS } from '$lib/constants';
+import { DEFAULT_EXCLUDED_IDS, DEFAULT_EXCLUDED_TAGS } from '$lib/exclusion-defaults';
 import { type ShareExclusions } from '$lib/types/config';
 
 export interface FocusServiceOptions {

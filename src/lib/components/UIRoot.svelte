@@ -9,7 +9,7 @@
   import { showToast } from '$lib/stores/toast-store.svelte';
   import { shareStore, type SelectionMode } from '$features/share/stores/share-store.svelte';
   import { themeStore } from '$lib/stores/theme-store.svelte';
-  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '$lib/constants';
+  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '$lib/exclusion-defaults';
   import Toast from '$ui/Toast.svelte';
   import ShareOverlay from '$features/share/ShareOverlay.svelte';
   import FocusBanner from '$features/focus/FocusBanner.svelte';
@@ -106,7 +106,7 @@
   );
 </script>
 
-<div class="cv-widget-root" data-theme={themeStore.currentTheme}>
+<div class="cv-widget-root" data-theme={themeStore.currentTheme} data-cv-share-ignore>
   <!-- Intro Callout -->
   {#if introManager.showCallout && settingsEnabled}
     <IntroCallout
