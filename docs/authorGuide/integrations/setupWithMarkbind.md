@@ -21,14 +21,23 @@ Then, add a file named **`customviews.js`** inside it with the following content
 /**
  * CustomViews Plugin for MarkBind
  * Injects the CustomViews auto-init script into every page.
- * Configuration is loaded from /customviews.config.json
- * Add data-base-url="/website-baseurl"
+ * Configuration is loaded from websiteUrl/BaseUrl/customviews.config.json
  */
 function getScripts() {
-  return ['<script src="https://unpkg.com/@customviews-js/customviews"></script>'];
+  return ['<script src="https://unpkg.com/@customviews-js/customviews" data-base-url="/"></script>'];
 }
 
-module.exports = { getScripts };
+const tagConfig = {
+  'cv-toggle': { isCustomElement: true },
+  'cv-tabgroup': { isCustomElement: true },
+  'cv-tab': { isCustomElement: true },
+  'cv-tab-body': { isCustomElement: true },
+  'cv-tab-header': { isCustomElement: true },
+  'cv-define-placeholder': { isCustomElement: true },
+  'cv-placeholder-input': { isCustomElement: true }
+};
+
+module.exports = { getScripts, tagConfig };
 ```
 
 <box type="info">
@@ -37,10 +46,20 @@ Note: Depending on your MarkBind JS environment, if you are operating in an ESM 
 
 ```js
 function getScripts() {
-  return ['<script src="../../../dist/custom-views.min.js"></script>'];
+  return ['<script src="https://unpkg.com/@customviews-js/customviews@v1" data-base-url="/"></script>'];
 }
 
-export { getScripts };
+const tagConfig = {
+  'cv-toggle': { isCustomElement: true },
+  'cv-tabgroup': { isCustomElement: true },
+  'cv-tab': { isCustomElement: true },
+  'cv-tab-body': { isCustomElement: true },
+  'cv-tab-header': { isCustomElement: true },
+  'cv-define-placeholder': { isCustomElement: true },
+  'cv-placeholder-input': { isCustomElement: true }
+};
+
+export { getScripts, tagConfig };
 ```
 
 This is a current limitation of MarkBind which only operates in CJS formats, which may cause compatibility issues when operating in cross CJS and ESM environments.
@@ -105,6 +124,7 @@ At your project root, create a `customviews.config.json` file to define your tog
   "baseUrl": "/customviews",
   "storageKey": "cv-docs-beta",
   "settings": {
+    "enabled": true,
     "panel": {
       "title": "Custom Views Settings Dialog",
       "description": "Toggle different content sections to customize your view."

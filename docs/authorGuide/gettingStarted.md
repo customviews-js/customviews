@@ -36,10 +36,10 @@ Add the following script tag to the `<head>` or end of `<body>` in your HTML fil
 
 ```html
 <!-- Load from unpkg -->
-<script src="https://unpkg.com/@customviews-js/customviews/dist/custom-views.min.js"></script>
+<script src="https://unpkg.com/@customviews-js/customviews" data-base-url="/"></script>
 
 <!-- OR Load from jsDelivr -->
-<script src="https://cdn.jsdelivr.net/npm/@customviews-js/customviews/dist/custom-views.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@customviews-js/customviews" data-base-url="/"></script>
 ```
 
 ++**2. Create a Configuration File (Optional)**++

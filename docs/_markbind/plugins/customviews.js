@@ -1,7 +1,7 @@
 /**
  * CustomViews Plugin for MarkBind
  * Injects the CustomViews auto-init script into every page.
- * Configuration is loaded from websiteBaseUrl/customviews.config.json
+ * Configuration is loaded from websiteUrl/BaseUrl/customviews.config.json
  */
 
 // Local Development: ESM Modules, relative directory
