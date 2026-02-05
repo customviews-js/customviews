@@ -115,8 +115,12 @@ export class URLStateManager {
         encoded = btoa(json);
       } else {
         // Node/test fallback
-        // @ts-expect-error - Node polyfill not typed in browser context
-        encoded = Buffer.from(json, 'utf-8').toString('base64');
+
+        encoded = (
+          globalThis as unknown as {
+            Buffer: { from: (str: string, enc: string) => { toString: (enc: string) => string } };
+          }
+        ).Buffer.from(json, 'utf-8').toString('base64');
       }
 
       // Make URL-safe
@@ -149,8 +153,12 @@ export class URLStateManager {
         json = atob(base64);
       } else {
         // Node/test fallback
-        // @ts-expect-error - Node polyfill not typed in browser context
-        json = Buffer.from(base64, 'base64').toString('utf-8');
+
+        json = (
+          globalThis as unknown as {
+            Buffer: { from: (str: string, enc: string) => { toString: (enc: string) => string } };
+          }
+        ).Buffer.from(base64, 'base64').toString('utf-8');
       }
       const compact = JSON.parse(json);
 

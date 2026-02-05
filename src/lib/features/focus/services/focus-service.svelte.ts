@@ -224,20 +224,18 @@ export class FocusService {
     targets.forEach((t) => t.classList.add(SHOW_ELEMENT_CLASS));
 
     // 2. Determine what to hide
-    const elementsToHide = determineHiddenElements(
-        targets, 
-        document.body,
-        (el) => isElementExcluded(el, {
-            hiddenElements: this.hiddenElements,
-            excludedTags: this.excludedTags,
-            excludedIds: this.excludedIds
-        })
+    const elementsToHide = determineHiddenElements(targets, document.body, (el) =>
+      isElementExcluded(el, {
+        hiddenElements: this.hiddenElements,
+        excludedTags: this.excludedTags,
+        excludedIds: this.excludedIds,
+      }),
     );
 
     // 3. Apply changes (Hide & Track)
-    elementsToHide.forEach(el => {
-        el.classList.add(HIDDEN_CLASS);
-        this.hiddenElements.add(el);
+    elementsToHide.forEach((el) => {
+      el.classList.add(HIDDEN_CLASS);
+      this.hiddenElements.add(el);
     });
 
     // 4. Identify Elements to Keep Visible (Targets + Ancestors)
@@ -263,16 +261,15 @@ export class FocusService {
     });
   }
 
-
   private insertDividersForContainer(container: HTMLElement): void {
     const children = Array.from(container.children) as HTMLElement[];
     const isHidden = (el: HTMLElement) => el.classList.contains(HIDDEN_CLASS);
 
     const groups = calculateDividerGroups(children, isHidden);
 
-    groups.forEach(group => {
-        // Insert the divider before first hidden element of the group.
-        this.createDivider(container, group.startNode, group.count);
+    groups.forEach((group) => {
+      // Insert the divider before first hidden element of the group.
+      this.createDivider(container, group.startNode, group.count);
     });
   }
 

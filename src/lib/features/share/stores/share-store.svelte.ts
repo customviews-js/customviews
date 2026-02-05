@@ -8,7 +8,7 @@ import {
   HIDE_SELECTED_CLASS,
   HIDE_HIGHLIGHT_TARGET_CLASS,
   HIGHLIGHT_SELECTED_CLASS,
-  HIGHLIGHT_TARGET_MODE_CLASS
+  HIGHLIGHT_TARGET_MODE_CLASS,
 } from '../share-logic';
 
 export type SelectionMode = 'show' | 'hide' | 'highlight';
@@ -85,25 +85,25 @@ export class ShareStore {
 
   toggleElementSelection(el: HTMLElement) {
     const { updatedSelection, changesMade } = calculateNewSelection(this.selectedElements, el);
-    
-    if (changesMade) {
-        // We need to sync the classes on the DOM elements
-        // 1. Remove classes from elements that are no longer selected
-        this.selectedElements.forEach(oldEl => {
-            if (!updatedSelection.has(oldEl)) {
-                this._removeSelectionClass(oldEl);
-            }
-        });
 
-        // 2. Add classes to elements that are newly selected
-        updatedSelection.forEach(newEl => {
-            if (!this.selectedElements.has(newEl)) {
-                this._addSelectionClass(newEl);
-            }
-        });
-        
-        // 3. Update the state
-        this.selectedElements = updatedSelection;
+    if (changesMade) {
+      // We need to sync the classes on the DOM elements
+      // 1. Remove classes from elements that are no longer selected
+      this.selectedElements.forEach((oldEl) => {
+        if (!updatedSelection.has(oldEl)) {
+          this._removeSelectionClass(oldEl);
+        }
+      });
+
+      // 2. Add classes to elements that are newly selected
+      updatedSelection.forEach((newEl) => {
+        if (!this.selectedElements.has(newEl)) {
+          this._addSelectionClass(newEl);
+        }
+      });
+
+      // 3. Update the state
+      this.selectedElements = updatedSelection;
     }
   }
 

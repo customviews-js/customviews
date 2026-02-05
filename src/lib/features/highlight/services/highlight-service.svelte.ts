@@ -130,12 +130,12 @@ export class HighlightService {
 
     // Calculate Union Rect for each group
     this.state.rects = calculateMergedRects(
-        groups,
-        (el) => el.getBoundingClientRect(),
-        () => ({
-            scrollTop: window.pageYOffset || document.documentElement.scrollTop,
-            scrollLeft: window.pageXOffset || document.documentElement.scrollLeft
-        })
+      groups,
+      (el) => el.getBoundingClientRect(),
+      () => ({
+        scrollTop: window.pageYOffset || document.documentElement.scrollTop,
+        scrollLeft: window.pageXOffset || document.documentElement.scrollLeft,
+      }),
     );
   }
 }

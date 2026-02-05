@@ -41,57 +41,56 @@ export function isGenericWrapper(el: HTMLElement): boolean {
 /**
  * Calculates the new set of selected elements based on the current selection
  * and the new element to toggle/select.
- * 
+ *
  * Implements the logic:
  * 1. If an ancestor is already selected, ignore the new selection (Scenario B).
  * 2. If children of the new selection are already selected, remove them (Scenario A) and add the new one.
  * 3. Otherwise, just add the new one.
  */
 export function calculateNewSelection(
-    currentSelection: SvelteSet<HTMLElement>, 
-    newElement: HTMLElement
-): { updatedSelection: SvelteSet<HTMLElement>, changesMade: boolean } {
-    
-    // Create a copy to modify
-    const nextSelection = new SvelteSet(currentSelection);
-    
-    // 0. Toggle off if already present
-    if (nextSelection.has(newElement)) {
-        nextSelection.delete(newElement);
-        return { updatedSelection: nextSelection, changesMade: true };
-    }
+  currentSelection: SvelteSet<HTMLElement>,
+  newElement: HTMLElement,
+): { updatedSelection: SvelteSet<HTMLElement>; changesMade: boolean } {
+  // Create a copy to modify
+  const nextSelection = new SvelteSet(currentSelection);
 
-    // 1. Check if ancestor is selected (Scenario B)
-    // Guard Check -> element toggled should not have an ancestor in the selection technically
-    let parent = newElement.parentElement;
-    let ancestorSelected = false;
-    while (parent) {
-        if (nextSelection.has(parent)) {
-            ancestorSelected = true;
-            break;
-        }
-        parent = parent.parentElement;
-    }
-
-    if (ancestorSelected) {
-        return { updatedSelection: currentSelection, changesMade: false }; // No change
-    }
-
-    // 2. NewElement is the parent of an element in the selection.
-    //  Remove children if selected (Scenario A)
-    const toRemove: HTMLElement[] = [];
-    nextSelection.forEach((selected) => {
-        if (newElement.contains(selected) && newElement !== selected) {
-            toRemove.push(selected);
-        }
-    });
-
-    toRemove.forEach((child) => {
-        nextSelection.delete(child);
-    });
-
-    // Add
-    nextSelection.add(newElement);
-    
+  // 0. Toggle off if already present
+  if (nextSelection.has(newElement)) {
+    nextSelection.delete(newElement);
     return { updatedSelection: nextSelection, changesMade: true };
+  }
+
+  // 1. Check if ancestor is selected (Scenario B)
+  // Guard Check -> element toggled should not have an ancestor in the selection technically
+  let parent = newElement.parentElement;
+  let ancestorSelected = false;
+  while (parent) {
+    if (nextSelection.has(parent)) {
+      ancestorSelected = true;
+      break;
+    }
+    parent = parent.parentElement;
+  }
+
+  if (ancestorSelected) {
+    return { updatedSelection: currentSelection, changesMade: false }; // No change
+  }
+
+  // 2. NewElement is the parent of an element in the selection.
+  //  Remove children if selected (Scenario A)
+  const toRemove: HTMLElement[] = [];
+  nextSelection.forEach((selected) => {
+    if (newElement.contains(selected) && newElement !== selected) {
+      toRemove.push(selected);
+    }
+  });
+
+  toRemove.forEach((child) => {
+    nextSelection.delete(child);
+  });
+
+  // Add
+  nextSelection.add(newElement);
+
+  return { updatedSelection: nextSelection, changesMade: true };
 }
