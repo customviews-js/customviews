@@ -1,15 +1,32 @@
 /**
- * Calculates the height of a fixed or sticky header, if present.
- * This is used to offset scroll positions so content isn't hidden behind the header.
+ * Calculates the total height of fixed or sticky elements at the top of the viewport.
+ * This includes the standard site header and any custom elements marked with [data-cv-scroll-offset].
+ * Used to offset scroll positions so content isn't hidden behind these fixed elements.
  */
-export function getHeaderOffset(): number {
+export function getScrollTopOffset(): number {
+  let headerHeight = 0;
+  let customOffset = 0;
+
+  // 1. Standard Site Header if applicable
   const headerEl = document.querySelector('header');
-  if (!headerEl) return 0;
+  if (headerEl) {
+    const headerStyle = window.getComputedStyle(headerEl);
+    const isHeaderFixedOrSticky = ['fixed', 'sticky'].includes(headerStyle.position);
+    if (isHeaderFixedOrSticky) {
+      headerHeight = headerEl.getBoundingClientRect().height;
+    }
+  }
 
-  const headerStyle = window.getComputedStyle(headerEl);
-  const isHeaderFixedOrSticky = ['fixed', 'sticky'].includes(headerStyle.position);
+  // 2. Custom Views Fixed Elements (e.g. Focus Banner)
+  // Elements with [data-cv-scroll-offset] are considered fixed/sticky obstructions.
+  // We use scrollHeight to get the full height even during animations (like slide transition).
+  document.querySelectorAll('[data-cv-scroll-offset]').forEach((el) => {
+    customOffset += el.scrollHeight;
+  });
 
-  return isHeaderFixedOrSticky ? headerEl.getBoundingClientRect().height : 0;
+  // Custom elements overlay the standard header.
+  // Avoid double-counting while ensuring visibility.
+  return Math.max(headerHeight, customOffset);
 }
 
 /**
@@ -18,7 +35,7 @@ export function getHeaderOffset(): number {
  * @returns The HTMLElement of the highest visible element, or null if none are found.
  */
 export function findHighestVisibleElement(selector: string): HTMLElement | null {
-  const headerOffset = getHeaderOffset();
+  const headerOffset = getScrollTopOffset();
   const contentTop = headerOffset; // Viewport-relative position where content begins.
 
   // 1. Find all matching elements, filtering out any inside the main header (if fixed/sticky).
@@ -60,7 +77,7 @@ export function findHighestVisibleElement(selector: string): HTMLElement | null 
  * @param element The element to scroll to.
  */
 export function scrollToElement(element: HTMLElement): void {
-  const headerOffset = getHeaderOffset();
+  const headerOffset = getScrollTopOffset();
   const PADDING_BELOW_HEADER = 20;
 
   const targetElementRect = element.getBoundingClientRect();
