@@ -181,6 +181,7 @@ export class CustomViewsController {
     this.persistenceManager.clearAll();
     this.store.reset();
     this.store.isTabGroupNavHeadingVisible = true;
+    placeholderValueStore.reset();
     URLStateManager.clearURL();
   }
 

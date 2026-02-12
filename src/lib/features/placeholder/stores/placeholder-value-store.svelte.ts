@@ -41,6 +41,11 @@ export class PlaceholderValueStore {
     if (!this.persistence) return;
     this.persistence.setItem(STORAGE_KEY_BASE, JSON.stringify(this.values));
   }
+
+  public reset() {
+    this.values = {};
+    this.persistValue();
+  }
 }
 
 export const placeholderValueStore = new PlaceholderValueStore();
