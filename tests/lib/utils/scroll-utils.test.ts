@@ -76,7 +76,7 @@ describe('scroll-utils', () => {
       getComputedStyleSpy.mockRestore();
     });
 
-    it('returns sum of custom elements scrollHeight', () => {
+    it('returns max of custom elements scrollHeight (assuming overlap)', () => {
       const el1 = document.createElement('div');
       el1.setAttribute('data-cv-scroll-offset', '');
       Object.defineProperty(el1, 'scrollHeight', { configurable: true, value: 30 });
@@ -87,7 +87,8 @@ describe('scroll-utils', () => {
       Object.defineProperty(el2, 'scrollHeight', { configurable: true, value: 20 });
       document.body.appendChild(el2);
 
-      expect(getScrollTopOffset()).toBe(50);
+      // Max(30, 20) = 30
+      expect(getScrollTopOffset()).toBe(30);
     });
 
     it('returns max of header height and custom offset (overlap logic)', () => {
@@ -119,8 +120,10 @@ describe('scroll-utils', () => {
       Object.defineProperty(el2, 'scrollHeight', { configurable: true, value: 70 });
       document.body.appendChild(el2);
 
-      // Should be Math.max(100, 120) = 120
-      expect(getScrollTopOffset()).toBe(120);
+      // Custom offset now = Math.max(50, 70) = 70.
+      // Header = 100.
+      // Result = Math.max(100, 70) = 100.
+      expect(getScrollTopOffset()).toBe(100);
       
       getComputedStyleSpy.mockRestore();
     });

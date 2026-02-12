@@ -21,7 +21,9 @@ export function getScrollTopOffset(): number {
   // Elements with [data-cv-scroll-offset] are considered fixed/sticky obstructions.
   // We use scrollHeight to get the full height even during animations (like slide transition).
   document.querySelectorAll('[data-cv-scroll-offset]').forEach((el) => {
-    customOffset += el.scrollHeight;
+    // We assume these elements overlap at the top (top: 0) unless a stacking context is managed.
+    // Taking the MAX ensures we clear the tallest obstruction without over-counting.
+    customOffset = Math.max(customOffset, el.scrollHeight);
   });
 
   // Custom elements overlay the standard header.
