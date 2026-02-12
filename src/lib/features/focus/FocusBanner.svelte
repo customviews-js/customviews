@@ -8,28 +8,33 @@
 </script>
 
 {#if focusStore.isActive}
-  <div id="cv-exit-focus-banner" transition:slide={{ duration: 250 }}>
-    <span>You are viewing a focused selection.</span>
-    <button onclick={handleExit}>Show Full Page</button>
+  <div class="cv-focus-banner-wrapper" transition:slide={{ duration: 250 }}>
+    <div id="cv-exit-focus-banner" data-cv-scroll-offset>
+      <span>You are viewing a focused selection.</span>
+      <button onclick={handleExit}>Show Full Page</button>
+    </div>
   </div>
 {/if}
 
 <style>
-  #cv-exit-focus-banner {
+  .cv-focus-banner-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
+    z-index: 9000;
     background-color: #0078d4;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-family: system-ui, sans-serif;
+  }
+
+  #cv-exit-focus-banner {
     color: white;
     padding: 10px 20px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    z-index: 9000; /* Below Toast (usually 9999+) */
-    font-family: system-ui, sans-serif;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
 
   button {
