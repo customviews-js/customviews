@@ -1,4 +1,4 @@
-import type { Config } from '$lib/types/index';
+import type { ConfigFile } from '$lib/types/index';
 import type { AssetsManager } from './assets';
 
 import { PersistenceManager } from './state/persistence';
@@ -11,7 +11,7 @@ import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
 export interface ControllerOptions {
   assetsManager: AssetsManager;
-  config: Config;
+  configFile: ConfigFile;
   rootEl?: HTMLElement | undefined;
   showUrl?: boolean;
   storageKey?: string | undefined;
@@ -43,7 +43,7 @@ export class CustomViewsController {
     this.showUrlEnabled = opt.showUrl ?? false;
 
     // Initialize Reactive Store Singleton
-    this.store = initStore(opt.config);
+    this.store = initStore(opt.configFile);
 
     // Store assetsManager in global store for component access
     this.store.setAssetsManager(opt.assetsManager);
@@ -53,7 +53,7 @@ export class CustomViewsController {
 
     // Resolve Exclusions
     this.focusService = new FocusService(this.rootEl, {
-      shareExclusions: opt.config.shareExclusions || {},
+      shareExclusions: opt.configFile.config?.shareExclusions || {},
     });
   }
 
