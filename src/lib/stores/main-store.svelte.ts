@@ -1,5 +1,5 @@
 import { SvelteSet } from 'svelte/reactivity';
-import type { Config, State, TabGroupConfig } from '$lib/types/index';
+import type { Config, ConfigFile, State, TabGroupConfig } from '$lib/types/index';
 import type { ConfigSectionKey } from '$lib/types/index';
 import { isValidConfigSection } from '$lib/types/index';
 import type { AssetsManager } from '../assets';
@@ -55,6 +55,17 @@ export class DataStore {
   detectedPlaceholders = $state<SvelteSet<string>>(new SvelteSet());
 
   /**
+   * UI Configuration Options
+   * Stores settings related to the UI appearance and behavior (e.g. visibility of specific sections).
+   */
+  uiOptions = $state({
+    showTabGroups: true,
+    showReset: true,
+    title: 'Customize View',
+    description: '',
+  });
+
+  /**
    * Controls the visibility of the tab navigation headers globally.
    */
   isTabGroupNavHeadingVisible = $state(true);
@@ -76,7 +87,21 @@ export class DataStore {
     return this.config.tabGroups.filter((g) => !g.isLocal || this.detectedTabGroups.has(g.groupId));
   });
 
-  hasMenuOptions = $derived(this.menuToggles.length > 0 || this.menuTabGroups.length > 0);
+  hasVisiblePlaceholders = $derived.by(() => {
+    return placeholderRegistryStore.definitions.some((d) => {
+      if (d.hiddenFromSettings) return false;
+      if (d.isLocal) {
+        return this.detectedPlaceholders.has(d.name);
+      }
+      return true;
+    });
+  });
+
+  hasMenuOptions = $derived(
+    this.menuToggles.length > 0 ||
+      this.menuTabGroups.length > 0 ||
+      this.hasVisiblePlaceholders,
+  );
 
   /**
    * Returns true if there are any active components (toggles or tab groups) actually present in the DOM.
@@ -133,6 +158,12 @@ export class DataStore {
    */
   reset() {
     this.state = this.computeDefaultState();
+    this.uiOptions = {
+      showTabGroups: true,
+      showReset: true,
+      title: 'Customize View',
+      description: '',
+    };
   }
 
   // --- Registry Actions ---
@@ -180,6 +211,30 @@ export class DataStore {
    */
   setAssetsManager(manager: AssetsManager) {
     this.assetsManager = manager;
+  }
+
+  /**
+   * Updates the UI configuration options.
+   * @param options Partial UI options to merge.
+   */
+  setUIOptions(options: {
+    showTabGroups?: boolean;
+    showReset?: boolean;
+    title?: string;
+    description?: string;
+  }) {
+    if (options.showTabGroups !== undefined) {
+      this.uiOptions.showTabGroups = options.showTabGroups;
+    }
+    if (options.showReset !== undefined) {
+      this.uiOptions.showReset = options.showReset;
+    }
+    if (options.title !== undefined) {
+      this.uiOptions.title = options.title;
+    }
+    if (options.description !== undefined) {
+      this.uiOptions.description = options.description;
+    }
   }
 
   // --- Helpers ---
@@ -297,7 +352,10 @@ export const store = new DataStore({});
  * Initialize the store with actual configuration.
  * This populates the hollow singleton with real data.
  */
-export function initStore(config: Config): DataStore {
+export function initStore(configFile: ConfigFile): DataStore {
+  const config = configFile.config || {};
+  const settings = configFile.settings?.panel || {};
+
   // Mutate config in place to preserve reactivity
   Object.assign(store.config, config);
 
@@ -308,6 +366,14 @@ export function initStore(config: Config): DataStore {
   store.state.shownToggles = newState.shownToggles ?? [];
   store.state.peekToggles = newState.peekToggles ?? [];
   store.state.tabs = newState.tabs ?? {};
+
+  // Initialize UI Options from Settings
+  store.uiOptions = {
+    showTabGroups: settings.showTabGroups ?? true,
+    showReset: settings.showReset ?? true,
+    title: settings.title ?? 'Customize View',
+    description: settings.description ?? '',
+  };
 
   // Process Global Placeholders from Config
   if (config.placeholders) {

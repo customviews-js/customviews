@@ -102,7 +102,7 @@
 
   // --- Settings Visibility ---
   const shouldRenderSettings = $derived(
-    settingsEnabled && (store.hasMenuOptions || options.panel.showTabGroups || isModalOpen),
+    settingsEnabled && (store.hasMenuOptions || store.uiOptions.showTabGroups || isModalOpen),
   );
 </script>
 
@@ -133,7 +133,7 @@
     <SettingsIcon
       bind:this={settingsIcon}
       position={options.icon.position}
-      title={options.panel.title}
+      title={store.uiOptions.title}
       pulse={introManager.showPulse}
       onclick={openModal}
       iconColor={options.icon?.color}
@@ -148,10 +148,6 @@
   {#if settingsEnabled && isModalOpen}
     <Modal
       {controller}
-      title={options.panel.title}
-      description={options.panel.description}
-      showReset={options.panel.showReset}
-      showTabGroups={options.panel.showTabGroups}
       {isResetting}
       onclose={closeModal}
       onreset={handleReset}
