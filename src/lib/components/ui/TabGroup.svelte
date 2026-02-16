@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getPinIcon } from '$lib/utils/icons';
+  import IconPin from '$lib/components/icons/IconPin.svelte';
   import { store } from '$lib/stores/main-store.svelte';
 
   //  ID of the tabgroup Group
@@ -63,7 +63,6 @@
   let navHeadingVisible = $derived(store.isTabGroupNavHeadingVisible);
 
   // Icons
-  const pinIconHtml = getPinIcon(true);
 
   onMount(() => {
     if (contentWrapper) {
@@ -225,8 +224,7 @@
                 {@html tab.header}</span
               >
               <span class="cv-tab-pin-icon" style:display={isPinned ? 'inline-flex' : 'none'}
-                ><!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                {@html pinIconHtml}</span
+                ><IconPin {isPinned} /></span
               >
             </span>
           </a>

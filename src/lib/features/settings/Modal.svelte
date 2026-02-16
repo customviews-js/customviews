@@ -1,20 +1,18 @@
 <script lang="ts">
   /* eslint-disable @typescript-eslint/no-explicit-any */
   import { fade, scale } from 'svelte/transition';
-  import {
-    getNavHeadingOnIcon,
-    getNavHeadingOffIcon,
-    getNavDashed,
-    getShareIcon,
-    getCopyIcon,
-    getTickIcon,
-    getGitHubIcon,
-    getResetIcon,
-    getGearIcon,
-    getCloseIcon,
-    getSunIcon,
-    getMoonIcon,
-  } from '$lib/utils/icons';
+  import IconGear from '$lib/components/icons/IconGear.svelte';
+  import IconClose from '$lib/components/icons/IconClose.svelte';
+  import IconNavDashed from '$lib/components/icons/IconNavDashed.svelte';
+  import IconNavHeadingOn from '$lib/components/icons/IconNavHeadingOn.svelte';
+  import IconNavHeadingOff from '$lib/components/icons/IconNavHeadingOff.svelte';
+  import IconShare from '$lib/components/icons/IconShare.svelte';
+  import IconCopy from '$lib/components/icons/IconCopy.svelte';
+  import IconCheck from '$lib/components/icons/IconCheck.svelte';
+  import IconReset from '$lib/components/icons/IconReset.svelte';
+  import IconGitHub from '$lib/components/icons/IconGitHub.svelte';
+  import IconSun from '$lib/components/icons/IconSun.svelte';
+  import IconMoon from '$lib/components/icons/IconMoon.svelte';
   import { themeStore } from '$lib/stores/theme-store.svelte';
   import type { CustomViewsController } from '$lib/controller.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';
@@ -85,7 +83,6 @@
   let activeTab = $state<'customize' | 'share'>('customize');
 
   let copySuccess = $state(false);
-  let navIconHtml = $state('');
 
   // Height preservation logic
   let mainClientHeight = $state(0);
@@ -103,20 +100,10 @@
     }
   });
 
-  $effect(() => {
-    updateNavIcon(areTabNavsVisible, false);
-  });
-
-  function updateNavIcon(isVisible: boolean, isHovering: boolean) {
-    if (isHovering) {
-      navIconHtml = getNavDashed();
-    } else {
-      navIconHtml = isVisible ? getNavHeadingOnIcon() : getNavHeadingOffIcon();
-    }
-  }
+  let isNavHovering = $state(false);
 
   function handleNavHover(hovering: boolean) {
-    updateNavIcon(areTabNavsVisible, hovering);
+    isNavHovering = hovering;
   }
 
   function handleNavToggle() {
@@ -201,16 +188,12 @@
     <header class="header">
       <div class="header-content">
         <div class="modal-icon">
-          <!-- Gear Icon -->
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html getGearIcon()}
+          <IconGear />
         </div>
         <div class="title">{title}</div>
       </div>
       <button class="close-btn" aria-label="Close modal" onclick={onclose}>
-        <!-- Close icon svg -->
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        {@html getCloseIcon()}
+        <IconClose />
       </button>
     </header>
 
@@ -288,8 +271,13 @@
                     <div class="tabgroup-row">
                       <div class="logo-box" id="cv-nav-icon-box">
                         <div class="nav-icon">
-                          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                          {@html navIconHtml}
+                          {#if isNavHovering}
+                            <IconNavDashed />
+                          {:else if areTabNavsVisible}
+                            <IconNavHeadingOn />
+                          {:else}
+                            <IconNavHeadingOff />
+                          {/if}
                         </div>
                       </div>
                       <div class="tabgroup-info">
@@ -337,8 +325,7 @@
                   onclick={() => themeStore.setMode('light')}
                   title="Light Mode"
                 >
-                  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                  {@html getSunIcon()}
+                  <IconSun />
                   <span>Light</span>
                 </button>
                 <button
@@ -346,8 +333,7 @@
                   onclick={() => themeStore.setMode('dark')}
                   title="Dark Mode"
                 >
-                  <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                  {@html getMoonIcon()}
+                  <IconMoon />
                   <span>Dark</span>
                 </button>
                 <!-- Auto button disabled for now -->
@@ -357,7 +343,7 @@
                 onclick={() => themeStore.setMode('auto')}
                 title="System Default"
               >
-                {@html getSystemIcon()}
+                 <IconSystem />
                 <span>Auto</span>
               </button>
               -->
@@ -375,8 +361,7 @@
 
             <button class="share-action-btn primary start-share-btn" onclick={() => onstartShare()}>
               <span class="btn-icon"
-                ><!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                {@html getShareIcon()}</span
+                ><IconShare /></span
               >
               <span>Select elements to share</span>
             </button>
@@ -385,11 +370,9 @@
               <button class="share-action-btn copy-url-btn" onclick={copyShareUrl}>
                 <span class="btn-icon">
                   {#if copySuccess}
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    {@html getTickIcon()}
+                    <IconCheck />
                   {:else}
-                    <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-                    {@html getCopyIcon()}
+                    <IconCopy />
                   {/if}
                 </span>
                 <span>
@@ -410,8 +393,7 @@
       {#if showReset}
         <button class="reset-btn" title="Reset to Default" onclick={onreset}>
           <span class="reset-btn-icon {isResetting ? 'spinning' : ''}">
-            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-            {@html getResetIcon()}
+            <IconReset />
           </span>
           <span>Reset</span>
         </button>
@@ -420,8 +402,7 @@
       {/if}
 
       <a href="https://github.com/customviews-js/customviews" target="_blank" class="footer-link">
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        {@html getGitHubIcon()}
+        <IconGitHub />
         <span>View on GitHub</span>
       </a>
 

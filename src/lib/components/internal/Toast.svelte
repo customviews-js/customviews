@@ -2,8 +2,6 @@
   import { flip } from 'svelte/animate';
   import { fade, fly } from 'svelte/transition';
   import { toast, TOAST_CLASS } from '$lib/stores/toast-store.svelte';
-
-  // We can access the store directly in the template
 </script>
 
 <div class="toast-container">
