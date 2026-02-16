@@ -68,7 +68,7 @@ describe('DataStore', () => {
       };
 
       // Setup Store with Config
-      const testStore = initStore(config);
+      const testStore = initStore({ config });
 
       // Mock Registry to say placeholder exists
       vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
@@ -91,7 +91,7 @@ describe('DataStore', () => {
         ],
       };
 
-      const testStore = initStore(config);
+      const testStore = initStore({ config });
       testStore.setPinnedTab('group1', 't1');
 
       expect(placeholderValueStore.set).not.toHaveBeenCalled();
@@ -108,7 +108,7 @@ describe('DataStore', () => {
         ],
       };
 
-      const testStore = initStore(config);
+      const testStore = initStore({ config });
 
       // Clear calls from initStore
       vi.mocked(placeholderValueStore.set).mockClear();
@@ -134,7 +134,7 @@ describe('DataStore', () => {
         ],
       };
 
-      const testStore = initStore(config);
+      const testStore = initStore({ config });
       vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
 
       testStore.setPinnedTab('group1', 't1');
@@ -151,7 +151,7 @@ describe('DataStore', () => {
         placeholders: [{ name: 'p1', defaultValue: 'default' }],
       };
 
-      initStore(config);
+      initStore({ config });
 
       expect(placeholderRegistryStore.register).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -172,7 +172,7 @@ describe('DataStore', () => {
         ],
       };
 
-      initStore(config);
+      initStore({ config });
 
       expect(placeholderRegistryStore.register).toHaveBeenCalledWith(
         expect.objectContaining({
