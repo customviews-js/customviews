@@ -183,4 +183,46 @@ describe('DataStore', () => {
       );
     });
   });
+
+  describe('Element Registry', () => {
+    it('should register toggles and update detectedToggles', () => {
+      store.registerToggle('t1');
+      expect(store.detectedToggles.has('t1')).toBe(true);
+      expect(store.hasPageElements).toBe(true);
+    });
+
+    it('should register tabGroups and update detectedTabGroups', () => {
+      store.registerTabGroup('g1');
+      expect(store.detectedTabGroups.has('g1')).toBe(true);
+      expect(store.hasPageElements).toBe(true);
+    });
+
+    it('should clear registry', () => {
+      store.registerToggle('t1');
+      store.registerTabGroup('g1');
+      store.registerPlaceholder('p1');
+
+      store.clearRegistry();
+
+      expect(store.detectedToggles.size).toBe(0);
+      expect(store.detectedTabGroups.size).toBe(0);
+      expect(store.detectedPlaceholders.size).toBe(0);
+      expect(store.hasPageElements).toBe(false);
+    });
+  });
+
+  describe('UI Options', () => {
+    it('should update uiOptions', () => {
+      store.setUIOptions({ showTabGroups: false });
+      expect(store.uiOptions.showTabGroups).toBe(false);
+      // Check other options remain default
+      expect(store.uiOptions.showReset).toBe(true);
+    });
+
+    it('should reset uiOptions', () => {
+      store.setUIOptions({ showTabGroups: false });
+      store.reset();
+      expect(store.uiOptions.showTabGroups).toBe(true);
+    });
+  });
 });
