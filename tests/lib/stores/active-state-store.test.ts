@@ -127,11 +127,8 @@ describe('ActiveStateStore', () => {
   });
 
   describe('Initialization', () => {
-    // Note: ActiveStateStore registers placeholders via registerPlaceholderFromTabGroup
-    // but global placeholders are handled by main-store initStore currently?
-    // Let's check ActiveStateStore.init() code.
-    // It calls registerPlaceholderFromTabGroup for tab groups.
-    // It does NOT iterate config.placeholders. That was in main-store.ts initStore().
+    // ActiveStateStore handles tabGroup-based placeholder registration internally
+    // during initialization. It does NOT handle global config placeholders.
     
     it('should register placeholders from tabGroups', () => {
       const config = {

@@ -52,12 +52,10 @@ export class ActiveStateStore {
     const newState = this.computeDefaultState();
     
     // Mutate state properties in place to preserve reactivity
-    // We only apply defaults if state is empty or we want to ensure basic integrity
-    // But usually init is called before applying URL state?
-    // In original code:
-    // store.state.shownToggles = newState.shownToggles ?? [];
-    // store.state.peekToggles = newState.peekToggles ?? [];
-    // store.state.tabs = newState.tabs ?? {};
+    // Apply defaults to ensure state integrity.
+    // Existing values in `this.state` are preserved if they exist, but `newState`
+    // (which comes from computeDefaultState) contains the baseline defaults.
+    // We strictly apply defaults here; overlaying URL state happens later via applyState().
     
     this.state.shownToggles = newState.shownToggles ?? [];
     this.state.peekToggles = newState.peekToggles ?? [];

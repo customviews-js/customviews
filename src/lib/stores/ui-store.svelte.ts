@@ -46,10 +46,7 @@ export class UIStore {
       title: 'Customize View',
       description: '',
     };
-    // Note: isTabGroupNavHeadingVisible is usually persisted, so we might not want to reset it here?
-    // In original main-store.reset(), it resets uiOptions but NOT isTabGroupNavHeadingVisible explicitly?
-    // Let's check main-store.ts again.
-    // Yes, main-store.reset() sets this.uiOptions = { ...defaults... }
-    // It does NOT touch isTabGroupNavHeadingVisible.
+    // isTabGroupNavHeadingVisible is intentionally NOT reset here.
+    // This value is persisted separately and should survive a store reset.
   }
 }

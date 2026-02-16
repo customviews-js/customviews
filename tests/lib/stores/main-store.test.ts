@@ -61,6 +61,45 @@ describe('DataStore (Facade)', () => {
         }),
       );
     });
+
+    it('should prioritize config placeholders over tabGroup placeholders (Precedence)', () => {
+      // Logic: If config defines 'p1', and tabGroup uses 'p1',
+      // The config definition should be registered first.
+      // Then when tabGroup tries to register, it detects existing 'config' source and yields.
+      
+      const config = {
+        placeholders: [{ name: 'p1', defaultValue: 'config-def' }],
+        tabGroups: [
+            {
+                groupId: 'g1',
+                placeholderId: 'p1', // Collision
+                tabs: []
+            }
+        ]
+      };
+
+      // Use a stateful mock to simulate registry behavior
+      const registryMap = new Map();
+      vi.mocked(placeholderRegistryStore.register).mockImplementation((def: any) => {
+          registryMap.set(def.name, def);
+      });
+      vi.mocked(placeholderRegistryStore.get).mockImplementation((name) => {
+          return registryMap.get(name);
+      });
+      vi.mocked(placeholderRegistryStore.has).mockImplementation((name) => {
+          return registryMap.has(name);
+      });
+
+      initStore({ config });
+
+      // Expectation: The registered placeholder should have source: 'config'
+      const calls = vi.mocked(placeholderRegistryStore.register).mock.calls;
+      const p1Calls = calls.filter((args: any) => args[0].name === 'p1');
+      
+      // We expect the first call to be source: 'config'
+      expect(p1Calls.length).toBeGreaterThan(0);
+      expect(p1Calls[0]?.[0].source).toBe('config');
+    });
   });
 
   // Smoke tests to ensure delegation works
@@ -76,8 +115,7 @@ describe('DataStore (Facade)', () => {
     });
 
     it('should delegate setPinnedTab to ActiveStateStore', () => {
-       // We rely on ActiveStateStore logic, here we just check if it doesn't crash
-       // and updates local state if possible
+       // Verify that calls are correctly delegated to ActiveStateStore
        const config = {
         tabGroups: [
           {

@@ -103,10 +103,10 @@ export class DataStore {
   get hasPageElements() { return this.elementStore.hasPageElements; }
 
   constructor(initialConfig: Config = {}) {
-    // Initial config is handled by activeStateStore init or constructor
-    // but here we might want to pass it
+    // Pass initial config to activeStateStore to ensure it's initialized immediately,
+    // although initStore() will typically be called later with the full config.
     if (initialConfig && Object.keys(initialConfig).length > 0) {
-        this.activeStateStore.init(initialConfig);
+      this.activeStateStore.init(initialConfig);
     }
   }
 
@@ -187,21 +187,6 @@ export function initStore(configFile: ConfigFile): DataStore {
   const config = configFile.config || {};
   const settings = configFile.settings?.panel || {};
 
-  // Initialize ActiveStateStore with config
-  store.activeStateStore.init(config);
-  
-  // Note: activeStateStore.init() also computes defaults and resets state
-  // So we might not need to do manual state merging here if init() handles it.
-  // In usage: when initStore is called, it seems to expect to reset/init the state.
-  
-  // Initialize UI Options from Settings
-  store.uiStore.setUIOptions({
-    showTabGroups: settings.showTabGroups ?? true,
-    showReset: settings.showReset ?? true,
-    title: settings.title ?? 'Customize View',
-    description: settings.description ?? '',
-  });
-
   // Process Global Placeholders from Config
   if (config.placeholders) {
     config.placeholders.forEach((def) => {
@@ -212,8 +197,21 @@ export function initStore(configFile: ConfigFile): DataStore {
     });
   }
 
-  // store.configSectionOrder is handled by activeStateStore.init()
-  // store.registerPlaceholderFromTabGroup is handled by activeStateStore.init()
+  // Initialize ActiveStateStore with config
+  store.activeStateStore.init(config);
+  
+  // activeStateStore.init() computes defaults and resets state.
+  // This ensures the store starts with a valid state based on the provided config.
+  
+  // Initialize UI Options from Settings
+  store.uiStore.setUIOptions({
+    showTabGroups: settings.showTabGroups ?? true,
+    showReset: settings.showReset ?? true,
+    title: settings.title ?? 'Customize View',
+    description: settings.description ?? '',
+  });
+
+
 
   return store;
 }
