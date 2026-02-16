@@ -14,7 +14,7 @@ export const VAR_REGEX = /(\\)?\[\[\s*([a-zA-Z0-9_-]+)(?:\s*:\s*(.*?))?\s*\]\]/g
 const VAR_TESTER = /(\\)?\[\[\s*([a-zA-Z0-9_-]+)(?:\s*:\s*(.*?))?\s*\]\]/;
 
 import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
-import { store } from '$lib/stores/main-store.svelte';
+import { getAppStore } from '$lib/stores/app-context';
 
 export class PlaceholderBinder {
   /**
@@ -111,7 +111,7 @@ export class PlaceholderBinder {
         fragment.appendChild(el);
 
         // Register detection
-        store.registerPlaceholder(name);
+        getAppStore().registry.registerPlaceholder(name);
       }
 
       lastIndex = VAR_REGEX.lastIndex;
@@ -158,7 +158,7 @@ export class PlaceholderBinder {
         let match;
         while ((match = matcher.exec(tmpl)) !== null) {
           if (!match[1] && match[2]) {
-            store.registerPlaceholder(match[2]);
+            getAppStore().registry.registerPlaceholder(match[2]);
           }
         }
       });

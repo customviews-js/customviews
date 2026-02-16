@@ -1,17 +1,11 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { PlaceholderBinder } from '../../src/lib/features/placeholder/placeholder-binder';
-import { store } from '../../src/lib/stores/main-store.svelte';
+import { getAppStore, initAppStore } from '../../src/lib/stores/app-context';
 import { placeholderRegistryStore } from '../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
 
 // Mock main store
-vi.mock('../../src/lib/stores/main-store.svelte', () => {
-  return {
-    store: {
-      registerPlaceholder: vi.fn(),
-    },
-  };
-});
+// No mock needed for main-store as we use the real AppStore via initAppStore
 
 // Mock the store BEFORE importing the subject under test
 vi.mock('../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => {
@@ -33,6 +27,7 @@ describe('PlaceholderBinder', () => {
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
+    initAppStore({}); // Initialize with empty config
   });
 
   afterEach(() => {
@@ -100,9 +95,11 @@ describe('PlaceholderBinder', () => {
       // Mock store register to verify it's NOT called
       vi.clearAllMocks();
 
+      getAppStore().registry.registerPlaceholder = vi.fn();
+      
       PlaceholderBinder.scanAndHydrate(container);
 
-      expect(store.registerPlaceholder).not.toHaveBeenCalled();
+      expect(getAppStore().registry.registerPlaceholder).not.toHaveBeenCalled();
     });
   });
 

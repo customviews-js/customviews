@@ -13,8 +13,10 @@
 <script lang="ts">
   import IconChevronDown from '$lib/components/icons/IconChevronDown.svelte';
   import IconChevronUp from '$lib/components/icons/IconChevronUp.svelte';
-  import { store } from '$lib/stores/main-store.svelte';
+  import { getAppStore } from '$lib/stores/app-context';
   import { renderAssetInto } from '$lib/render';
+
+  const store = getAppStore();
 
   // Props using Svelte 5 runes
   let {
@@ -30,10 +32,10 @@
   } = $props();
   // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
   let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
-  let toggleConfig = $derived(store.config.toggles?.find((t) => t.toggleId === toggleIds[0]));
+  let toggleConfig = $derived(store.siteConfig.config.toggles?.find((t) => t.toggleId === toggleIds[0]));
 
   $effect(() => {
-    toggleIds.forEach((id) => store.registerToggle(id));
+    toggleIds.forEach((id) => store.registry.registerToggle(id));
   });
 
   // Derive label text from config
@@ -52,15 +54,15 @@
   // Derive visibility from store state
   let showState = $derived.by(() => {
     // Default to SHOWN if config hasn't loaded yet (prevent pop-in)
-    if (!store.config.toggles) return true;
+    if (!store.siteConfig.config.toggles) return true;
 
-    const shownToggles = store.state.shownToggles ?? [];
+    const shownToggles = store.userPreferences.state.shownToggles ?? [];
     return toggleIds.some((id) => shownToggles.includes(id));
   });
 
   // Derive peek state from store state
   let peekState = $derived.by(() => {
-    const peekToggles = store.state.peekToggles ?? [];
+    const peekToggles = store.userPreferences.state.peekToggles ?? [];
     return !showState && toggleIds.some((id) => peekToggles.includes(id));
   });
 
