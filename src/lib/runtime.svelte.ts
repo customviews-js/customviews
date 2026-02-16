@@ -10,7 +10,7 @@ import { initAppStore } from '$lib/stores/app-context';
 import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
 import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
-export interface ControllerOptions {
+export interface RuntimeOptions {
   assetsManager: AssetsManager;
   configFile: ConfigFile;
   rootEl?: HTMLElement | undefined;
@@ -19,11 +19,11 @@ export interface ControllerOptions {
 }
 
 /**
- * The Reactive Binder for CustomViews, coordinates interaction between DataStore and other components.
+ * The Reactive Runtime for CustomViews, coordinates interaction between DataStore and other components.
  * Uses Svelte 5 Effects ($effect) to automatically apply state changes from the store to URL and persistence.
  * Components (Toggle, TabGroup) are self-contained and self-managing via the global store.
  */
-export class CustomViewsController {
+export class CustomViewsRuntime {
   /**
    * The single source of truth for application state.
    */
@@ -38,23 +38,26 @@ export class CustomViewsController {
   private destroyEffectRoot?: () => void;
   private popstateHandler?: () => void;
 
-  constructor(opt: ControllerOptions) {
-    this.rootEl = opt.rootEl || document.body;
-    this.persistenceManager = new PersistenceManager(opt.storageKey);
-    this.showUrlEnabled = opt.showUrl ?? false;
+  constructor(options: RuntimeOptions) {
+    this.rootEl = options.rootEl || document.body;
+
+    const showUrl = options.showUrl || false;
+    const storageKey = options.storageKey || 'custom-views-settings';
+    this.persistenceManager = new PersistenceManager(storageKey);
+    this.showUrlEnabled = showUrl;
 
     // Initialize Reactive Store Singleton
-    this.store = initAppStore(opt.configFile);
+    this.store = initAppStore(options.configFile);
 
     // Store assetsManager in global store for component access
-    this.store.setAssetsManager(opt.assetsManager);
+    this.store.setAssetsManager(options.assetsManager);
 
     // Initial State Resolution: URL > Persistence > Default
     this.resolveInitialState();
 
     // Resolve Exclusions
     this.focusService = new FocusService(this.rootEl, {
-      shareExclusions: opt.configFile.config?.shareExclusions || {},
+      shareExclusions: options.configFile.config?.shareExclusions || {},
     });
   }
 
@@ -95,7 +98,8 @@ export class CustomViewsController {
     this.store.registry.clearPlaceholders();
     PlaceholderBinder.scanAndHydrate(this.rootEl);
 
-    this.setUpObserver();
+    // Delegate observation to PlaceholderBinder
+    this.observer = PlaceholderBinder.observe(this.rootEl);
 
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
@@ -130,52 +134,6 @@ export class CustomViewsController {
       }
     };
     window.addEventListener('popstate', this.popstateHandler);
-  }
-
-  /**
-   * Sets up a MutationObserver to detect content added dynamically to the page
-   * (e.g. by other scripts, lazy loading, or client-side routing).
-   */
-  private setUpObserver() {
-    this.observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type !== 'childList') continue;
-        mutation.addedNodes.forEach((node) => this.handleForPlaceholders(node));
-      }
-    });
-
-    // Observe the entire document tree for changes
-    this.observer.observe(this.rootEl, { childList: true, subtree: true });
-  }
-
-  /**
-   * Processes a newly added DOM node to check for and hydrate placeholders.
-   */
-  private handleForPlaceholders(node: Node) {
-    // Skip our own custom elements to avoid unnecessary scanning
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const el = node as HTMLElement;
-      if (el.tagName === 'CV-PLACEHOLDER' || el.tagName === 'CV-PLACEHOLDER-INPUT') {
-        return;
-      }
-    }
-
-    // Case 1: A new HTML element was added (e.g. via innerHTML or appendChild).
-    // Recursively scan inside for any new placeholders.
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      PlaceholderBinder.scanAndHydrate(node as HTMLElement);
-    }
-    // Case 2: A raw text node was added directly.
-    // Check looks like a variable `[[...]]` to avoid unnecessary scans of plain text.
-    else if (
-      node.nodeType === Node.TEXT_NODE &&
-      node.parentElement &&
-      node.nodeValue?.includes('[[') &&
-      node.nodeValue?.includes(']]')
-    ) {
-      // Re-scan parent to properly wrap text node in reactive span.
-      PlaceholderBinder.scanAndHydrate(node.parentElement);
-    }
   }
 
   // --- Public APIs for Widget/Other ---

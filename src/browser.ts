@@ -1,6 +1,6 @@
 import { getScriptAttributes, fetchConfig } from '$lib/utils/init-utils';
 import { initUIManager } from '$lib/ui-manager';
-import { CustomViewsController, type ControllerOptions } from '$lib/controller.svelte';
+import { CustomViewsRuntime, type RuntimeOptions } from '$lib/runtime.svelte';
 import { AssetsManager } from '$lib/assets';
 import type { CustomViewAsset } from '$lib/types/index';
 import { prependBaseUrl } from '$lib/utils/url-utils';
@@ -53,7 +53,7 @@ export function initializeFromScript(): void {
         assetsManager = new AssetsManager({}, effectiveBaseURL);
       }
 
-      const coreOptions: ControllerOptions = {
+      const coreOptions: RuntimeOptions = {
         assetsManager,
         configFile,
         rootEl: document.body,
@@ -61,10 +61,10 @@ export function initializeFromScript(): void {
         storageKey: configFile.storageKey,
       };
 
-      const controller = new CustomViewsController(coreOptions);
-      controller.init();
+      const runtime = new CustomViewsRuntime(coreOptions);
+      runtime.init();
 
-      initUIManager(controller, configFile);
+      initUIManager(runtime, configFile);
 
       // Mark initialized
       window.__customViewsInitialized = true;
