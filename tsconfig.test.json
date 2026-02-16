@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "types": ["svelte", "vitest/globals"],
-    "allowImportingTsExtensions": true,
-    "noEmit": true
-  }
-}

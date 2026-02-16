@@ -17,9 +17,10 @@
   import type { CustomViewsController } from '$lib/controller.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';
   import { showToast } from '$lib/stores/toast-store.svelte';
-  import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
   import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
   import { findHighestVisibleElement, scrollToElement } from '$lib/utils/scroll-utils';
+  
+  import type { SettingsStore } from '$features/settings/stores/settings-store.svelte';
 
   import ToggleItem from './ToggleItem.svelte';
   import TabGroupItem from './TabGroupItem.svelte';
@@ -28,6 +29,7 @@
 
   interface Props {
     controller: CustomViewsController;
+    settingsStore: SettingsStore;
     isResetting?: boolean;
     onclose?: () => void;
     onreset?: () => void;
@@ -36,6 +38,7 @@
 
   let {
     controller,
+    settingsStore,
     isResetting = false,
     onclose = () => {},
     onreset = () => {},
@@ -44,32 +47,25 @@
 
   // --- Derived State from Core ---
   const store = $derived(controller.store);
-  const areTabNavsVisible = $derived(store.isTabGroupNavHeadingVisible);
-  const showTabGroups = $derived(store.uiOptions.showTabGroups);
-  const showReset = $derived(store.uiOptions.showReset);
-  const title = $derived(store.uiOptions.title);
-  const description = $derived(store.uiOptions.description);
+  const areTabNavsVisible = $derived(store.interfaceSettings.isTabGroupNavHeadingVisible);
+  const showTabGroups = $derived(store.interfaceSettings.options.showTabGroups);
+  const showReset = $derived(store.interfaceSettings.options.showReset);
+  const title = $derived(store.interfaceSettings.options.title);
+  const description = $derived(store.interfaceSettings.options.description);
 
   // Config Items
-  const toggles = $derived(store.menuToggles);
-  const tabGroups = $derived(store.menuTabGroups);
-  const sectionOrder = $derived(store.configSectionOrder);
+  const toggles = $derived(settingsStore.menuToggles);
+  const tabGroups = $derived(settingsStore.menuTabGroups);
+  const sectionOrder = $derived(store.siteConfig.sectionOrder);
 
   // State Items
-  let shownToggles = $derived(store.state.shownToggles ?? []);
-  let peekToggles = $derived(store.state.peekToggles ?? []);
-  let activeTabs = $derived(store.state.tabs ?? {});
+  let shownToggles = $derived(store.userPreferences.state.shownToggles ?? []);
+  let peekToggles = $derived(store.userPreferences.state.peekToggles ?? []);
+  let activeTabs = $derived(store.userPreferences.state.tabs ?? {});
 
   // Placeholder Data
-  let placeholderDefinitions = $derived.by(() => {
-    return placeholderRegistryStore.definitions.filter((d) => {
-      if (d.hiddenFromSettings) return false;
-      if (d.isLocal) {
-        return store.detectedPlaceholders.has(d.name);
-      }
-      return true;
-    });
-  });
+  // Placeholder Data
+  const placeholderDefinitions = $derived(settingsStore.visiblePlaceholders);
   let placeholderValues = $derived(placeholderValueStore.values);
 
   // --- UI Logic ---
@@ -107,15 +103,15 @@
   }
 
   function handleNavToggle() {
-    store.isTabGroupNavHeadingVisible = !areTabNavsVisible;
+    store.interfaceSettings.isTabGroupNavHeadingVisible = !areTabNavsVisible;
   }
 
   // --- Core Actions ---
 
   function handleToggleChange(detail: any) {
     const { toggleId, value } = detail;
-    const currentShown = store.state.shownToggles || [];
-    const currentPeek = store.state.peekToggles || [];
+    const currentShown = store.userPreferences.state.shownToggles || [];
+    const currentPeek = store.userPreferences.state.peekToggles || [];
 
     const newShown = currentShown.filter((id: string) => id !== toggleId);
     const newPeek = currentPeek.filter((id: string) => id !== toggleId);
@@ -123,7 +119,7 @@
     if (value === 'show') newShown.push(toggleId);
     if (value === 'peek') newPeek.push(toggleId);
 
-    store.setToggles(newShown, newPeek);
+    store.userPreferences.setToggles(newShown, newPeek);
   }
 
   function handleTabGroupChange(detail: any) {
@@ -146,7 +142,7 @@
   }
 
   async function copyShareUrl() {
-    const url = URLStateManager.generateShareableURL(store.state);
+    const url = URLStateManager.generateShareableURL(store.userPreferences.state);
     try {
       await copyToClipboard(url);
       showToast('Link copied to clipboard!');
