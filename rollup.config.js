@@ -25,6 +25,10 @@ const banner = `/*!
 const sveltePluginCustomElements = svelte({
   ...svelteConfig,
   include: ['src/lib/components/ui/**/*.svelte', 'src/lib/features/placeholder/**/*.svelte'],
+  compilerOptions: {
+    ...svelteConfig.compilerOptions,
+    customElement: true,
+  },
 });
 
 // Regular Svelte components and Svelte 5 modules (e.g. .svelte.ts)
