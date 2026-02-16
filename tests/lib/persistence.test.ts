@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { PersistenceManager } from '../../src/lib/state/persistence';
 
 describe('PersistenceManager', () => {
@@ -127,12 +127,15 @@ describe('PersistenceManager', () => {
 
   describe('Robustness', () => {
     it('should return null and log error when state json is corrupted', () => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const manager = new PersistenceManager('corrupt');
       // Manually inject bad JSON
       localStorage.setItem('corrupt-customviews-state', '{ "incomplete": ');
 
       const state = manager.getPersistedState();
       expect(state).toBeNull();
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to parse persisted state:', expect.any(Error));
+      consoleSpy.mockRestore();
     });
 
     it('should handle errors in removeItem gracefully', () => {

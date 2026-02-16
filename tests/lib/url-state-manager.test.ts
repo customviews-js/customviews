@@ -29,8 +29,11 @@ describe('URLStateManager', () => {
     });
 
     it('should return null for malformed encoded string', () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const malformed = 'not-valid-base64-json%';
       expect(decodeState(malformed)).toBeNull();
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to decode view state:', expect.any(Error));
+      consoleSpy.mockRestore();
     });
 
     it('should handle empty state', () => {
