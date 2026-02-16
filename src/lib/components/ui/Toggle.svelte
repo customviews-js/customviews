@@ -11,8 +11,7 @@
 />
 
 <script lang="ts">
-  import IconChevronDown from '$lib/components/icons/IconChevronDown.svelte';
-  import IconChevronUp from '$lib/components/icons/IconChevronUp.svelte';
+  import { getChevronDownIcon, getChevronUpIcon } from '$lib/utils/icons';
   import { store } from '$lib/stores/main-store.svelte';
   import { renderAssetInto } from '$lib/render';
 
@@ -180,11 +179,8 @@
       aria-label={localExpanded ? 'Collapse content' : 'Expand content'}
       onclick={toggleExpand}
     >
-      {#if localExpanded}
-        <IconChevronUp />
-      {:else}
-        <IconChevronDown />
-      {/if}
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+      {@html localExpanded ? getChevronUpIcon() : getChevronDownIcon()}
     </button>
   {/if}
 </div>
