@@ -10,7 +10,7 @@
   import { shareStore, type SelectionMode } from '$features/share/stores/share-store.svelte';
   import { themeStore } from '$lib/stores/theme-store.svelte';
   import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '$lib/exclusion-defaults';
-  import Toast from '$ui/Toast.svelte';
+  import Toast from '$lib/components/internal/Toast.svelte';
   import ShareOverlay from '$features/share/ShareOverlay.svelte';
   import FocusBanner from '$features/focus/FocusBanner.svelte';
 
