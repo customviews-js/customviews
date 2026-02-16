@@ -1,18 +1,14 @@
 import { defineConfig } from 'vitest/config';
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import path from 'path';
 
 export default defineConfig({
-  plugins: [svelte({ hot: !process.env.VITEST })],
+  plugins: [
+    tsconfigPaths({ projects: ['./tsconfig.test.json'] }),
+    svelte({ hot: !process.env.VITEST }),
+  ],
   test: {
-    include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
-    globals: true,
     environment: 'jsdom',
-  },
-  resolve: {
-    alias: {
-      $lib: path.resolve('./src/lib'),
-      $features: path.resolve('./src/lib/features'),
-    },
+    globals: true, // If using globals like describe, it, expect
   },
 });

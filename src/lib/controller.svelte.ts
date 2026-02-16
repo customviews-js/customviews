@@ -5,8 +5,7 @@ import { PersistenceManager } from './state/persistence';
 import { URLStateManager } from '$features/url/url-state-manager';
 
 import { FocusService } from '$features/focus/services/focus-service.svelte';
-import { type AppStore } from './stores/app-store.svelte';
-import { initAppStore } from '$lib/stores/app-context';
+import { DataStore, initStore } from './stores/main-store.svelte';
 import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
 import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
@@ -27,7 +26,7 @@ export class CustomViewsController {
   /**
    * The single source of truth for application state.
    */
-  public store: AppStore;
+  public store: DataStore;
 
   private rootEl: HTMLElement;
   public persistenceManager: PersistenceManager;
@@ -44,7 +43,7 @@ export class CustomViewsController {
     this.showUrlEnabled = opt.showUrl ?? false;
 
     // Initialize Reactive Store Singleton
-    this.store = initAppStore(opt.configFile);
+    this.store = initStore(opt.configFile);
 
     // Store assetsManager in global store for component access
     this.store.setAssetsManager(opt.assetsManager);
@@ -62,14 +61,14 @@ export class CustomViewsController {
     // 1. URL State
     const urlState = URLStateManager.parseURL();
     if (urlState) {
-      this.store.userPreferences.applyState(urlState);
+      this.store.applyState(urlState);
       return;
     }
 
     // 2. Persisted State
     const persistedState = this.persistenceManager.getPersistedState();
     if (persistedState) {
-      this.store.userPreferences.applyState(persistedState);
+      this.store.applyState(persistedState);
       return;
     }
   }
@@ -84,7 +83,7 @@ export class CustomViewsController {
     // Restore tab nav visibility preference
     const navPref = this.persistenceManager.getPersistedTabNavVisibility();
     if (navPref !== null) {
-      this.store.interfaceSettings.isTabGroupNavHeadingVisible = navPref;
+      this.store.isTabGroupNavHeadingVisible = navPref;
     }
 
     // Initialize Stores
@@ -92,7 +91,7 @@ export class CustomViewsController {
 
     // Run initial scan (non-reactive)
     // Clear previous page detections if any, before scan (SPA support)
-    this.store.registry.clearPlaceholders();
+    this.store.clearDetectedPlaceholders();
     PlaceholderBinder.scanAndHydrate(this.rootEl);
 
     this.setUpObserver();
@@ -102,7 +101,7 @@ export class CustomViewsController {
       // Effect 1: Update URL
       $effect(() => {
         if (this.showUrlEnabled) {
-          URLStateManager.updateURL(this.store.userPreferences.state);
+          URLStateManager.updateURL(this.store.state);
         } else {
           URLStateManager.clearURL();
         }
@@ -110,10 +109,8 @@ export class CustomViewsController {
 
       // Effect 2: Persistence
       $effect(() => {
-        this.persistenceManager.persistState(this.store.userPreferences.state);
-        this.persistenceManager.persistTabNavVisibility(
-          this.store.interfaceSettings.isTabGroupNavHeadingVisible,
-        );
+        this.persistenceManager.persistState(this.store.state);
+        this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
       });
 
       // Effect 3: React to Variable Changes
@@ -126,7 +123,7 @@ export class CustomViewsController {
     this.popstateHandler = () => {
       const urlState = URLStateManager.parseURL();
       if (urlState) {
-        this.store.userPreferences.applyState(urlState);
+        this.store.applyState(urlState);
       }
     };
     window.addEventListener('popstate', this.popstateHandler);
@@ -183,7 +180,7 @@ export class CustomViewsController {
   public resetToDefault() {
     this.persistenceManager.clearAll();
     this.store.reset();
-    this.store.interfaceSettings.isTabGroupNavHeadingVisible = true;
+    this.store.isTabGroupNavHeadingVisible = true;
     placeholderValueStore.reset();
     URLStateManager.clearURL();
   }

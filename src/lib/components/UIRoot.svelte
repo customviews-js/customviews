@@ -16,7 +16,6 @@
 
   import { UrlActionRouter } from '$features/url/url-action-router.svelte';
   import { IntroManager } from '$features/settings/intro-manager.svelte';
-  import { SettingsStore } from '$features/settings/stores/settings-store.svelte';
 
   let { controller, options } = $props<{
     controller: CustomViewsController;
@@ -25,9 +24,6 @@
 
   // --- Derived State ---
   const store = $derived(controller.store);
-  // SettingsStore needs to be reactive if controller.store can change
-  const settingsStore = $derived(new SettingsStore(controller.store));
-  
   const storeConfig = $derived(controller.store.config);
   const settingsEnabled = $derived(options.settingsEnabled ?? true);
 
@@ -70,7 +66,7 @@
   // --- Effects ---
 
   $effect(() => {
-    introManager.init(settingsStore.hasPageElements, settingsEnabled);
+    introManager.init(store.hasPageElements, settingsEnabled);
   });
 
   // --- Modal Actions ---
@@ -106,7 +102,7 @@
 
   // --- Settings Visibility ---
   const shouldRenderSettings = $derived(
-    settingsEnabled && (settingsStore.hasMenuOptions || store.uiOptions.showTabGroups || isModalOpen),
+    settingsEnabled && (store.hasMenuOptions || store.uiOptions.showTabGroups || isModalOpen),
   );
 </script>
 
@@ -152,7 +148,6 @@
   {#if settingsEnabled && isModalOpen}
     <Modal
       {controller}
-      {settingsStore}
       {isResetting}
       onclose={closeModal}
       onreset={handleReset}

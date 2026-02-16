@@ -10,14 +10,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import IconPin from '$lib/components/icons/IconPin.svelte';
-  import { getAppStore } from '$lib/stores/app-context';
-
-  const store = getAppStore();
+  import { store } from '$lib/stores/main-store.svelte';
 
   //  ID of the tabgroup Group
   let { groupId } = $props<{ groupId?: string }>();
   $effect(() => {
-    if (groupId) store.registry.registerTabGroup(groupId);
+    if (groupId) store.registerTabGroup(groupId);
   });
 
   let tabs: Array<{
@@ -36,7 +34,7 @@
 
   // Derive pinnedTab from store (shared across groups with same ID)
   let pinnedTab = $derived.by(() => {
-    const tabs$ = store.userPreferences.state.tabs ?? {};
+    const tabs$ = store.state.tabs ?? {};
     return groupId && tabs$[groupId] ? tabs$[groupId] : null;
   });
 
@@ -62,7 +60,7 @@
   });
 
   // Sync isTabGroupNavHeadingVisible from store
-  let navHeadingVisible = $derived(store.interfaceSettings.isTabGroupNavHeadingVisible);
+  let navHeadingVisible = $derived(store.isTabGroupNavHeadingVisible);
 
   // Icons
 
