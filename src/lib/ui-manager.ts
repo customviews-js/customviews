@@ -1,11 +1,11 @@
-import type { CustomViewsRuntime } from './runtime.svelte';
+import type { CustomViewsController } from './controller.svelte';
 import type { ConfigFile } from '$lib/types/index';
 import UIRoot from '$lib/components/UIRoot.svelte';
 import { mount, unmount } from 'svelte';
 
 export interface UIManagerOptions {
-  /** The CustomViews runtime instance to control */
-  runtime: CustomViewsRuntime;
+  /** The CustomViews controller instance to control */
+  controller: CustomViewsController;
 
   /** Container element where the settings widget should be rendered */
   container?: HTMLElement;
@@ -99,7 +99,7 @@ export class CustomViewsUIManager {
   constructor(options: UIManagerOptions) {
     // Set defaults
     this.options = {
-      runtime: options.runtime, // 'runtime' is a required property
+      controller: options.controller, // 'controller' is a required property
       container: options.container || document.body,
       settingsEnabled: options.settingsEnabled ?? true,
       theme: options.theme || 'light',
@@ -133,7 +133,7 @@ export class CustomViewsUIManager {
     this.app = mount(UIRoot, {
       target: this.options.container,
       props: {
-        runtime: this.options.runtime,
+        controller: this.options.controller,
         options: this.options,
       },
     });
@@ -154,13 +154,13 @@ export class CustomViewsUIManager {
  * Initializes the UI manager (settings and share UI) using the provided config.
  */
 export function initUIManager(
-  runtime: CustomViewsRuntime,
+  controller: CustomViewsController,
   config: ConfigFile,
 ): CustomViewsUIManager | undefined {
   const settingsEnabled = config.settings?.enabled !== false;
 
   const uiManager = new CustomViewsUIManager({
-    runtime,
+    controller,
     settingsEnabled,
     ...config.settings,
   });

@@ -14,12 +14,12 @@
   import IconSun from '$lib/components/icons/IconSun.svelte';
   import IconMoon from '$lib/components/icons/IconMoon.svelte';
   import { themeStore } from '$lib/stores/theme-store.svelte';
+  import type { CustomViewsController } from '$lib/controller.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';
   import { showToast } from '$lib/stores/toast-store.svelte';
   import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
   import { findHighestVisibleElement, scrollToElement } from '$lib/utils/scroll-utils';
   
-  import type { CustomViewsRuntime } from '$lib/runtime.svelte';
   import type { SettingsStore } from '$features/settings/stores/settings-store.svelte';
 
   import ToggleItem from './ToggleItem.svelte';
@@ -28,7 +28,7 @@
   import { copyToClipboard } from '$lib/utils/clipboard-utils';
 
   interface Props {
-    runtime: CustomViewsRuntime;
+    controller: CustomViewsController;
     settingsStore: SettingsStore;
     isResetting?: boolean;
     onclose?: () => void;
@@ -37,7 +37,7 @@
   }
 
   let {
-    runtime,
+    controller,
     settingsStore,
     isResetting = false,
     onclose = () => {},
@@ -46,7 +46,7 @@
   }: Props = $props();
 
   // --- Derived State from Core ---
-  const store = $derived(runtime.store);
+  const store = $derived(controller.store);
   const areTabNavsVisible = $derived(store.interfaceSettings.isTabGroupNavHeadingVisible);
   const showTabGroups = $derived(store.interfaceSettings.options.showTabGroups);
   const showReset = $derived(store.interfaceSettings.options.showReset);
