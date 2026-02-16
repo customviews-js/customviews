@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { CustomViewsController } from '$lib/controller.svelte';
+  import type { CustomViewsRuntime } from '$lib/runtime.svelte';
   import type { UIManagerOptions } from '$lib/ui-manager';
 
   import IntroCallout from '$features/settings/IntroCallout.svelte';
@@ -18,22 +18,22 @@
   import { IntroManager } from '$features/settings/intro-manager.svelte';
   import { SettingsStore } from '$features/settings/stores/settings-store.svelte';
 
-  let { controller, options } = $props<{
-    controller: CustomViewsController;
+  let { runtime, options } = $props<{
+    runtime: CustomViewsRuntime;
     options: UIManagerOptions;
   }>();
 
   // --- Derived State ---
-  const store = $derived(controller.store);
-  // SettingsStore needs to be reactive if controller.store can change
-  const settingsStore = $derived(new SettingsStore(controller.store));
+  const store = $derived(runtime.store);
+  // SettingsStore needs to be reactive if runtime.store can change
+  const settingsStore = $derived(new SettingsStore(runtime.store));
   
-  const storeConfig = $derived(controller.store.config);
+  const storeConfig = $derived(runtime.store.config);
   const settingsEnabled = $derived(options.settingsEnabled ?? true);
 
   // --- Services ---
   const introManager = new IntroManager(
-    () => controller.persistenceManager,
+    () => runtime.persistenceManager,
     () => options.callout,
   );
   const router = new UrlActionRouter({
@@ -64,7 +64,7 @@
   });
 
   function initTheme() {
-    themeStore.init(controller.persistenceManager);
+    themeStore.init(runtime.persistenceManager);
   }
 
   // --- Effects ---
@@ -87,7 +87,7 @@
 
   function handleReset() {
     isResetting = true;
-    controller.resetToDefault();
+    runtime.resetToDefault();
     settingsIcon?.resetPosition();
 
     showToast('Settings reset to default');
@@ -144,14 +144,14 @@
       backgroundColor={options.icon?.backgroundColor}
       opacity={options.icon?.opacity}
       scale={options.icon?.scale}
-      persistence={controller.persistenceManager}
+      persistence={runtime.persistenceManager}
     />
   {/if}
 
   <!-- Modal: Only specific to Settings -->
   {#if settingsEnabled && isModalOpen}
     <Modal
-      {controller}
+      {runtime}
       {settingsStore}
       {isResetting}
       onclose={closeModal}

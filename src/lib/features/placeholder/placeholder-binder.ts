@@ -35,6 +35,52 @@ export class PlaceholderBinder {
     this.updateAttributeBindings(values);
   }
 
+  /**
+   * Sets up a MutationObserver to detect content added dynamically to the page.
+   * Returns the observer instance so the caller can manage its lifecycle.
+   */
+  static observe(root: HTMLElement): MutationObserver {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type !== 'childList') continue;
+        mutation.addedNodes.forEach((node) => this.handleMutation(node));
+      }
+    });
+
+    observer.observe(root, { childList: true, subtree: true });
+    return observer;
+  }
+
+  /**
+   * Processes a newly added DOM node to check for and hydrate placeholders.
+   */
+  private static handleMutation(node: Node) {
+    // Skip our own custom elements to avoid unnecessary scanning
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as HTMLElement;
+      if (el.tagName === 'CV-PLACEHOLDER' || el.tagName === 'CV-PLACEHOLDER-INPUT') {
+        return;
+      }
+    }
+
+    // Case 1: A new HTML element was added (e.g. via innerHTML or appendChild).
+    // Recursively scan inside for any new placeholders.
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      PlaceholderBinder.scanAndHydrate(node as HTMLElement);
+    }
+    // Case 2: A raw text node was added directly.
+    // Check looks like a variable `[[...]]` to avoid unnecessary scans of plain text.
+    else if (
+      node.nodeType === Node.TEXT_NODE &&
+      node.parentElement &&
+      node.nodeValue?.includes('[[') &&
+      node.nodeValue?.includes(']]')
+    ) {
+      // Re-scan parent to properly wrap text node in reactive span.
+      PlaceholderBinder.scanAndHydrate(node.parentElement);
+    }
+  }
+
   // =========================================================================
   // Scanning Logic
   // =========================================================================
