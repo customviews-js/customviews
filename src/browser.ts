@@ -55,7 +55,7 @@ export function initializeFromScript(): void {
 
       const coreOptions: ControllerOptions = {
         assetsManager,
-        configFile,
+        config: configFile.config || {},
         rootEl: document.body,
         showUrl: configFile.showUrl || false,
         storageKey: configFile.storageKey,

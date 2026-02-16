@@ -30,6 +30,10 @@
 
   interface Props {
     controller: CustomViewsController;
+    title?: string;
+    description?: string;
+    showReset?: boolean;
+    showTabGroups?: boolean;
     isResetting?: boolean;
     onclose?: () => void;
     onreset?: () => void;
@@ -38,6 +42,10 @@
 
   let {
     controller,
+    title = 'Customize View',
+    description = '',
+    showReset = true,
+    showTabGroups = true,
     isResetting = false,
     onclose = () => {},
     onreset = () => {},
@@ -47,10 +55,6 @@
   // --- Derived State from Core ---
   const store = $derived(controller.store);
   const areTabNavsVisible = $derived(store.isTabGroupNavHeadingVisible);
-  const showTabGroups = $derived(store.uiOptions.showTabGroups);
-  const showReset = $derived(store.uiOptions.showReset);
-  const title = $derived(store.uiOptions.title);
-  const description = $derived(store.uiOptions.description);
 
   // Config Items
   const toggles = $derived(store.menuToggles);

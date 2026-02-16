@@ -17,7 +17,7 @@ export interface UIManagerOptions {
   panel?: {
     /** Title displayed in the settings modal */
     title?: string;
-    /** Widget description text */
+    /** Description text displayed in the settings modal */
     description?: string;
     /** Whether to show tab groups section in widget (default: true) */
     showTabGroups?: boolean;
@@ -75,6 +75,7 @@ export type ResolvedUIManagerOptions = Omit<
   container: HTMLElement;
   settingsEnabled: boolean;
   theme: NonNullable<UIManagerOptions['theme']>;
+  panel: Required<NonNullable<UIManagerOptions['panel']>>;
   callout: {
     show: boolean;
     message: string;
@@ -103,6 +104,12 @@ export class CustomViewsUIManager {
       container: options.container || document.body,
       settingsEnabled: options.settingsEnabled ?? true,
       theme: options.theme || 'light',
+      panel: {
+        title: options.panel?.title || 'Customize View',
+        description: options.panel?.description || '',
+        showTabGroups: options.panel?.showTabGroups ?? true,
+        showReset: options.panel?.showReset ?? true,
+      },
       callout: {
         show: options.callout?.show ?? false,
         message: options.callout?.message || 'Customize your reading experience here.',
