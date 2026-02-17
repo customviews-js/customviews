@@ -1,7 +1,7 @@
 import { getScriptAttributes, fetchConfig } from '$lib/utils/init-utils';
 import { initUIManager } from '$lib/ui-manager';
 import { CustomViewsController, type ControllerOptions } from '$lib/controller.svelte';
-import { AssetsManager } from '$lib/assets';
+import { AssetsManager } from '$features/render/assets';
 import type { CustomViewAsset } from '$lib/types/index';
 import { prependBaseUrl } from '$lib/utils/url-utils';
 import '$lib/registry';

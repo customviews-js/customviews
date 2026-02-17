@@ -14,7 +14,7 @@
   import IconChevronDown from '$lib/components/icons/IconChevronDown.svelte';
   import IconChevronUp from '$lib/components/icons/IconChevronUp.svelte';
   import { store } from '$lib/stores/main-store.svelte';
-  import { renderAssetInto } from '$lib/render';
+  import { renderAssetInto } from '$features/render/render';
 
   // Props using Svelte 5 runes
   let {

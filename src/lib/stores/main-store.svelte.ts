@@ -1,7 +1,7 @@
 
 import type { Config, ConfigFile, State } from '$lib/types/index';
 
-import type { AssetsManager } from '../assets';
+import type { AssetsManager } from '$features/render/assets';
 import { placeholderManager } from '$features/placeholder/placeholder-manager';
 import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 import { ElementStore } from './element-store.svelte';
