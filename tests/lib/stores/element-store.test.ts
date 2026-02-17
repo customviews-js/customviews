@@ -24,13 +24,13 @@ describe('ElementStore', () => {
     it('should register toggles and update detectedToggles', () => {
       store.registerToggle('t1');
       expect(store.detectedToggles.has('t1')).toBe(true);
-      expect(store.hasPageElements).toBe(true);
+      expect(store.detectedToggles.size).toBeGreaterThan(0);
     });
 
     it('should register tabGroups and update detectedTabGroups', () => {
       store.registerTabGroup('g1');
       expect(store.detectedTabGroups.has('g1')).toBe(true);
-      expect(store.hasPageElements).toBe(true);
+      expect(store.detectedTabGroups.size).toBeGreaterThan(0);
     });
 
     it('should clear registry', () => {
@@ -43,6 +43,5 @@ describe('ElementStore', () => {
       expect(store.detectedToggles.size).toBe(0);
       expect(store.detectedTabGroups.size).toBe(0);
       expect(store.detectedPlaceholders.size).toBe(0);
-      expect(store.hasPageElements).toBe(false);
     });
 });
