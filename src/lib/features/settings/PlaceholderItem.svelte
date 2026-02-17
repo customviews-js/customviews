@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PlaceholderDefinition } from '$features/placeholder/stores/placeholder-registry-store.svelte';
+  import type { PlaceholderDefinition } from '$features/placeholder/types';
 
   interface Props {
     definition: PlaceholderDefinition;
