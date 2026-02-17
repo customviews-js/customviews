@@ -1,6 +1,5 @@
-import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
-import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
-import type { Config, ConfigSectionKey, State, TabGroupConfig } from '$lib/types/index';
+import { placeholderManager } from '$features/placeholder/placeholder-manager';
+import type { Config, ConfigSectionKey, State } from '$lib/types/index';
 import { isValidConfigSection } from '$lib/types/index';
 
 /**
@@ -35,9 +34,9 @@ export class ActiveStateStore {
   constructor(initialConfig: Config = {}) {
     this.config = initialConfig;
     if (Object.keys(initialConfig).length > 0) {
-        this.init(initialConfig);
+      this.init(initialConfig);
     } else {
-        this.state = this.computeDefaultState();
+      this.state = this.computeDefaultState();
     }
   }
 
@@ -62,11 +61,15 @@ export class ActiveStateStore {
     this.state.tabs = newState.tabs ?? {};
     
     // Process TabGroup-linked Placeholders
-    if (this.config.tabGroups) {
-      this.config.tabGroups.forEach((group) => {
-        this.registerPlaceholderFromTabGroup(group);
-      });
-    }
+
+  }
+
+  /**
+   * Registers placeholders defined in tab groups.
+   * Should be called AFTER global config placeholders are registered to ensure correct precedence.
+   */
+  registerPlaceholders() {
+    placeholderManager.registerTabGroupPlaceholders(this.config, this.state.tabs);
   }
 
   // --- Actions ---
@@ -80,7 +83,7 @@ export class ActiveStateStore {
   setPinnedTab(groupId: string, tabId: string) {
     if (!this.state.tabs) this.state.tabs = {};
     this.state.tabs[groupId] = tabId;
-    this.updatePlaceholderFromTabInput(groupId, tabId);
+    placeholderManager.updatePlaceholderFromTab(groupId, tabId, this.config);
   }
 
   /**
@@ -114,62 +117,6 @@ export class ActiveStateStore {
     this.state = this.computeDefaultState();
   }
 
-  // --- Helpers ---
-
-  public registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig) {
-    if (!groupConfig.placeholderId) return;
-
-    const id = groupConfig.placeholderId;
-    const existing = placeholderRegistryStore.get(id);
-
-    if (existing) {
-      if (existing.source === 'config') {
-        console.warn(
-          `[CustomViews] Tab group "${groupConfig.groupId}" is binding to placeholder "${id}", ` +
-            `which is already explicitly defined in placeholders config. ` +
-            `To avoid unexpected behavior, placeholders should have a single source of truth.`,
-        );
-      } else if (
-        existing.source === 'tabgroup' &&
-        existing.ownerTabGroupId !== groupConfig.groupId
-      ) {
-        console.warn(
-          `[CustomViews] Multiple tab groups are binding to the same placeholderId: "${id}". ` +
-            `Current group: "${groupConfig.groupId}", Existing group: "${existing.ownerTabGroupId}". ` +
-            `This will cause race conditions as both groups compete for the same value.`,
-        );
-      }
-      return;
-    }
-
-    placeholderRegistryStore.register({
-      name: id,
-      settingsLabel: groupConfig.label ?? groupConfig.groupId,
-      hiddenFromSettings: true,
-      source: 'tabgroup',
-      ownerTabGroupId: groupConfig.groupId,
-    });
-
-    const activeTabId = this.state.tabs?.[groupConfig.groupId];
-    if (activeTabId) {
-      this.updatePlaceholderFromTabInput(groupConfig.groupId, activeTabId);
-    }
-  }
-
-  private updatePlaceholderFromTabInput(groupId: string, tabId: string) {
-    const groupConfig = this.config.tabGroups?.find((g) => g.groupId === groupId);
-
-    if (!groupConfig || !groupConfig.placeholderId) return;
-
-    if (!placeholderRegistryStore.has(groupConfig.placeholderId)) return;
-
-    const tabConfig = groupConfig.tabs.find((t) => t.tabId === tabId);
-
-    if (!tabConfig) return;
-
-    const placeholderValue = tabConfig.placeholderValue ?? '';
-    placeholderValueStore.set(groupConfig.placeholderId, placeholderValue);
-  }
 
   public computeDefaultState(): State {
     const shownToggles: string[] = [];

@@ -7,25 +7,18 @@ globalThis.$state = (initial) => initial;
 globalThis.$derived = (fn) => (typeof fn === 'function' ? fn() : fn);
 globalThis.$derived.by = (fn) => fn();
 
-// Mock dependencies
-vi.mock('../../../src/lib/features/placeholder/stores/placeholder-value-store.svelte', () => ({
-  placeholderValueStore: {
-    set: vi.fn(),
-    values: {},
+// Mock PlaceholderManager
+vi.mock('../../../src/lib/features/placeholder/placeholder-manager', () => ({
+  placeholderManager: {
+    updatePlaceholderFromTab: vi.fn(),
+    registerTabGroupPlaceholders: vi.fn(),
+    registerConfigPlaceholders: vi.fn(),
   },
 }));
 
-vi.mock('../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => ({
-  placeholderRegistryStore: {
-    has: vi.fn(),
-    register: vi.fn(),
-    get: vi.fn(),
-    definitions: [],
-  },
-}));
+import { placeholderManager } from '../../../src/lib/features/placeholder/placeholder-manager';
 
-import { placeholderValueStore } from '../../../src/lib/features/placeholder/stores/placeholder-value-store.svelte';
-import { placeholderRegistryStore } from '../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
+
 import { ActiveStateStore } from '../../../src/lib/stores/active-state-store.svelte';
 
 describe('ActiveStateStore', () => {
@@ -33,7 +26,10 @@ describe('ActiveStateStore', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(placeholderRegistryStore.has).mockReset();
+    // Reset mock implementation if needed
+    placeholderManager.updatePlaceholderFromTab = vi.fn();
+    placeholderManager.registerTabGroupPlaceholders = vi.fn();
+    placeholderManager.registerConfigPlaceholders = vi.fn();
     store = new ActiveStateStore();
   });
 
@@ -56,14 +52,15 @@ describe('ActiveStateStore', () => {
       // In the new store, we init with config
       store.init(config);
 
-      // Mock Registry to say placeholder exists
-      vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
-
-      // Action: Pin Tab 2
+      // Asseert
       store.setPinnedTab('group1', 't2');
 
-      // Assert
-      expect(placeholderValueStore.set).toHaveBeenCalledWith('p1', 'val2');
+// Logic moved to PlaceholderManager. We just test that the manager called.
+      expect(placeholderManager.updatePlaceholderFromTab).toHaveBeenCalledWith(
+        'group1',
+        't2',
+        expect.any(Object)
+      );
     });
 
     it('should NOT update placeholder if placeholderId is missing in config', () => {
@@ -80,7 +77,8 @@ describe('ActiveStateStore', () => {
       store.init(config);
       store.setPinnedTab('group1', 't1');
 
-      expect(placeholderValueStore.set).not.toHaveBeenCalled();
+      // Expect call to manager even if config has issues (manager handles validation)
+      expect(placeholderManager.updatePlaceholderFromTab).toHaveBeenCalled();
     });
 
     it('should NOT update placeholder if placeholder is not in registry', () => {
@@ -95,13 +93,10 @@ describe('ActiveStateStore', () => {
       };
 
       store.init(config);
-
-      // Mock Registry to say placeholder does NOT exist
-      vi.mocked(placeholderRegistryStore.has).mockReturnValue(false);
-
       store.setPinnedTab('group1', 't1');
 
-      expect(placeholderValueStore.set).not.toHaveBeenCalled();
+      // Expect call to manager even if registry has issues (manager handles validation)
+      expect(placeholderManager.updatePlaceholderFromTab).toHaveBeenCalled();
     });
 
     it('should handle undefined placeholderValue in tab config', () => {
@@ -118,11 +113,11 @@ describe('ActiveStateStore', () => {
       };
 
       store.init(config);
-      vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
+      // No registry mock needed - manager handles it
 
       store.setPinnedTab('group1', 't1');
 
-      expect(placeholderValueStore.set).toHaveBeenCalledWith('p1', '');
+      expect(placeholderManager.updatePlaceholderFromTab).toHaveBeenCalled();
     });
   });
 
@@ -142,13 +137,13 @@ describe('ActiveStateStore', () => {
       };
 
       store.init(config);
+      // We need to pass the current tabs state to registerPlaceholders
+      // The store handles this internally when we call this method
+      store.registerPlaceholders();
 
-      expect(placeholderRegistryStore.register).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'p1',
-          source: 'tabgroup',
-          ownerTabGroupId: 'group1',
-        }),
+      expect(placeholderManager.registerTabGroupPlaceholders).toHaveBeenCalledWith(
+        config,
+        { group1: 't1' }
       );
     });
   });

@@ -1,7 +1,8 @@
 
-import type { Config, ConfigFile, State, TabGroupConfig } from '$lib/types/index';
+import type { Config, ConfigFile, State } from '$lib/types/index';
 
 import type { AssetsManager } from '../assets';
+import { placeholderManager } from '$features/placeholder/placeholder-manager';
 import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 import { ElementStore } from './element-store.svelte';
 import { ActiveStateStore } from './active-state-store.svelte';
@@ -164,12 +165,6 @@ export class DataStore {
     this.uiStore.setUIOptions(options);
   }
 
-  // --- Helpers ---
-
-  public registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig) {
-    this.activeStateStore.registerPlaceholderFromTabGroup(groupConfig);
-  }
-
   public computeDefaultState(): State {
     return this.activeStateStore.computeDefaultState();
   }
@@ -188,20 +183,15 @@ export function initStore(configFile: ConfigFile): DataStore {
   const settings = configFile.settings?.panel || {};
 
   // Process Global Placeholders from Config
-  if (config.placeholders) {
-    config.placeholders.forEach((def) => {
-      placeholderRegistryStore.register({
-        ...def,
-        source: 'config',
-      });
-    });
-  }
+  placeholderManager.registerConfigPlaceholders(config);
 
   // Initialize ActiveStateStore with config
-  store.activeStateStore.init(config);
-  
   // activeStateStore.init() computes defaults and resets state.
   // This ensures the store starts with a valid state based on the provided config.
+  store.activeStateStore.init(config);
+  
+  // Register tab-group placeholders AFTER global config placeholders to preserve precedence
+  placeholderManager.registerTabGroupPlaceholders(config, store.activeStateStore.state.tabs);
   
   // Initialize UI Options from Settings
   store.uiStore.setUIOptions({
