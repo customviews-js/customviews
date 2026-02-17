@@ -16,7 +16,7 @@
   import { themeStore } from '$lib/stores/theme-store.svelte';
   import type { CustomViewsController } from '$lib/controller.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';
-  import { showToast } from '$lib/stores/toast-store.svelte';
+  import { showToast } from '$features/notifications/stores/toast-store.svelte';
   import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
   import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
   import { findHighestVisibleElement, scrollToElement } from '$lib/utils/scroll-utils';

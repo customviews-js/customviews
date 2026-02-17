@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { mount, unmount } from 'svelte';
-import { showToast } from '$lib/stores/toast-store.svelte';
+import { showToast } from '$features/notifications/stores/toast-store.svelte';
 import { focusStore } from '$features/focus/stores/focus-store.svelte';
 import * as DomElementLocator from '$lib/utils/dom-element-locator';
 import { scrollToElement } from '$lib/utils/scroll-utils';
