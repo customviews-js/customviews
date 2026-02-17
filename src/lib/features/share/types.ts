@@ -1,5 +1,5 @@
 /**
- * Configuration for the site, has default state and list of toggles
+ * Configuration for excluded tags and IDs in Share/Focus modes
  */
 export interface ShareExclusions {
   tags?: string[];

@@ -2,6 +2,7 @@ import type { PlaceholderDefinition } from '../features/placeholder/types';
 import type { TabGroupConfig } from '../features/tabs/types';
 import type { ToggleConfig } from '../features/toggles/types';
 import type { ShareExclusions } from '../features/share/types';
+import type { WidgetSettings } from '../features/settings/types';
 
 /**
  * Configuration for the site, has default state and list of toggles
@@ -16,8 +17,6 @@ export interface Config {
   /** Global placeholder definitions */
   placeholders?: PlaceholderDefinition[];
 }
-
-import type { WidgetSettings } from '../features/settings/types';
 
 /**
  * Represents the configuration file structure for CustomViews auto-initialization.
