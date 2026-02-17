@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { CustomViewsController } from '$lib/controller.svelte';
-  import type { ResolvedUIManagerOptions } from '$lib/ui-manager';
+  import type { ResolvedUIManagerOptions } from './ui-manager';
 
   import IntroCallout from '$features/settings/IntroCallout.svelte';
   import SettingsIcon from '$features/settings/SettingsIcon.svelte';

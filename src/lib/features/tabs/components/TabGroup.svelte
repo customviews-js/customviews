@@ -9,7 +9,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import IconPin from '$lib/components/icons/IconPin.svelte';
+  import IconPin from '$lib/app/icons/IconPin.svelte';
   import { store } from '$lib/stores/main-store.svelte';
 
   //  ID of the tabgroup Group

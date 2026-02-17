@@ -1,6 +1,6 @@
-import type { CustomViewsController } from './controller.svelte';
+import type { CustomViewsController } from '../controller.svelte';
 import type { ConfigFile } from '$lib/types/index';
-import UIRoot from '$lib/components/UIRoot.svelte';
+import UIRoot from './UIRoot.svelte';
 import { mount, unmount } from 'svelte';
 
 import type { WidgetSettings, WidgetCalloutConfig, WidgetIconConfig } from '$features/settings/types';

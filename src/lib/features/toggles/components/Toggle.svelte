@@ -11,8 +11,8 @@
 />
 
 <script lang="ts">
-  import IconChevronDown from '$lib/components/icons/IconChevronDown.svelte';
-  import IconChevronUp from '$lib/components/icons/IconChevronUp.svelte';
+  import IconChevronDown from '$lib/app/icons/IconChevronDown.svelte';
+  import IconChevronUp from '$lib/app/icons/IconChevronUp.svelte';
   import { store } from '$lib/stores/main-store.svelte';
   import { renderAssetInto } from '$features/render/render';
 
