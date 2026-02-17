@@ -32,7 +32,6 @@ export class ActiveStateStore {
   });
 
   constructor(initialConfig: Config = {}) {
-    this.config = initialConfig;
     if (Object.keys(initialConfig).length > 0) {
       this.init(initialConfig);
     } else {
@@ -50,18 +49,10 @@ export class ActiveStateStore {
     // Compute new defaults and merge
     const newState = this.computeDefaultState();
     
-    // Mutate state properties in place to preserve reactivity
-    // Apply defaults to ensure state integrity.
-    // Existing values in `this.state` are preserved if they exist, but `newState`
-    // (which comes from computeDefaultState) contains the baseline defaults.
-    // We strictly apply defaults here; overlaying URL state happens later via applyState().
-    
+    // Reset state to computed defaults. Overriding with URL state happens later via applyState().
     this.state.shownToggles = newState.shownToggles ?? [];
     this.state.peekToggles = newState.peekToggles ?? [];
     this.state.tabs = newState.tabs ?? {};
-    
-    // Process TabGroup-linked Placeholders
-
   }
 
   /**

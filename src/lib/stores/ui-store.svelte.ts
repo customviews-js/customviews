@@ -40,12 +40,12 @@ export class UIStore {
   }
 
   reset() {
-    this.uiOptions = {
+    Object.assign(this.uiOptions, {
       showTabGroups: true,
       showReset: true,
       title: 'Customize View',
       description: '',
-    };
+    });
     // isTabGroupNavHeadingVisible is intentionally NOT reset here.
     // This value is persisted separately and should survive a store reset.
   }
