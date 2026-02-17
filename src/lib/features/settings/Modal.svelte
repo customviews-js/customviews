@@ -1,16 +1,16 @@
 <script lang="ts">
   /* eslint-disable @typescript-eslint/no-explicit-any */
   import { fade, scale } from 'svelte/transition';
-  import IconGear from '$lib/components/icons/IconGear.svelte';
-  import IconClose from '$lib/components/icons/IconClose.svelte';
-  import IconNavDashed from '$lib/components/icons/IconNavDashed.svelte';
-  import IconNavHeadingOn from '$lib/components/icons/IconNavHeadingOn.svelte';
-  import IconNavHeadingOff from '$lib/components/icons/IconNavHeadingOff.svelte';
-  import IconShare from '$lib/components/icons/IconShare.svelte';
-  import IconCopy from '$lib/components/icons/IconCopy.svelte';
-  import IconCheck from '$lib/components/icons/IconCheck.svelte';
-  import IconReset from '$lib/components/icons/IconReset.svelte';
-  import IconGitHub from '$lib/components/icons/IconGitHub.svelte';
+  import IconGear from '$lib/app/icons/IconGear.svelte';
+  import IconClose from '$lib/app/icons/IconClose.svelte';
+  import IconNavDashed from '$lib/app/icons/IconNavDashed.svelte';
+  import IconNavHeadingOn from '$lib/app/icons/IconNavHeadingOn.svelte';
+  import IconNavHeadingOff from '$lib/app/icons/IconNavHeadingOff.svelte';
+  import IconShare from '$lib/app/icons/IconShare.svelte';
+  import IconCopy from '$lib/app/icons/IconCopy.svelte';
+  import IconCheck from '$lib/app/icons/IconCheck.svelte';
+  import IconReset from '$lib/app/icons/IconReset.svelte';
+  import IconGitHub from '$lib/app/icons/IconGitHub.svelte';
 
   import type { CustomViewsController } from '$lib/controller.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';

@@ -1,5 +1,5 @@
 import { getScriptAttributes, fetchConfig } from '$lib/utils/init-utils';
-import { initUIManager } from '$lib/ui-manager';
+import { initUIManager } from '$lib/app/ui-manager';
 import { CustomViewsController, type ControllerOptions } from '$lib/controller.svelte';
 import { AssetsManager } from '$features/render/assets';
 import type { CustomViewAsset } from '$lib/types/index';
