@@ -13,7 +13,9 @@
 <script lang="ts">
   import IconChevronDown from '$lib/app/icons/IconChevronDown.svelte';
   import IconChevronUp from '$lib/app/icons/IconChevronUp.svelte';
-  import { store } from '$lib/stores/main-store.svelte';
+  import { activeStateStore } from '$lib/stores/active-state-store.svelte';
+  import { elementStore } from '$lib/stores/element-store.svelte';
+  import { derivedStore } from '$lib/stores/derived-store.svelte';
   import { renderAssetInto } from '$features/render/render';
 
   // Props using Svelte 5 runes
@@ -30,10 +32,10 @@
   } = $props();
   // Derive toggle IDs from toggle-id prop (can have multiple space-separated IDs)
   let toggleIds = $derived((toggleId || '').split(/\s+/).filter(Boolean));
-  let toggleConfig = $derived(store.config.toggles?.find((t) => t.toggleId === toggleIds[0]));
+  let toggleConfig = $derived(activeStateStore.config.toggles?.find((t) => t.toggleId === toggleIds[0]));
 
   $effect(() => {
-    toggleIds.forEach((id) => store.registerToggle(id));
+    toggleIds.forEach((id) => elementStore.registerToggle(id));
   });
 
   // Derive label text from config
@@ -52,15 +54,15 @@
   // Derive visibility from store state
   let showState = $derived.by(() => {
     // Default to SHOWN if config hasn't loaded yet (prevent pop-in)
-    if (!store.config.toggles) return true;
+    if (!activeStateStore.config.toggles) return true;
 
-    const shownToggles = store.state.shownToggles ?? [];
+    const shownToggles = activeStateStore.state.shownToggles ?? [];
     return toggleIds.some((id) => shownToggles.includes(id));
   });
 
   // Derive peek state from store state
   let peekState = $derived.by(() => {
-    const peekToggles = store.state.peekToggles ?? [];
+    const peekToggles = activeStateStore.state.peekToggles ?? [];
     return !showState && toggleIds.some((id) => peekToggles.includes(id));
   });
 
@@ -144,8 +146,8 @@
 
   // Reactive asset rendering - renders assets when toggle becomes visible
   $effect(() => {
-    if (showFullContent && assetId && !hasRendered && store.assetsManager && contentEl) {
-      renderAssetInto(contentEl, assetId, store.assetsManager);
+    if (showFullContent && assetId && !hasRendered && derivedStore.assetsManager && contentEl) {
+      renderAssetInto(contentEl, assetId, derivedStore.assetsManager);
       hasRendered = true;
     }
   });

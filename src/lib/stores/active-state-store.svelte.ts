@@ -146,3 +146,5 @@ export class ActiveStateStore {
     };
   }
 }
+
+export const activeStateStore = new ActiveStateStore();

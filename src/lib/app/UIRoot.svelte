@@ -1,7 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { ResolvedUIManagerOptions, RuntimeCallbacks } from './ui-manager';
-  import { store } from '$lib/stores/main-store.svelte';
+  import { activeStateStore } from '$lib/stores/active-state-store.svelte';
+  import { elementStore } from '$lib/stores/element-store.svelte';
+  import { uiStore } from '$lib/stores/ui-store.svelte';
+  import { derivedStore } from '$lib/stores/derived-store.svelte';
 
   import IntroCallout from '$features/settings/IntroCallout.svelte';
   import SettingsIcon from '$features/settings/SettingsIcon.svelte';
@@ -22,7 +25,7 @@
   }>();
 
   // --- Derived State ---
-  const storeConfig = $derived(store.config);
+  const storeConfig = $derived(activeStateStore.config);
   const settingsEnabled = $derived(options.settingsEnabled ?? true);
 
   // --- Services ---
@@ -59,7 +62,7 @@
   // --- Effects ---
 
   $effect(() => {
-    introManager.init(store.hasPageElements, settingsEnabled);
+    introManager.init(elementStore.hasPageElements, settingsEnabled);
   });
 
   // --- Modal Actions ---
@@ -95,7 +98,7 @@
 
   // --- Settings Visibility ---
   const shouldRenderSettings = $derived(
-    settingsEnabled && (store.hasMenuOptions || store.uiOptions.showTabGroups || isModalOpen),
+    settingsEnabled && (derivedStore.hasMenuOptions || uiStore.uiOptions.showTabGroups || isModalOpen),
   );
 </script>
 
@@ -126,7 +129,7 @@
     <SettingsIcon
       bind:this={settingsIcon}
       position={options.icon.position}
-      title={store.uiOptions.title}
+      title={uiStore.uiOptions.title}
       pulse={introManager.showPulse}
       onclick={openModal}
       iconColor={options.icon?.color}

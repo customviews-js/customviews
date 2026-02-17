@@ -5,7 +5,11 @@ import { PersistenceManager } from './state/persistence';
 import { URLStateManager } from '$features/url/url-state-manager';
 
 import { FocusService } from '$features/focus/services/focus-service.svelte';
-import { DataStore, initStore } from './stores/main-store.svelte';
+import { activeStateStore } from './stores/active-state-store.svelte';
+import { elementStore } from './stores/element-store.svelte';
+import { uiStore } from './stores/ui-store.svelte';
+import { derivedStore } from './stores/derived-store.svelte';
+import { placeholderManager } from '$features/placeholder/placeholder-manager';
 import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
 import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
@@ -23,11 +27,6 @@ export interface RuntimeOptions {
  * Components (Toggle, TabGroup) are self-contained and self-managing via the global store.
  */
 export class AppRuntime {
-  /**
-   * The single source of truth for application state.
-   */
-  public store: DataStore;
-
   private rootEl: HTMLElement;
   private persistenceManager: PersistenceManager;
   private focusService: FocusService;
@@ -42,11 +41,11 @@ export class AppRuntime {
     this.persistenceManager = new PersistenceManager(opt.storageKey);
     this.showUrlEnabled = opt.showUrl ?? false;
 
-    // Initialize Reactive Store Singleton
-    this.store = initStore(opt.configFile);
+    // Initialize all store singletons with config
+    this.initStores(opt.configFile);
 
-    // Store assetsManager in global store for component access
-    this.store.setAssetsManager(opt.assetsManager);
+    // Store assetsManager for component access
+    derivedStore.setAssetsManager(opt.assetsManager);
 
     // Initial State Resolution: URL > Persistence > Default
     this.resolveInitialState();
@@ -57,18 +56,44 @@ export class AppRuntime {
     });
   }
 
+  /**
+   * Initialize all stores with configuration from the config file.
+   * Populates the singleton sub-stores with real data.
+   */
+  private initStores(configFile: ConfigFile) {
+    const config = configFile.config || {};
+    const settings = configFile.settings?.panel || {};
+
+    // Process Global Placeholders from Config
+    placeholderManager.registerConfigPlaceholders(config);
+
+    // Initialize ActiveStateStore with config
+    activeStateStore.init(config);
+
+    // Register tab-group placeholders AFTER global config placeholders to preserve precedence
+    placeholderManager.registerTabGroupPlaceholders(config, activeStateStore.state.tabs);
+
+    // Initialize UI Options from Settings
+    uiStore.setUIOptions({
+      showTabGroups: settings.showTabGroups ?? true,
+      showReset: settings.showReset ?? true,
+      title: settings.title ?? 'Customize View',
+      description: settings.description ?? '',
+    });
+  }
+
   private resolveInitialState() {
     // 1. URL State
     const urlState = URLStateManager.parseURL();
     if (urlState) {
-      this.store.applyState(urlState);
+      activeStateStore.applyState(urlState);
       return;
     }
 
     // 2. Persisted State
     const persistedState = this.persistenceManager.getPersistedState();
     if (persistedState) {
-      this.store.applyState(persistedState);
+      activeStateStore.applyState(persistedState);
       return;
     }
   }
@@ -83,7 +108,7 @@ export class AppRuntime {
     // Restore tab nav visibility preference
     const navPref = this.persistenceManager.getPersistedTabNavVisibility();
     if (navPref !== null) {
-      this.store.isTabGroupNavHeadingVisible = navPref;
+      uiStore.isTabGroupNavHeadingVisible = navPref;
     }
 
     // Initialize Stores
@@ -91,7 +116,7 @@ export class AppRuntime {
 
     // Run initial scan (non-reactive)
     // Clear previous page detections if any, before scan (SPA support)
-    this.store.clearDetectedPlaceholders();
+    elementStore.clearDetectedPlaceholders();
     PlaceholderBinder.scanAndHydrate(this.rootEl);
 
     this.setUpObserver();
@@ -101,7 +126,7 @@ export class AppRuntime {
       // Effect 1: Update URL
       $effect(() => {
         if (this.showUrlEnabled) {
-          URLStateManager.updateURL(this.store.state);
+          URLStateManager.updateURL(activeStateStore.state);
         } else {
           URLStateManager.clearURL();
         }
@@ -109,8 +134,8 @@ export class AppRuntime {
 
       // Effect 2: Persistence
       $effect(() => {
-        this.persistenceManager.persistState(this.store.state);
-        this.persistenceManager.persistTabNavVisibility(this.store.isTabGroupNavHeadingVisible);
+        this.persistenceManager.persistState(activeStateStore.state);
+        this.persistenceManager.persistTabNavVisibility(uiStore.isTabGroupNavHeadingVisible);
       });
 
       // Effect 3: React to Variable Changes
@@ -123,7 +148,7 @@ export class AppRuntime {
     this.popstateHandler = () => {
       const urlState = URLStateManager.parseURL();
       if (urlState) {
-        this.store.applyState(urlState);
+        activeStateStore.applyState(urlState);
       }
     };
     window.addEventListener('popstate', this.popstateHandler);
@@ -179,8 +204,9 @@ export class AppRuntime {
 
   public resetToDefault() {
     this.persistenceManager.clearAll();
-    this.store.reset();
-    this.store.isTabGroupNavHeadingVisible = true;
+    activeStateStore.reset();
+    uiStore.reset();
+    uiStore.isTabGroupNavHeadingVisible = true;
     placeholderValueStore.reset();
     URLStateManager.clearURL();
   }
