@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { PlaceholderManager } from '../../../../src/lib/features/placeholder/placeholder-manager';
 
 // Polyfill Svelte Runes
@@ -33,6 +33,10 @@ describe('PlaceholderManager', () => {
     manager = new PlaceholderManager();
     // Spy on console.warn
     warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
   });
 
   describe('registerConfigPlaceholders', () => {

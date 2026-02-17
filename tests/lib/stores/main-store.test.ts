@@ -26,15 +26,19 @@ vi.mock('../../../src/lib/features/placeholder/stores/placeholder-registry-store
   },
 }));
 
-import { placeholderRegistryStore } from '../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
+
 
 describe('DataStore (Facade)', () => {
   let initStore: any;
   let store: any;
+  let placeholderRegistryStore: any;
 
   beforeEach(async () => {
     vi.resetModules();
     vi.clearAllMocks();
+
+    const registryModule = await import('../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte');
+    placeholderRegistryStore = registryModule.placeholderRegistryStore;
 
     // Dynamic import to ensure globals are set
     const module = await import('../../../src/lib/stores/main-store.svelte');
@@ -83,10 +87,10 @@ describe('DataStore (Facade)', () => {
       vi.mocked(placeholderRegistryStore.register).mockImplementation((def: any) => {
           registryMap.set(def.name, def);
       });
-      vi.mocked(placeholderRegistryStore.get).mockImplementation((name) => {
+      vi.mocked(placeholderRegistryStore.get).mockImplementation((name: any) => {
           return registryMap.get(name);
       });
-      vi.mocked(placeholderRegistryStore.has).mockImplementation((name) => {
+      vi.mocked(placeholderRegistryStore.has).mockImplementation((name: any) => {
           return registryMap.has(name);
       });
 

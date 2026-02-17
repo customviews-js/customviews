@@ -106,7 +106,7 @@ export class ActiveStateStore {
     this.state = {
       shownToggles: newState.shownToggles ?? defaults.shownToggles ?? [],
       peekToggles: newState.peekToggles ?? defaults.peekToggles ?? [],
-      tabs: { ...defaults.tabs, ...newState.tabs },
+      tabs: { ...(defaults.tabs ?? {}), ...(newState.tabs ?? {}) },
     };
   }
 

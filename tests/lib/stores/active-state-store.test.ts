@@ -52,7 +52,7 @@ describe('ActiveStateStore', () => {
       // In the new store, we init with config
       store.init(config);
 
-      // Asseert
+      // Assert
       store.setPinnedTab('group1', 't2');
 
 // Logic moved to PlaceholderManager. We just test that the manager called.
@@ -63,7 +63,7 @@ describe('ActiveStateStore', () => {
       );
     });
 
-    it('should NOT update placeholder if placeholderId is missing in config', () => {
+    it('should delegate update to PlaceholderManager even if placeholderId is missing (validation in manager)', () => {
       const config = {
         tabGroups: [
           {
@@ -81,7 +81,7 @@ describe('ActiveStateStore', () => {
       expect(placeholderManager.updatePlaceholderFromTab).toHaveBeenCalled();
     });
 
-    it('should NOT update placeholder if placeholder is not in registry', () => {
+    it('should delegate update to PlaceholderManager even if placeholder is not in registry (validation in manager)', () => {
       const config = {
         tabGroups: [
           {
@@ -145,6 +145,13 @@ describe('ActiveStateStore', () => {
         config,
         { group1: 't1' }
       );
+    });
+  });
+
+  describe('applyState', () => {
+    it('should handle undefined tabs in newState gracefully', () => {
+      store.applyState({ shownToggles: [], peekToggles: [] }); // tabs is undefined
+      expect(store.state.tabs).toBeDefined();
     });
   });
 });
