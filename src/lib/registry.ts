@@ -1,8 +1,8 @@
-import '$ui/Toggle.svelte';
-import '$ui/Tab.svelte';
-import '$ui/TabGroup.svelte';
-import '$ui/TabHeader.svelte';
-import '$ui/TabBody.svelte';
+import '$features/toggles/components/Toggle.svelte';
+import '$features/tabs/components/Tab.svelte';
+import '$features/tabs/components/TabGroup.svelte';
+import '$features/tabs/components/TabHeader.svelte';
+import '$features/tabs/components/TabBody.svelte';
 
 import '$features/placeholder/Placeholder.svelte';
 import '$features/placeholder/PlaceholderInput.svelte';

@@ -24,7 +24,12 @@ const banner = `/*!
 // Custom Web Component Elements 
 const sveltePluginCustomElements = svelte({
   ...svelteConfig,
-  include: ['src/lib/components/ui/**/*.svelte', 'src/lib/features/placeholder/**/*.svelte'],
+  include: [
+    'src/lib/components/ui/**/*.svelte',
+    'src/lib/features/placeholder/**/*.svelte',
+    'src/lib/features/tabs/**/*.svelte',
+    'src/lib/features/toggles/**/*.svelte',
+  ],
   compilerOptions: {
     ...svelteConfig.compilerOptions,
     customElement: true,
@@ -36,7 +41,12 @@ const sveltePluginRegular = svelte({
   ...svelteConfig,
   extensions: ['.svelte', '.svelte.ts', '.svelte.js'],
   include: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
-  exclude: ['src/lib/components/ui/**/*.svelte', 'src/lib/features/placeholder/**/*.svelte'],
+  exclude: [
+    'src/lib/components/ui/**/*.svelte',
+    'src/lib/features/placeholder/**/*.svelte',
+    'src/lib/features/tabs/**/*.svelte',
+    'src/lib/features/toggles/**/*.svelte',
+  ],
   // Regular non-custom components
   compilerOptions: {
     ...svelteConfig.compilerOptions,
