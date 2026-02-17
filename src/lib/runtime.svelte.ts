@@ -9,7 +9,7 @@ import { DataStore, initStore } from './stores/main-store.svelte';
 import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
 import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
-export interface ControllerOptions {
+export interface RuntimeOptions {
   assetsManager: AssetsManager;
   configFile: ConfigFile;
   rootEl?: HTMLElement | undefined;
@@ -18,11 +18,11 @@ export interface ControllerOptions {
 }
 
 /**
- * The Reactive Binder for CustomViews, coordinates interaction between DataStore and other components.
- * Uses Svelte 5 Effects ($effect) to automatically apply state changes from the store to URL and persistence.
+ * The reactive runtime for CustomViews. Manages the full lifecycle: initialization,
+ * state resolution, reactive side-effects (URL sync, persistence), DOM observation, and teardown.
  * Components (Toggle, TabGroup) are self-contained and self-managing via the global store.
  */
-export class CustomViewsController {
+export class AppRuntime {
   /**
    * The single source of truth for application state.
    */
@@ -37,7 +37,7 @@ export class CustomViewsController {
   private destroyEffectRoot?: () => void;
   private popstateHandler?: () => void;
 
-  constructor(opt: ControllerOptions) {
+  constructor(opt: RuntimeOptions) {
     this.rootEl = opt.rootEl || document.body;
     this.persistenceManager = new PersistenceManager(opt.storageKey);
     this.showUrlEnabled = opt.showUrl ?? false;

@@ -22,7 +22,7 @@ This document provides essential context for AI models interacting with this pro
 ## Architectural Patterns
 
 - Overall Architecture:
-  - Core Library: A singleton/class-based controller (`CustomViewsController`) that manages state, assets, and configuration.
+  - Core Library: A singleton/class-based runtime (`AppRuntime`) that manages state, assets, and configuration.
   - No Public API Facade: The library is designed for auto-initialization via script tag. `src/browser.ts` is the main entry point.
   - Custom Elements: Uses Web Components (via Svelte) for easy integration into any HTML page (e.g., `<cv-tabgroup>`).
 - Directory Structure Philosophy:
@@ -42,8 +42,8 @@ This document provides essential context for AI models interacting with this pro
   - Semicolons: Always used.
   - Quotes: Double quotes preferred in JSON/HTML, mixed in TS (follow existing file consistency).
 - Naming Conventions:
-  - Classes: PascalCase (e.g., `CustomViewsController`, `AssetsManager`).
-  - Files: kebab-case (e.g., `controller.svelte.ts`, `assets.ts`).
+  - Classes: PascalCase (e.g., `AppRuntime`, `AssetsManager`).
+  - Files: kebab-case (e.g., `runtime.svelte.ts`, `assets.ts`).
   - Variables/Functions: camelCase (e.g., `init`, `rootEl`).
   - Private/Internal Properties: Often prefixed with `_` or handled via Svelte runes/privacy mechanisms.
 - Svelte Specifics:

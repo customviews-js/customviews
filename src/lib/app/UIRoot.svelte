@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { CustomViewsController } from '$lib/controller.svelte';
+  import type { AppRuntime } from '$lib/runtime.svelte';
   import type { ResolvedUIManagerOptions } from './ui-manager';
 
   import IntroCallout from '$features/settings/IntroCallout.svelte';
@@ -16,19 +16,19 @@
   import { UrlActionRouter } from '$features/url/url-action-router.svelte';
   import { IntroManager } from '$features/settings/intro-manager.svelte';
 
-  let { controller, options } = $props<{
-    controller: CustomViewsController;
+  let { runtime, options } = $props<{
+    runtime: AppRuntime;
     options: ResolvedUIManagerOptions;
   }>();
 
   // --- Derived State ---
-  const store = $derived(controller.store);
-  const storeConfig = $derived(controller.store.config);
+  const store = $derived(runtime.store);
+  const storeConfig = $derived(runtime.store.config);
   const settingsEnabled = $derived(options.settingsEnabled ?? true);
 
   // --- Services ---
   const introManager = new IntroManager(
-    () => controller.persistenceManager,
+    () => runtime.persistenceManager,
     () => options.callout,
   );
   const router = new UrlActionRouter({
@@ -77,7 +77,7 @@
 
   function handleReset() {
     isResetting = true;
-    controller.resetToDefault();
+    runtime.resetToDefault();
     settingsIcon?.resetPosition();
 
     showToast('Settings reset to default');
@@ -134,14 +134,14 @@
       backgroundColor={options.icon?.backgroundColor}
       opacity={options.icon?.opacity}
       scale={options.icon?.scale}
-      persistence={controller.persistenceManager}
+      persistence={runtime.persistenceManager}
     />
   {/if}
 
   <!-- Modal: Only specific to Settings -->
   {#if settingsEnabled && isModalOpen}
     <Modal
-      {controller}
+      {runtime}
       {isResetting}
       onclose={closeModal}
       onreset={handleReset}
