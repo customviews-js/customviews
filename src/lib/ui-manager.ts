@@ -3,7 +3,9 @@ import type { ConfigFile } from '$lib/types/index';
 import UIRoot from '$lib/components/UIRoot.svelte';
 import { mount, unmount } from 'svelte';
 
-export interface UIManagerOptions {
+import type { WidgetSettings, WidgetCalloutConfig, WidgetIconConfig } from '$features/settings/types';
+
+export interface UIManagerOptions extends Omit<WidgetSettings, 'enabled'> {
   /** The CustomViews controller instance to control */
   controller: CustomViewsController;
 
@@ -12,83 +14,23 @@ export interface UIManagerOptions {
 
   /** Whether the settings feature (icon/modal) is enabled */
   settingsEnabled?: boolean;
-
-  /** Settings panel configuration */
-  panel?: {
-    /** Title displayed in the settings modal */
-    title?: string;
-    /** Widget description text */
-    description?: string;
-    /** Whether to show tab groups section in widget (default: true) */
-    showTabGroups?: boolean;
-    /** Whether to show the reset button (default: true) */
-    showReset?: boolean;
-  };
-
-  /** Widget theme: 'light' | 'dark' */
-  theme?: 'light' | 'dark';
-
-  /** Callout configuration options */
-  callout?: {
-    /** Whether to show the callout */
-    show?: boolean;
-    /** Message to display in the callout */
-    message?: string;
-    /** Whether to enable pulse animation */
-    enablePulse?: boolean;
-    /** Custom background color */
-    backgroundColor?: string | undefined;
-    /** Custom text color */
-    textColor?: string | undefined;
-  };
-
-  /** Custom icon styling options */
-  icon?: {
-    /** Widget position (default: middle-left) */
-    position?:
-      | 'top-right'
-      | 'top-left'
-      | 'bottom-right'
-      | 'bottom-left'
-      | 'middle-left'
-      | 'middle-right';
-    /** Custom icon color (e.g. #000, rgba(0,0,0,1)) */
-    color?: string | undefined;
-
-    /** Custom background color (e.g. #fff, rgba(255,255,255,1)) */
-    backgroundColor?: string | undefined;
-
-    /** Custom opacity (0-1) */
-    opacity?: number | undefined;
-
-    /** Custom scale factor (default 1) */
-    scale?: number;
-    /** Whether to show the icon (default: true) */
-    show?: boolean;
-  };
 }
 
 export type ResolvedUIManagerOptions = Omit<
   UIManagerOptions,
-  'container' | 'theme' | 'panel' | 'callout' | 'icon'
+  'container' | 'panel' | 'callout' | 'icon'
 > & {
   container: HTMLElement;
   settingsEnabled: boolean;
-  theme: NonNullable<UIManagerOptions['theme']>;
-  callout: {
-    show: boolean;
-    message: string;
-    enablePulse: boolean;
+  theme: 'light' | 'dark';
+  callout: Required<Pick<WidgetCalloutConfig, 'show' | 'message' | 'enablePulse'>> & {
     backgroundColor?: string | undefined;
     textColor?: string | undefined;
   };
-  icon: {
-    position: NonNullable<NonNullable<UIManagerOptions['icon']>['position']>;
+  icon: Required<Pick<WidgetIconConfig, 'position' | 'scale' | 'show'>> & {
     color?: string | undefined;
     backgroundColor?: string | undefined;
     opacity?: number | undefined;
-    scale: number;
-    show: boolean;
   };
 };
 
@@ -102,7 +44,7 @@ export class CustomViewsUIManager {
       controller: options.controller, // 'controller' is a required property
       container: options.container || document.body,
       settingsEnabled: options.settingsEnabled ?? true,
-      theme: options.theme || 'light',
+      theme: options.panel?.theme || 'light',
       callout: {
         show: options.callout?.show ?? false,
         message: options.callout?.message || 'Customize your reading experience here.',

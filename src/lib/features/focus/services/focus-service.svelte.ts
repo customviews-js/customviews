@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { mount, unmount, untrack } from 'svelte';
 import { focusStore } from '$features/focus/stores/focus-store.svelte';
-import { showToast } from '$lib/stores/toast-store.svelte';
+import { showToast } from '$features/notifications/stores/toast-store.svelte';
 import * as DomElementLocator from '$lib/utils/dom-element-locator';
 import FocusDivider from '$features/focus/FocusDivider.svelte';
 import { determineHiddenElements, isElementExcluded, calculateDividerGroups } from '../focus-logic';
@@ -19,8 +19,8 @@ import {
   HIGHLIGHT_PARAM,
 } from '$features/highlight/services/highlight-service.svelte';
 
-import { DEFAULT_EXCLUDED_IDS, DEFAULT_EXCLUDED_TAGS } from '$lib/exclusion-defaults';
-import { type ShareExclusions } from '$lib/types/config';
+import { DEFAULT_EXCLUDED_IDS, DEFAULT_EXCLUDED_TAGS } from '$features/share/constants';
+import type { ShareExclusions } from '$features/share/types';
 
 export interface FocusServiceOptions {
   shareExclusions?: ShareExclusions;

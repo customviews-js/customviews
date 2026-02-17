@@ -1,18 +1,5 @@
 import { SvelteMap } from 'svelte/reactivity';
-
-export interface PlaceholderDefinition {
-  name: string;
-  settingsLabel?: string | undefined;
-  settingsHint?: string | undefined;
-  defaultValue?: string | undefined;
-  hiddenFromSettings?: boolean | undefined;
-  /** If true, this placeholder is only shown in settings if detected on the page */
-  isLocal?: boolean | undefined;
-  /** Internal tracking of where this definition came from to detect conflicts */
-  source?: 'config' | 'tabgroup' | undefined;
-  /** The ID of the component (e.g. TabGroup groupId) that registered this placeholder */
-  ownerTabGroupId?: string | undefined;
-}
+import type { PlaceholderDefinition } from '../types';
 
 export class PlaceholderRegistryStore {
   // Reactivity: Map is deeply reactive in Svelte 5 with $state

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { ToastStore } from '$lib/stores/toast-store.svelte';
+import { ToastStore } from '$features/notifications/stores/toast-store.svelte';
 
 describe('ToastStore', () => {
   let store: ToastStore;

@@ -1,4 +1,5 @@
 import { SvelteSet } from 'svelte/reactivity';
+import { CV_SHARE_IGNORE_ATTRIBUTE } from './constants';
 
 export const CV_CUSTOM_ELEMENTS = 'cv-tabgroup, cv-toggle';
 
@@ -94,8 +95,6 @@ export function calculateNewSelection(
 
   return { updatedSelection: nextSelection, changesMade: true };
 }
-
-import { CV_SHARE_IGNORE_ATTRIBUTE } from '$lib/exclusion-defaults';
 
 /**
  * Checks if an element or any of its ancestors should be excluded from sharing.

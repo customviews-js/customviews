@@ -1,16 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { CustomViewsController } from '$lib/controller.svelte';
-  import type { UIManagerOptions } from '$lib/ui-manager';
+  import type { ResolvedUIManagerOptions } from '$lib/ui-manager';
 
   import IntroCallout from '$features/settings/IntroCallout.svelte';
   import SettingsIcon from '$features/settings/SettingsIcon.svelte';
   import Modal from '$features/settings/Modal.svelte';
-  import { showToast } from '$lib/stores/toast-store.svelte';
+  import { showToast } from '$features/notifications/stores/toast-store.svelte';
   import { shareStore, type SelectionMode } from '$features/share/stores/share-store.svelte';
-  import { themeStore } from '$lib/stores/theme-store.svelte';
-  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '$lib/exclusion-defaults';
-  import Toast from '$lib/components/internal/Toast.svelte';
+  import { DEFAULT_EXCLUDED_TAGS, DEFAULT_EXCLUDED_IDS } from '$features/share/constants';
+  import Toast from '$features/notifications/components/Toast.svelte';
   import ShareOverlay from '$features/share/ShareOverlay.svelte';
   import FocusBanner from '$features/focus/FocusBanner.svelte';
 
@@ -19,7 +18,7 @@
 
   let { controller, options } = $props<{
     controller: CustomViewsController;
-    options: UIManagerOptions;
+    options: ResolvedUIManagerOptions;
   }>();
 
   // --- Derived State ---
@@ -53,15 +52,10 @@
   // --- Initialization ---
 
   onMount(() => {
-    initTheme();
     router.init();
 
     return () => router.destroy();
   });
-
-  function initTheme() {
-    themeStore.init(controller.persistenceManager);
-  }
 
   // --- Effects ---
 
@@ -106,7 +100,7 @@
   );
 </script>
 
-<div class="cv-widget-root" data-theme={themeStore.currentTheme} data-cv-share-ignore>
+<div class="cv-widget-root" data-theme={options.theme} data-cv-share-ignore>
   <!-- Intro Callout -->
   {#if introManager.showCallout && settingsEnabled}
     <IntroCallout
