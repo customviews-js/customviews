@@ -29,7 +29,7 @@ export class AppRuntime {
   public store: DataStore;
 
   private rootEl: HTMLElement;
-  public persistenceManager: PersistenceManager;
+  private persistenceManager: PersistenceManager;
   private focusService: FocusService;
 
   private showUrlEnabled: boolean;
@@ -183,6 +183,31 @@ export class AppRuntime {
     this.store.isTabGroupNavHeadingVisible = true;
     placeholderValueStore.reset();
     URLStateManager.clearURL();
+  }
+
+  // --- Icon Position Persistence ---
+
+  public getIconPosition(): number | null {
+    const raw = this.persistenceManager.getItem('cv-settings-icon-offset');
+    return raw ? parseFloat(raw) : null;
+  }
+
+  public saveIconPosition(offset: number): void {
+    this.persistenceManager.setItem('cv-settings-icon-offset', offset.toString());
+  }
+
+  public clearIconPosition(): void {
+    this.persistenceManager.removeItem('cv-settings-icon-offset');
+  }
+
+  // --- Intro Callout Persistence ---
+
+  public isIntroSeen(): boolean {
+    return !!this.persistenceManager.getItem('cv-intro-shown');
+  }
+
+  public markIntroSeen(): void {
+    this.persistenceManager.setItem('cv-intro-shown', 'true');
   }
 
   public destroy() {
