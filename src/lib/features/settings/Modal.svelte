@@ -12,7 +12,7 @@
   import IconReset from '$lib/app/icons/IconReset.svelte';
   import IconGitHub from '$lib/app/icons/IconGitHub.svelte';
 
-  import type { AppRuntime } from '$lib/runtime.svelte';
+  import { store } from '$lib/stores/main-store.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';
   import { showToast } from '$features/notifications/stores/toast-store.svelte';
   import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
@@ -25,7 +25,6 @@
   import { copyToClipboard } from '$lib/utils/clipboard-utils';
 
   interface Props {
-    runtime: AppRuntime;
     isResetting?: boolean;
     onclose?: () => void;
     onreset?: () => void;
@@ -33,7 +32,6 @@
   }
 
   let {
-    runtime,
     isResetting = false,
     onclose = () => {},
     onreset = () => {},
@@ -41,7 +39,6 @@
   }: Props = $props();
 
   // --- Derived State from Core ---
-  const store = $derived(runtime.store);
   const areTabNavsVisible = $derived(store.isTabGroupNavHeadingVisible);
   const showTabGroups = $derived(store.uiOptions.showTabGroups);
   const showReset = $derived(store.uiOptions.showReset);
