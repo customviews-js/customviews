@@ -14,18 +14,15 @@ export interface UIManagerOptions extends Omit<WidgetSettings, 'enabled'> {
 
   /** Whether the settings feature (icon/modal) is enabled */
   settingsEnabled?: boolean;
-
-  /** Widget theme: 'light' | 'dark' */
-  theme?: 'light' | 'dark';
 }
 
 export type ResolvedUIManagerOptions = Omit<
   UIManagerOptions,
-  'container' | 'theme' | 'panel' | 'callout' | 'icon'
+  'container' | 'panel' | 'callout' | 'icon'
 > & {
   container: HTMLElement;
   settingsEnabled: boolean;
-  theme: NonNullable<UIManagerOptions['theme']>;
+  theme: 'light' | 'dark';
   callout: Required<Pick<WidgetCalloutConfig, 'show' | 'message' | 'enablePulse'>> & {
     backgroundColor?: string | undefined;
     textColor?: string | undefined;
@@ -47,7 +44,7 @@ export class CustomViewsUIManager {
       controller: options.controller, // 'controller' is a required property
       container: options.container || document.body,
       settingsEnabled: options.settingsEnabled ?? true,
-      theme: options.theme || 'light',
+      theme: options.panel?.theme || 'light',
       callout: {
         show: options.callout?.show ?? false,
         message: options.callout?.message || 'Customize your reading experience here.',

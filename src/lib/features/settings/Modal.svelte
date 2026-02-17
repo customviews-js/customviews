@@ -11,9 +11,7 @@
   import IconCheck from '$lib/components/icons/IconCheck.svelte';
   import IconReset from '$lib/components/icons/IconReset.svelte';
   import IconGitHub from '$lib/components/icons/IconGitHub.svelte';
-  import IconSun from '$lib/components/icons/IconSun.svelte';
-  import IconMoon from '$lib/components/icons/IconMoon.svelte';
-  import { themeStore } from '$lib/stores/theme-store.svelte';
+
   import type { CustomViewsController } from '$lib/controller.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';
   import { showToast } from '$features/notifications/stores/toast-store.svelte';
@@ -314,42 +312,6 @@
               </div>
             {/if}
           {/each}
-
-          <!-- Hide Light Dark Theme Selection for now -->
-          {#if false}
-            <div class="section">
-              <div class="section-heading">Theme</div>
-              <div class="theme-selector">
-                <button
-                  class="theme-btn {themeStore.mode === 'light' ? 'active' : ''}"
-                  onclick={() => themeStore.setMode('light')}
-                  title="Light Mode"
-                >
-                  <IconSun />
-                  <span>Light</span>
-                </button>
-                <button
-                  class="theme-btn {themeStore.mode === 'dark' ? 'active' : ''}"
-                  onclick={() => themeStore.setMode('dark')}
-                  title="Dark Mode"
-                >
-                  <IconMoon />
-                  <span>Dark</span>
-                </button>
-                <!-- Auto button disabled for now -->
-                <!--
-              <button 
-                class="theme-btn {themeStore.mode === 'auto' ? 'active' : ''}" 
-                onclick={() => themeStore.setMode('auto')}
-                title="System Default"
-              >
-                 <IconSystem />
-                <span>Auto</span>
-              </button>
-              -->
-              </div>
-            </div>
-          {/if}
         </div>
       {:else}
         <div class="tab-content active" in:fade={{ duration: 150 }}>
@@ -561,44 +523,6 @@
     flex-direction: column;
     gap: 0.5rem;
     overflow: hidden;
-  }
-
-  /* Theme Selector */
-  .theme-selector {
-    display: flex;
-    background: var(--cv-input-bg);
-    border: 1px solid var(--cv-input-border);
-    border-radius: 0.5rem;
-    padding: 0.25rem;
-    gap: 0.25rem;
-  }
-
-  .theme-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    border: none;
-    background: transparent;
-    color: var(--cv-text-secondary);
-    border-radius: 0.375rem;
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-  }
-
-  .theme-btn:hover {
-    background: var(--cv-bg-hover);
-    color: var(--cv-text);
-  }
-
-  .theme-btn.active {
-    background: var(--cv-primary);
-    color: white;
-    box-shadow: var(--cv-shadow-sm);
   }
 
   /* Tab Groups Section specific */
