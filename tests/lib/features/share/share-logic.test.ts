@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach } from 'vitest';
 import { calculateNewSelection, isGenericWrapper, isExcluded } from '$features/share/share-logic';
-import { CV_SHARE_IGNORE_ATTRIBUTE } from '$lib/exclusion-defaults';
+import { CV_SHARE_IGNORE_ATTRIBUTE } from '$features/share/constants';
 import { SvelteSet } from 'svelte/reactivity';
 
 describe('share-logic', () => {

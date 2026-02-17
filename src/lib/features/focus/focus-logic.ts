@@ -1,5 +1,5 @@
 import { SvelteSet } from 'svelte/reactivity';
-import { CV_SHARE_IGNORE_ATTRIBUTE } from '$lib/exclusion-defaults';
+import { CV_SHARE_IGNORE_ATTRIBUTE } from '$features/share/constants';
 
 /**
  * Determines which siblings of the target path elements should be hidden.
