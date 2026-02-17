@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { AppRuntime } from '$lib/runtime.svelte';
-  import type { ResolvedUIManagerOptions } from './ui-manager';
+  import type { ResolvedUIManagerOptions, RuntimeCallbacks } from './ui-manager';
+  import { store } from '$lib/stores/main-store.svelte';
 
   import IntroCallout from '$features/settings/IntroCallout.svelte';
   import SettingsIcon from '$features/settings/SettingsIcon.svelte';
@@ -16,19 +16,18 @@
   import { UrlActionRouter } from '$features/url/url-action-router.svelte';
   import { IntroManager } from '$features/settings/intro-manager.svelte';
 
-  let { runtime, options } = $props<{
-    runtime: AppRuntime;
+  let { callbacks, options } = $props<{
+    callbacks: RuntimeCallbacks;
     options: ResolvedUIManagerOptions;
   }>();
 
   // --- Derived State ---
-  const store = $derived(runtime.store);
-  const storeConfig = $derived(runtime.store.config);
+  const storeConfig = $derived(store.config);
   const settingsEnabled = $derived(options.settingsEnabled ?? true);
 
   // --- Services ---
   const introManager = new IntroManager(
-    () => runtime.persistenceManager,
+    { isIntroSeen: () => callbacks.isIntroSeen(), markIntroSeen: () => callbacks.markIntroSeen() },
     () => options.callout,
   );
   const router = new UrlActionRouter({
@@ -77,7 +76,7 @@
 
   function handleReset() {
     isResetting = true;
-    runtime.resetToDefault();
+    callbacks.resetToDefault();
     settingsIcon?.resetPosition();
 
     showToast('Settings reset to default');
@@ -134,14 +133,15 @@
       backgroundColor={options.icon?.backgroundColor}
       opacity={options.icon?.opacity}
       scale={options.icon?.scale}
-      persistence={runtime.persistenceManager}
+      getIconPosition={callbacks.getIconPosition}
+      saveIconPosition={callbacks.saveIconPosition}
+      clearIconPosition={callbacks.clearIconPosition}
     />
   {/if}
 
   <!-- Modal: Only specific to Settings -->
   {#if settingsEnabled && isModalOpen}
     <Modal
-      {runtime}
       {isResetting}
       onclose={closeModal}
       onreset={handleReset}
