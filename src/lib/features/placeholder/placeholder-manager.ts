@@ -33,7 +33,7 @@ export class PlaceholderManager {
   registerTabGroupPlaceholders(config: Config, activeTabs?: Record<string, string>) {
     if (config.tabGroups) {
       config.tabGroups.forEach((group) => {
-        this.registerPlaceholderFromTabGroup(group, activeTabs);
+        this.registerPlaceholderFromTabGroup(group, config, activeTabs);
       });
     }
   }
@@ -62,7 +62,7 @@ export class PlaceholderManager {
 
   // --- Internal Helpers ---
 
-  private registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig, activeTabs?: Record<string, string>) {
+  private registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig, fullConfig: Config, activeTabs?: Record<string, string>) {
     if (!groupConfig.placeholderId) return;
 
     const id = groupConfig.placeholderId;
@@ -100,7 +100,7 @@ export class PlaceholderManager {
     if (activeTabs) {
       const activeTabId = activeTabs[groupConfig.groupId];
       if (activeTabId) {
-        this.updatePlaceholderFromTab(groupConfig.groupId, activeTabId, { tabGroups: [groupConfig] });
+        this.updatePlaceholderFromTab(groupConfig.groupId, activeTabId, fullConfig);
       }
     }
   }

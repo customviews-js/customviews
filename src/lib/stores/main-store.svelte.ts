@@ -201,7 +201,5 @@ export function initStore(configFile: ConfigFile): DataStore {
     description: settings.description ?? '',
   });
 
-
-
   return store;
 }
