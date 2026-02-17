@@ -6,18 +6,18 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 // @ts-expect-error - Polyfill for testing
 globalThis.$state = (initial) => initial;
 
-import { IntroManager } from '../../../../src/lib/features/settings/intro-manager.svelte';
-import { PersistenceManager } from '../../../../src/lib/state/persistence';
+import { IntroManager, type IntroPersistence } from '../../../../src/lib/features/settings/intro-manager.svelte';
 
 describe('IntroManager', () => {
   let introManager: IntroManager;
-  let persistence: PersistenceManager;
+  let persistence: IntroPersistence;
   let calloutOptions: any;
 
   beforeEach(() => {
-    persistence = new PersistenceManager();
-    vi.spyOn(persistence, 'getItem').mockReturnValue(null);
-    vi.spyOn(persistence, 'setItem');
+    persistence = {
+      isIntroSeen: vi.fn().mockReturnValue(false),
+      markIntroSeen: vi.fn(),
+    };
 
     calloutOptions = {
       show: true,
@@ -54,7 +54,8 @@ describe('IntroManager', () => {
   });
 
   it('should not show if already persisted as shown', () => {
-    vi.spyOn(persistence, 'getItem').mockReturnValue('true');
+    (persistence.isIntroSeen as ReturnType<typeof vi.fn>).mockReturnValue(true);
+    introManager = new IntroManager(persistence, calloutOptions);
     introManager.init(true, true);
 
     vi.advanceTimersByTime(1100);
@@ -69,6 +70,6 @@ describe('IntroManager', () => {
     introManager.dismiss();
 
     expect(introManager.showCallout).toBe(false);
-    expect(persistence.setItem).toHaveBeenCalledWith('cv-intro-shown', 'true');
+    expect(persistence.markIntroSeen).toHaveBeenCalled();
   });
 });

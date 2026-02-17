@@ -12,7 +12,9 @@
     backgroundColor = undefined,
     opacity = undefined,
     scale = undefined,
-    persistence = undefined,
+    getIconPosition = undefined,
+    saveIconPosition = undefined,
+    clearIconPosition = undefined,
   }: {
     position?:
       | 'top-right'
@@ -28,11 +30,12 @@
     backgroundColor?: string;
     opacity?: number;
     scale?: number;
-    persistence?: any;
+    getIconPosition?: () => number | null;
+    saveIconPosition?: (offset: number) => void;
+    clearIconPosition?: () => void;
   } = $props();
 
   // Constants
-  const STORAGE_KEY_BASE = 'cv-settings-icon-offset';
   const VIEWPORT_MARGIN = 10;
   const DRAG_THRESHOLD = 5;
 
@@ -49,10 +52,10 @@
 
   onMount(() => {
     // Load persisted offset
-    if (persistence) {
-      const savedPosition = persistence.getItem(STORAGE_KEY_BASE);
-      if (savedPosition) {
-        currentOffset = parseFloat(savedPosition);
+    if (getIconPosition) {
+      const savedOffset = getIconPosition();
+      if (savedOffset !== null) {
+        currentOffset = savedOffset;
       }
     }
 
@@ -81,9 +84,7 @@
   export function resetPosition() {
     currentOffset = 0;
     dragStartOffset = 0;
-    if (persistence) {
-      persistence.removeItem(STORAGE_KEY_BASE);
-    }
+    clearIconPosition?.();
   }
 
   function constrainPositionToViewport() {
@@ -170,9 +171,7 @@
   }
 
   function savePosition() {
-    if (persistence) {
-      persistence.setItem(STORAGE_KEY_BASE, currentOffset.toString());
-    }
+    saveIconPosition?.(currentOffset);
   }
 
   function onClick(e: MouseEvent) {
