@@ -1,5 +1,5 @@
 import type { ConfigFile } from '$lib/types/index';
-import type { AssetsManager } from './assets';
+import type { AssetsManager } from '$features/render/assets';
 
 import { PersistenceManager } from './state/persistence';
 import { URLStateManager } from '$features/url/url-state-manager';
