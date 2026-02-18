@@ -4,6 +4,12 @@ import type { ToggleConfig } from '../features/toggles/types';
 import type { ShareExclusions } from '../features/share/types';
 import type { WidgetSettings } from '../features/settings/types';
 
+export type ConfigSectionKey = 'toggles' | 'tabGroups' | 'placeholders';
+
+export function isValidConfigSection(key: string): key is ConfigSectionKey {
+  return ['toggles', 'tabGroups', 'placeholders'].includes(key);
+}
+
 /**
  * Configuration for the site, has default state and list of toggles
  */
