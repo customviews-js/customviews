@@ -4,10 +4,12 @@ import type { ToggleConfig } from '../features/toggles/types';
 import type { ShareExclusions } from '../features/share/types';
 import type { WidgetSettings } from '../features/settings/types';
 
-export type ConfigSectionKey = 'toggles' | 'tabGroups' | 'placeholders';
+const CONFIG_SECTION_KEYS = ['toggles', 'tabGroups', 'placeholders'] as const;
+
+export type ConfigSectionKey = (typeof CONFIG_SECTION_KEYS)[number];
 
 export function isValidConfigSection(key: string): key is ConfigSectionKey {
-  return ['toggles', 'tabGroups', 'placeholders'].includes(key);
+  return CONFIG_SECTION_KEYS.includes(key as ConfigSectionKey);
 }
 
 /**
