@@ -1,4 +1,4 @@
-import type { CustomViewAsset } from '$lib/types/index';
+import type { CustomViewAsset } from './types';
 import type { AssetsManager } from './assets';
 
 /** --- Basic renderers --- */
