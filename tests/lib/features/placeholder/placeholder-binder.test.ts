@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { PlaceholderBinder } from '../../src/lib/features/placeholder/placeholder-binder';
-import { elementStore } from '../../src/lib/stores/element-store.svelte';
-import { placeholderRegistryStore } from '../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
+import { PlaceholderBinder } from '../../../../src/lib/features/placeholder/placeholder-binder';
+import { elementStore } from '../../../../src/lib/stores/element-store.svelte';
+import { placeholderRegistryStore } from '../../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
 
 // Mock element store
-vi.mock('../../src/lib/stores/element-store.svelte', () => {
+vi.mock('../../../../src/lib/stores/element-store.svelte', () => {
   return {
     elementStore: {
       registerPlaceholder: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock('../../src/lib/stores/element-store.svelte', () => {
 });
 
 // Mock the store BEFORE importing the subject under test
-vi.mock('../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => {
+vi.mock('../../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => {
   return {
     placeholderRegistryStore: {
       definitions: [],
