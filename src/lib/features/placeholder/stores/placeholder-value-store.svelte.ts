@@ -1,4 +1,4 @@
-import type { PersistenceManager } from '$lib/state/persistence';
+import type { PersistenceManager } from '$lib/utils/persistence';
 
 const STORAGE_KEY_BASE = 'cv-user-variables';
 

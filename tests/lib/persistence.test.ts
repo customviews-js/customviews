@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PersistenceManager } from '../../src/lib/state/persistence';
+import { PersistenceManager } from '../../src/lib/utils/persistence';
 
 describe('PersistenceManager', () => {
   beforeEach(() => {

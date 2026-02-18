@@ -1,7 +1,7 @@
 import type { ConfigFile } from '$lib/types/index';
 import type { AssetsManager } from '$features/render/assets';
 
-import { PersistenceManager } from './state/persistence';
+import { PersistenceManager } from './utils/persistence';
 import { URLStateManager } from '$features/url/url-state-manager';
 
 import { FocusService } from '$features/focus/services/focus-service.svelte';
