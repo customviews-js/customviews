@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import * as DomElementLocator from '../../src/lib/utils/dom-element-locator';
+import * as DomElementLocator from '../../../src/lib/utils/dom-element-locator';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 
 // Mock DOM environment is assumed (jsdom)
