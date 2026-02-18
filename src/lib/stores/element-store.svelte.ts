@@ -68,3 +68,5 @@ export class ElementStore {
     this.detectedPlaceholders.clear();
   }
 }
+
+export const elementStore = new ElementStore();

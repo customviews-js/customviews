@@ -50,3 +50,5 @@ export class UIStore {
     // This value is persisted separately and should survive a store reset.
   }
 }
+
+export const uiStore = new UIStore();

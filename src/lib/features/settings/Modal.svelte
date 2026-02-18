@@ -12,7 +12,10 @@
   import IconReset from '$lib/app/icons/IconReset.svelte';
   import IconGitHub from '$lib/app/icons/IconGitHub.svelte';
 
-  import { store } from '$lib/stores/main-store.svelte';
+  import { activeStateStore } from '$lib/stores/active-state-store.svelte';
+  import { elementStore } from '$lib/stores/element-store.svelte';
+  import { uiStore } from '$lib/stores/ui-store.svelte';
+  import { derivedStore } from '$lib/stores/derived-store.svelte';
   import { URLStateManager } from '$features/url/url-state-manager';
   import { showToast } from '$features/notifications/stores/toast-store.svelte';
   import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
@@ -39,28 +42,28 @@
   }: Props = $props();
 
   // --- Derived State from Core ---
-  const areTabNavsVisible = $derived(store.isTabGroupNavHeadingVisible);
-  const showTabGroups = $derived(store.uiOptions.showTabGroups);
-  const showReset = $derived(store.uiOptions.showReset);
-  const title = $derived(store.uiOptions.title);
-  const description = $derived(store.uiOptions.description);
+  const areTabNavsVisible = $derived(uiStore.isTabGroupNavHeadingVisible);
+  const showTabGroups = $derived(uiStore.uiOptions.showTabGroups);
+  const showReset = $derived(uiStore.uiOptions.showReset);
+  const title = $derived(uiStore.uiOptions.title);
+  const description = $derived(uiStore.uiOptions.description);
 
   // Config Items
-  const toggles = $derived(store.menuToggles);
-  const tabGroups = $derived(store.menuTabGroups);
-  const sectionOrder = $derived(store.configSectionOrder);
+  const toggles = $derived(derivedStore.menuToggles);
+  const tabGroups = $derived(derivedStore.menuTabGroups);
+  const sectionOrder = $derived(activeStateStore.configSectionOrder);
 
   // State Items
-  let shownToggles = $derived(store.state.shownToggles ?? []);
-  let peekToggles = $derived(store.state.peekToggles ?? []);
-  let activeTabs = $derived(store.state.tabs ?? {});
+  let shownToggles = $derived(activeStateStore.state.shownToggles ?? []);
+  let peekToggles = $derived(activeStateStore.state.peekToggles ?? []);
+  let activeTabs = $derived(activeStateStore.state.tabs ?? {});
 
   // Placeholder Data
   let placeholderDefinitions = $derived.by(() => {
     return placeholderRegistryStore.definitions.filter((d) => {
       if (d.hiddenFromSettings) return false;
       if (d.isLocal) {
-        return store.detectedPlaceholders.has(d.name);
+        return elementStore.detectedPlaceholders.has(d.name);
       }
       return true;
     });
@@ -102,15 +105,15 @@
   }
 
   function handleNavToggle() {
-    store.isTabGroupNavHeadingVisible = !areTabNavsVisible;
+    uiStore.isTabGroupNavHeadingVisible = !areTabNavsVisible;
   }
 
   // --- Core Actions ---
 
   function handleToggleChange(detail: any) {
     const { toggleId, value } = detail;
-    const currentShown = store.state.shownToggles || [];
-    const currentPeek = store.state.peekToggles || [];
+    const currentShown = activeStateStore.state.shownToggles || [];
+    const currentPeek = activeStateStore.state.peekToggles || [];
 
     const newShown = currentShown.filter((id: string) => id !== toggleId);
     const newPeek = currentPeek.filter((id: string) => id !== toggleId);
@@ -118,7 +121,7 @@
     if (value === 'show') newShown.push(toggleId);
     if (value === 'peek') newPeek.push(toggleId);
 
-    store.setToggles(newShown, newPeek);
+    activeStateStore.setToggles(newShown, newPeek);
   }
 
   function handleTabGroupChange(detail: any) {
@@ -126,7 +129,7 @@
     // Scroll Logic: Capture target before state update
     const groupToScrollTo = findHighestVisibleElement('cv-tabgroup');
 
-    store.setPinnedTab(groupId, tabId);
+    activeStateStore.setPinnedTab(groupId, tabId);
 
     // Restore scroll after update
     if (groupToScrollTo) {
@@ -141,7 +144,7 @@
   }
 
   async function copyShareUrl() {
-    const url = URLStateManager.generateShareableURL(store.state);
+    const url = URLStateManager.generateShareableURL(activeStateStore.state);
     try {
       await copyToClipboard(url);
       showToast('Link copied to clipboard!');

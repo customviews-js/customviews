@@ -1,13 +1,13 @@
 // @vitest-environment jsdom
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { PlaceholderBinder } from '../../src/lib/features/placeholder/placeholder-binder';
-import { store } from '../../src/lib/stores/main-store.svelte';
+import { elementStore } from '../../src/lib/stores/element-store.svelte';
 import { placeholderRegistryStore } from '../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
 
-// Mock main store
-vi.mock('../../src/lib/stores/main-store.svelte', () => {
+// Mock element store
+vi.mock('../../src/lib/stores/element-store.svelte', () => {
   return {
-    store: {
+    elementStore: {
       registerPlaceholder: vi.fn(),
     },
   };
@@ -102,7 +102,7 @@ describe('PlaceholderBinder', () => {
 
       PlaceholderBinder.scanAndHydrate(container);
 
-      expect(store.registerPlaceholder).not.toHaveBeenCalled();
+      expect(elementStore.registerPlaceholder).not.toHaveBeenCalled();
     });
   });
 
