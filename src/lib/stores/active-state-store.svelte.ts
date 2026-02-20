@@ -12,7 +12,6 @@ import { isValidConfigSection } from '$lib/types/index';
 export class ActiveStateStore {
   /**
    * Static configuration loaded at startup.
-   * Contains definitions for toggles, tab groups, and defaults.
    */
   config = $state<Config>({});
 
@@ -50,19 +49,12 @@ export class ActiveStateStore {
     // Compute new defaults and merge
     const newState = this.computeDefaultState();
     
-    // Reset state to computed defaults. Overriding with URL state happens later via applyState().
+    // Reset state to computed defaults. 
+    // Overriding with URL state happens later via applyState().
     this.state.shownToggles = newState.shownToggles ?? [];
     this.state.peekToggles = newState.peekToggles ?? [];
     this.state.tabs = newState.tabs ?? {};
     this.state.placeholders = newState.placeholders ?? {};
-  }
-
-  /**
-   * Registers placeholders defined in tab groups.
-   * Should be called AFTER global config placeholders are registered to ensure correct precedence.
-   */
-  registerPlaceholders() {
-    placeholderManager.registerTabGroupPlaceholders(this.config, this.state.tabs);
   }
 
   // --- Actions ---
@@ -76,7 +68,11 @@ export class ActiveStateStore {
   setPinnedTab(groupId: string, tabId: string) {
     if (!this.state.tabs) this.state.tabs = {};
     this.state.tabs[groupId] = tabId;
-    placeholderManager.updatePlaceholderFromTab(groupId, tabId, this.config);
+    
+    const phUpdate = placeholderManager.calculatePlaceholderFromTabSelected(groupId, tabId, this.config);
+    if (phUpdate) {
+      this.setPlaceholder(phUpdate.key, phUpdate.value);
+    }
   }
 
   /**
@@ -169,6 +165,15 @@ export class ActiveStateStore {
     const shownToggles: string[] = [];
     const peekToggles: string[] = [];
     const tabs: Record<string, string> = {};
+    const placeholders: Record<string, string> = {};
+
+    if (this.config.placeholders) {
+      this.config.placeholders.forEach((p) => {
+        if (p.defaultValue !== undefined) {
+          placeholders[p.name] = p.defaultValue;
+        }
+      });
+    }
 
     if (this.config.toggles) {
       this.config.toggles.forEach((toggle) => {
@@ -184,12 +189,25 @@ export class ActiveStateStore {
 
     if (this.config.tabGroups) {
       this.config.tabGroups.forEach((group) => {
+        let defaultTabId: string | undefined = undefined;
+
         if (group.default) {
-          tabs[group.groupId] = group.default;
+          defaultTabId = group.default;
         } else if (group.tabs && group.tabs.length > 0) {
           const firstTab = group.tabs[0];
           if (firstTab?.tabId) {
-            tabs[group.groupId] = firstTab.tabId;
+            defaultTabId = firstTab.tabId;
+          }
+        }
+        
+        if (defaultTabId) {
+          tabs[group.groupId] = defaultTabId;
+          
+          if (group.placeholderId) {
+            const tabConfig = group.tabs.find(t => t.tabId === defaultTabId);
+            if (tabConfig && placeholders[group.placeholderId] === undefined) {
+              placeholders[group.placeholderId] = tabConfig.placeholderValue ?? '';
+            }
           }
         }
       });
@@ -199,14 +217,9 @@ export class ActiveStateStore {
       shownToggles,
       peekToggles,
       tabs,
-      placeholders: {},
+      placeholders,
     };
   }
 }
 
 export const activeStateStore = new ActiveStateStore();
-
-// Inject dependency to break circular imports
-placeholderManager.setStoreAdapter((key, value) => {
-  activeStateStore.setPlaceholder(key, value);
-});

@@ -19,7 +19,6 @@
   import { URLStateManager } from '$features/url/url-state-manager';
   import { showToast } from '$features/notifications/stores/toast-store.svelte';
   import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
-  import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
   import { findHighestVisibleElement, scrollToElement } from '$lib/utils/scroll-utils';
 
   import ToggleItem from './ToggleItem.svelte';
@@ -68,7 +67,7 @@
       return true;
     });
   });
-  let placeholderValues = $derived(placeholderValueStore.values);
+  let placeholderValues = $derived(activeStateStore.state.placeholders ?? {});
 
   // --- UI Logic ---
 
@@ -140,11 +139,14 @@
   }
 
   function handlePlaceholderChange(detail: { name: string; value: string }) {
-    placeholderValueStore.set(detail.name, detail.value);
+    activeStateStore.setPlaceholder(detail.name, detail.value);
   }
 
   async function copyShareUrl() {
-    const url = URLStateManager.generateShareableURL(activeStateStore.state);
+    const url = URLStateManager.generateShareableURL(
+      activeStateStore.state,
+      [...elementStore.detectedToggles],
+    );
     try {
       await copyToClipboard(url);
       showToast('Link copied to clipboard!');

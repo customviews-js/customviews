@@ -1,4 +1,4 @@
-import type { ConfigFile } from '$lib/types/index';
+import type { ConfigFile, State } from '$lib/types/index';
 import type { AssetsManager } from '$features/render/assets';
 
 import { PersistenceManager } from './utils/persistence';
@@ -10,14 +10,12 @@ import { elementStore } from './stores/element-store.svelte';
 import { uiStore } from './stores/ui-store.svelte';
 import { derivedStore } from './stores/derived-store.svelte';
 import { placeholderManager } from '$features/placeholder/placeholder-manager';
-import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
 import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
 export interface RuntimeOptions {
   assetsManager: AssetsManager;
   configFile: ConfigFile;
   rootEl?: HTMLElement | undefined;
-  showUrl?: boolean;
   storageKey?: string | undefined;
 }
 
@@ -31,15 +29,13 @@ export class AppRuntime {
   private persistenceManager: PersistenceManager;
   private focusService: FocusService;
 
-  private showUrlEnabled: boolean;
+  private urlState: State | null = null;
   private observer?: MutationObserver;
   private destroyEffectRoot?: () => void;
-  private popstateHandler?: () => void;
 
   constructor(opt: RuntimeOptions) {
     this.rootEl = opt.rootEl || document.body;
     this.persistenceManager = new PersistenceManager(opt.storageKey);
-    this.showUrlEnabled = opt.showUrl ?? false;
 
     // Initialize all store singletons with config
     this.initStores(opt.configFile);
@@ -71,7 +67,7 @@ export class AppRuntime {
     activeStateStore.init(config);
 
     // Register tab-group placeholders AFTER global config placeholders to preserve precedence
-    placeholderManager.registerTabGroupPlaceholders(config, activeStateStore.state.tabs);
+    placeholderManager.registerTabGroupPlaceholders(config);
 
     // Initialize UI Options from Settings
     uiStore.setUIOptions({
@@ -83,18 +79,21 @@ export class AppRuntime {
   }
 
   private resolveInitialState() {
-    // 1. URL State
-    const urlState = URLStateManager.parseURL();
-    if (urlState) {
-      activeStateStore.applyState(urlState);
-      return;
-    }
-
-    // 2. Persisted State
+    // 1. Apply base state: Persistence > Defaults (already set by init())
     const persistedState = this.persistenceManager.getPersistedState();
     if (persistedState) {
       activeStateStore.applyState(persistedState);
-      return;
+    }
+
+    // TODO: Confirm intended behavior again
+
+    // 2. Apply URL delta on top of base state.
+    //    URL params represent sparse overrides (e.g. ?t-hide=X only hides X,
+    //    leaving other toggles in their current visibility).
+    const urlDelta = URLStateManager.parseURL();
+    if (urlDelta) {
+      this.urlState = urlDelta;
+      activeStateStore.applyDifferenceInState(urlDelta);
     }
   }
 
@@ -112,7 +111,15 @@ export class AppRuntime {
     }
 
     // Initialize Stores
-    placeholderValueStore.init(this.persistenceManager);
+    // TODO: Confirm intended behavior again
+
+    // URL placeholder values override localStorage values
+    if (this.urlState) {
+      const validUrlPlaceholders = placeholderManager.filterValidPlaceholders(this.urlState);
+      for (const [key, value] of Object.entries(validUrlPlaceholders)) {
+        activeStateStore.setPlaceholder(key, value);
+      }
+    }
 
     // Run initial scan (non-reactive)
     // Clear previous page detections if any, before scan (SPA support)
@@ -123,35 +130,17 @@ export class AppRuntime {
 
     // Setup Global Reactivity using $effect.root
     this.destroyEffectRoot = $effect.root(() => {
-      // Effect 1: Update URL
-      $effect(() => {
-        if (this.showUrlEnabled) {
-          URLStateManager.updateURL(activeStateStore.state);
-        } else {
-          URLStateManager.clearURL();
-        }
-      });
-
-      // Effect 2: Persistence
+      // Persistence
       $effect(() => {
         this.persistenceManager.persistState(activeStateStore.state);
         this.persistenceManager.persistTabNavVisibility(uiStore.isTabGroupNavHeadingVisible);
       });
 
-      // Effect 3: React to Variable Changes
+      // React to Variable Changes
       $effect(() => {
-        PlaceholderBinder.updateAll(placeholderValueStore.values);
+        PlaceholderBinder.updateAll(activeStateStore.state.placeholders ?? {});
       });
     });
-
-    // Handle History Popstate
-    this.popstateHandler = () => {
-      const urlState = URLStateManager.parseURL();
-      if (urlState) {
-        activeStateStore.applyState(urlState);
-      }
-    };
-    window.addEventListener('popstate', this.popstateHandler);
   }
 
   /**
@@ -207,8 +196,6 @@ export class AppRuntime {
     activeStateStore.reset();
     uiStore.reset();
     uiStore.isTabGroupNavHeadingVisible = true;
-    placeholderValueStore.reset();
-    URLStateManager.clearURL();
   }
 
   // --- Icon Position Persistence ---
@@ -239,11 +226,6 @@ export class AppRuntime {
   public destroy() {
     this.observer?.disconnect();
     this.destroyEffectRoot?.();
-
-    if (this.popstateHandler) {
-      window.removeEventListener('popstate', this.popstateHandler);
-    }
-
     this.focusService.destroy();
   }
 }

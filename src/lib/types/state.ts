@@ -1,16 +1,15 @@
-export type ToggleId = string;
-
 /**
  * Represents a specific state of a custom view.
- * States contain the list of toggle categories that should be displayed in this state.
  */
 export interface State {
   /** List of toggle categories that should be fully displayed ("Show" state) */
-  shownToggles?: ToggleId[];
+  shownToggles?: string[];
   /** List of toggle categories that should be in preview mode ("Peek" state) */
-  peekToggles?: ToggleId[];
+  peekToggles?: string[];
+  /** List of toggle categories that should be explicitly hidden ("Hide" state) */
+  hiddenToggles?: string[];
   /** Optional tab selections: groupId -> tabId */
   tabs?: Record<string, string>;
-  /** Optional focus selections: array of element IDs */
-  focus?: string[];
+  /** URL-sourced placeholder values. Not persisted by activeStateStore. */
+  placeholders?: Record<string, string>;
 }
