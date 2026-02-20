@@ -6,10 +6,9 @@ import { PlaceholderManager } from '../../../../src/lib/features/placeholder/pla
 globalThis.$state = (initial) => initial;
 
 // Mock dependencies
-vi.mock('../../../../src/lib/features/placeholder/stores/placeholder-value-store.svelte', () => ({
-  placeholderValueStore: {
-    set: vi.fn(),
-    values: {},
+vi.mock('../../../../src/lib/stores/active-state-store.svelte', () => ({
+  activeStateStore: {
+    state: { placeholders: {} },
   },
 }));
 
@@ -22,11 +21,10 @@ vi.mock('../../../../src/lib/features/placeholder/stores/placeholder-registry-st
 }));
 
 import { placeholderRegistryStore } from '../../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte';
-import { placeholderValueStore } from '../../../../src/lib/features/placeholder/stores/placeholder-value-store.svelte';
 
 describe('PlaceholderManager', () => {
   let manager: PlaceholderManager;
-  let warnSpy: any;
+  let warnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -132,14 +130,14 @@ describe('PlaceholderManager', () => {
       // Mock registry has to say 'true' for update internal check
       vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
 
-      manager.registerTabGroupPlaceholders(config, { g1: 't1' });
+      manager.registerTabGroupPlaceholders(config);
 
-      expect(placeholderValueStore.set).toHaveBeenCalledWith('p1', 'val1');
+      // Registration no longer auto-sets state, it just registers the definition.
     });
   });
 
-  describe('updatePlaceholderFromTab', () => {
-    it('should update value store if tab has placeholderValue', () => {
+  describe('calculatePlaceholderFromTab', () => {
+    it('should return key and value if tab has placeholderValue', () => {
       const config = {
         tabGroups: [
           {
@@ -152,12 +150,12 @@ describe('PlaceholderManager', () => {
 
       vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
 
-      manager.updatePlaceholderFromTab('g1', 't1', config);
+      const result = manager.calculatePlaceholderFromTabSelected('g1', 't1', config);
 
-      expect(placeholderValueStore.set).toHaveBeenCalledWith('p1', 'v1');
+      expect(result).toEqual({ key: 'p1', value: 'v1' });
     });
 
-    it('should set empty string if placeholderValue is undefined', () => {
+    it('should return empty string if placeholderValue is undefined', () => {
         const config = {
           tabGroups: [
             {
@@ -167,12 +165,55 @@ describe('PlaceholderManager', () => {
             },
           ],
         };
-  
+
         vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
-  
-        manager.updatePlaceholderFromTab('g1', 't1', config);
-  
-        expect(placeholderValueStore.set).toHaveBeenCalledWith('p1', '');
+
+        const result = manager.calculatePlaceholderFromTabSelected('g1', 't1', config);
+
+        expect(result).toEqual({ key: 'p1', value: '' });
       });
+  });
+
+  describe('filterValidPlaceholders', () => {
+    it('returns values for registered placeholder keys', () => {
+      vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
+
+      const result = manager.filterValidPlaceholders({ placeholders: { lang: 'Python', os: 'Linux' } } as any);
+
+      expect(result).toEqual({ lang: 'Python', os: 'Linux' });
+    });
+
+    it('warns and omits unregistered keys', () => {
+      vi.mocked(placeholderRegistryStore.has).mockReturnValue(false);
+
+      const result = manager.filterValidPlaceholders({ placeholders: { unknown: 'value' } } as any);
+
+      expect(result).toEqual({});
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining('"unknown"'),
+      );
+    });
+
+    it('returns empty object when placeholders is undefined', () => {
+      const result = manager.filterValidPlaceholders({} as any);
+
+      expect(result).toEqual({});
+      expect(warnSpy).not.toHaveBeenCalled();
+    });
+
+    it('returns empty object when placeholders is an empty object', () => {
+      const result = manager.filterValidPlaceholders({ placeholders: {} } as any);
+
+      expect(result).toEqual({});
+    });
+
+    it('returns registered keys and omits unregistered keys in a mixed state', () => {
+      vi.mocked(placeholderRegistryStore.has).mockImplementation((key) => key === 'registered');
+
+      const result = manager.filterValidPlaceholders({ placeholders: { registered: 'yes', unregistered: 'no' } } as any);
+
+      expect(result).toEqual({ registered: 'yes' });
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('"unregistered"'));
+    });
   });
 });

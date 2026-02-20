@@ -1,7 +1,7 @@
 <svelte:options customElement="cv-placeholder" />
 
 <script lang="ts">
-  import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
+  import { activeStateStore } from '$lib/stores/active-state-store.svelte';
   import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 
   let { name, fallback } = $props<{ name: string; fallback?: string }>();
@@ -10,7 +10,7 @@
     if (!name) return '';
 
     // 1. User Value
-    const userVal = placeholderValueStore.values[name];
+    const userVal = activeStateStore.state.placeholders?.[name];
     if (userVal !== undefined && userVal !== '') return userVal;
 
     // 2. Fallback

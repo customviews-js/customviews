@@ -1,13 +1,6 @@
 import { placeholderRegistryStore } from './stores/placeholder-registry-store.svelte';
-import { placeholderValueStore } from './stores/placeholder-value-store.svelte';
-import type { Config, TabGroupConfig } from '$lib/types/index';
+import type { Config, TabGroupConfig, State } from '$lib/types/index';
 
-/**
- * Manager for Placeholder Logic
- *
- * Centralizes logic for registering placeholders from different sources (Config, TabGroups)
- * and updating placeholder values based on state changes.
- */
 export class PlaceholderManager {
   /**
    * Registers global placeholders defined in the configuration.
@@ -30,39 +23,59 @@ export class PlaceholderManager {
    *
    * Should be called AFTER registerConfigPlaceholders to ensure config precedence.
    */
-  registerTabGroupPlaceholders(config: Config, activeTabs?: Record<string, string>) {
+  registerTabGroupPlaceholders(config: Config) {
     if (config.tabGroups) {
       config.tabGroups.forEach((group) => {
-        this.registerPlaceholderFromTabGroup(group, config, activeTabs);
+        this.registerPlaceholderFromTabGroup(group);
       });
     }
   }
 
   /**
-   * Updates a placeholder value based on the active tab selection in a group.
+   * Calculates the placeholder value based on the active tab selection in a group.
    *
-   * @param groupId The ID of the tab group
+   * @param tabgroupId The ID of the tab group
    * @param tabId The ID of the currently active tab
    * @param config The full application configuration
+   * @returns An object containing the placeholder key and value, or null if nothing to update.
    */
-  updatePlaceholderFromTab(groupId: string, tabId: string, config: Config) {
-    const groupConfig = config.tabGroups?.find((g) => g.groupId === groupId);
+  calculatePlaceholderFromTabSelected(tabgroupId: string, tabId: string, config: Config): { key: string; value: string } | null {
+    const groupConfig = config.tabGroups?.find((g) => g.groupId === tabgroupId);
 
-    if (!groupConfig || !groupConfig.placeholderId) return;
+    if (!groupConfig || !groupConfig.placeholderId) return null;
 
-    if (!placeholderRegistryStore.has(groupConfig.placeholderId)) return;
+    if (!placeholderRegistryStore.has(groupConfig.placeholderId)) return null;
 
     const tabConfig = groupConfig.tabs.find((t) => t.tabId === tabId);
 
-    if (!tabConfig) return;
+    if (!tabConfig) return null;
 
     const placeholderValue = tabConfig.placeholderValue ?? '';
-    placeholderValueStore.set(groupConfig.placeholderId, placeholderValue);
+    return { key: groupConfig.placeholderId, value: placeholderValue };
+  }
+
+  /**
+   * Filters incoming URL state placeholders to only those that are registered.
+   * Warns and skips unregistered keys to prevent arbitrary key injection.
+   * @returns A partial record of valid placeholders to apply.
+   */
+  filterValidPlaceholders(state: State): Record<string, string> {
+    const valid: Record<string, string> = {};
+    if (!state.placeholders) return valid;
+    
+    for (const [key, value] of Object.entries(state.placeholders)) {
+      if (placeholderRegistryStore.has(key)) {
+        valid[key] = value;
+      } else {
+        console.warn(`[CustomViews] URL placeholder "${key}" is not registered and will be ignored.`);
+      }
+    }
+    return valid;
   }
 
   // --- Internal Helpers ---
 
-  private registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig, fullConfig: Config, activeTabs?: Record<string, string>) {
+  private registerPlaceholderFromTabGroup(groupConfig: TabGroupConfig) {
     if (!groupConfig.placeholderId) return;
 
     const id = groupConfig.placeholderId;
@@ -96,13 +109,8 @@ export class PlaceholderManager {
       ownerTabGroupId: groupConfig.groupId,
     });
     
-    // Initial Update: If we have an active tab for this group, ensure the placeholder matches
-    if (activeTabs) {
-      const activeTabId = activeTabs[groupConfig.groupId];
-      if (activeTabId) {
-        this.updatePlaceholderFromTab(groupConfig.groupId, activeTabId, fullConfig);
-      }
-    }
+    // We do not return the initial value here, as registration happens during config load
+    // and we let the ActiveStateStore handle initial state setup.
   }
 }
 

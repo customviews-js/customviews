@@ -13,7 +13,7 @@ export function isValidConfigSection(key: string): key is ConfigSectionKey {
 }
 
 /**
- * Configuration for the site, has default state and list of toggles
+ * Configuration (website author-defined) for the site
  */
 export interface Config {
   /** All available toggle categories */

@@ -1,6 +1,10 @@
 import { SvelteMap } from 'svelte/reactivity';
 import type { PlaceholderDefinition } from '../types';
 
+/**
+ * Registry store tracks existence and properties of placeholder,
+ * but not the values of the placeholders.
+ */
 export class PlaceholderRegistryStore {
   // Reactivity: Map is deeply reactive in Svelte 5 with $state
   private _definitions = new SvelteMap<string, PlaceholderDefinition>();
