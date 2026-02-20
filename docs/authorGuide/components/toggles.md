@@ -129,7 +129,7 @@ To make toggles discoverable by the settings, you must define them in your `cust
 
 ### Visibility Resolution Order
 
-1. URL state (if `showUrl` is enabled)
+1. URL state
 2. Persisted local storage state
 3. Default configuration (per-item `default`)
 
@@ -209,9 +209,6 @@ This will ensure that the specified local toggles appear in the configuration se
 
 - No effect when toggling?
   - Ensure the element uses `<cv-toggle toggle-id="...">` and the category matches a configured toggle ID.
-
-- URL state not persisting in URL bar?
-  - Enable showUrl in the configuration.
 
 - Settings icon not loading?
   - Verify the script is included and customviews.config.json is accessible.

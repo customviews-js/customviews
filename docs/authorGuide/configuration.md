@@ -50,7 +50,6 @@ Refer to individual components for more details on each configuration option.
 | -------------- | --------- | ------- | ---------------------------------------------------------------------------------------------------------------------- |
 | assetsJsonPath | `string`  | null    | Path to the assets manifest JSON file (relative to `baseUrl`).                                                         |
 | baseUrl        | `string`  | `/`     | Base URL for resolving relative paths (can also be `baseURL`). Specifies the website's base URL (for example `/docs`). |
-| showUrl        | `boolean` | `false` | Whether to encode state in the URL for shareable links.                                                                |
 | storageKey     | `string`  | `null`  | Optional key to isolate localStorage settings across different sites. Used as a prefix (e.g., `my-unique-siteName`).   |
 
 ### Settings Configuration (`settings`)

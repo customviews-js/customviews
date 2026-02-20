@@ -57,7 +57,6 @@ export function initializeFromScript(): void {
         assetsManager,
         configFile,
         rootEl: document.body,
-        showUrl: configFile.showUrl || false,
         storageKey: configFile.storageKey,
       };
 
