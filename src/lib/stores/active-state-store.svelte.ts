@@ -275,19 +275,19 @@ export class ActiveStateStore {
     const valid: Record<string, string> = {};
 
     for (const [groupId, tabId] of Object.entries(incomingTabs)) {
-      const group = this.config.tabGroups?.find((g) => g.groupId === groupId);
+      const group = this.config.tabGroups?.find((g) => g.groupId.toLowerCase() === groupId.toLowerCase());
       if (!group) {
         console.warn(`[CustomViews] Tab group "${groupId}" is not in the config and will be ignored.`);
         continue;
       }
 
-      const tabExists = group.tabs.some((t) => t.tabId === tabId);
-      if (!tabExists) {
-        console.warn(`[CustomViews] Tab "${tabId}" is not in group "${groupId}" and will be ignored.`);
+      const matchedTab = group.tabs.find((t) => t.tabId.toLowerCase() === tabId.toLowerCase());
+      if (!matchedTab) {
+        console.warn(`[CustomViews] Tab "${tabId}" is not in group "${group.groupId}" and will be ignored.`);
         continue;
       }
 
-      valid[groupId] = tabId;
+      valid[group.groupId] = matchedTab.tabId;
     }
 
     return valid;
@@ -305,12 +305,12 @@ export class ActiveStateStore {
       return [];
     }
 
-    const validIds = new Set(this.config.toggles.map((t) => t.toggleId));
     const valid: string[] = [];
 
     for (const toggleId of incomingToggles) {
-      if (validIds.has(toggleId)) {
-        valid.push(toggleId);
+      const match = this.config.toggles.find((t) => t.toggleId.toLowerCase() === toggleId.toLowerCase());
+      if (match) {
+        valid.push(match.toggleId);
       } else {
         console.warn(`[CustomViews] Toggle "${toggleId}" is not in the config and will be ignored.`);
       }
