@@ -94,10 +94,11 @@ export class AppRuntime {
       activeStateStore.applyState(persistedState);
     }
 
-    // 2. Layer URL delta on top.
+    // 2. Layer URL delta on top, then clear the URL parameters so they don't persist
     const urlDelta = URLStateManager.parseURL();
     if (urlDelta) {
       activeStateStore.applyDifferenceInState(urlDelta);
+      URLStateManager.clearURL();
     }
 
     // 3. Restore UI preferences

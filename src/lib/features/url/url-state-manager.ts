@@ -309,6 +309,29 @@ export class URLStateManager {
 
     return buildFullUrl(url, managedSearch);
   }
+
+  /**
+   * Clears all managed parameters from the current browser URL.
+   * This is called after parsing so that shared configurations don't stick around in
+   * the address bar when the user subsequently interacts with the page or refreshes.
+   */
+  public static clearURL(): void {
+    if (typeof window === 'undefined' || !window.history) return;
+
+    const url = new URL(window.location.href);
+    let hasChanges = false;
+
+    for (const param of MANAGED_PARAMS) {
+      if (url.searchParams.has(param)) {
+        url.searchParams.delete(param);
+        hasChanges = true;
+      }
+    }
+
+    if (hasChanges) {
+      window.history.replaceState({}, '', url.toString());
+    }
+  }
 }
 
 // Export for use in tests that verify focus params are preserved
