@@ -154,7 +154,7 @@ describe('PlaceholderManager', () => {
     it('returns values for registered placeholder keys', () => {
       vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
 
-      const result = manager.filterValidPlaceholders({ placeholders: { lang: 'Python', os: 'Linux' } } as any);
+      const result = manager.filterValidPlaceholders({ lang: 'Python', os: 'Linux' });
 
       expect(result).toEqual({ lang: 'Python', os: 'Linux' });
     });
@@ -162,7 +162,7 @@ describe('PlaceholderManager', () => {
     it('warns and omits unregistered keys', () => {
       vi.mocked(placeholderRegistryStore.has).mockReturnValue(false);
 
-      const result = manager.filterValidPlaceholders({ placeholders: { unknown: 'value' } } as any);
+      const result = manager.filterValidPlaceholders({ unknown: 'value' });
 
       expect(result).toEqual({});
       expect(warnSpy).toHaveBeenCalledWith(
@@ -171,14 +171,14 @@ describe('PlaceholderManager', () => {
     });
 
     it('returns empty object when placeholders is undefined', () => {
-      const result = manager.filterValidPlaceholders({} as any);
+      const result = manager.filterValidPlaceholders(undefined);
 
       expect(result).toEqual({});
       expect(warnSpy).not.toHaveBeenCalled();
     });
 
     it('returns empty object when placeholders is an empty object', () => {
-      const result = manager.filterValidPlaceholders({ placeholders: {} } as any);
+      const result = manager.filterValidPlaceholders({});
 
       expect(result).toEqual({});
     });
@@ -186,7 +186,7 @@ describe('PlaceholderManager', () => {
     it('returns registered keys and omits unregistered keys in a mixed state', () => {
       vi.mocked(placeholderRegistryStore.has).mockImplementation((key) => key === 'registered');
 
-      const result = manager.filterValidPlaceholders({ placeholders: { registered: 'yes', unregistered: 'no' } } as any);
+      const result = manager.filterValidPlaceholders({ registered: 'yes', unregistered: 'no' });
 
       expect(result).toEqual({ registered: 'yes' });
       expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('"unregistered"'));

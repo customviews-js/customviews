@@ -11,12 +11,20 @@ globalThis.$derived.by = (fn) => fn();
 vi.mock('../../../src/lib/features/placeholder/placeholder-manager', () => ({
   placeholderManager: {
     calculatePlaceholderFromTabSelected: vi.fn(),
+    filterValidPlaceholders: vi.fn((placeholders) => placeholders ?? {}),
+  },
+}));
+
+// Mock PlaceholderRegistryStore
+vi.mock('../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => ({
+  placeholderRegistryStore: {
+    has: vi.fn().mockReturnValue(false),
+    get: vi.fn().mockReturnValue(undefined),
+    register: vi.fn(),
   },
 }));
 
 import { placeholderManager } from '../../../src/lib/features/placeholder/placeholder-manager';
-
-
 import { ActiveStateStore } from '../../../src/lib/stores/active-state-store.svelte';
 
 describe('ActiveStateStore', () => {
@@ -24,12 +32,17 @@ describe('ActiveStateStore', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default: filterValidPlaceholders is a passthrough
+    vi.mocked(placeholderManager.filterValidPlaceholders).mockImplementation((ph) => ph ?? {});
     store = new ActiveStateStore();
   });
 
+  // ---------------------------------------------------------------------------
+  // setPinnedTab
+  // ---------------------------------------------------------------------------
+
   describe('setPinnedTab', () => {
     it('should update placeholder value when tab is pinned', () => {
-      // Setup Config with TabGroup and Placeholder
       const config = {
         tabGroups: [
           {
@@ -43,13 +56,9 @@ describe('ActiveStateStore', () => {
         ],
       };
 
-      // In the new store, we init with config
       store.init(config);
-
-      // Assert
       store.setPinnedTab('group1', 't2');
 
-// Logic moved to PlaceholderManager. We just test that the manager called.
       expect(placeholderManager.calculatePlaceholderFromTabSelected).toHaveBeenCalledWith(
         'group1',
         't2',
@@ -57,7 +66,7 @@ describe('ActiveStateStore', () => {
       );
     });
 
-    it('should delegate update to PlaceholderManager even if placeholderId is missing (validation in manager)', () => {
+    it('should delegate to PlaceholderManager even if placeholderId is missing (manager handles validation)', () => {
       const config = {
         tabGroups: [
           {
@@ -71,11 +80,10 @@ describe('ActiveStateStore', () => {
       store.init(config);
       store.setPinnedTab('group1', 't1');
 
-      // Expect call to manager even if config has issues (manager handles validation)
       expect(placeholderManager.calculatePlaceholderFromTabSelected).toHaveBeenCalled();
     });
 
-    it('should delegate update to PlaceholderManager even if placeholder is not in registry (validation in manager)', () => {
+    it('should delegate to PlaceholderManager even if placeholder is not in registry (manager handles validation)', () => {
       const config = {
         tabGroups: [
           {
@@ -89,7 +97,6 @@ describe('ActiveStateStore', () => {
       store.init(config);
       store.setPinnedTab('group1', 't1');
 
-      // Expect call to manager even if registry has issues (manager handles validation)
       expect(placeholderManager.calculatePlaceholderFromTabSelected).toHaveBeenCalled();
     });
 
@@ -99,28 +106,65 @@ describe('ActiveStateStore', () => {
           {
             groupId: 'group1',
             placeholderId: 'p1',
-            tabs: [
-              { tabId: 't1' }, // No placeholderValue
-            ],
+            tabs: [{ tabId: 't1' }],
           },
         ],
       };
 
       store.init(config);
-      // No registry mock needed - manager handles it
-
       store.setPinnedTab('group1', 't1');
 
       expect(placeholderManager.calculatePlaceholderFromTabSelected).toHaveBeenCalled();
     });
   });
 
+  // ---------------------------------------------------------------------------
+  // applyState
+  // ---------------------------------------------------------------------------
+
   describe('applyState', () => {
     it('should handle undefined tabs in newState gracefully', () => {
-      store.applyState({ shownToggles: [], peekToggles: [] }); // tabs is undefined
+      store.applyState({ shownToggles: [], peekToggles: [] });
       expect(store.state.tabs).toBeDefined();
     });
+
+    it('should filter out invalid tab group IDs', () => {
+      const config = {
+        tabGroups: [{ groupId: 'known', tabs: [{ tabId: 't1' }] }],
+      };
+      store.init(config);
+
+      store.applyState({ tabs: { known: 't1', ghost: 'tabB' } });
+
+      expect(store.state.tabs?.known).toBe('t1');
+      expect(store.state.tabs?.ghost).toBeUndefined();
+    });
+
+    it('should filter out invalid tab IDs within a known group', () => {
+      const config = {
+        tabGroups: [{ groupId: 'g1', tabs: [{ tabId: 'valid' }] }],
+      };
+      store.init(config);
+
+      store.applyState({ tabs: { g1: 'nonexistent' } });
+
+      // Falls back to default (first tab)
+      expect(store.state.tabs?.g1).toBe('valid');
+    });
+
+    it('should sanitize incoming placeholders via filterValidPlaceholders', () => {
+      vi.mocked(placeholderManager.filterValidPlaceholders).mockReturnValue({ safe: 'ok' });
+
+      store.applyState({ placeholders: { safe: 'ok', evil: 'injected' } });
+
+      expect(placeholderManager.filterValidPlaceholders).toHaveBeenCalledWith({ safe: 'ok', evil: 'injected' });
+      expect(store.state.placeholders?.evil).toBeUndefined();
+    });
   });
+
+  // ---------------------------------------------------------------------------
+  // applyDifferenceInState (Sparse URL Delta)
+  // ---------------------------------------------------------------------------
 
   describe('applyDifferenceInState (Sparse URL Delta)', () => {
     beforeEach(() => {
@@ -130,7 +174,6 @@ describe('ActiveStateStore', () => {
     });
 
     it('merges shown/peek/hide deltas on top of current state', () => {
-      // Delta says: show NEW, hide ON_BY_PERSISTENCE
       store.applyDifferenceInState({
         shownToggles: ['NEW'],
         hiddenToggles: ['ON_BY_PERSISTENCE'],
@@ -142,16 +185,6 @@ describe('ActiveStateStore', () => {
       expect(store.state.peekToggles).toContain('PEEK_BY_PERSISTENCE');
     });
 
-    it('merges tabs and placeholders', () => {
-      store.applyDifferenceInState({
-        tabs: { g2: 'tabB' },
-        placeholders: { p1: 'val1' },
-      });
-
-      expect(store.state.tabs).toEqual({ g1: 'tabA', g2: 'tabB' });
-      expect(store.state.placeholders).toEqual({ p1: 'val1' });
-    });
-
     it('completely overwrites a toggle if it switches from shown to peek', () => {
       store.applyDifferenceInState({
         peekToggles: ['ON_BY_PERSISTENCE'],
@@ -159,6 +192,54 @@ describe('ActiveStateStore', () => {
 
       expect(store.state.peekToggles).toContain('ON_BY_PERSISTENCE');
       expect(store.state.shownToggles).not.toContain('ON_BY_PERSISTENCE');
+    });
+
+    it('merges valid tabs and preserves existing tabs', () => {
+      const config = {
+        tabGroups: [
+          { groupId: 'g1', tabs: [{ tabId: 'tabA' }] },
+          { groupId: 'g2', tabs: [{ tabId: 'tabB' }] },
+        ],
+      };
+      store.init(config);
+      store.state.tabs = { g1: 'tabA' };
+
+      store.applyDifferenceInState({ tabs: { g2: 'tabB' } });
+
+      expect(store.state.tabs).toMatchObject({ g1: 'tabA', g2: 'tabB' });
+    });
+
+    it('drops nonexistent tab group IDs from the delta', () => {
+      const config = {
+        tabGroups: [{ groupId: 'real', tabs: [{ tabId: 't1' }] }],
+      };
+      store.init(config);
+
+      store.applyDifferenceInState({ tabs: { ghost: 'tabX' } });
+
+      expect(store.state.tabs?.ghost).toBeUndefined();
+    });
+
+    it('drops nonexistent tab IDs within a known group', () => {
+      const config = {
+        tabGroups: [{ groupId: 'g1', tabs: [{ tabId: 'valid' }] }],
+      };
+      store.init(config);
+      store.state.tabs = { g1: 'valid' };
+
+      store.applyDifferenceInState({ tabs: { g1: 'fakeTab' } });
+
+      // Should not have accepted the invalid tab
+      expect(store.state.tabs?.g1).toBe('valid');
+    });
+
+    it('only accepts registered placeholder keys (explicit override wins)', () => {
+      vi.mocked(placeholderManager.filterValidPlaceholders).mockReturnValue({ p1: 'explicit' });
+
+      store.applyDifferenceInState({ placeholders: { p1: 'explicit', evil: 'injected' } });
+
+      expect(placeholderManager.filterValidPlaceholders).toHaveBeenCalledWith({ p1: 'explicit', evil: 'injected' });
+      expect(store.state.placeholders?.evil).toBeUndefined();
     });
   });
 });

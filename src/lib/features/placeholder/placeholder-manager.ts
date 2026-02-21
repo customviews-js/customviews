@@ -1,5 +1,5 @@
 import { placeholderRegistryStore } from './stores/placeholder-registry-store.svelte';
-import type { Config, TabGroupConfig, State } from '$lib/types/index';
+import type { Config, TabGroupConfig } from '$lib/types/index';
 
 export class PlaceholderManager {
   /**
@@ -55,19 +55,20 @@ export class PlaceholderManager {
   }
 
   /**
-   * Filters incoming URL state placeholders to only those that are registered.
+   * Filters a record of incoming placeholders to only those registered in the registry.
    * Warns and skips unregistered keys to prevent arbitrary key injection.
-   * @returns A partial record of valid placeholders to apply.
+   *
+   * @param placeholders Raw key-value record to validate (e.g. from a URL delta or persistence).
+   * @returns A filtered record containing only registered placeholder keys.
    */
-  filterValidPlaceholders(state: State): Record<string, string> {
+  filterValidPlaceholders(placeholders: Record<string, string> = {}): Record<string, string> {
     const valid: Record<string, string> = {};
-    if (!state.placeholders) return valid;
     
-    for (const [key, value] of Object.entries(state.placeholders)) {
+    for (const [key, value] of Object.entries(placeholders)) {
       if (placeholderRegistryStore.has(key)) {
         valid[key] = value;
       } else {
-        console.warn(`[CustomViews] URL placeholder "${key}" is not registered and will be ignored.`);
+        console.warn(`[CustomViews] Placeholder "${key}" is not registered and will be ignored.`);
       }
     }
     return valid;
