@@ -10,14 +10,12 @@ import { elementStore } from './stores/element-store.svelte';
 import { uiStore } from './stores/ui-store.svelte';
 import { derivedStore } from './stores/derived-store.svelte';
 import { placeholderManager } from '$features/placeholder/placeholder-manager';
-import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
 import { PlaceholderBinder } from '$features/placeholder/placeholder-binder';
 
 export interface RuntimeOptions {
   assetsManager: AssetsManager;
   configFile: ConfigFile;
   rootEl?: HTMLElement | undefined;
-  showUrl?: boolean;
   storageKey?: string | undefined;
 }
 
@@ -31,15 +29,12 @@ export class AppRuntime {
   private persistenceManager: PersistenceManager;
   private focusService: FocusService;
 
-  private showUrlEnabled: boolean;
   private observer?: MutationObserver;
   private destroyEffectRoot?: () => void;
-  private popstateHandler?: () => void;
 
   constructor(opt: RuntimeOptions) {
     this.rootEl = opt.rootEl || document.body;
     this.persistenceManager = new PersistenceManager(opt.storageKey);
-    this.showUrlEnabled = opt.showUrl ?? false;
 
     // Initialize all store singletons with config
     this.initStores(opt.configFile);
@@ -47,7 +42,8 @@ export class AppRuntime {
     // Store assetsManager for component access
     derivedStore.setAssetsManager(opt.assetsManager);
 
-    // Initial State Resolution: URL > Persistence > Default
+    // Initial State Resolution:
+    // URL (Sparse Override) > Persistence (Full) > Default
     this.resolveInitialState();
 
     // Resolve Exclusions
@@ -71,7 +67,7 @@ export class AppRuntime {
     activeStateStore.init(config);
 
     // Register tab-group placeholders AFTER global config placeholders to preserve precedence
-    placeholderManager.registerTabGroupPlaceholders(config, activeStateStore.state.tabs);
+    placeholderManager.registerTabGroupPlaceholders(config);
 
     // Initialize UI Options from Settings
     uiStore.setUIOptions({
@@ -82,83 +78,82 @@ export class AppRuntime {
     });
   }
 
+  /**
+   * Resolves the starting application state by layering sources:
+   * 
+   * 1. **Baseline**: `ActiveStateStore` initializes with defaults from the config file.
+   * 2. **Persistence**: If local storage has a saved state, it replaces the baseline (`applyState`).
+   * 3. **URL Overrides**: If the URL contains parameters (`?t-show=X`), these are applied
+   *    as **sparse overrides** (`applyDifferenceInState`). Toggles not mentioned in the URL
+   *    retain their values from persistence/defaults.
+   */
   private resolveInitialState() {
-    // 1. URL State
-    const urlState = URLStateManager.parseURL();
-    if (urlState) {
-      activeStateStore.applyState(urlState);
-      return;
-    }
-
-    // 2. Persisted State
+    // 1. Apply persisted base state on top of defaults.
     const persistedState = this.persistenceManager.getPersistedState();
     if (persistedState) {
       activeStateStore.applyState(persistedState);
-      return;
     }
-  }
 
-  /**
-   * Initializes the CustomViews core.
-   *
-   * Components (Toggle, TabGroup) self-register during their mount lifecycle.
-   * Core only manages global reactivity for URL state and persistence.
-   */
-  public init() {
-    // Restore tab nav visibility preference
+    // 2. Layer URL delta on top, then clear the URL parameters so they don't persist
+    const urlDelta = URLStateManager.parseURL();
+    if (urlDelta) {
+      activeStateStore.applyDifferenceInState(urlDelta);
+      URLStateManager.clearURL();
+    }
+
+    // 3. Restore UI preferences
     const navPref = this.persistenceManager.getPersistedTabNavVisibility();
     if (navPref !== null) {
       uiStore.isTabGroupNavHeadingVisible = navPref;
     }
+  }
 
-    // Initialize Stores
-    placeholderValueStore.init(this.persistenceManager);
+  /**
+   * Starts the CustomViews execution engine.
+   *
+   * Components (Toggle, TabGroup) self-register during their mount lifecycle.
+   * This method starts the global observers for DOM changes and reactive state side-effects.
+   */
+  public start() {
+    this.scanDOM();
+    this.startComponentObserver();
+    this.startGlobalReactivity();
+  }
 
-    // Run initial scan (non-reactive)
-    // Clear previous page detections if any, before scan (SPA support)
+  // --- Execution Helpers ---
+
+  /**
+   * Performs an initial, non-reactive scan of the DOM for placeholders.
+   */
+  private scanDOM() {
+    // Clear previous page detections if any (SPA support)
     elementStore.clearDetectedPlaceholders();
     PlaceholderBinder.scanAndHydrate(this.rootEl);
+  }
 
-    this.setUpObserver();
-
-    // Setup Global Reactivity using $effect.root
+  /**
+   * Sets up global reactivity using `$effect.root` for persistence and placeholder binding.
+   */
+  private startGlobalReactivity() {
     this.destroyEffectRoot = $effect.root(() => {
-      // Effect 1: Update URL
-      $effect(() => {
-        if (this.showUrlEnabled) {
-          URLStateManager.updateURL(activeStateStore.state);
-        } else {
-          URLStateManager.clearURL();
-        }
-      });
-
-      // Effect 2: Persistence
+      // Automatic Persistence
       $effect(() => {
         this.persistenceManager.persistState(activeStateStore.state);
         this.persistenceManager.persistTabNavVisibility(uiStore.isTabGroupNavHeadingVisible);
       });
 
-      // Effect 3: React to Variable Changes
+      // Automatic Placeholder Updates
       $effect(() => {
-        PlaceholderBinder.updateAll(placeholderValueStore.values);
+        PlaceholderBinder.updateAll(activeStateStore.state.placeholders ?? {});
       });
     });
-
-    // Handle History Popstate
-    this.popstateHandler = () => {
-      const urlState = URLStateManager.parseURL();
-      if (urlState) {
-        activeStateStore.applyState(urlState);
-      }
-    };
-    window.addEventListener('popstate', this.popstateHandler);
   }
 
   /**
    * Sets up a MutationObserver to detect content added dynamically to the page
    * (e.g. by other scripts, lazy loading, or client-side routing).
    */
-  private setUpObserver() {
+  private startComponentObserver() {
     this.observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (mutation.type !== 'childList') continue;
@@ -207,8 +202,6 @@ export class AppRuntime {
     activeStateStore.reset();
     uiStore.reset();
     uiStore.isTabGroupNavHeadingVisible = true;
-    placeholderValueStore.reset();
-    URLStateManager.clearURL();
   }
 
   // --- Icon Position Persistence ---
@@ -239,11 +232,6 @@ export class AppRuntime {
   public destroy() {
     this.observer?.disconnect();
     this.destroyEffectRoot?.();
-
-    if (this.popstateHandler) {
-      window.removeEventListener('popstate', this.popstateHandler);
-    }
-
     this.focusService.destroy();
   }
 }

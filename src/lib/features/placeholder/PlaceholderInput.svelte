@@ -1,7 +1,7 @@
 <svelte:options customElement="cv-placeholder-input" />
 
 <script lang="ts">
-  import { placeholderValueStore } from '$features/placeholder/stores/placeholder-value-store.svelte';
+  import { activeStateStore } from '$lib/stores/active-state-store.svelte';
   import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 
   type Layout = 'inline' | 'stacked' | 'horizontal';
@@ -25,7 +25,7 @@
 
   let effectiveLayout = $derived(layout);
 
-  let value = $derived(placeholderValueStore.values[name] ?? '');
+  let value = $derived(activeStateStore.state.placeholders?.[name] ?? '');
 
   let effectiveLabel = $derived.by(() => {
     if (label) return label;
@@ -49,7 +49,7 @@
 
   function handleInput(e: Event) {
     const target = e.target as HTMLInputElement;
-    placeholderValueStore.set(name, target.value);
+    activeStateStore.setPlaceholder(name, target.value);
   }
 
   let inputSize = $derived.by(() => {

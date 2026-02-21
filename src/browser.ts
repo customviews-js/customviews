@@ -57,12 +57,11 @@ export function initializeFromScript(): void {
         assetsManager,
         configFile,
         rootEl: document.body,
-        showUrl: configFile.showUrl || false,
         storageKey: configFile.storageKey,
       };
 
       const runtime = new AppRuntime(coreOptions);
-      runtime.init();
+      runtime.start();
 
       initUIManager(runtime, configFile);
 

@@ -13,7 +13,7 @@ export function isValidConfigSection(key: string): key is ConfigSectionKey {
 }
 
 /**
- * Configuration for the site, has default state and list of toggles
+ * Configuration (website author-defined) for the site
  */
 export interface Config {
   /** All available toggle categories */
@@ -36,8 +36,6 @@ export interface ConfigFile {
   assetsJsonPath?: string;
   /** Base URL for all paths */
   baseUrl?: string;
-  /** Whether to keep the `view` state parameter visible in the browser URL bar */
-  showUrl?: boolean;
   /** Optional key to namespace localStorage items for isolation */
   storageKey?: string;
   /** Widget configuration options */
