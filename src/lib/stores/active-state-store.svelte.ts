@@ -161,50 +161,46 @@ export class ActiveStateStore {
     const tabs: Record<string, string> = {};
     const placeholders: Record<string, string> = {};
 
-    if (this.config.placeholders) {
-      this.config.placeholders.forEach((p) => {
-        if (p.defaultValue !== undefined) {
-          placeholders[p.name] = p.defaultValue;
-        }
-      });
+    // 1. Process global placeholders
+    for (const p of (this.config.placeholders ?? [])) {
+      if (p.defaultValue !== undefined) {
+        placeholders[p.name] = p.defaultValue;
+      }
     }
 
-    if (this.config.toggles) {
-      this.config.toggles.forEach((toggle) => {
-        if (toggle.default === 'peek') {
-          peekToggles.push(toggle.toggleId);
-        } else if (toggle.default === 'hide') {
-          // Start hidden — not in shown or peek lists
-        } else {
-          shownToggles.push(toggle.toggleId);
-        }
-      });
+    // 2. Process toggles
+    for (const toggle of (this.config.toggles ?? [])) {
+      if (toggle.default === 'peek') {
+        peekToggles.push(toggle.toggleId);
+      } else if (toggle.default === 'hide') {
+        // Start hidden — not in shown or peek lists
+      } else {
+        shownToggles.push(toggle.toggleId);
+      }
     }
 
-    if (this.config.tabGroups) {
-      this.config.tabGroups.forEach((group) => {
-        let defaultTabId: string | undefined = undefined;
+    // 3. Process tab groups
+    for (const group of (this.config.tabGroups ?? [])) {
+      let defaultTabId = group.default;
+      if (!defaultTabId) {
+        defaultTabId = group.tabs?.[0]?.tabId;
+      }
 
-        if (group.default) {
-          defaultTabId = group.default;
-        } else if (group.tabs && group.tabs.length > 0) {
-          const firstTab = group.tabs[0];
-          if (firstTab?.tabId) {
-            defaultTabId = firstTab.tabId;
-          }
-        }
-        
-        if (defaultTabId) {
-          tabs[group.groupId] = defaultTabId;
-          
-          if (group.placeholderId) {
-            const tabConfig = group.tabs.find(t => t.tabId === defaultTabId);
-            if (tabConfig && placeholders[group.placeholderId] === undefined) {
-              placeholders[group.placeholderId] = tabConfig.placeholderValue ?? '';
-            }
-          }
-        }
-      });
+      if (!defaultTabId) continue;
+
+      tabs[group.groupId] = defaultTabId;
+
+      if (!group.placeholderId) continue;
+
+      // Priority: config-owned placeholders (source: 'config') always win.
+      // Even if they have no defaultValue, they should not be seeded from a tab.
+      const definition = placeholderRegistryStore.get(group.placeholderId);
+      if (definition?.source === 'config') continue;
+
+      const tabConfig = group.tabs.find((t) => t.tabId === defaultTabId);
+      if (tabConfig && placeholders[group.placeholderId] === undefined) {
+        placeholders[group.placeholderId] = tabConfig.placeholderValue ?? '';
+      }
     }
 
     return { shownToggles, peekToggles, tabs, placeholders };
@@ -309,11 +305,11 @@ export class ActiveStateStore {
 
     for (const toggleId of incomingToggles) {
       const match = this.config.toggles.find((t) => t.toggleId.toLowerCase() === toggleId.toLowerCase());
-      if (match) {
-        valid.push(match.toggleId);
-      } else {
+      if (!match) {
         console.warn(`[CustomViews] Toggle "${toggleId}" is not in the config and will be ignored.`);
+        continue;
       }
+      valid.push(match.toggleId);
     }
 
     return valid;
