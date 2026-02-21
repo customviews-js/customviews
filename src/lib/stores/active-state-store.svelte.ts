@@ -1,4 +1,5 @@
 import { placeholderManager } from '$features/placeholder/placeholder-manager';
+import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 import type { Config, ConfigSectionKey, State } from '$lib/types/index';
 import { isValidConfigSection } from '$lib/types/index';
 
@@ -6,7 +7,7 @@ import { isValidConfigSection } from '$lib/types/index';
  * Store for managing the application's configuration and user state.
  * Handles:
  * - Loading and storing static configuration.
- * - Managing mutable user state (toggles, tabs).
+ * - Managing mutable user state (toggles, tabs, placeholders).
  * - Computing default states based on configuration.
  */
 export class ActiveStateStore {
@@ -49,8 +50,8 @@ export class ActiveStateStore {
     // Compute new defaults and merge
     const newState = this.computeDefaultState();
     
-    // Reset state to computed defaults. 
-    // Overriding with URL state happens later via applyState().
+    // Reset state to computed defaults.
+    // Overriding with URL state happens later via applyDifferenceInState().
     this.state.shownToggles = newState.shownToggles ?? [];
     this.state.peekToggles = newState.peekToggles ?? [];
     this.state.tabs = newState.tabs ?? {};
@@ -95,67 +96,53 @@ export class ActiveStateStore {
     this.state.placeholders[key] = value;
   }
 
-  // Address placeholder and tabgroup drift
-  // TODO: https://github.com/customviews-js/customviews/issues/178 
+  // --- State Application ---
+
   /**
-   * Updates the full state (e.g. from URL or Persistence).
-   * Merges the new state with computed defaults to ensure completeness.
-   * @param newState Partial state object to apply.
+   * Replaces the full application state (e.g. from persistence).
+   *
+   * Precedence model:
+   * 1. Start from computed defaults (config-driven).
+   * 2. Layer in the incoming `newState`, sanitizing tabs and placeholders.
+   * 3. Sync any tab-group-derived placeholders that weren't explicitly set.
+   *
+   * @param newState The persisted state to restore.
    */
   applyState(newState: State) {
     const defaults = this.computeDefaultState();
+
+    const validatedTabs = this.filterValidTabs(newState.tabs ?? {});
+    const validatedPlaceholders = placeholderManager.filterValidPlaceholders(newState.placeholders ?? {});
+
     this.state = {
       shownToggles: newState.shownToggles ?? defaults.shownToggles ?? [],
       peekToggles: newState.peekToggles ?? defaults.peekToggles ?? [],
-      tabs: { ...(defaults.tabs ?? {}), ...(newState.tabs ?? {}) },
-      placeholders: { ...(defaults.placeholders ?? {}), ...(newState.placeholders ?? {}) },
+      tabs: { ...(defaults.tabs ?? {}), ...validatedTabs },
+      placeholders: { ...(defaults.placeholders ?? {}), ...validatedPlaceholders },
     };
+
+    // Sync derived placeholders for any tabs that shifted (and aren't explicitly overridden).
+    this.syncPlaceholdersFromTabs(validatedPlaceholders);
   }
 
   /**
-   * Applies a delta (difference) state on top of the current state.
-   * Only the toggles explicitly mentioned in the delta are affected;
-   * unmentioned toggles retain their current visibility.
+   * Applies a sparse delta on top of the current state (e.g. from URL parameters).
    *
-   * This is used when applying URL parameters, which represent sparse overrides
-   * rather than a complete state replacement.
+   * Semantics:
+   * - Only toggles explicitly mentioned in the delta are affected;
+   *   unmentioned toggles retain their current visibility.
+   * - Tab and placeholder entries in the delta are merged into (not replacing) current state.
+   * - Incoming tab IDs are validated against the config; invalid entries are dropped.
+   * - Incoming placeholder keys are validated against the registry; invalid keys are dropped.
+   * - After tab merges, tab-group-derived placeholders are automatically synced
+   *   unless the delta explicitly provides a value for them.
    *
    * @param deltaState Partial state describing only the changes to apply.
    */
   applyDifferenceInState(deltaState: State) {
-    const toShow = new Set(deltaState.shownToggles ?? []);
-    const toPeek = new Set(deltaState.peekToggles ?? []);
-    const toHide = new Set(deltaState.hiddenToggles ?? []);
-
-    // Collect all toggle IDs mentioned in the delta
-    const allMentioned = new Set([...toShow, ...toPeek, ...toHide]);
-
-    // Start from current state, removing any toggle that the delta explicitly reassigns
-    const newShown = (this.state.shownToggles ?? []).filter((id) => !allMentioned.has(id));
-    const newPeek = (this.state.peekToggles ?? []).filter((id) => !allMentioned.has(id));
-
-    // Add the delta's explicit assignments
-    newShown.push(...toShow);
-    newPeek.push(...toPeek);
-    // Hidden toggles are simply absent from both shown and peek lists
-
-    this.state.shownToggles = newShown;
-    this.state.peekToggles = newPeek;
-
-    // Merge tabs (delta tabs override current tabs per group)
-    // Address placeholder and tabgroup drift
-    // TODO: https://github.com/customviews-js/customviews/issues/178 
-    if (deltaState.tabs) {
-      if (!this.state.tabs) this.state.tabs = {};
-      Object.assign(this.state.tabs, deltaState.tabs);
-    }
-
-    // Merge placeholders
-    if (deltaState.placeholders) {
-      if (!this.state.placeholders) this.state.placeholders = {};
-      const filteredPlaceholders = placeholderManager.filterValidPlaceholders(deltaState.placeholders);
-      Object.assign(this.state.placeholders, filteredPlaceholders);
-    }
+    this.applyToggleDelta(deltaState);
+    this.applyTabsDelta(deltaState.tabs ?? {});
+    this.applyPlaceholdersDelta(deltaState.placeholders ?? {});
   }
 
   /**
@@ -185,7 +172,7 @@ export class ActiveStateStore {
         if (toggle.default === 'peek') {
           peekToggles.push(toggle.toggleId);
         } else if (toggle.default === 'hide') {
-          // Start hidden
+          // Start hidden — not in shown or peek lists
         } else {
           shownToggles.push(toggle.toggleId);
         }
@@ -218,12 +205,125 @@ export class ActiveStateStore {
       });
     }
 
-    return {
-      shownToggles,
-      peekToggles,
-      tabs,
-      placeholders,
-    };
+    return { shownToggles, peekToggles, tabs, placeholders };
+  }
+
+  // --- Private Helpers ---
+
+  /**
+   * Applies the toggle portion of a delta state.
+   * Toggles explicitly reassigned in the delta are moved to their new state;
+   * all others retain their current visibility.
+   */
+  private applyToggleDelta(deltaState: State) {
+    const toShow = new Set(deltaState.shownToggles ?? []);
+    const toPeek = new Set(deltaState.peekToggles ?? []);
+    const toHide = new Set(deltaState.hiddenToggles ?? []);
+    const allMentioned = new Set([...toShow, ...toPeek, ...toHide]);
+
+    const newShown = (this.state.shownToggles ?? []).filter((id) => !allMentioned.has(id));
+    const newPeek = (this.state.peekToggles ?? []).filter((id) => !allMentioned.has(id));
+
+    newShown.push(...toShow);
+    newPeek.push(...toPeek);
+    // Hidden toggles are simply absent from both shown and peek lists
+
+    this.state.shownToggles = newShown;
+    this.state.peekToggles = newPeek;
+  }
+
+  /**
+   * Merges a tab delta into the current state.
+   * Validates each incoming groupId and tabId against the configuration.
+   * Invalid entries are dropped with a warning; valid entries override the current selection.
+   * After merging, tab-group-derived placeholders are synced.
+   */
+  private applyTabsDelta(deltaTabs: Record<string, string>) {
+    const validatedTabs = this.filterValidTabs(deltaTabs);
+
+    if (!this.state.tabs) this.state.tabs = {};
+    Object.assign(this.state.tabs, validatedTabs);
+
+    // Sync tab-derived placeholders for any tabs that changed.
+    // Placeholders are NOT passed as explicit overrides here, so all tab-derived ones will sync.
+    this.syncPlaceholdersFromTabs({});
+  }
+
+  /**
+   * Merges a placeholder delta into the current state.
+   * Only registered placeholder keys are accepted; others are dropped with a warning.
+   * Explicit placeholder values override any tab-derived value (winning over syncPlaceholdersFromTabs).
+   */
+  private applyPlaceholdersDelta(deltaPlaceholders: Record<string, string>) {
+    const validatedPlaceholders = placeholderManager.filterValidPlaceholders(deltaPlaceholders);
+
+    if (!this.state.placeholders) this.state.placeholders = {};
+    Object.assign(this.state.placeholders, validatedPlaceholders);
+  }
+
+  /**
+   * Validates an incoming tab record against the configuration.
+   * Drops any groupId that doesn't exist in `config.tabGroups`,
+   * and any tabId that doesn't exist within that group.
+   *
+   * @param incomingTabs Raw tab record (e.g. from a URL or persistence).
+   * @returns A filtered record containing only valid groupId → tabId pairs.
+   */
+  private filterValidTabs(incomingTabs: Record<string, string>): Record<string, string> {
+    const valid: Record<string, string> = {};
+
+    for (const [groupId, tabId] of Object.entries(incomingTabs)) {
+      const group = this.config.tabGroups?.find((g) => g.groupId === groupId);
+      if (!group) {
+        console.warn(`[CustomViews] Tab group "${groupId}" is not in the config and will be ignored.`);
+        continue;
+      }
+
+      const tabExists = group.tabs.some((t) => t.tabId === tabId);
+      if (!tabExists) {
+        console.warn(`[CustomViews] Tab "${tabId}" is not in group "${groupId}" and will be ignored.`);
+        continue;
+      }
+
+      valid[groupId] = tabId;
+    }
+
+    return valid;
+  }
+
+  /**
+   * Recalculates tab-group-derived placeholders for any tab group that hasn't been
+   * explicitly overridden in the `explicitPlaceholders` map.
+   *
+   * Skip rules (to avoid overwriting intentional values):
+   * - If the placeholder was explicitly included in the incoming state, skip it.
+   * - If the placeholder is owned by `config` (not a tab group), skip it.
+   *
+   * @param explicitPlaceholders Placeholders that were explicitly set in the incoming state.
+   */
+  private syncPlaceholdersFromTabs(explicitPlaceholders: Record<string, string>) {
+    if (!this.config.tabGroups) return;
+
+    for (const group of this.config.tabGroups) {
+      const phId = group.placeholderId;
+      if (!phId) continue;
+
+      // Explicit URL/persistence value wins — don't overwrite it with the tab-derived value.
+      if (explicitPlaceholders[phId] !== undefined) continue;
+
+      // Config-owned placeholders are not tab-derived — don't synchronize them.
+      const definition = placeholderRegistryStore.get(phId);
+      if (definition?.source === 'config') continue;
+
+      // Calculate the tab-derived value for the currently active tab.
+      const activeTabId = this.state.tabs?.[group.groupId];
+      if (!activeTabId) continue;
+
+      const phUpdate = placeholderManager.calculatePlaceholderFromTabSelected(group.groupId, activeTabId, this.config);
+      if (phUpdate) {
+        this.setPlaceholder(phUpdate.key, phUpdate.value);
+      }
+    }
   }
 }
 

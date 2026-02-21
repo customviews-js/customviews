@@ -1,3 +1,4 @@
+import { placeholderRegistryStore } from '$features/placeholder/stores/placeholder-registry-store.svelte';
 import type { State } from '$lib/types/index';
 
 const PARAM_SHOW_TOGGLE = 't-show';
@@ -13,7 +14,7 @@ const MANAGED_PARAMS = [PARAM_SHOW_TOGGLE, PARAM_PEEK_TOGGLE, PARAM_HIDE_TOGGLE,
 /**
  * Encodes a list of IDs into a comma-separated query-safe string.
  *
- * Each ID individually encoded with `encodeURIComponent` so that any commas
+ * Each ID is individually encoded with `encodeURIComponent` so that any commas
  * or special characters *within* an ID are escaped (e.g. `%2C`).
  */
 function encodeList(items: string[]): string {
@@ -69,39 +70,92 @@ function splitAndDecode(search: string, paramName: string): string[] {
     .filter(Boolean);
 }
 
-// --- Query String Construction ---
+/**
+ * Parses `key:value` pairs from a raw comma-delimited list into a Record.
+ * Entries with missing key or value are silently dropped.
+ */
+function decodePairs(search: string, paramName: string): Record<string, string> {
+  const pairs = splitAndDecode(search, paramName);
+  const result: Record<string, string> = {};
+  for (const pair of pairs) {
+    const colonIdx = pair.indexOf(':');
+    if (colonIdx > 0) {
+      const key = pair.slice(0, colonIdx);
+      const value = pair.slice(colonIdx + 1);
+      if (key) result[key] = value;
+    }
+  }
+  return result;
+}
+
+// --- URL Parsing ---
 
 /**
- * Builds the query string fragment for managed parameters from a diff state.
+ * Parses toggle visibility state from the current URL search string.
+ * Returns partial state containing only the toggle fields that are present.
+ */
+function parseTogglesFromSearch(search: string): Pick<State, 'shownToggles' | 'peekToggles' | 'hiddenToggles'> {
+  const partial: Pick<State, 'shownToggles' | 'peekToggles' | 'hiddenToggles'> = {};
+
+  const showIds = splitAndDecode(search, PARAM_SHOW_TOGGLE);
+  if (showIds.length > 0) partial.shownToggles = showIds;
+
+  const peekIds = splitAndDecode(search, PARAM_PEEK_TOGGLE);
+  if (peekIds.length > 0) partial.peekToggles = peekIds;
+
+  const hideIds = splitAndDecode(search, PARAM_HIDE_TOGGLE);
+  if (hideIds.length > 0) partial.hiddenToggles = hideIds;
+
+  return partial;
+}
+
+/**
+ * Parses tab group selections from the current URL search string.
+ * Returns partial state containing the `tabs` record, or empty object if absent.
+ */
+function parseTabsFromSearch(search: string): Pick<State, 'tabs'> {
+  const tabs = decodePairs(search, PARAM_TABS);
+  return Object.keys(tabs).length > 0 ? { tabs } : {};
+}
+
+/**
+ * Parses placeholder values from the current URL search string.
+ * Returns partial state containing the `placeholders` record, or empty object if absent.
+ */
+function parsePlaceholdersFromSearch(search: string): Pick<State, 'placeholders'> {
+  const placeholders = decodePairs(search, PARAM_PH);
+  return Object.keys(placeholders).length > 0 ? { placeholders } : {};
+}
+
+// --- URL Generation ---
+
+/**
+ * Builds the query string fragment for the managed URL parameters from a state object.
  *
  * We construct this string manually (instead of using `URLSearchParams.set()`)
  * to avoid double-encoding. `URLSearchParams.set()` would encode our already-encoded
  * values a second time (e.g. `%2C` → `%252C`), requiring a hacky decode step.
  *
  * By building the string directly, each value is encoded exactly once,
- * and structural separators (`,` `:`) remain as literal characters.
+ * and structural separators (`,` `:`) remain as literal characters in the URL.
  */
-function buildManagedSearch(diff: State): string {
+function buildManagedSearch(state: State): string {
   const parts: string[] = [];
 
-  if (diff.shownToggles && diff.shownToggles.length > 0) {
-    parts.push(`${PARAM_SHOW_TOGGLE}=${encodeList(diff.shownToggles)}`);
+  if (state.shownToggles && state.shownToggles.length > 0) {
+    parts.push(`${PARAM_SHOW_TOGGLE}=${encodeList(state.shownToggles)}`);
   }
-
-  if (diff.peekToggles && diff.peekToggles.length > 0) {
-    parts.push(`${PARAM_PEEK_TOGGLE}=${encodeList(diff.peekToggles)}`);
+  if (state.peekToggles && state.peekToggles.length > 0) {
+    parts.push(`${PARAM_PEEK_TOGGLE}=${encodeList(state.peekToggles)}`);
   }
-
-  if (diff.hiddenToggles && diff.hiddenToggles.length > 0) {
-    parts.push(`${PARAM_HIDE_TOGGLE}=${encodeList(diff.hiddenToggles)}`);
+  if (state.hiddenToggles && state.hiddenToggles.length > 0) {
+    parts.push(`${PARAM_HIDE_TOGGLE}=${encodeList(state.hiddenToggles)}`);
   }
-
-  if (diff.tabs && Object.keys(diff.tabs).length > 0) {
-    parts.push(`${PARAM_TABS}=${encodePairs(diff.tabs)}`);
+  if (state.tabs && Object.keys(state.tabs).length > 0) {
+    parts.push(`${PARAM_TABS}=${encodePairs(state.tabs)}`);
   }
-
-  if (diff.placeholders && Object.keys(diff.placeholders).length > 0) {
-    parts.push(`${PARAM_PH}=${encodePairs(diff.placeholders)}`);
+  if (state.placeholders && Object.keys(state.placeholders).length > 0) {
+    parts.push(`${PARAM_PH}=${encodePairs(state.placeholders)}`);
   }
 
   return parts.join('&');
@@ -117,14 +171,39 @@ function buildFullUrl(url: URL, managedSearch: string): string {
 }
 
 /**
- * Computes a full state representation for sharing.
+ * Strips placeholder entries whose value is derived from a tab group (source: 'tabgroup').
+ *
+ * These placeholders should NOT be encoded in the shared URL because their value
+ * is already implied by the `?tabs=` param. Encoding both would create two sources
+ * of truth and risk drift when decoded on the recipient's side.
+ */
+function stripTabDerivedPlaceholders(placeholders: Record<string, string>): Record<string, string> {
+  const shareable: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(placeholders)) {
+    const definition = placeholderRegistryStore.get(key);
+    if (definition?.source === 'tabgroup') {
+      // Omit — the tab selection in ?tabs= is the source of truth for this placeholder.
+      continue;
+    }
+    shareable[key] = value;
+  }
+
+  return shareable;
+}
+
+/**
+ * Computes a full absolute state for sharing from the current application state.
+ *
  * Every toggle known to the page is explicitly encoded as shown, peeked, or hidden,
  * so the recipient's view exactly matches the sender's regardless of their local settings.
+ *
+ * Tab-group-derived placeholders are omitted — the `?tabs=` param is their source of truth.
  *
  * @param currentState The current application state.
  * @param allToggleIds All toggle IDs registered on the page (from elementStore).
  */
-function computeAbsoluteState(currentState: State, allToggleIds: string[]): State {
+function computeShareableState(currentState: State, allToggleIds: string[]): State {
   const currentShown = currentState.shownToggles ?? [];
   const currentPeek  = currentState.peekToggles  ?? [];
 
@@ -134,15 +213,24 @@ function computeAbsoluteState(currentState: State, allToggleIds: string[]): Stat
   // Every known toggle that isn't shown or peeked must be explicitly hidden.
   const absoluteHide = allToggleIds.filter((id) => !shownSet.has(id) && !peekSet.has(id));
 
-  const absolute: State = {};
+  const shareable: State = {};
 
-  if (currentShown.length > 0) absolute.shownToggles = currentShown;
-  if (currentPeek.length  > 0) absolute.peekToggles  = currentPeek;
-  if (absoluteHide.length > 0) absolute.hiddenToggles = absoluteHide;
-  if (currentState.tabs && Object.keys(currentState.tabs).length > 0) absolute.tabs = currentState.tabs;
-  if (currentState.placeholders) absolute.placeholders = currentState.placeholders;
+  if (currentShown.length > 0) shareable.shownToggles = currentShown;
+  if (currentPeek.length  > 0) shareable.peekToggles  = currentPeek;
+  if (absoluteHide.length > 0) shareable.hiddenToggles = absoluteHide;
 
-  return absolute;
+  if (currentState.tabs && Object.keys(currentState.tabs).length > 0) {
+    shareable.tabs = currentState.tabs;
+  }
+
+  if (currentState.placeholders) {
+    const shareablePlaceholders = stripTabDerivedPlaceholders(currentState.placeholders);
+    if (Object.keys(shareablePlaceholders).length > 0) {
+      shareable.placeholders = shareablePlaceholders;
+    }
+  }
+
+  return shareable;
 }
 
 // --- URL State Manager ---
@@ -158,15 +246,23 @@ function computeAbsoluteState(currentState: State, allToggleIds: string[]): Stat
  *   ?tabs=g1:t1,g2:t2  — tab group selections (groupId:tabId pairs)
  *   ?ph=key:val        — placeholder values (key:encodedValue pairs)
  *
- * `parseURL` is used on page load to apply state from an inbound link.
- * `generateShareableURL` is used to create a link to copy to clipboard.
+ * Precedence model (applied by ActiveStateStore, not here):
+ * - Persisted state is loaded first as a base.
+ * - URL parameters act as a sparse override on top of persisted state.
+ *   Only toggles/tabs/placeholders mentioned in the URL are affected.
+ * - Tab-group-derived placeholders are always re-derived from the active tab,
+ *   so the `?tabs=` param is the sole source of truth for those values.
+ *
+ * `parseURL` is used on page load to read inbound link state.
+ * `generateShareableURL` is used to produce a link for the clipboard.
  *
  * Focus params (cv-show, cv-hide, cv-highlight) remain owned by FocusService.
  */
 export class URLStateManager {
   /**
-   * Parse current URL parameters into a delta state object.
-   * Returns null if none of the managed params are present.
+   * Parses the current page URL into a sparse delta state object.
+   * Only fields present in the URL are populated; the rest are omitted.
+   * Returns null if none of the managed parameters are present.
    */
   public static parseURL(): State | null {
     const urlParams = new URLSearchParams(window.location.search);
@@ -174,66 +270,23 @@ export class URLStateManager {
     const hasAny = MANAGED_PARAMS.some((p) => urlParams.has(p));
     if (!hasAny) return null;
 
-    const state: State = {};
     const search = window.location.search;
 
-    // Parse ?t-show=A,B
-    const showIds = splitAndDecode(search, PARAM_SHOW_TOGGLE);
-    if (showIds.length > 0) {
-      state.shownToggles = showIds;
-    }
-
-    // Parse ?t-peek=C
-    const peekIds = splitAndDecode(search, PARAM_PEEK_TOGGLE);
-    if (peekIds.length > 0) {
-      state.peekToggles = peekIds;
-    }
-
-    // Parse ?t-hide=D
-    const hideIds = splitAndDecode(search, PARAM_HIDE_TOGGLE);
-    if (hideIds.length > 0) {
-      state.hiddenToggles = hideIds;
-    }
-
-    // Parse ?tabs=g1:t1,g2:t2
-    const tabsRaw = splitAndDecode(search, PARAM_TABS);
-    if (tabsRaw.length > 0) {
-      state.tabs = {};
-      for (const pair of tabsRaw) {
-        const colonIdx = pair.indexOf(':');
-        if (colonIdx > 0) {
-          const groupId = pair.slice(0, colonIdx);
-          const tabId = pair.slice(colonIdx + 1);
-          if (groupId && tabId) {
-            state.tabs[groupId] = tabId;
-          }
-        }
-      }
-    }
-
-    // Parse ?ph=key:value
-    const phRaw = splitAndDecode(search, PARAM_PH);
-    if (phRaw.length > 0) {
-      state.placeholders = {};
-      for (const pair of phRaw) {
-        const colonIdx = pair.indexOf(':');
-        if (colonIdx > 0) {
-          const key = pair.slice(0, colonIdx);
-          const value = pair.slice(colonIdx + 1);
-          if (key) {
-            state.placeholders[key] = value;
-          }
-        }
-      }
-    }
-
-    return state;
+    return {
+      ...parseTogglesFromSearch(search),
+      ...parseTabsFromSearch(search),
+      ...parsePlaceholdersFromSearch(search),
+    };
   }
 
-/**
-   * Generate a shareable URL for the current state.
+  /**
+   * Generates a shareable URL that encodes the full current state.
+   *
    * Encodes every toggle on the page explicitly (shown, peeked, or hidden)
    * so the recipient sees the exact same view regardless of their local settings.
+   *
+   * Tab-group-derived placeholders are omitted from the URL — they are implied
+   * by the `?tabs=` parameter and will be re-derived by the recipient's store.
    *
    * @param currentState The full application state to encode.
    * @param allToggleIds All toggle IDs currently registered on the page.
@@ -250,8 +303,8 @@ export class URLStateManager {
 
     let managedSearch = '';
     if (currentState) {
-      const absolute = computeAbsoluteState(currentState, allToggleIds);
-      managedSearch = buildManagedSearch(absolute);
+      const shareable = computeShareableState(currentState, allToggleIds);
+      managedSearch = buildManagedSearch(shareable);
     }
 
     return buildFullUrl(url, managedSearch);
