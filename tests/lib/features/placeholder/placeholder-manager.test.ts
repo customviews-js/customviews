@@ -5,12 +5,7 @@ import { PlaceholderManager } from '../../../../src/lib/features/placeholder/pla
 // @ts-expect-error - Polyfill for testing
 globalThis.$state = (initial) => initial;
 
-// Mock dependencies
-vi.mock('../../../../src/lib/stores/active-state-store.svelte', () => ({
-  activeStateStore: {
-    state: { placeholders: {} },
-  },
-}));
+
 
 vi.mock('../../../../src/lib/features/placeholder/stores/placeholder-registry-store.svelte', () => ({
   placeholderRegistryStore: {
@@ -114,29 +109,10 @@ describe('PlaceholderManager', () => {
       expect(placeholderRegistryStore.register).not.toHaveBeenCalled();
       expect(warnSpy).toHaveBeenCalled();
     });
-    it('should update placeholder on registration if activeTabs is provided', () => {
-      const config = {
-        tabGroups: [
-          {
-            groupId: 'g1',
-            placeholderId: 'p1',
-            tabs: [{ tabId: 't1', placeholderValue: 'val1' }],
-          },
-        ],
-      };
 
-      // Mock registry to pretend it registered successfully
-      vi.mocked(placeholderRegistryStore.get).mockReturnValue(undefined);
-      // Mock registry has to say 'true' for update internal check
-      vi.mocked(placeholderRegistryStore.has).mockReturnValue(true);
-
-      manager.registerTabGroupPlaceholders(config);
-
-      // Registration no longer auto-sets state, it just registers the definition.
-    });
   });
 
-  describe('calculatePlaceholderFromTab', () => {
+  describe('calculatePlaceholderFromTabSelected', () => {
     it('should return key and value if tab has placeholderValue', () => {
       const config = {
         tabGroups: [

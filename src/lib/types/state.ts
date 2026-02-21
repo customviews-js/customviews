@@ -8,8 +8,8 @@ export interface State {
   peekToggles?: string[];
   /** List of toggle categories that should be explicitly hidden ("Hide" state) */
   hiddenToggles?: string[];
-  /** Optional tab selections: groupId -> tabId */
+  /** Tab selections: groupId -> tabId */
   tabs?: Record<string, string>;
-  /** URL-sourced placeholder values. Not persisted by activeStateStore. */
+  /** Placeholder values: key -> value */
   placeholders?: Record<string, string>;
 }

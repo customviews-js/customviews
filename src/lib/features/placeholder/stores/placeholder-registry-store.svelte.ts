@@ -2,7 +2,7 @@ import { SvelteMap } from 'svelte/reactivity';
 import type { PlaceholderDefinition } from '../types';
 
 /**
- * Registry store tracks existence and properties of placeholder,
+ * Registry store tracks existence and properties of placeholders,
  * but not the values of the placeholders.
  */
 export class PlaceholderRegistryStore {

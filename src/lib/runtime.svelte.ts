@@ -43,7 +43,8 @@ export class AppRuntime {
     // Store assetsManager for component access
     derivedStore.setAssetsManager(opt.assetsManager);
 
-    // Initial State Resolution: URL > Persistence > Default
+    // Initial State Resolution:
+    // URL (Sparse Override) > Persistence (Full) > Default
     this.resolveInitialState();
 
     // Resolve Exclusions
@@ -78,18 +79,23 @@ export class AppRuntime {
     });
   }
 
+  /**
+   * Resolves the starting application state by layering sources:
+   * 
+   * 1. **Baseline**: `ActiveStateStore` initializes with defaults from the config file.
+   * 2. **Persistence**: If local storage has a saved state, it replaces the baseline (`applyState`).
+   * 3. **URL Overrides**: If the URL contains parameters (`?t-show=X`), these are applied
+   *    as **sparse overrides** (`applyDifferenceInState`). Toggles not mentioned in the URL
+   *    retain their values from persistence/defaults.
+   */
   private resolveInitialState() {
-    // 1. Apply base state: Persistence > Defaults (already set by init())
+    // 1. Apply persisted base state on top of defaults.
     const persistedState = this.persistenceManager.getPersistedState();
     if (persistedState) {
       activeStateStore.applyState(persistedState);
     }
 
-    // TODO: Confirm intended behavior again
-
-    // 2. Apply URL delta on top of base state.
-    //    URL params represent sparse overrides (e.g. ?t-hide=X only hides X,
-    //    leaving other toggles in their current visibility).
+    // 2. Layer URL delta on top.
     const urlDelta = URLStateManager.parseURL();
     if (urlDelta) {
       this.urlState = urlDelta;
@@ -111,7 +117,6 @@ export class AppRuntime {
     }
 
     // Initialize Stores
-    // TODO: Confirm intended behavior again
 
     // URL placeholder values override localStorage values
     if (this.urlState) {

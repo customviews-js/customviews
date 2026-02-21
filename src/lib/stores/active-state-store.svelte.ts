@@ -95,6 +95,8 @@ export class ActiveStateStore {
     this.state.placeholders[key] = value;
   }
 
+  // Address placeholder and tabgroup drift
+  // TODO: https://github.com/customviews-js/customviews/issues/178 
   /**
    * Updates the full state (e.g. from URL or Persistence).
    * Merges the new state with computed defaults to ensure completeness.
@@ -141,6 +143,8 @@ export class ActiveStateStore {
     this.state.peekToggles = newPeek;
 
     // Merge tabs (delta tabs override current tabs per group)
+    // Address placeholder and tabgroup drift
+    // TODO: https://github.com/customviews-js/customviews/issues/178 
     if (deltaState.tabs) {
       if (!this.state.tabs) this.state.tabs = {};
       Object.assign(this.state.tabs, deltaState.tabs);
@@ -149,7 +153,8 @@ export class ActiveStateStore {
     // Merge placeholders
     if (deltaState.placeholders) {
       if (!this.state.placeholders) this.state.placeholders = {};
-      Object.assign(this.state.placeholders, deltaState.placeholders);
+      const filteredPlaceholders = placeholderManager.filterValidPlaceholders(deltaState.placeholders);
+      Object.assign(this.state.placeholders, filteredPlaceholders);
     }
   }
 

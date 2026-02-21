@@ -10,9 +10,7 @@ globalThis.$derived.by = (fn) => fn();
 // Mock PlaceholderManager
 vi.mock('../../../src/lib/features/placeholder/placeholder-manager', () => ({
   placeholderManager: {
-    calculatePlaceholderFromTab: vi.fn(),
-    registerTabGroupPlaceholders: vi.fn(),
-    registerConfigPlaceholders: vi.fn(),
+    calculatePlaceholderFromTabSelected: vi.fn(),
   },
 }));
 
@@ -26,10 +24,6 @@ describe('ActiveStateStore', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset mock implementation if needed
-    placeholderManager.calculatePlaceholderFromTabSelected = vi.fn();
-    placeholderManager.registerTabGroupPlaceholders = vi.fn();
-    placeholderManager.registerConfigPlaceholders = vi.fn();
     store = new ActiveStateStore();
   });
 
@@ -125,6 +119,46 @@ describe('ActiveStateStore', () => {
     it('should handle undefined tabs in newState gracefully', () => {
       store.applyState({ shownToggles: [], peekToggles: [] }); // tabs is undefined
       expect(store.state.tabs).toBeDefined();
+    });
+  });
+
+  describe('applyDifferenceInState (Sparse URL Delta)', () => {
+    beforeEach(() => {
+      store.state.shownToggles = ['ON_BY_PERSISTENCE'];
+      store.state.peekToggles = ['PEEK_BY_PERSISTENCE'];
+      store.state.tabs = { g1: 'tabA' };
+    });
+
+    it('merges shown/peek/hide deltas on top of current state', () => {
+      // Delta says: show NEW, hide ON_BY_PERSISTENCE
+      store.applyDifferenceInState({
+        shownToggles: ['NEW'],
+        hiddenToggles: ['ON_BY_PERSISTENCE'],
+      });
+
+      expect(store.state.shownToggles).toContain('NEW');
+      expect(store.state.shownToggles).not.toContain('ON_BY_PERSISTENCE');
+      // Unmentioned peek should remain
+      expect(store.state.peekToggles).toContain('PEEK_BY_PERSISTENCE');
+    });
+
+    it('merges tabs and placeholders', () => {
+      store.applyDifferenceInState({
+        tabs: { g2: 'tabB' },
+        placeholders: { p1: 'val1' },
+      });
+
+      expect(store.state.tabs).toEqual({ g1: 'tabA', g2: 'tabB' });
+      expect(store.state.placeholders).toEqual({ p1: 'val1' });
+    });
+
+    it('completely overwrites a toggle if it switches from shown to peek', () => {
+      store.applyDifferenceInState({
+        peekToggles: ['ON_BY_PERSISTENCE'],
+      });
+
+      expect(store.state.peekToggles).toContain('ON_BY_PERSISTENCE');
+      expect(store.state.shownToggles).not.toContain('ON_BY_PERSISTENCE');
     });
   });
 });
