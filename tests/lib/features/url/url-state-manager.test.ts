@@ -118,7 +118,11 @@ describe('URLStateManager', () => {
         tabs: { os: 'linux' },
         placeholders: { myKey: 'Hello World' },
       };
-      const allIds = ['A', 'B', 'P1', 'HIDDEN'];
+      const allIds = {
+        toggles: ['A', 'B', 'P1', 'HIDDEN'],
+        tabGroups: ['os'],
+        placeholders: ['myKey'],
+      };
 
       const shareUrl = URLStateManager.generateShareableURL(current, allIds);
       (window as any).location.search = new URL(shareUrl).search;
@@ -141,7 +145,11 @@ describe('URLStateManager', () => {
         },
       };
 
-      const shareUrl = URLStateManager.generateShareableURL(current);
+      const shareUrl = URLStateManager.generateShareableURL(current, {
+        toggles: [],
+        tabGroups: [],
+        placeholders: ['key1', 'key2'],
+      });
       expect(shareUrl).toContain('key1:value%2Cwith%2Ccommas');
       expect(shareUrl).toContain('key2:value%3Awith%3Acolons');
 
@@ -160,7 +168,7 @@ describe('URLStateManager', () => {
     it('encodes all active toggles and explicitly hides the rest', () => {
       const url = URLStateManager.generateShareableURL(
         { shownToggles: ['A', 'NEW'], peekToggles: [], tabs: { g1: 'tabA' } },
-        ['A', 'NEW', 'HIDDEN_DEFAULT'],
+        { toggles: ['A', 'NEW', 'HIDDEN_DEFAULT'], tabGroups: ['g1'], placeholders: [] },
       );
       expect(url).toContain('t-show=A,NEW');
       expect(url).toContain('tabs=g1:tabA');
@@ -177,7 +185,7 @@ describe('URLStateManager', () => {
       setLocation('?cv-show=el1');
       const url = URLStateManager.generateShareableURL(
         { shownToggles: ['t1'] },
-        ['t1', 'other'],
+        { toggles: ['t1', 'other'], tabGroups: [], placeholders: [] },
       );
       expect(url).toContain('cv-show=el1');
     });
@@ -185,7 +193,7 @@ describe('URLStateManager', () => {
     it('encodes t-hide for all toggles not shown or peeked', () => {
       const url = URLStateManager.generateShareableURL(
         { shownToggles: [], peekToggles: [] },
-        ['A', 'B'],
+        { toggles: ['A', 'B'], tabGroups: [], placeholders: [] },
       );
       expect(url).toContain('t-hide=A,B');
       expect(url).not.toContain('t-show=');

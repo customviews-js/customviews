@@ -193,40 +193,81 @@ function stripTabDerivedPlaceholders(placeholders: Record<string, string>): Reco
 }
 
 /**
- * Computes a full absolute state for sharing from the current application state.
+ * Elements currently present and tracked on the page.
+ */
+export interface PageElements {
+  toggles: Iterable<string>;
+  tabGroups: Iterable<string>;
+  placeholders: Iterable<string>;
+}
+
+/**
+ * Computes a shareable state object from the current state.
  *
  * Every toggle known to the page is explicitly encoded as shown, peeked, or hidden,
  * so the recipient's view exactly matches the sender's regardless of their local settings.
  *
+ * Toggles, tabs, and placeholders NOT present on the current page are omitted,
+ * preventing cross-page state pollution.
+ *
  * Tab-group-derived placeholders are omitted — the `?tabs=` param is their source of truth.
  *
  * @param currentState The current application state.
- * @param allToggleIds All toggle IDs registered on the page (from elementStore).
+ * @param pageElements The active elements detected on the current page.
  */
-function computeShareableState(currentState: State, allToggleIds: string[]): State {
+function computeShareableState(currentState: State, pageElements: PageElements): State {
   const currentShown = currentState.shownToggles ?? [];
   const currentPeek  = currentState.peekToggles  ?? [];
 
-  const shownSet = new Set(currentShown);
-  const peekSet  = new Set(currentPeek);
+  const pageTogglesSet = new Set(pageElements.toggles);
+  const pageTabGroupsSet = new Set(pageElements.tabGroups);
+  const pagePlaceholdersSet = new Set(pageElements.placeholders);
 
-  // Every known toggle that isn't shown or peeked must be explicitly hidden.
-  const absoluteHide = allToggleIds.filter((id) => !shownSet.has(id) && !peekSet.has(id));
+  // 1. Filter toggles to only those present on the page
+  const pageShown = currentShown.filter((id) => pageTogglesSet.has(id));
+  const pagePeek = currentPeek.filter((id) => pageTogglesSet.has(id));
+
+  const shownSet = new Set(pageShown);
+  const peekSet  = new Set(pagePeek);
+
+  // Every toggle on the page that isn't shown or peeked must be explicitly hidden.
+  const absoluteHide: string[] = [];
+  for (const id of pageTogglesSet) {
+    if (!shownSet.has(id as string) && !peekSet.has(id as string)) {
+      absoluteHide.push(id as string);
+    }
+  }
 
   const shareable: State = {};
 
-  if (currentShown.length > 0) shareable.shownToggles = currentShown;
-  if (currentPeek.length  > 0) shareable.peekToggles  = currentPeek;
+  if (pageShown.length > 0) shareable.shownToggles = pageShown;
+  if (pagePeek.length  > 0) shareable.peekToggles  = pagePeek;
   if (absoluteHide.length > 0) shareable.hiddenToggles = absoluteHide;
 
-  if (currentState.tabs && Object.keys(currentState.tabs).length > 0) {
-    shareable.tabs = currentState.tabs;
+  // 2. Filter tabs to only those present on the page
+  if (currentState.tabs) {
+    const pageTabs: Record<string, string> = {};
+    for (const [groupId, tabId] of Object.entries(currentState.tabs)) {
+      if (pageTabGroupsSet.has(groupId)) {
+        pageTabs[groupId] = tabId;
+      }
+    }
+    if (Object.keys(pageTabs).length > 0) {
+      shareable.tabs = pageTabs;
+    }
   }
 
+  // 3. Filter placeholders to only those present on the page
   if (currentState.placeholders) {
     const shareablePlaceholders = stripTabDerivedPlaceholders(currentState.placeholders);
-    if (Object.keys(shareablePlaceholders).length > 0) {
-      shareable.placeholders = shareablePlaceholders;
+    const pagePlaceholders: Record<string, string> = {};
+    for (const [key, value] of Object.entries(shareablePlaceholders)) {
+      if (pagePlaceholdersSet.has(key)) {
+        pagePlaceholders[key] = value;
+      }
+    }
+    if (Object.keys(pagePlaceholders).length > 0) {
+      shareable.placeholders = pagePlaceholders;
     }
   }
 
@@ -288,12 +329,15 @@ export class URLStateManager {
    * Tab-group-derived placeholders are omitted from the URL — they are implied
    * by the `?tabs=` parameter and will be re-derived by the recipient's store.
    *
+   * Toggles, tabs, and placeholders NOT present on the current page are omitted,
+   * preventing cross-page state pollution.
+   *
    * @param currentState The full application state to encode.
-   * @param allToggleIds All toggle IDs currently registered on the page.
+   * @param pageElements The active elements detected on the current page.
    */
   public static generateShareableURL(
     currentState: State | null | undefined,
-    allToggleIds: string[] = [],
+    pageElements: PageElements = { toggles: [], tabGroups: [], placeholders: [] },
   ): string {
     const url = new URL(window.location.href);
 
@@ -303,7 +347,7 @@ export class URLStateManager {
 
     let managedSearch = '';
     if (currentState) {
-      const shareable = computeShareableState(currentState, allToggleIds);
+      const shareable = computeShareableState(currentState, pageElements);
       managedSearch = buildManagedSearch(shareable);
     }
 

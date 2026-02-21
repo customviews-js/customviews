@@ -145,7 +145,11 @@
   async function copyShareUrl() {
     const url = URLStateManager.generateShareableURL(
       activeStateStore.state,
-      [...elementStore.detectedToggles],
+      {
+        toggles: elementStore.detectedToggles,
+        tabGroups: elementStore.detectedTabGroups,
+        placeholders: elementStore.detectedPlaceholders,
+      }
     );
     try {
       await copyToClipboard(url);
