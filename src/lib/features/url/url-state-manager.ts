@@ -72,7 +72,7 @@ function splitAndDecode(search: string, paramName: string): string[] {
 
 /**
  * Parses `key:value` pairs from a raw comma-delimited list into a Record.
- * Entries with missing key or value are silently dropped.
+ * Entries without a colon, or with empty keys, are silently dropped.
  */
 function decodePairs(search: string, paramName: string): Record<string, string> {
   const pairs = splitAndDecode(search, paramName);
