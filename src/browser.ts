@@ -61,7 +61,7 @@ export function initializeFromScript(): void {
       };
 
       const runtime = new AppRuntime(coreOptions);
-      runtime.init();
+      runtime.start();
 
       initUIManager(runtime, configFile);
 

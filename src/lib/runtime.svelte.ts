@@ -1,4 +1,4 @@
-import type { ConfigFile, State } from '$lib/types/index';
+import type { ConfigFile } from '$lib/types/index';
 import type { AssetsManager } from '$features/render/assets';
 
 import { PersistenceManager } from './utils/persistence';
@@ -29,7 +29,6 @@ export class AppRuntime {
   private persistenceManager: PersistenceManager;
   private focusService: FocusService;
 
-  private urlState: State | null = null;
   private observer?: MutationObserver;
   private destroyEffectRoot?: () => void;
 
@@ -98,50 +97,51 @@ export class AppRuntime {
     // 2. Layer URL delta on top.
     const urlDelta = URLStateManager.parseURL();
     if (urlDelta) {
-      this.urlState = urlDelta;
       activeStateStore.applyDifferenceInState(urlDelta);
     }
-  }
 
-  /**
-   * Initializes the CustomViews core.
-   *
-   * Components (Toggle, TabGroup) self-register during their mount lifecycle.
-   * Core only manages global reactivity for URL state and persistence.
-   */
-  public init() {
-    // Restore tab nav visibility preference
+    // 3. Restore UI preferences
     const navPref = this.persistenceManager.getPersistedTabNavVisibility();
     if (navPref !== null) {
       uiStore.isTabGroupNavHeadingVisible = navPref;
     }
+  }
 
-    // Initialize Stores
+  /**
+   * Starts the CustomViews execution engine.
+   *
+   * Components (Toggle, TabGroup) self-register during their mount lifecycle.
+   * This method starts the global observers for DOM changes and reactive state side-effects.
+   */
+  public start() {
+    this.scanDOM();
+    this.startComponentObserver();
+    this.startGlobalReactivity();
+  }
 
-    // URL placeholder values override localStorage values
-    if (this.urlState) {
-      const validUrlPlaceholders = placeholderManager.filterValidPlaceholders(this.urlState);
-      for (const [key, value] of Object.entries(validUrlPlaceholders)) {
-        activeStateStore.setPlaceholder(key, value);
-      }
-    }
+  // --- Execution Helpers ---
 
-    // Run initial scan (non-reactive)
-    // Clear previous page detections if any, before scan (SPA support)
+  /**
+   * Performs an initial, non-reactive scan of the DOM for placeholders.
+   */
+  private scanDOM() {
+    // Clear previous page detections if any (SPA support)
     elementStore.clearDetectedPlaceholders();
     PlaceholderBinder.scanAndHydrate(this.rootEl);
+  }
 
-    this.setUpObserver();
-
-    // Setup Global Reactivity using $effect.root
+  /**
+   * Sets up global reactivity using `$effect.root` for persistence and placeholder binding.
+   */
+  private startGlobalReactivity() {
     this.destroyEffectRoot = $effect.root(() => {
-      // Persistence
+      // Automatic Persistence
       $effect(() => {
         this.persistenceManager.persistState(activeStateStore.state);
         this.persistenceManager.persistTabNavVisibility(uiStore.isTabGroupNavHeadingVisible);
       });
 
-      // React to Variable Changes
+      // Automatic Placeholder Updates
       $effect(() => {
         PlaceholderBinder.updateAll(activeStateStore.state.placeholders ?? {});
       });
@@ -152,7 +152,7 @@ export class AppRuntime {
    * Sets up a MutationObserver to detect content added dynamically to the page
    * (e.g. by other scripts, lazy loading, or client-side routing).
    */
-  private setUpObserver() {
+  private startComponentObserver() {
     this.observer = new MutationObserver((mutations) => {
       for (const mutation of mutations) {
         if (mutation.type !== 'childList') continue;
