@@ -128,6 +128,19 @@ describe('ActiveStateStore', () => {
       expect(store.state.tabs).toBeDefined();
     });
 
+    it('should filter out invalid toggle IDs', () => {
+      const config = {
+        toggles: [{ toggleId: 'known' }],
+      };
+      store.init(config);
+
+      store.applyState({ shownToggles: ['known', 'ghost-show'], peekToggles: ['ghost-peek'] });
+
+      expect(store.state.shownToggles).toContain('known');
+      expect(store.state.shownToggles).not.toContain('ghost-show');
+      expect(store.state.peekToggles).not.toContain('ghost-peek');
+    });
+
     it('should filter out invalid tab group IDs', () => {
       const config = {
         tabGroups: [{ groupId: 'known', tabs: [{ tabId: 't1' }] }],
@@ -168,6 +181,13 @@ describe('ActiveStateStore', () => {
 
   describe('applyDifferenceInState (Sparse URL Delta)', () => {
     beforeEach(() => {
+      store.init({
+        toggles: [
+          { toggleId: 'ON_BY_PERSISTENCE' },
+          { toggleId: 'PEEK_BY_PERSISTENCE' },
+          { toggleId: 'NEW' },
+        ],
+      });
       store.state.shownToggles = ['ON_BY_PERSISTENCE'];
       store.state.peekToggles = ['PEEK_BY_PERSISTENCE'];
       store.state.tabs = { g1: 'tabA' };
@@ -196,6 +216,11 @@ describe('ActiveStateStore', () => {
 
     it('merges valid tabs and preserves existing tabs', () => {
       const config = {
+        toggles: [
+          { toggleId: 'ON_BY_PERSISTENCE' },
+          { toggleId: 'PEEK_BY_PERSISTENCE' },
+          { toggleId: 'NEW' },
+        ],
         tabGroups: [
           { groupId: 'g1', tabs: [{ tabId: 'tabA' }] },
           { groupId: 'g2', tabs: [{ tabId: 'tabB' }] },
@@ -240,6 +265,19 @@ describe('ActiveStateStore', () => {
 
       expect(placeholderManager.filterValidPlaceholders).toHaveBeenCalledWith({ p1: 'explicit', evil: 'injected' });
       expect(store.state.placeholders?.evil).toBeUndefined();
+    });
+
+    it('drops nonexistent toggle IDs from the delta', () => {
+      const config = {
+        toggles: [{ toggleId: 'real' }],
+      };
+      store.init(config);
+
+      store.applyDifferenceInState({ shownToggles: ['real', 'fakeShow'], peekToggles: ['fakePeek'], hiddenToggles: ['fakeHide'] });
+
+      expect(store.state.shownToggles).toContain('real');
+      expect(store.state.shownToggles).not.toContain('fakeShow');
+      expect(store.state.peekToggles).not.toContain('fakePeek');
     });
   });
 });

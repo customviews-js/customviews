@@ -113,10 +113,12 @@ export class ActiveStateStore {
 
     const validatedTabs = this.filterValidTabs(newState.tabs ?? {});
     const validatedPlaceholders = placeholderManager.filterValidPlaceholders(newState.placeholders ?? {});
+    const validatedShownToggles = this.filterValidToggles(newState.shownToggles ?? defaults.shownToggles ?? []);
+    const validatedPeekToggles = this.filterValidToggles(newState.peekToggles ?? defaults.peekToggles ?? []);
 
     this.state = {
-      shownToggles: newState.shownToggles ?? defaults.shownToggles ?? [],
-      peekToggles: newState.peekToggles ?? defaults.peekToggles ?? [],
+      shownToggles: validatedShownToggles,
+      peekToggles: validatedPeekToggles,
       tabs: { ...(defaults.tabs ?? {}), ...validatedTabs },
       placeholders: { ...(defaults.placeholders ?? {}), ...validatedPlaceholders },
     };
@@ -216,9 +218,9 @@ export class ActiveStateStore {
    * all others retain their current visibility.
    */
   private applyToggleDelta(deltaState: State) {
-    const toShow = new Set(deltaState.shownToggles ?? []);
-    const toPeek = new Set(deltaState.peekToggles ?? []);
-    const toHide = new Set(deltaState.hiddenToggles ?? []);
+    const toShow = new Set(this.filterValidToggles(deltaState.shownToggles ?? []));
+    const toPeek = new Set(this.filterValidToggles(deltaState.peekToggles ?? []));
+    const toHide = new Set(this.filterValidToggles(deltaState.hiddenToggles ?? []));
     const allMentioned = new Set([...toShow, ...toPeek, ...toHide]);
 
     const newShown = (this.state.shownToggles ?? []).filter((id) => !allMentioned.has(id));
@@ -286,6 +288,32 @@ export class ActiveStateStore {
       }
 
       valid[groupId] = tabId;
+    }
+
+    return valid;
+  }
+
+  /**
+   * Validates an incoming list of toggle IDs against the configuration.
+   * Invalid IDs are dropped with a warning.
+   */
+  private filterValidToggles(incomingToggles: string[]): string[] {
+    if (!this.config.toggles || this.config.toggles.length === 0) {
+      incomingToggles.forEach((id) =>
+        console.warn(`[CustomViews] Toggle "${id}" is not in the config and will be ignored.`),
+      );
+      return [];
+    }
+
+    const validIds = new Set(this.config.toggles.map((t) => t.toggleId));
+    const valid: string[] = [];
+
+    for (const toggleId of incomingToggles) {
+      if (validIds.has(toggleId)) {
+        valid.push(toggleId);
+      } else {
+        console.warn(`[CustomViews] Toggle "${toggleId}" is not in the config and will be ignored.`);
+      }
     }
 
     return valid;
